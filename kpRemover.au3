@@ -6,7 +6,9 @@
 #include "SystemRestore.au3"
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\Form1.kxf
 
-$MainWindow = GUICreate("KpRemover", 449, 175, 202, 112)
+$ProgramName = "KpRemover"
+
+$MainWindow = GUICreate($ProgramName, 449, 175, 202, 112)
 $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)
 
 $RemoveTools = GUICtrlCreateCheckbox("Suppression des outils", 16, 40, 129, 17)
@@ -42,6 +44,9 @@ Func logMessage($message)
 EndFunc
 
 Func ClearRestorePoint()
+	$message = "[I] ************* clear restore point **************"
+	logMessage($message)
+
 	$arrEnum = _SR_EnumRestorePoints()
 	$nbrRestorePoint = $arrEnum[0][0]
 	$message = "[I] " & $nbrRestorePoint & " restore point found"
@@ -55,6 +60,28 @@ Func ClearRestorePoint()
 		$message = "[OK] all restore point are deleted"
 		logMessage($message)
 	EndIf
+EndFunc
+
+Func CreateRestorePoint()
+	$message = "[I] ************* create restore point **************"
+	logMessage($message)
+
+	$arrEnum = _SR_EnumRestorePoints()
+	$nbrRestorePoint = $arrEnum[0][0]
+	$message = "[I] " & $nbrRestorePoint & " restore point found"
+	logMessage($message)
+
+    $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
+
+    Do
+       Sleep(3000)
+    Until $createdPointStatus = 0 or $createdPointStatus = 1
+
+    If $pid = 0 Then
+      logMessage("[X] Failed to create System Restore Point!")
+    ElseIf $pid = 1 Then
+       logMessage("[OK] System Restore Point created successfully.")
+    EndIf
 
 EndFunc
 
@@ -63,4 +90,8 @@ Func KpRemover()
 	If GUICtrlRead($RemoveRP) = $GUI_CHECKED Then
 		ClearRestorePoint()
 	EndIf
+
+	If GUICtrlRead($CreateRP) = $GUI_CHECKED Then
+    	CreateRestorePoint()
+    EndIf
 EndFunc
