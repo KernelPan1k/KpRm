@@ -25,7 +25,10 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 While 1
+    Sleep(1000)
+    
 	$nMsg = GUIGetMsg()
+
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
