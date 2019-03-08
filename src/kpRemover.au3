@@ -79,6 +79,12 @@ Func KpRemover()
 
 	ProgressBarUpdate()
 
+	If GUICtrlRead($RemoveTools) = $GUI_CHECKED Then
+		RunRemoveTools()
+	EndIf
+
+	ProgressBarUpdate()
+
 	If GUICtrlRead($RemoveRP) = $GUI_CHECKED Then
 		ClearRestorePoint()
 	EndIf

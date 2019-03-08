@@ -1,17 +1,30 @@
-#cs ----------------------------------------------------------------------------
+Func RemoveFile($file)
+	Local Const $iFileExists = FileExists($file)
 
- AutoIt Version: 3.3.14.5
- Author:         myName
+	If $iFileExists Then
+		Local $iDelete = FileDelete($file)
 
- Script Function:
-	Template AutoIt script.
+		If $iDelete Then
+			logMessage("  [OK] File " & $file & " deleted successfully")
+		EndIf
+	EndIf
+EndFunc   ;==>RemoveFile
 
-#ce ----------------------------------------------------------------------------
+Func RemoveFolder($path)
+	Local $iFileExists = FileExists($path)
 
-; Script Start - Add your code below here
+	If $iFileExists Then
+		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
 
-Func RemoveFile($pattern)
-	Local $hSearch = FileFindFirstFile($pattern)
+		If $iDelete Then
+			logMessage("  [OK] Directory " & $path & " deleted successfully")
+		EndIf
+	EndIf
+EndFunc   ;==>RemoveFolder
+
+Func RemoveGlobFile($path, $file, $reg)
+	Local Const $filePathGlob = $path & "\" & $file
+	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 
 	If $hSearch = -1 Then
 		Return False
@@ -20,19 +33,13 @@ Func RemoveFile($pattern)
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
-		Local $status = FileDelete($sFileName)
-
-		If $status = 1 Then
-			logMessage()
-		Else
-			logMessage()
+		If StringRegExp($sFileName, $reg) Then
+			RemoveFile($path & "\" & $sFileName)
 		EndIf
-		$sFileName = FileFindNextFile($hSearch) ; fichier suivant
+
+		$sFileName = FileFindNextFile($hSearch)
 	WEnd
 
 	FileClose($hSearch)
-EndFunc   ;==>RemoveFile
+EndFunc   ;==>RemoveGlobFile
 
-Func RemoveFolder()
-
-EndFunc   ;==>RemoveFolder
