@@ -10,4 +10,12 @@
 
 ; Script Start - Add your code below here
 
+#include "tools_remove.au3"
 #include "tools/frst.au3"
+
+
+Func RunRemoveTools()
+	RemoveFRST()
+
+	ProgressBarUpdate()
+EndFunc

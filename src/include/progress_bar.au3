@@ -10,7 +10,7 @@
 
 ; Script Start - Add your code below here
 
-Local Const $nbrTask = 4
+Local Const $nbrTask = 7
 Global $currentNbrTask = 0
 Global Const $taskStep = Floor(100 / $nbrTask)
 
@@ -27,5 +27,5 @@ EndFunc   ;==>ProgressBarUpdate
 
 Func ProgressBarInit()
 	$currentNbrTask = 0
-	ProgressOn($ProgramName, $ProgramName & " progress", "Working...")
+;~ 	ProgressOn($ProgramName, $ProgramName & " progress", "Working...")
 EndFunc
