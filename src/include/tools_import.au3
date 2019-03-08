@@ -12,10 +12,10 @@
 
 #include "tools_remove.au3"
 #include "tools/frst.au3"
+#include "tools/zhpdiag.au3"
 
 
 Func RunRemoveTools()
 	RemoveFRST()
-
-	ProgressBarUpdate()
-EndFunc
+	RemoveZHPDiag()
+EndFunc   ;==>RunRemoveTools
