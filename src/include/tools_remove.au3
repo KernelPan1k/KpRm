@@ -1,3 +1,7 @@
+Func prepareRemove($path)
+	FileSetAttrib($path, "-RAS", $FT_RECURSIVE)
+EndFunc   ;==>prepareRemove
+
 Func RemoveFile($file)
 	Local Const $iFileExists = FileExists($file)
 
@@ -14,6 +18,7 @@ Func RemoveFolder($path)
 	Local $iFileExists = FileExists($path)
 
 	If $iFileExists Then
+		prepareRemove($path)
 		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
 
 		If $iDelete Then
