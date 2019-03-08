@@ -12,6 +12,7 @@
 #include "include\registry_backup.au3"
 #include "include\restore_uac.au3"
 #include "include\restore_system_settings.au3"
+#include "include\tools_import.au3"
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
