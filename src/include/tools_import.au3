@@ -13,9 +13,11 @@
 #include "tools_remove.au3"
 #include "tools/frst.au3"
 #include "tools/zhpdiag.au3"
+#include "tools/zhpfix.au3"
 
 
 Func RunRemoveTools()
 	RemoveFRST()
 	RemoveZHPDiag()
+	RemoveZHPFix()
 EndFunc   ;==>RunRemoveTools
