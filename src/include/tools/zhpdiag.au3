@@ -1,5 +1,4 @@
 
-
 Func RemoveZHPDiag()
 
 	RemoveFile(@DesktopDir & "\ZHPDiag.txt")
@@ -19,6 +18,19 @@ Func RemoveZHPDiag()
 	EndIf
 
 	RemoveFolder(@AppDataDir & "\ZHP")
+	RemoveFolder(@LocalAppDataDir & "\ZHP")
+
+	Local Const $localUsers = _GetLocalUsers()
+
+	If $localUsers <> 0 Then
+		For $i = 1 To UBound($localUsers) - 1
+			Local $uDesktop = TryResolveUserDesktop($localUsers[$i])
+			RemoveFile($uDesktop & "\ZHPDiag.lnk")
+		Next
+	EndIf
+
+	RemoveRegistryKey("HKCU\SOFTWARE\ZHP")
+	RemoveRegistryKey("HKU\S-1-5-21-3583694148-1414552638-2922671848-1000\SOFTWARE\ZHP")
 
 	ProgressBarUpdate()
 EndFunc   ;==>RemoveZHPDiag

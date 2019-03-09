@@ -1,3 +1,4 @@
+
 Func prepareRemove($path)
 	FileSetAttrib($path, "-RAS", $FT_RECURSIVE)
 EndFunc   ;==>prepareRemove
@@ -47,4 +48,14 @@ Func RemoveGlobFile($path, $file, $reg)
 
 	FileClose($hSearch)
 EndFunc   ;==>RemoveGlobFile
+
+Func RemoveRegistryKey($key)
+	Local Const $status = RegDelete($key)
+
+	If $status = 1 Then
+		logMessage("  [OK] " & $key & " deleted successfully")
+	ElseIf $status = 2 Then
+		logMessage("  [X] " & $key & " deleted failed")
+	EndIf
+EndFunc   ;==>RemoveRegistryKey
 
