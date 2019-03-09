@@ -6,6 +6,11 @@
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 #include <Date.au3>
+#include <WinAPIShellEx.au3>
+#include <SendMessage.au3>
+#include <Array.au3>
+#include "lib\UAC.au3"
+#include "lib\SystemRestore.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
 #include "include\restore_points.au3"
