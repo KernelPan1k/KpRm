@@ -1,20 +1,18 @@
 
-Local Const $nbrTask = 7
+Local Const $nbrTask = 9
 Global $currentNbrTask = 0
 Global Const $taskStep = Floor(100 / $nbrTask)
 
 Func ProgressBarUpdate()
 	$currentNbrTask += 1
-	ProgressSet($currentNbrTask * $taskStep)
+	GUICtrlSetData($ProgressBar, $currentNbrTask * $taskStep)
 
 	If $currentNbrTask = $nbrTask Then
-		ProgressSet(100, "Done!")
-		Sleep(750)
-		ProgressOff()
+		GUICtrlSetData($ProgressBar, 100)
 	EndIf
 EndFunc   ;==>ProgressBarUpdate
 
 Func ProgressBarInit()
 	$currentNbrTask = 0
-;~ 	ProgressOn($ProgramName, $ProgramName & " progress", "Working...")
+	GUICtrlSetData($ProgressBar, 0)
 EndFunc

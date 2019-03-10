@@ -29,8 +29,10 @@ Func RemoveZHPDiag()
 		Next
 	EndIf
 
-	RemoveRegistryKey("HKCU\SOFTWARE\ZHP")
-	RemoveRegistryKey("HKU\S-1-5-21-3583694148-1414552638-2922671848-1000\SOFTWARE\ZHP")
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	RemoveRegistryKey("HKCU" & $s64Bit & "\SOFTWARE\ZHP")
 
 	ProgressBarUpdate()
 EndFunc   ;==>RemoveZHPDiag
