@@ -14,10 +14,12 @@
 #include "tools/frst.au3"
 #include "tools/zhpdiag.au3"
 #include "tools/zhpfix.au3"
+#include "tools/mbam.au3"
 
 
 Func RunRemoveTools()
 	RemoveFRST()
 	RemoveZHPDiag()
 	RemoveZHPFix()
+	RemoveMBAM()
 EndFunc   ;==>RunRemoveTools

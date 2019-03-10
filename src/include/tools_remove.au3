@@ -59,3 +59,16 @@ Func RemoveRegistryKey($key)
 	EndIf
 EndFunc   ;==>RemoveRegistryKey
 
+Func RemoveService($name)
+	RunWait(@ComSpec & " /c " & "sc stop " & $name)
+
+	If @error = 0 Then
+		logMessage("  [OK] Stop service " & $name & " successfully")
+	EndIf
+
+	RunWait(@ComSpec & " /c " & "sc config " & $name " start= disabled")
+
+	If @error = 0 Then
+		logMessage("  [OK] Disable service " & $name & " successfully")
+	EndIf
+EndFunc

@@ -67,8 +67,6 @@ EndFunc   ;==>Init
 Func KpRemover()
 	Init()
 
-	ProgressBarUpdate()
-
 	If GUICtrlRead($BackupRegistry) = $GUI_CHECKED Then
 		CreateBackupRegistry()
 	EndIf
@@ -105,5 +103,6 @@ Func KpRemover()
 
 	GUICtrlSetData($ProgressBar, 100)
 	MsgBox(0, "Finish", "All operation ar finish")
+	Sleep(750)
 	Exit
 EndFunc   ;==>KpRemover
