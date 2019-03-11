@@ -1,6 +1,6 @@
 
 Func RemoveMBAM()
-	logMessage(@CRLF & "=> ************* Search MBAM files ************** <=" & @CRLF)
+	logMessage(@CRLF & "- Search MBAM Files -" & @CRLF)
 
 	If FileExists(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes\Anti-Malware\unins000.exe") Then
 		RunWait(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes\Anti-Malware\unins000.exe /verysilent /suppressmsgboxes /norestart")
@@ -8,7 +8,7 @@ Func RemoveMBAM()
 		If @error <> 0 Then
 			logMessage("  [OK] Uninstall MBAM Successfully")
 		Else
-			logMessage("  [X] Uninstall MBAM failed")
+			logMessage("  [X] Uninstall MBAM failure")
 		EndIf
 	EndIf
 

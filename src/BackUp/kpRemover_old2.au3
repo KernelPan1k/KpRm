@@ -9,15 +9,6 @@
 #include <WinAPIShellEx.au3>
 #include <SendMessage.au3>
 #include <Array.au3>
-
-Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
-
-If _ArraySearch($codeFR, @MUILang) <> 1 Then
-	#include "locales\fr.au3"
-Else
-	#include "locales\en.au3"
-EndIf
-
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
 #include "include\utils.au3"
@@ -30,24 +21,24 @@ EndIf
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
-FileInstall("C:\Users\IEUser\Desktop\kpRemover\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\IEUser\Desktop\kpRemover\assets\bug.gif", @TempDir & "\iwgefiwefecbeifbibi.gif")
 
 Global Const $ProgramName = "KpRm"
 
 Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)
-Local Const $RemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
-Local Const $RemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 105, 17)
-Local Const $CreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 97, 17)
-Local Const $BackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 192, 40, 137, 17)
-Local Const $RestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 192, 80, 137, 17)
-Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 192, 120, 137, 17)
+Local Const $RemoveTools = GUICtrlCreateCheckbox("Suppression des outils", 16, 40, 129, 17)
+Local Const $RemoveRP = GUICtrlCreateCheckbox("Supprimer les PR", 16, 80, 105, 17)
+Local Const $CreateRP = GUICtrlCreateCheckbox("Nouveau PR", 16, 120, 97, 17)
+Local Const $BackupRegistry = GUICtrlCreateCheckbox("Sauvegarde du registre", 192, 40, 137, 17)
+Local Const $RestoreUAC = GUICtrlCreateCheckbox("Restaurer UAC", 192, 80, 137, 17)
+Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox("Restaurer les paramètres système", 192, 120, 137, 17)
 Global Const $ProgressBar = GUICtrlCreateProgress(8, 170, 428, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 360, 16, 76, 76)
-Local Const $RunKp = GUICtrlCreateButton($lRun, 360, 120, 75, 40)
+Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\iwgefiwefecbeifbibi.gif", 360, 16, 76, 76)
+Local Const $RunKp = GUICtrlCreateButton("Button1", 360, 120, 75, 40)
 
 GUISetState(@SW_SHOW)
 
@@ -70,8 +61,8 @@ WEnd
 Func Init()
 	FileWrite(@DesktopDir & "\kp-remover.txt", "#################################################################################################################" & @CRLF & @CRLF)
 	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run at " _Now() & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run by " & @UserName & " in " @ComputerName & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Launch fom " @WorkingDir & @CRLF)
+	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run by " & @UserName & " in " @ComputerName &@CRLF)
+	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run fom " @WorkingDir & @CRLF)
 	ProgressBarInit()
 EndFunc   ;==>Init
 
@@ -115,6 +106,6 @@ Func KpRemover()
 	EndIf
 
 	GUICtrlSetData($ProgressBar, 100)
-	MsgBox(64, "OK", $lFinish)
+	MsgBox(64, "OK", "All operations were successfully completed")
 	Exit
 EndFunc   ;==>KpRemover
