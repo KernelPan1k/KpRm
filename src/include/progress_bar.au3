@@ -1,5 +1,5 @@
 
-Local Const $nbrTask = 9
+Local Const $nbrTask = 11 ; 6 fixe + 5 programs
 Global $currentNbrTask = 0
 Global Const $taskStep = Floor(100 / $nbrTask)
 

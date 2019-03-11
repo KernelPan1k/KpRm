@@ -41,7 +41,7 @@ EndIf
 
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
-Global Const $ProgramName = "KpRm"
+Global $ProgramName = "KpRm"
 
 Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)
@@ -51,7 +51,7 @@ Local Const $CreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 97,
 Local Const $BackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 192, 40, 137, 17)
 Local Const $RestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 192, 80, 137, 17)
 Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 192, 120, 137, 17)
-Global Const $ProgressBar = GUICtrlCreateProgress(8, 170, 428, 17)
+Global $ProgressBar = GUICtrlCreateProgress(8, 170, 428, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
