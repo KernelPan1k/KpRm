@@ -15,4 +15,4 @@ EndFunc   ;==>ProgressBarUpdate
 Func ProgressBarInit()
 	$currentNbrTask = 0
 	GUICtrlSetData($ProgressBar, 0)
-EndFunc
+EndFunc   ;==>ProgressBarInit

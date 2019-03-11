@@ -1,6 +1,6 @@
 
 Func RemoveZHPDiag()
-	logMessage(@CRLF & "=> ************* Search ZHPDiag files ************** <=" & @CRLF)
+	logMessage(@CRLF & "- Search ZHPDiag Files -" & @CRLF)
 
 	RemoveFile(@DesktopDir & "\ZHPDiag.txt")
 	RemoveFile(@DesktopDir & "\ZHPDiag.lnk")
