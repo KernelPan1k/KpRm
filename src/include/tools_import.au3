@@ -15,6 +15,7 @@
 #include "tools/zhpdiag.au3"
 #include "tools/zhpfix.au3"
 #include "tools/mbam.au3"
+#include "tools/roguekiller.au3"
 
 
 Func RunRemoveTools()
@@ -22,4 +23,5 @@ Func RunRemoveTools()
 	RemoveZHPDiag()
 	RemoveZHPFix()
 	RemoveMBAM()
+	RemoveRogueKiller()
 EndFunc   ;==>RunRemoveTools
