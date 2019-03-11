@@ -5,6 +5,7 @@ Global Const $taskStep = Floor(100 / $nbrTask)
 
 Func ProgressBarUpdate()
 	$currentNbrTask += 1
+	Dim $ProgressBar
 	GUICtrlSetData($ProgressBar, $currentNbrTask * $taskStep)
 
 	If $currentNbrTask = $nbrTask Then
@@ -14,5 +15,6 @@ EndFunc   ;==>ProgressBarUpdate
 
 Func ProgressBarInit()
 	$currentNbrTask = 0
+	Dim $ProgressBar
 	GUICtrlSetData($ProgressBar, 0)
 EndFunc   ;==>ProgressBarInit

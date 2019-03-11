@@ -32,6 +32,7 @@ EndFunc   ;==>ClearRestorePoint
 
 Func CreateRestorePoint()
 	logMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
+	Dim $ProgramName
 
 	Local Const $iSR_Enabled = _SR_Enable()
 
