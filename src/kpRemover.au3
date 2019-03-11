@@ -1,5 +1,14 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\assets\bug.gif
+#AutoIt3Wrapper_Icon=assets\bug.ico
+#AutoIt3Wrapper_Outfile=kpRm.exe
+#AutoIt3Wrapper_Res_Description=Remove tools
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.0
+#AutoIt3Wrapper_Res_ProductName=KpRm
+#AutoIt3Wrapper_Res_ProductVersion=0.1
+#AutoIt3Wrapper_Res_CompanyName=kernel-panik
+#AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
+#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <ButtonConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -30,7 +39,7 @@ EndIf
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
-FileInstall("C:\Users\IEUser\Desktop\kpRemover\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
 Global Const $ProgramName = "KpRm"
 
@@ -69,9 +78,9 @@ WEnd
 
 Func Init()
 	FileWrite(@DesktopDir & "\kp-remover.txt", "#################################################################################################################" & @CRLF & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run at " _Now() & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run by " & @UserName & " in " @ComputerName & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Launch fom " @WorkingDir & @CRLF)
+	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run at " & _Now() & @CRLF)
+	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run by " & @UserName & " in " & @ComputerName & @CRLF)
+	FileWrite(@DesktopDir & "\kp-remover.txt", "# Launch fom " & @WorkingDir & @CRLF)
 	ProgressBarInit()
 EndFunc   ;==>Init
 
