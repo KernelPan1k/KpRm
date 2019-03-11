@@ -1,12 +1,17 @@
 
 Func prepareRemove($path)
-	FileSetAttrib($path, "-RAS", $FT_RECURSIVE)
+	FileSetAttrib($path, "-R", $FT_RECURSIVE)
+	FileSetAttrib($path, "-A", $FT_RECURSIVE)
+	FileSetAttrib($path, "-S", $FT_RECURSIVE)
+	FileSetAttrib($path, "-H", $FT_RECURSIVE)
+	FileSetAttrib($path, "+N", $FT_RECURSIVE)
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file)
 	Local Const $iFileExists = FileExists($file)
 
 	If $iFileExists Then
+		prepareRemove($file)
 		Local $iDelete = FileDelete($file)
 
 		If $iDelete Then
@@ -60,15 +65,50 @@ Func RemoveRegistryKey($key)
 EndFunc   ;==>RemoveRegistryKey
 
 Func RemoveService($name)
-	RunWait(@ComSpec & " /c " & "sc stop " & $name)
+	Local Const $status = RunWait(@ComSpec & " /c " & "sc query " & $name, @TempDir, @SW_HIDE)
+
+	If $status = 1060 Then
+		Return Null
+	EndIf
+
+	RunWait(@ComSpec & " /c " & "sc stop " & $name, @TempDir, @SW_HIDE)
 
 	If @error = 0 Then
 		logMessage("  [OK] Stop service " & $name & " successfully")
 	EndIf
 
-	RunWait(@ComSpec & " /c " & "sc config " & $name " start= disabled")
+	RunWait(@ComSpec & " /c " & "sc config " & $name & " start= disabled", @TempDir, @SW_HIDE)
 
 	If @error = 0 Then
 		logMessage("  [OK] Disable service " & $name & " successfully")
 	EndIf
-EndFunc
+
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	Local $key = "HKLM" & $s64Bit & "\SYSTEM\CurrentControlSet\Services\" & $name
+	RemoveRegistryKey($key)
+
+	Local $key = "HKLM" & $s64Bit & "\SYSTEM\ControlSet002\Services\" & $name
+	RemoveRegistryKey($key)
+EndFunc   ;==>RemoveService
+
+Func RemoveSoftwareKey($name)
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	RemoveRegistryKey("HKCU" & $s64Bit & "\SOFTWARE\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\" & $name)
+EndFunc   ;==>RemoveSoftwareKey
+
+Func RemoveContextMenu($name)
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\lnkfile\shellex\ContextMenuHandlers\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\ShellEx\ContextMenuHandlers\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\Background\ShellEx\ContextMenuHandlers\" & $name)
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\Drive\shellex\ContextMenuHandlers\" & $name)
+EndFunc   ;==>RemoveContextMenu
