@@ -1,0 +1,5 @@
+
+
+Func RemoveAdwcleaner()
+
+EndFunc

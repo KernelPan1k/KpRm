@@ -16,6 +16,7 @@
 #include "tools/zhpfix.au3"
 #include "tools/mbam.au3"
 #include "tools/roguekiller.au3"
+#include "tools/adwcleaner.au3"
 
 
 Func RunRemoveTools()
@@ -24,4 +25,5 @@ Func RunRemoveTools()
 	RemoveZHPFix()
 	RemoveMBAM()
 	RemoveRogueKiller()
+	RemoveAdwcleaner()
 EndFunc   ;==>RunRemoveTools
