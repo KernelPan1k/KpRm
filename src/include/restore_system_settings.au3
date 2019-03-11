@@ -2,7 +2,7 @@
 Func RestoreSystemSettingsByDefault()
 	logMessage(@CRLF & "=> ************* Restore Default System Settings ************** <=" & @CRLF)
 
-	Local $status = RunWait(@ComSpec & " /c " & "ipconfig /flushdns")
+	Local $status = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Then
 		logMessage("  [X] Flush DNS failed")
@@ -25,7 +25,7 @@ Func RestoreSystemSettingsByDefault()
 	$status = 0
 
 	For $i = 0 To 6
-		RunWait(@ComSpec & " /c " & $commands[$i])
+		RunWait(@ComSpec & " /c " & $commands[$i], @TempDir, @SW_HIDE)
 
 		If @error <> 0 Then
 			$status += 1

@@ -1,5 +1,6 @@
 
 Func RemoveZHPDiag()
+	logMessage(@CRLF & "=> ************* Search ZHPDiag files ************** <=" & @CRLF)
 
 	RemoveFile(@DesktopDir & "\ZHPDiag.txt")
 	RemoveFile(@DesktopDir & "\ZHPDiag.lnk")
@@ -29,10 +30,7 @@ Func RemoveZHPDiag()
 		Next
 	EndIf
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
-
-	RemoveRegistryKey("HKCU" & $s64Bit & "\SOFTWARE\ZHP")
+	RemoveSoftwareKey("ZHP")
 
 	ProgressBarUpdate()
 EndFunc   ;==>RemoveZHPDiag

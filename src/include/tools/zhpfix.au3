@@ -1,5 +1,6 @@
 
 Func RemoveZHPFix()
+	logMessage(@CRLF & "=> ************* Search ZHPFix files ************** <=" & @CRLF)
 
 	RemoveFile(@DesktopDir & "\ZHPFix.txt")
 	RemoveFile(@DesktopDir & "\ZHPFix.lnk")

@@ -12,6 +12,8 @@
 
 Func RemoveFRST()
 
+	logMessage(@CRLF & "=> ************* Search FRST files ************** <=" & @CRLF)
+
 	Local Const $files[6] = [ _
 			@DesktopDir & "\FRST.exe", _
 			@DesktopDir & "\fixlist.txt", _
