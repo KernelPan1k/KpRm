@@ -60,3 +60,20 @@ EndFunc   ;==>_GetLocalUsers
 Func TryResolveUserDesktop($User)
 	Return @HomeDrive & "\Users\" & $User & "\Desktop"
 EndFunc   ;==>TryResolveUserDesktop
+
+Func searchRegistryKeyStrings($path, $pattern, $key)
+	$i = 0
+	While True
+		$i += 1
+		Local $entry = RegEnumKey($path, $i)
+		If @error <> 0 Then ExitLoop
+		$regPath = $path & "\" & $entry
+		$name = RegRead($regPath, $key)
+
+		If StringRegExp($name, $pattern) Then
+			Return $regPath
+		EndIf
+	WEnd
+
+	Return Null
+EndFunc   ;==>searchRegistryKeyStrings

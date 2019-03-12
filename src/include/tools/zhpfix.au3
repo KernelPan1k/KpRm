@@ -2,6 +2,11 @@
 Func RemoveZHPFix()
 	logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
 
+	CloseProcessAndWait("ZHPFix.exe")
+	CloseProcessAndWait("ZHPFix2.exe")
+
+	Local Const $desciptionPattern = "(?i)^ZHPDiag"
+
 	RemoveFile(@DesktopDir & "\ZHPFix.txt")
 	RemoveFile(@DesktopDir & "\ZHPFix.lnk")
 	RemoveFile(@DesktopDir & "\ZHPFix2.lnk")
