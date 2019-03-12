@@ -1,30 +1,8 @@
 
-Func searchUninstallStrings()
-	$i = 0
-	$uninstall_path = "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-	While True
-		$i += 1
-		Local $entry = RegEnumKey($uninstall_path, $i)
-		If @error <> 0 Then ExitLoop
-		$regPath = $uninstall_path & "\" & $entry
-		$DisplayName = RegRead($regPath, "DisplayName")
-
-		If StringRegExp($DisplayName, "^Roguekiller") Then
-			Return $regPath
-		EndIf
-	WEnd
-
-	Return Null
-EndFunc   ;==>searchUninstallStrings
-
 Func RemoveRogueKiller()
 	logMessage(@CRLF & "- Search RogueKiller Files -" & @CRLF)
 
-	Local $status = ProcessWaitClose("RogueKiller.exe", 10)
-
-	If $status = 1 Then
-		logMessage("  [OK] RogueKiller.exe was stopped correctly")
-	EndIf
+	CloseProcessAndWait("RogueKiller.exe")
 
 	ShellExecuteWait("schtasks.exe", '/delete /tn "RogueKiller Anti-Malware" /f', @SW_HIDE)
 
@@ -32,7 +10,7 @@ Func RemoveRogueKiller()
 		logMessage("  [OK] RogueKiller.exe was deleted from schedule")
 	EndIf
 
-	Local Const $installReg = searchUninstallStrings()
+	Local Const $installReg = searchRegistryKeyStrings("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^RogueKiller", "DisplayName")
 
 	If $installReg Then
 		RemoveRegistryKey($installReg)

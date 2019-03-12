@@ -7,11 +7,22 @@ Func prepareRemove($path)
 	FileSetAttrib($path, "+N", $FT_RECURSIVE)
 EndFunc   ;==>prepareRemove
 
-Func RemoveFile($file)
+Func RemoveFile($file, $descriptionPattern = Null)
 	Local Const $iFileExists = FileExists($file)
 
 	If $iFileExists Then
+		If $descriptionPattern Then
+			Local Const $fileDescription = FileGetVersion($file, "FileDescription")
+
+			If @error Then
+				Return Null
+			ElseIf Not StringRegExp($fileDescription, $descriptionPattern) Then
+				Return Null
+			EndIf
+		EndIf
+
 		prepareRemove($file)
+
 		Local $iDelete = FileDelete($file)
 
 		If $iDelete Then
@@ -33,7 +44,7 @@ Func RemoveFolder($path)
 	EndIf
 EndFunc   ;==>RemoveFolder
 
-Func RemoveGlobFile($path, $file, $reg)
+Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
 	Local Const $filePathGlob = $path & "\" & $file
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 
@@ -45,7 +56,7 @@ Func RemoveGlobFile($path, $file, $reg)
 
 	While @error = 0
 		If StringRegExp($sFileName, $reg) Then
-			RemoveFile($path & "\" & $sFileName)
+			RemoveFile($path & "\" & $sFileName, $descriptionPattern)
 		EndIf
 
 		$sFileName = FileFindNextFile($hSearch)
@@ -112,3 +123,24 @@ Func RemoveContextMenu($name)
 	RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\Background\ShellEx\ContextMenuHandlers\" & $name)
 	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\Drive\shellex\ContextMenuHandlers\" & $name)
 EndFunc   ;==>RemoveContextMenu
+
+Func CloseProcessAndWait($process)
+	Local $cpt = 50
+
+	If 0 = ProcessExists($process) Then Return 0
+
+	ProcessClose($process)
+
+	Do
+		$cpt -= 1
+		Sleep(250)
+	Until ($cpt = 0 Or 0 = ProcessExists($process))
+
+	Local Const $status = ProcessExists($process)
+
+	If 0 = $status Then
+		logMessage("  [OK] Porccess " & $process & " stopped successfully")
+	EndIf
+
+	Return $status
+EndFunc   ;==>CloseProcessAndWait
