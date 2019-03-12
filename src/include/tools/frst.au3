@@ -1,6 +1,10 @@
-Func RemoveFRST()
-	logMessage(@CRLF & "- Search FRST Files -" & @CRLF)
 
+Func RemoveFRST()
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage(@CRLF & "- Search FRST Files -" & @CRLF)
+
+	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^Farbar"
 
 	Local Const $files[6] = [ _
@@ -13,12 +17,12 @@ Func RemoveFRST()
 			]
 
 	For $i = 0 To 5
-		RemoveFile($files[$i])
+		$return += RemoveFile($files[$i])
 	Next
 
-	RemoveGlobFile(@DesktopDir, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
-	RemoveGlobFile(@DesktopDir, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
-	RemoveGlobFile(@DesktopDir, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
@@ -34,15 +38,26 @@ Func RemoveFRST()
 				]
 
 		For $i = 0 To 5
-			RemoveFile($downloadFiles[$i])
+			$return += RemoveFile($downloadFiles[$i])
 		Next
 
-		RemoveGlobFile($userDownloadFolder, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
-		RemoveGlobFile($userDownloadFolder, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
-		RemoveGlobFile($userDownloadFolder, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
 	EndIf
 
-	RemoveFolder(@HomeDrive & "\FRST")
+	$return += RemoveFolder(@HomeDrive & "\FRST")
+
+	If $return > 0 Then
+		If Not $KPDebug Then logMessage(@CRLF & "- Search FRST Files -" & @CRLF)
+
+		If FileExists(@HomeDrive & "\FRST") Then
+			logMessage("  [X] Directory " & @HomeDrive & "\FRST" & " delete failure")
+		Else
+			logMessage("  [OK] FRST has been successfully removed")
+		EndIf
+
+	EndIf
 
 	ProgressBarUpdate()
 

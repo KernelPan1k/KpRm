@@ -1,37 +1,64 @@
 
 Func RemoveZHPFix()
-	logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
+	Dim $KPDebug
 
-	CloseProcessAndWait("ZHPFix.exe")
-	CloseProcessAndWait("ZHPFix2.exe")
+	If $KPDebug Then logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
 
-	Local Const $desciptionPattern = "(?i)^ZHPDiag"
+	Local $return = 0
 
-	RemoveFile(@DesktopDir & "\ZHPFix.txt")
-	RemoveFile(@DesktopDir & "\ZHPFix.lnk")
-	RemoveFile(@DesktopDir & "\ZHPFix2.lnk")
-	RemoveGlobFile(@DesktopDir, "ZHPFix?.exe", "^ZHPFix2?.exe$")
-	RemoveGlobFile(@DesktopDir, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$")
-	RemoveGlobFile(@DesktopDir, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$")
+	$return += CloseProcessAndWait("ZHPFix.exe")
+	$return += CloseProcessAndWait("ZHPFix2.exe")
+
+	Local Const $desciptionPattern = "(?i)^ZHPFix"
+
+	$return += RemoveFile(@DesktopDir & "\ZHPFix.txt")
+	$return += RemoveFile(@DesktopDir & "\ZHPFix.lnk")
+	$return += RemoveFile(@DesktopDir & "\ZHPFix2.lnk")
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
-		RemoveFile($userDownloadFolder & "\ZHPFix.txt")
-		RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "^ZHPFix2?.exe$")
-		RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$")
-		RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$")
+		$return +=  RemoveFile($userDownloadFolder & "\ZHPFix.txt")
+		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
+		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
+		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
 	EndIf
+
+	$return += RemoveFolder(@AppDataDir & "\ZHP")
+	$return += RemoveFolder(@LocalAppDataDir & "\ZHP")
 
 	Local Const $localUsers = _GetLocalUsers()
 
 	If $localUsers <> 0 Then
 		For $i = 1 To UBound($localUsers) - 1
 			Local $uDesktop = TryResolveUserDesktop($localUsers[$i])
-			RemoveFile($uDesktop & "\ZHPFix.lnk")
-			RemoveFile($uDesktop & "\ZHPFix2.lnk")
+			$return +=  RemoveFile($uDesktop & "\ZHPFix.lnk")
+			$return +=  RemoveFile($uDesktop & "\ZHPFix2.lnk")
 		Next
+	EndIf
+
+	If $return > 0 Then
+		If Not $KPDebug Then logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
+		Local $errors = ""
+
+		If FileExists(@AppDataDir & "\ZHP") Then
+			$errors += " [X] The folder " & @AppDataDir & "\ZHP still exists" & @CRLF
+		EndIf
+
+		If FileExists(@LocalAppDataDir & "\ZHP") Then
+			$errors += " [X] The folder " & @LocalAppDataDir & "\ZHP still exists" & @CRLF
+		EndIf
+
+		If $errors <> "" Then
+			logMessage($errors)
+		Else
+			logMessage("  [OK] ZHPFix has been successfully removed")
+		EndIf
+
 	EndIf
 
 	ProgressBarUpdate()

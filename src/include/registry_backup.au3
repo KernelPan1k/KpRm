@@ -22,7 +22,7 @@ Func CreateBackupRegistry()
 
 	Local Const $status = RunWait("Regedit /e " & $backupLocation)
 
-	Sleep(3000)
+	Sleep(1000)
 
 	If Not FileExists($backupLocation) Or @error <> 0 Then
 		logMessage("  [X] Failed to create registry backup")
