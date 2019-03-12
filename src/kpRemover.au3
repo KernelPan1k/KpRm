@@ -42,6 +42,7 @@ EndIf
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
 Global $ProgramName = "KpRm"
+Global $KPDebug = False
 
 Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)

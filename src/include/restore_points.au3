@@ -10,6 +10,8 @@ Func ClearRestorePoint()
 		Return Null
 	EndIf
 
+	Local $errors = []
+
 	For $i = 1 To $aRP[0][0]
 		Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
 		$ret += $status
@@ -17,7 +19,20 @@ Func ClearRestorePoint()
 		If $status = 1 Then
 			logMessage("    => [OK] RP named " & $aRP[$i][1] & " has been successfully deleted")
 		Else
-			logMessage("    => [X] RP named " & $aRP[$i][1] & " has not been successfully deleted")
+			_ArrayAdd($errors, $aRP[$i])
+		EndIf
+	Next
+
+	If 1 < UBound($errors) Then Sleep(3000)
+
+	For $i = 1 To UBound($errors)
+		Local $status = _SR_RemoveRestorePoint($errors[$i][0])
+		$ret += $status
+
+		If $status = 1 Then
+			logMessage("    => [OK] RP named " & $errors[$i][1] & " has been successfully deleted")
+		Else
+			logMessage("    => [X] RP named " & $errors[$i][1] & " has not been successfully deleted")
 		EndIf
 	Next
 
@@ -30,28 +45,47 @@ Func ClearRestorePoint()
 EndFunc   ;==>ClearRestorePoint
 
 
-Func CreateRestorePoint()
-	logMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
+Func CreateRestorePoint($retry = False)
+	If $retry = False Then
+		logMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
+	Else
+		logMessage("  [I] Retry Create New System Restore Point")
+	EndIf
+
 	Dim $ProgramName
 
-	Local Const $iSR_Enabled = _SR_Enable()
+	Local $iSR_Enabled = _SR_Enable()
 
 	If $iSR_Enabled = 0 Then
-		logMessage("  [X] Failed to enable System Restore")
+
+		Sleep(3000)
+		$iSR_Enabled = _SR_Enable()
+
+		If $iSR_Enabled = 0 Then
+			logMessage("  [X] Failed to enable System Restore")
+		EndIf
+
 	ElseIf $iSR_Enabled = 1 Then
 		logMessage("  [OK] System Restore enabled successfully")
 	EndIf
 
-	Sleep(1000)
-
 	Local Const $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
 
-	Do
-		Sleep(3000)
-	Until $createdPointStatus = 0 Or $createdPointStatus = 1
+	Local $nbr = 50
 
-	If $createdPointStatus = 0 Then
+	Do
+		Sleep(250)
+		$nbr -= 1
+	Until $createdPointStatus = 0 Or $createdPointStatus = 1 Or $nbr = 0
+
+	If $createdPointStatus = 0 Or $nbr = 0 Then
 		logMessage("  [X] Failed to create System Restore Point!")
+
+		If $retry = False Then
+			CreateRestorePoint(True)
+			Return
+		EndIf
+
 	ElseIf $createdPointStatus = 1 Then
 		logMessage("  [OK] System Restore Point successfully created")
 	EndIf
