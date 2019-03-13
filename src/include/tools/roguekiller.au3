@@ -34,9 +34,10 @@ Func RemoveRogueKiller($retry = False)
 	$return += RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 	$return += RemoveFile(@DesktopDir & "\RogueKiller.lnk")
 	$return += RemoveGlobFile(@DesktopDir, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)
+	$return += RemoveFile(@DesktopCommonDir & "\RogueKiller.lnk")
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
-	Local Const $iFileExists = FileExists($userDownloadFolder)
+	Local $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
 		$return += RemoveGlobFile($userDownloadFolder, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)

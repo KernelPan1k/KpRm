@@ -17,6 +17,8 @@ Func RemoveZHPFix()
 	$return += RemoveFile(@DesktopDir & "\ZHPFix.txt")
 	$return += RemoveFile(@DesktopDir & "\ZHPFix.lnk")
 	$return += RemoveFile(@DesktopDir & "\ZHPFix2.lnk")
+	$return += RemoveFile(@DesktopCommonDir & "\ZHPFix.lnk")
+	$return += RemoveFile(@DesktopCommonDir & "\ZHPFix2.lnk")
 	$return += RemoveGlobFile(@DesktopDir, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
@@ -25,24 +27,14 @@ Func RemoveZHPFix()
 	Local Const $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
-		$return +=  RemoveFile($userDownloadFolder & "\ZHPFix.txt")
-		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
-		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
-		$return +=  RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
+		$return += RemoveFile($userDownloadFolder & "\ZHPFix.txt")
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@AppDataDir & "\ZHP")
 	$return += RemoveFolder(@LocalAppDataDir & "\ZHP")
-
-	Local Const $localUsers = _GetLocalUsers()
-
-	If $localUsers <> 0 Then
-		For $i = 1 To UBound($localUsers) - 1
-			Local $uDesktop = TryResolveUserDesktop($localUsers[$i])
-			$return +=  RemoveFile($uDesktop & "\ZHPFix.lnk")
-			$return +=  RemoveFile($uDesktop & "\ZHPFix2.lnk")
-		Next
-	EndIf
 
 	If $return > 0 Then
 		If Not $KPDebug Then logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
