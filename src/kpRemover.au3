@@ -1,7 +1,7 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=kpRm.exe
-#AutoIt3Wrapper_Res_Description=Remove tools
+#AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=0.1.0.0
 #AutoIt3Wrapper_Res_ProductName=KpRm
 #AutoIt3Wrapper_Res_ProductVersion=0.1
@@ -16,7 +16,8 @@
 #include <WindowsConstants.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
-#include <WinAPISys.au3>
+#include <WinAPIShellEx.au3>
+#include <SendMessage.au3>
 #include <Array.au3>
 
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
@@ -45,20 +46,20 @@ Global $ProgramName = "KpRm"
 Global $KPDebug = False
 Global $nbrTask = 14
 
-Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
-Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)
+Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
+Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
 Local Const $RemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
-Local Const $RemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 105, 17)
-Local Const $CreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 97, 17)
-Local Const $BackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 192, 40, 137, 17)
-Local Const $RestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 192, 80, 137, 17)
-Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 192, 120, 137, 17)
-Global $ProgressBar = GUICtrlCreateProgress(8, 170, 428, 17)
+Local Const $RemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
+Local Const $CreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 190, 17)
+Local Const $BackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
+Local Const $RestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
+Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
+Global $ProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 360, 16, 76, 76)
-Local Const $RunKp = GUICtrlCreateButton($lRun, 360, 120, 75, 40)
+Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
+Local Const $RunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
 
 GUISetState(@SW_SHOW)
 

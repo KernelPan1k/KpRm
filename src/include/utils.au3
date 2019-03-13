@@ -3,31 +3,25 @@ Func logMessage($message)
 	FileWrite(@DesktopDir & "\kp-remover.txt", $message & @CRLF)
 EndFunc   ;==>logMessage
 
-
-Func _start_explorer()
-    $strComputer = "localhost"
-    $objWMI = ObjGet("winmgmts:\\" & $strComputer & "\root\CIMV2")
-    Local $objexplorer = $objWMI.Get("win32_process")
-    $objexplorer.create("explorer.exe")
-EndFunc   ;==>_start_explorer
-
 Func _Restart_Windows_Explorer()
-	;Close the explorer shell gracefully
-	$hSysTray_Handle = _WinAPI_FindWindow('Shell_TrayWnd', '')
-	_SendMessage($hSysTray_Handle, 0x5B4, 0, 0)
-
-	While WinExists($hSysTray_Handle)
-    		Sleep(500)
+	Local $ifailure = 100, $zfailure = 100, $rPID = 0, $iExplorerPath = @WindowsDir & "\Explorer.exe"
+	_WinAPI_ShellChangeNotify($shcne_AssocChanged, 0, 0, 0) ; Save icon positions
+	Local $hSystray = _WinAPI_FindWindow("Shell_TrayWnd", "")
+	_SendMessage($hSystray, 1460, 0, 0) ; Close the Explorer shell gracefully
+	While ProcessExists("Explorer.exe") ; Try Close the Explorer
+		Sleep(10)
+		$ifailure -= ProcessClose("Explorer.exe") ? 0 : 1
+		If $ifailure < 1 Then Return SetError(1, 0, 0)
 	WEnd
 
-	_start_explorer()
-
-	While Not _WinAPI_GetShellWindow()
-	    Sleep(500)
+	While (Not ProcessExists("Explorer.exe")) ; Start the Explorer
+		If Not FileExists($iExplorerPath) Then Return SetError(-1, 0, 0)
+		Sleep(500)
+		$rPID = ShellExecute($iExplorerPath)
+		$zfailure -= $rPID ? 0 : 1
+		If $zfailure < 1 Then Return SetError(2, 0, 0)
 	WEnd
-
-	EnvUpdate()
-
+	Return $rPID
 EndFunc   ;==>_Restart_Windows_Explorer
 
 ;Retrieve Local Machine Users
