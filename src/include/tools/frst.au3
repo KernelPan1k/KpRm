@@ -44,12 +44,15 @@ Func RemoveFRST()
 			$return += RemoveFile($downloadFiles[$i])
 		Next
 
+		$return += RemoveFolder($userDownloadFolder & "\FRST-OlderVersion")
+
 		$return += RemoveGlobFile($userDownloadFolder, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
 		$return += RemoveGlobFile($userDownloadFolder, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
 		$return += RemoveGlobFile($userDownloadFolder, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@HomeDrive & "\FRST")
+	$return += RemoveFolder(@DesktopDir & "\FRST-OlderVersion")
 
 	If $return > 0 Then
 		If Not $KPDebug Then logMessage(@CRLF & "- Search FRST Files -" & @CRLF)

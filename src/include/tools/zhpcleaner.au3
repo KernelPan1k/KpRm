@@ -18,6 +18,7 @@ Func RemoveZHPCleaner()
 
 	$return += RemoveGlobFile(@DesktopDir, "ZHPCleaner?.exe", "(?i)^ZHPCleaner.?\.exe$", $desciptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "ZHPCleaner (?).exe", "(?i)^ZHPCleaner \([a-z0-9]\)\.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPCleaner (?).txt", "(?i)^ZHPCleaner \([a-z0-9]\)\.txt$")
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)

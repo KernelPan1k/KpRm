@@ -19,6 +19,7 @@ Func RemoveZHPDiag()
 	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag?.exe", "(?i)^ZHPDiag3?\.exe$", $desciptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag (?).exe", "(?i)^ZHPDiag \([0-9]\)\.exe$", $desciptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag3 (?).exe", "(?i)^ZHPDiag3 \([0-9]\)\.exe$", $desciptionPattern)
+	$return += RemoveFile(@DesktopCommonDir & "\ZHPDiag.lnk")
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
@@ -32,15 +33,6 @@ Func RemoveZHPDiag()
 
 	$return += RemoveFolder(@AppDataDir & "\ZHP")
 	$return += RemoveFolder(@LocalAppDataDir & "\ZHP")
-
-	Local Const $localUsers = _GetLocalUsers()
-
-	If $localUsers <> 0 Then
-		For $i = 1 To UBound($localUsers) - 1
-			Local $uDesktop = TryResolveUserDesktop($localUsers[$i])
-			$return += RemoveFile($uDesktop & "\ZHPDiag.lnk")
-		Next
-	EndIf
 
 	$return += RemoveSoftwareKey("ZHP")
 
