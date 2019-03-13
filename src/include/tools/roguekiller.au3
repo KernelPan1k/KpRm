@@ -8,6 +8,7 @@ Func RemoveRogueKiller($retry = False)
 	Local Const $descriptionPattern = "(?i)^RogueKiller"
 
 	$return += CloseProcessAndWait("RogueKiller.exe")
+	$return += CloseProcessAndWait("RogueKiller64.exe")
 
 	RunWait('schtasks.exe /delete /tn "RogueKiller Anti-Malware" /f', @TempDir, @SW_HIDE)
 
