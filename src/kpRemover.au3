@@ -15,8 +15,8 @@
 #include <StaticConstants.au3>
 #include <WindowsConstants.au3>
 #include <Date.au3>
-#include <WinAPIShellEx.au3>
-#include <SendMessage.au3>
+#include <WinAPI.au3>
+#include <WinAPISys.au3>
 #include <Array.au3>
 
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
@@ -43,7 +43,7 @@ FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
-Global $nbrTask = 6
+Global $nbrTask = 14
 
 Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)

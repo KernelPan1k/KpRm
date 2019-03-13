@@ -1,6 +1,3 @@
-Dim $nbrTask
-
-$nbrTask += 1
 
 Func RemoveZHPFix()
 	Dim $KPDebug
@@ -19,18 +16,18 @@ Func RemoveZHPFix()
 	$return += RemoveFile(@DesktopDir & "\ZHPFix2.lnk")
 	$return += RemoveFile(@DesktopCommonDir & "\ZHPFix.lnk")
 	$return += RemoveFile(@DesktopCommonDir & "\ZHPFix2.lnk")
-	$return += RemoveGlobFile(@DesktopDir, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix?.exe", "(?i)^ZHPFix2?\.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix (?).exe", "(?i)^ZHPFix \([0-9]\)\.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPFix2 (?).exe", "(?i)^ZHPFix2 \([0-9]\)\.exe$", $desciptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
 		$return += RemoveFile($userDownloadFolder & "\ZHPFix.txt")
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "^ZHPFix2?.exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "^ZHPFix \([0-9]\).exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "^ZHPFix2 \([0-9]\).exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix?.exe", "(?i)^ZHPFix2?\.exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix (?).exe", "(?i)^ZHPFix \([0-9]\)\.exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPFix2 (?).exe", "(?i)^ZHPFix2 \([0-9]\)\.exe$", $desciptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@AppDataDir & "\ZHP")

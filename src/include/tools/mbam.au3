@@ -1,6 +1,3 @@
-Dim $nbrTask
-
-$nbrTask += 1
 
 Func RemoveMBAM($retry = False)
 	Dim $KPDebug
@@ -9,10 +6,10 @@ Func RemoveMBAM($retry = False)
 
 	Local $return = 0
 
-	If FileExists(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes\Anti-Malware\unins000.exe") Then
+	If FileExists(@HomeDrive & "\Program Files (x86)" & "\Malwarebytes\Anti-Malware\unins000.exe") Then
 		$return = 1
 
-		RunWait(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes\Anti-Malware\unins000.exe /verysilent /suppressmsgboxes /norestart")
+		RunWait(@HomeDrive & "\Program Files (x86)" & "\Malwarebytes\Anti-Malware\unins000.exe /verysilent /suppressmsgboxes /norestart")
 	EndIf
 
 	If FileExists(@HomeDrive & "\Program Files" & "\Malwarebytes\Anti-Malware\unins000.exe") Then
@@ -35,7 +32,7 @@ Func RemoveMBAM($retry = False)
 	$return += CloseProcessAndWait("MBAMService.exe")
 	$return += CloseProcessAndWait("mbamtray.exe")
 
-	$return += RemoveFolder(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes")
+	$return += RemoveFolder(@HomeDrive & "\Program Files (x86)" & "\Malwarebytes")
 	$return += RemoveFolder(@HomeDrive & "\Program Files" & "\Malwarebytes")
 
 	$return += RemoveFile(@WindowsDir & "\System32" & "\drivers\mbae.sys", $descriptionPattern)
@@ -62,13 +59,13 @@ Func RemoveMBAM($retry = False)
 	$return += RemoveFile(@DesktopDir & "\Malwarebytes.lnk")
 	$return += RemoveFile(@DesktopCommonDir & "\Malwarebytes.lnk")
 
-	$return += RemoveGlobFile(@DesktopDir, "mb3-setup-consumer-*.exe", "^mb3-setup-consumer-[0-9.-]+.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "mb3-setup-consumer-*.exe", "(?i)^mb3-setup-consumer-[0-9.-]+\.exe$", $descriptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
-		$return += RemoveGlobFile(@UserProfileDir & "\Downloads", "mb3-setup-consumer-*.exe", "^mb3-setup-consumer-[0-9.-]+.exe$", $descriptionPattern)
+		$return += RemoveGlobFile(@UserProfileDir & "\Downloads", "mb3-setup-consumer-*.exe", "(?i)^mb3-setup-consumer-[0-9.-]+\.exe$", $descriptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@LocalAppDataDir & "\mbamtray")
@@ -87,8 +84,8 @@ Func RemoveMBAM($retry = False)
 
 		Local $errors = ""
 
-		If FileExists(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes") Then
-			$errors += " [X] The folder " & @HomeDrive & "\Program Files(x86)" & "\Malwarebytes still exists" & @CRLF
+		If FileExists(@HomeDrive & "\Program Files (x86)" & "\Malwarebytes") Then
+			$errors += " [X] The folder " & @HomeDrive & "\Program Files (x86)" & "\Malwarebytes still exists" & @CRLF
 		EndIf
 
 		If FileExists(@HomeDrive & "\Program Files" & "\Malwarebytes") Then

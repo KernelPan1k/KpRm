@@ -1,6 +1,3 @@
-Dim $nbrTask
-
-$nbrTask += 1
 
 Func RemoveFRST()
 	Dim $KPDebug
@@ -23,9 +20,9 @@ Func RemoveFRST()
 		$return += RemoveFile($files[$i])
 	Next
 
-	$return += RemoveGlobFile(@DesktopDir, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST(*).exe", "^(?i)FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST32*.exe", "^(?i)FRST32-?[0-9]*\.?[0-9]*\.exe$", $descriptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "FRST64*.exe", "^(?i)FRST64-?[0-9]*\.?[0-9]*\.exe$", $descriptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
@@ -46,9 +43,9 @@ Func RemoveFRST()
 
 		$return += RemoveFolder($userDownloadFolder & "\FRST-OlderVersion")
 
-		$return += RemoveGlobFile($userDownloadFolder, "FRST(*).exe", "^FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "FRST32-*.exe", "^FRST32-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "FRST64-*.exe", "^FRST64-[0-9]+\.?[0-9]*\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST(*).exe", "^(?i)FRST\([0-9]{1,2}\)\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST32*.exe", "^(?i)FRST32-?[0-9]*\.?[0-9]*\.exe$", $descriptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "FRST64*.exe", "^(?i)FRST64-?[0-9]*\.?[0-9]*\.exe$", $descriptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@HomeDrive & "\FRST")
