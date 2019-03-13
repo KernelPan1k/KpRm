@@ -1,3 +1,6 @@
+Dim $nbrTask
+
+$nbrTask += 1
 
 Func RemoveZHPFix()
 	Dim $KPDebug

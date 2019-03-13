@@ -1,3 +1,6 @@
+Dim $nbrTask
+
+$nbrTask += 1
 
 Func RemoveZHPDiag()
 	Dim $KPDebug
@@ -13,18 +16,18 @@ Func RemoveZHPDiag()
 
 	$return += RemoveFile(@DesktopDir & "\ZHPDiag.txt")
 	$return += RemoveFile(@DesktopDir & "\ZHPDiag.lnk")
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag?.exe", "^ZHPDiag3?.exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag (?).exe", "^ZHPDiag \([0-9]\).exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag3 (?).exe", "^ZHPDiag3 \([0-9]\).exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag?.exe", "(?i)^ZHPDiag3?\.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag (?).exe", "(?i)^ZHPDiag \([0-9]\)\.exe$", $desciptionPattern)
+	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag3 (?).exe", "(?i)^ZHPDiag3 \([0-9]\)\.exe$", $desciptionPattern)
 
 	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
 	Local Const $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
 		$return += RemoveFile($userDownloadFolder & "\ZHPDiag.txt")
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag?.exe", "^ZHPDiag3?.exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag (?).exe", "^ZHPDiag \([0-9]\).exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag3 (?).exe", "^ZHPDiag3 \([0-9]\).exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag?.exe", "(?i)^ZHPDiag3?\.exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag (?).exe", "(?i)^ZHPDiag \([0-9]\)\.exe$", $desciptionPattern)
+		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag3 (?).exe", "(?i)^ZHPDiag3 \([0-9]\)\.exe$", $desciptionPattern)
 	EndIf
 
 	$return += RemoveFolder(@AppDataDir & "\ZHP")

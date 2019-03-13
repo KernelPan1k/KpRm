@@ -23,18 +23,21 @@ Func ClearRestorePoint()
 		EndIf
 	Next
 
-	If 1 < UBound($errors) Then Sleep(3000)
+	If 1 < UBound($errors) Then
+		Sleep(3000)
 
-	For $i = 1 To UBound($errors)
-		Local $status = _SR_RemoveRestorePoint($errors[$i][0])
-		$ret += $status
+		For $i = 1 To UBound($errors) - 1
+			Local $status = _SR_RemoveRestorePoint($errors[$i][0])
+			$ret += $status
 
-		If $status = 1 Then
-			logMessage("    => [OK] RP named " & $errors[$i][1] & " has been successfully deleted")
-		Else
-			logMessage("    => [X] RP named " & $errors[$i][1] & " has not been successfully deleted")
-		EndIf
-	Next
+			If $status = 1 Then
+				logMessage("    => [OK] RP named " & $errors[$i][1] & " has been successfully deleted")
+			Else
+				logMessage("    => [X] RP named " & $errors[$i][1] & " has not been successfully deleted")
+			EndIf
+		Next
+
+	EndIf
 
 	If $aRP[0][0] = $ret Then
 		logMessage("  [OK] All system restore points have been successfully deleted")

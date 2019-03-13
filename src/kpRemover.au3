@@ -43,6 +43,7 @@ FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
+Global $nbrTask = 6
 
 Local Const $MainWindow = GUICreate($ProgramName, 449, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 337, 153)
@@ -96,6 +97,12 @@ Func KpRemover()
 
 	ProgressBarUpdate()
 
+	If GUICtrlRead($RemoveTools) = $GUI_CHECKED Then
+		RunRemoveTools()
+	EndIf
+
+	ProgressBarUpdate()
+
 	If GUICtrlRead($RestoreSystemSettings) = $GUI_CHECKED Then
 		RestoreSystemSettingsByDefault()
 	EndIf
@@ -104,12 +111,6 @@ Func KpRemover()
 
 	If GUICtrlRead($RestoreUAC) = $GUI_CHECKED Then
 		RestaureUACByDefault()
-	EndIf
-
-	ProgressBarUpdate()
-
-	If GUICtrlRead($RemoveTools) = $GUI_CHECKED Then
-		RunRemoveTools()
 	EndIf
 
 	ProgressBarUpdate()

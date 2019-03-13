@@ -77,3 +77,16 @@ Func searchRegistryKeyStrings($path, $pattern, $key)
 
 	Return Null
 EndFunc   ;==>searchRegistryKeyStrings
+
+Func TasksExist($task)
+	Local $out, $sresult
+	; $rslt = Run(@ComSpec & ' /c schtasks', "", @SW_HIDE, 0x2 + 0x4)
+	$rslt = Run(@ComSpec & ' /c schtasks /query /FO list', "", @SW_HIDE, 0x2 + 0x4)
+	While 1
+		$sresult = StdoutRead($rslt)
+		If @error Then ExitLoop
+		If $sresult Then $out &= $sresult
+	WEnd
+
+	Return StringRegExp($out, "(?i)\Q" & $task & "\E\R") ? True : False
+EndFunc   ;==>TasksExist
