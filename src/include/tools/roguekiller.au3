@@ -1,6 +1,3 @@
-Dim $nbrTask
-
-$nbrTask += 1
 
 Func RemoveRogueKiller($retry = False)
 	Dim $KPDebug
@@ -28,7 +25,7 @@ Func RemoveRogueKiller($retry = False)
 		$return += RemoveRegistryKey($installReg)
 	EndIf
 
-	$return += RemoveFolder(@HomeDrive & "\Program Files(x86)" & "\RogueKiller")
+	$return += RemoveFolder(@HomeDrive & "\Program Files (x86)" & "\RogueKiller")
 	$return += RemoveFolder(@HomeDrive & "\Program Files" & "\RogueKiller")
 	$return += RemoveFolder(@AppDataCommonDir & "\RogueKiller")
 	$return += RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
@@ -50,8 +47,8 @@ Func RemoveRogueKiller($retry = False)
 
 		Local $errors = ""
 
-		If FileExists(@HomeDrive & "\Program Files(x86)" & "\RogueKiller") Then
-			$errors += " [X] The folder " & @HomeDrive & "\Program Files(x86)" & "\RogueKiller still exists" & @CRLF
+		If FileExists(@HomeDrive & "\Program Files (x86)" & "\RogueKiller") Then
+			$errors += " [X] The folder " & @HomeDrive & "\Program Files (x86)" & "\RogueKiller still exists" & @CRLF
 		EndIf
 
 		If FileExists(@HomeDrive & "\Program Files" & "\RogueKiller") Then

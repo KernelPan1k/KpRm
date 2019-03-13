@@ -1,6 +1,3 @@
-Dim $nbrTask
-
-$nbrTask += 1
 
 Func RemoveZHPDiag()
 	Dim $KPDebug

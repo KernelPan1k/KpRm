@@ -3,37 +3,30 @@ Func logMessage($message)
 	FileWrite(@DesktopDir & "\kp-remover.txt", $message & @CRLF)
 EndFunc   ;==>logMessage
 
+
+Func _start_explorer()
+    $strComputer = "localhost"
+    $objWMI = ObjGet("winmgmts:\\" & $strComputer & "\root\CIMV2")
+    Local $objexplorer = $objWMI.Get("win32_process")
+    $objexplorer.create("explorer.exe")
+EndFunc   ;==>_start_explorer
+
 Func _Restart_Windows_Explorer()
-	; By KaFu
+	;Close the explorer shell gracefully
+	$hSysTray_Handle = _WinAPI_FindWindow('Shell_TrayWnd', '')
+	_SendMessage($hSysTray_Handle, 0x5B4, 0, 0)
 
-	; Believed to save icon positions just before Shutting down explorer, which comes next
-	_WinAPI_ShellChangeNotify($SHCNE_ASSOCCHANGED, 0, 0, 0)
-
-	;Shutting down explorer gracefully
-	Local $hSysTray_Handle = DllCall("user32.dll", "HWND", "FindWindow", "str", "Shell_TrayWnd", "str", "")
-	If Not IsHWnd($hSysTray_Handle[0]) Then Return SetError(1)
-
-	Local $iPID_Old = WinGetProcess($hSysTray_Handle[0])
-
-	_SendMessage($hSysTray_Handle[0], 0x5B4, 0, 0)
-
-	#cs
-	    Local $i_Timer = TimerInit()
-	    While IsHWnd($hSysTray_Handle[0])
-	        Sleep(10)
-	        If TimerDiff($i_Timer) > 5000 Then Return SetError(2)
-	    WEnd
-	#ce
-
-	Local $i_Timer = TimerInit()
-	While ProcessExists($iPID_Old)
-		Sleep(10)
-		If TimerDiff($i_Timer) > 5000 Then Return SetError(3)
+	While WinExists($hSysTray_Handle)
+    		Sleep(500)
 	WEnd
 
-	Sleep(500)
+	_start_explorer()
 
-	Return ShellExecute(@WindowsDir & "\Explorer.exe")
+	While Not _WinAPI_GetShellWindow()
+	    Sleep(500)
+	WEnd
+
+	EnvUpdate()
 
 EndFunc   ;==>_Restart_Windows_Explorer
 
