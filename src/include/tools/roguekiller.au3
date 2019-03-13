@@ -1,36 +1,52 @@
+Dim $nbrTask
 
-Func RemoveRogueKiller()
+$nbrTask += 1
+
+Func RemoveRogueKiller($retry = False)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage(@CRLF & "- Search RogueKiller Files -" & @CRLF)
 
 	Local $return = 0
+	Local Const $descriptionPattern = "(?i)^RogueKiller"
 
 	$return += CloseProcessAndWait("RogueKiller.exe")
 
-	ShellExecuteWait("schtasks.exe", '/delete /tn "RogueKiller Anti-Malware" /f', @SW_HIDE)
+	RunWait('schtasks.exe /delete /tn "RogueKiller Anti-Malware" /f', @TempDir, @SW_HIDE)
 
 	If @error = 0 Then
 		If $KPDebug Then logMessage("  [OK] RogueKiller.exe was deleted from schedule")
 		$return += 1
 	EndIf
 
-	Local Const $installReg = searchRegistryKeyStrings("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^RogueKiller", "DisplayName")
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	Local $installReg = searchRegistryKeyStrings("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^RogueKiller", "DisplayName")
 
 	If $installReg Then
 		$return += RemoveRegistryKey($installReg)
 	EndIf
 
-	$return +=  RemoveFolder(@HomeDrive & "\Program Files(x86)" & "\RogueKiller")
-	$return +=  RemoveFolder(@HomeDrive & "\Program Files" & "\RogueKiller")
-
-	$return +=  RemoveFolder(@AppDataCommonDir & "\RogueKiller")
+	$return += RemoveFolder(@HomeDrive & "\Program Files(x86)" & "\RogueKiller")
+	$return += RemoveFolder(@HomeDrive & "\Program Files" & "\RogueKiller")
+	$return += RemoveFolder(@AppDataCommonDir & "\RogueKiller")
 	$return += RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
-
 	$return += RemoveFile(@DesktopDir & "\RogueKiller.lnk")
+	$return += RemoveGlobFile(@DesktopDir, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)
+
+	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
+	Local Const $iFileExists = FileExists($userDownloadFolder)
+
+	If $iFileExists Then
+		$return += RemoveGlobFile($userDownloadFolder, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)
+	EndIf
 
 	If $return > 0 Then
-		If Not $KPDebug Then logMessage(@CRLF & "- Search RogueKiller Files -" & @CRLF)
+		If Not $KPDebug And $retry = False Then
+			logMessage(@CRLF & "- Search RogueKiller Files -" & @CRLF)
+		EndIf
+
 		Local $errors = ""
 
 		If FileExists(@HomeDrive & "\Program Files(x86)" & "\RogueKiller") Then
@@ -49,8 +65,22 @@ Func RemoveRogueKiller()
 			$errors += " [X] The folder " & @AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller still exists" & @CRLF
 		EndIf
 
+		$installReg = searchRegistryKeyStrings("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^RogueKiller", "DisplayName")
+
+		If $installReg Then
+			$errors += " [X] SOFTWARE KEY stell exists" & @CRLF
+		EndIf
+
+		If TasksExist("RogueKiller Anti-Malware") Then
+			$errors += " [X] Schedule Tasks stell exists" & @CRLF
+		EndIf
+
 		If $errors <> "" Then
-			logMessage($errors)
+			If $retry = False Then
+				RemoveRogueKiller(True)
+			Else
+				logMessage($errors)
+			EndIf
 		Else
 			logMessage("  [OK] RogueKiller has been successfully removed")
 		EndIf

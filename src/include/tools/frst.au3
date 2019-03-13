@@ -1,3 +1,6 @@
+Dim $nbrTask
+
+$nbrTask += 1
 
 Func RemoveFRST()
 	Dim $KPDebug
@@ -16,7 +19,7 @@ Func RemoveFRST()
 			@DesktopDir & "\Shortcut.txt" _
 			]
 
-	For $i = 0 To 5
+	For $i = 0 To UBound($files) - 1
 		$return += RemoveFile($files[$i])
 	Next
 
@@ -37,7 +40,7 @@ Func RemoveFRST()
 				$userDownloadFolder & "\Shortcut.txt" _
 				]
 
-		For $i = 0 To 5
+		For $i = 0 To UBound($downloadFiles) - 1
 			$return += RemoveFile($downloadFiles[$i])
 		Next
 

@@ -17,12 +17,14 @@
 #include "tools/mbam.au3"
 #include "tools/roguekiller.au3"
 #include "tools/adwcleaner.au3"
+#include "tools/zhpcleaner.au3"
 
 
 Func RunRemoveTools()
 	RemoveFRST()
 	RemoveZHPDiag()
 	RemoveZHPFix()
+	RemoveZHPCleaner()
 	RemoveMBAM()
 	RemoveRogueKiller()
 	RemoveAdwcleaner()

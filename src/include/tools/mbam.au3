@@ -1,5 +1,8 @@
+Dim $nbrTask
 
-Func RemoveMBAM()
+$nbrTask += 1
+
+Func RemoveMBAM($retry = False)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage(@CRLF & "- Search MBAM Files -" & @CRLF)
@@ -47,6 +50,15 @@ Func RemoveMBAM()
 	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", $descriptionPattern)
 	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys", $descriptionPattern)
 
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+
+	Local $installReg = searchRegistryKeyStrings("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^Malwarebytes", "DisplayName")
+
+	If $installReg Then
+		$return += RemoveRegistryKey($installReg)
+	EndIf
+
 	$return += RemoveFile(@DesktopDir & "\Malwarebytes.lnk")
 	$return += RemoveFile(@DesktopCommonDir & "\Malwarebytes.lnk")
 
@@ -69,7 +81,10 @@ Func RemoveMBAM()
 	$return += RemoveContextMenu("MBAMShlExt")
 
 	If $return > 0 Then
-		If Not $KPDebug Then logMessage(@CRLF & "- Search MBAM Files -" & @CRLF)
+		If Not $KPDebug And $retry = False Then
+			logMessage(@CRLF & "- Search MBAM Files -" & @CRLF)
+		EndIf
+
 		Local $errors = ""
 
 		If FileExists(@HomeDrive & "\Program Files(x86)" & "\Malwarebytes") Then
@@ -80,20 +95,39 @@ Func RemoveMBAM()
 			$errors += " [X] The folder " & @HomeDrive & "\Program Files" & "\Malwarebytes still exists" & @CRLF
 		EndIf
 
-		If FileExists(@LocalAppDataDir & "\mbamtray") Then
-			$errors += " [X] The folder " & @LocalAppDataDir & "\mbamtray still exists" & @CRLF
-		EndIf
+		Local $checkExists[13] = [ _
+				@WindowsDir & "\System32" & "\drivers\mbae.sys", _
+				@WindowsDir & "\System32" & "\drivers\MbamChameleon.sys", _
+				@WindowsDir & "\System32" & "\drivers\farflt.sys", _
+				@WindowsDir & "\System32" & "\drivers\mbamswissarmy.sys", _
+				@WindowsDir & "\System32" & "\drivers\mwac.sys", _
+				@WindowsDir & "\SYSWOW64" & "\drivers\mbae.sys", _
+				@WindowsDir & "\SYSWOW64" & "\drivers\MbamChameleon.sys", _
+				@WindowsDir & "\SYSWOW64" & "\drivers\farflt.sys", _
+				@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", _
+				@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys", _
+				@LocalAppDataDir & "\mbamtray", _
+				@LocalAppDataDir & "\mbam", _
+				@AppDataCommonDir & "\Malwarebytes"]
 
-		If FileExists(@LocalAppDataDir & "\mbam") Then
-			$errors += " [X] The folder " & @LocalAppDataDir & "\mbam still exists" & @CRLF
-		EndIf
+		For $i = 0 To UBound($checkExists) - 1
+			If FileExists($checkExists[$i]) Then
+				$errors += " [X] " & $checkExists[$i] & " still exists" & @CRLF
+			EndIf
+		Next
 
-		If FileExists(@AppDataCommonDir & "\Malwarebytes") Then
-			$errors += " [X] The folder " & @AppDataCommonDir & "\Malwarebytes still exists" & @CRLF
+		$installReg = searchRegistryKeyStrings("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^Malwarebytes", "DisplayName")
+
+		If $installReg Then
+			$errors += " [X] SOFTWARE KEY stell exists" & @CRLF
 		EndIf
 
 		If $errors <> "" Then
-			logMessage($errors)
+			If $retry = False Then
+				RemoveMBAM(True)
+			Else
+				logMessage($errors)
+			EndIf
 		Else
 			logMessage("  [OK] MBAM has been successfully removed")
 		EndIf
