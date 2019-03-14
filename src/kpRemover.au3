@@ -9,6 +9,20 @@
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif
+#AutoIt3Wrapper_Run_Au3Stripper=y
+#Au3Stripper_Parameters=/rm /sf=1 /sv=1
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=assets\bug.ico
+#AutoIt3Wrapper_Outfile=kpRm.exe
+#AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.0
+#AutoIt3Wrapper_Res_ProductName=KpRm
+#AutoIt3Wrapper_Res_ProductVersion=0.1
+#AutoIt3Wrapper_Res_CompanyName=kernel-panik
+#AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
+#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #include <ButtonConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -44,7 +58,6 @@ FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
-Global $nbrTask = 14
 
 Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)

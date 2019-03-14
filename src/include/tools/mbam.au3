@@ -5,6 +5,7 @@ Func RemoveMBAM($retry = False)
 	If $KPDebug Then logMessage(@CRLF & "- Search MBAM Files -" & @CRLF)
 
 	Local $return = 0
+	Local Const $SYSWOW64Exist = FileExists(@WindowsDir & "\SYSWOW64")
 
 	If FileExists(@HomeDrive & "\Program Files (x86)" & "\Malwarebytes\Anti-Malware\unins000.exe") Then
 		$return = 1
@@ -41,11 +42,13 @@ Func RemoveMBAM($retry = False)
 	$return += RemoveFile(@WindowsDir & "\System32" & "\drivers\mbamswissarmy.sys", $descriptionPattern)
 	$return += RemoveFile(@WindowsDir & "\System32" & "\drivers\mwac.sys", $descriptionPattern)
 
-	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mbae.sys", $descriptionPattern)
-	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\MbamChameleon.sys", $descriptionPattern)
-	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\farflt.sys", $descriptionPattern)
-	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", $descriptionPattern)
-	$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys", $descriptionPattern)
+	If $SYSWOW64Exist Then
+		$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mbae.sys", $descriptionPattern)
+		$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\MbamChameleon.sys", $descriptionPattern)
+		$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\farflt.sys", $descriptionPattern)
+		$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", $descriptionPattern)
+		$return += RemoveFile(@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys", $descriptionPattern)
+	EndIf
 
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
@@ -98,11 +101,6 @@ Func RemoveMBAM($retry = False)
 				@WindowsDir & "\System32" & "\drivers\farflt.sys", _
 				@WindowsDir & "\System32" & "\drivers\mbamswissarmy.sys", _
 				@WindowsDir & "\System32" & "\drivers\mwac.sys", _
-				@WindowsDir & "\SYSWOW64" & "\drivers\mbae.sys", _
-				@WindowsDir & "\SYSWOW64" & "\drivers\MbamChameleon.sys", _
-				@WindowsDir & "\SYSWOW64" & "\drivers\farflt.sys", _
-				@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", _
-				@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys", _
 				@LocalAppDataDir & "\mbamtray", _
 				@LocalAppDataDir & "\mbam", _
 				@AppDataCommonDir & "\Malwarebytes"]
@@ -112,6 +110,22 @@ Func RemoveMBAM($retry = False)
 				$errors += " [X] " & $checkExists[$i] & " still exists" & @CRLF
 			EndIf
 		Next
+
+		If $SYSWOW64Exist Then
+			Local $checkExists[13] = [ _
+					@WindowsDir & "\SYSWOW64" & "\drivers\mbae.sys", _
+					@WindowsDir & "\SYSWOW64" & "\drivers\MbamChameleon.sys", _
+					@WindowsDir & "\SYSWOW64" & "\drivers\farflt.sys", _
+					@WindowsDir & "\SYSWOW64" & "\drivers\mbamswissarmy.sys", _
+					@WindowsDir & "\SYSWOW64" & "\drivers\mwac.sys"]
+
+			For $i = 0 To UBound($checkExists) - 1
+				If FileExists($checkExists[$i]) Then
+					$errors += " [X] " & $checkExists[$i] & " still exists" & @CRLF
+				EndIf
+			Next
+
+		EndIf
 
 		$installReg = searchRegistryKeyStrings("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "(?i)^Malwarebytes", "DisplayName")
 
