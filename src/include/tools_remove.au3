@@ -4,7 +4,6 @@ Func prepareRemove($path, $recursive = 0)
 	FileSetAttrib($path, "-A", $recursive)
 	FileSetAttrib($path, "-S", $recursive)
 	FileSetAttrib($path, "-H", $recursive)
-	FileSetAttrib($path, "+N", $recursive)
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null)
@@ -21,8 +20,6 @@ Func RemoveFile($file, $descriptionPattern = Null)
 				Return 0
 			EndIf
 		EndIf
-
-		prepareRemove($file)
 
 		Local $iDelete = FileDelete($file)
 
@@ -214,3 +211,20 @@ Func CloseProcessAndWait($process)
 
 	Return 0
 EndFunc   ;==>CloseProcessAndWait
+
+Func RemoveAllProcess($processList)
+	Local $return = 0
+
+	Local $aProcessList = ProcessList()
+
+	For $i = 1 To $aProcessList[0][0]
+		Local $processName = $aProcessList[$i][0]
+		Local $pid = $aProcessList[$i][1]
+
+		For $cpt = 0 To UBound($processList) - 1
+			If StringRegExp($processName, $processList[$cpt]) Then
+				$return += CloseProcessAndWait($pid)
+			EndIf
+		Next
+	Next
+EndFunc   ;==>RemoveAllProcess

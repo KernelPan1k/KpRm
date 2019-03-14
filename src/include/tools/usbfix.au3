@@ -5,6 +5,9 @@ Func RemoveUSBFIX()
 
 	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^UsbFix"
+	Local $processList[1] = [$descriptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	If FileExists(@HomeDrive & "\Program Files (x86)" & "\UsbFix\Un-UsbFix.exe") Then
 		$return = 1

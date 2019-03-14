@@ -5,11 +5,14 @@ Func RemoveZHPDiag()
 	If $KPDebug Then logMessage(@CRLF & "- Search ZHPDiag Files -" & @CRLF)
 
 	Local $return = 0
+	Local Const $desciptionPattern = "(?i)^ZHPDiag"
+	Local $processList[1] = [$desciptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	$return += CloseProcessAndWait("ZHPDiag.exe")
 	$return += CloseProcessAndWait("ZHPDiag3.exe")
 
-	Local Const $desciptionPattern = "(?i)^ZHPDiag"
 
 	$return += RemoveFile(@DesktopDir & "\ZHPDiag.txt")
 	$return += RemoveFile(@DesktopDir & "\ZHPDiag.lnk")

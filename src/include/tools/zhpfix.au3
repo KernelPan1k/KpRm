@@ -5,11 +5,10 @@ Func RemoveZHPFix()
 	If $KPDebug Then logMessage(@CRLF & "- Search ZHPFix Files -" & @CRLF)
 
 	Local $return = 0
-
-	$return += CloseProcessAndWait("ZHPFix.exe")
-	$return += CloseProcessAndWait("ZHPFix2.exe")
-
 	Local Const $desciptionPattern = "(?i)^ZHPFix"
+	Local $processList[1] = [$desciptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	$return += RemoveFile(@DesktopDir & "\ZHPFix.txt")
 	$return += RemoveFile(@DesktopDir & "\ZHPFix.lnk")

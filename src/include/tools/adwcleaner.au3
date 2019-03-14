@@ -6,6 +6,9 @@ Func RemoveAdwcleaner()
 
 	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^AdwCleaner"
+	Local $processList[1] = [$descriptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	$return += RemoveGlobFile(@DesktopDir, "adwcleaner*.exe", "(?i)^adwcleaner(.*)\.exe$", $descriptionPattern)
 
