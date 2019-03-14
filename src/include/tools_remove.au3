@@ -1,10 +1,10 @@
 
-Func prepareRemove($path)
-	FileSetAttrib($path, "-R", $FT_RECURSIVE)
-	FileSetAttrib($path, "-A", $FT_RECURSIVE)
-	FileSetAttrib($path, "-S", $FT_RECURSIVE)
-	FileSetAttrib($path, "-H", $FT_RECURSIVE)
-	FileSetAttrib($path, "+N", $FT_RECURSIVE)
+Func prepareRemove($path, $recursive = 0)
+	FileSetAttrib($path, "-R", $recursive)
+	FileSetAttrib($path, "-A", $recursive)
+	FileSetAttrib($path, "-S", $recursive)
+	FileSetAttrib($path, "-H", $recursive)
+	FileSetAttrib($path, "+N", $recursive)
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null)
@@ -46,7 +46,7 @@ Func RemoveFolder($path)
 
 	If $iFileExists Then
 
-		prepareRemove($path)
+		prepareRemove($path, 1)
 
 		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
 
@@ -64,20 +64,20 @@ Func RemoveFolder($path)
 
 EndFunc   ;==>RemoveFolder
 
-Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
+Func FindGlob($path, $file, $reg)
 	Local Const $filePathGlob = $path & "\" & $file
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
-	Local $return = 0
+	Local $return = []
 
 	If $hSearch = -1 Then
-		Return 0
+		Return $return
 	EndIf
 
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
 		If StringRegExp($sFileName, $reg) Then
-			$return += RemoveFile($path & "\" & $sFileName, $descriptionPattern)
+			_ArrayAdd($return, $path & "\" & $sFileName)
 		EndIf
 
 		$sFileName = FileFindNextFile($hSearch)
@@ -86,7 +86,31 @@ Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
 	FileClose($hSearch)
 
 	Return $return
+EndFunc   ;==>FindGlob
+
+Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
+	Local $return = 0
+	Local Const $fileList = FindGlob($path, $file, $reg)
+	For $i = 1 To UBound($fileList) - 1
+		If $fileList[$i] And $fileList[$i] <> "" Then
+			$return += RemoveFile($fileList[$i], $descriptionPattern)
+		EndIf
+	Next
+
+	Return $return
 EndFunc   ;==>RemoveGlobFile
+
+Func RemoveGlobFolder($path, $file, $reg)
+	Local $return = 0
+	Local Const $fileList = FindGlob($path, $file, $reg)
+	For $i = 1 To UBound($fileList) - 1
+		If $fileList[$i] And $fileList[$i] <> "" Then
+			$return += RemoveFolder($fileList[$i])
+		EndIf
+	Next
+
+	Return $return
+EndFunc   ;==>RemoveGlobFolder
 
 Func RemoveRegistryKey($key)
 	Dim $KPDebug

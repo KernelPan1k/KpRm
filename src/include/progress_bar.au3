@@ -1,7 +1,6 @@
-
-Dim $nbrTask = 11 ; 6 fixe + 5 programs
+Local $nbrTask = 16
 Local $currentNbrTask
-Global Const $taskStep = Floor(100 / $nbrTask)
+Local Const $taskStep = Floor(100 / $nbrTask)
 
 Func ProgressBarUpdate()
 	$currentNbrTask += 1

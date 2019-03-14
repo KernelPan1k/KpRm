@@ -5,16 +5,20 @@ Func RemoveRogueKiller($retry = False)
 	If $KPDebug Then logMessage(@CRLF & "- Search RogueKiller Files -" & @CRLF)
 
 	Local $return = 0
-	Local Const $descriptionPattern = "(?i)^RogueKiller"
+	Local Const $descriptionPattern = "(?i)^(RogueKiller|Anti-Malware)"
 
-	$return += CloseProcessAndWait("RogueKiller.exe")
-	$return += CloseProcessAndWait("RogueKiller64.exe")
+	If @OSArch = "X64" Then
+		$return += CloseProcessAndWait("RogueKiller64.exe")
+		$return += CloseProcessAndWait("RogueKiller_portable64.exe")
+	Else
+		$return += CloseProcessAndWait("RogueKiller.exe")
+		$return += CloseProcessAndWait("RogueKiller_portable32.exe")
+	EndIf
 
 	RunWait('schtasks.exe /delete /tn "RogueKiller Anti-Malware" /f', @TempDir, @SW_HIDE)
 
 	If @error = 0 Then
 		If $KPDebug Then logMessage("  [OK] RogueKiller.exe was deleted from schedule")
-		$return += 1
 	EndIf
 
 	Local $s64Bit = ""
@@ -31,6 +35,8 @@ Func RemoveRogueKiller($retry = False)
 	$return += RemoveFolder(@AppDataCommonDir & "\RogueKiller")
 	$return += RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 	$return += RemoveFile(@DesktopDir & "\RogueKiller.lnk")
+	$return += RemoveFile(@DesktopDir & "\RogueKiller_portable32.exe", $descriptionPattern)
+	$return += RemoveFile(@DesktopDir & "\RogueKiller_portable64.exe", $descriptionPattern)
 	$return += RemoveGlobFile(@DesktopDir, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)
 	$return += RemoveFile(@DesktopCommonDir & "\RogueKiller.lnk")
 
@@ -38,6 +44,8 @@ Func RemoveRogueKiller($retry = False)
 	Local $iFileExists = FileExists($userDownloadFolder)
 
 	If $iFileExists Then
+		$return += RemoveFile($userDownloadFolder & "\RogueKiller_portable32.exe", $descriptionPattern)
+		$return += RemoveFile($userDownloadFolder & "\RogueKiller_portable64.exe", $descriptionPattern)
 		$return += RemoveGlobFile($userDownloadFolder, "RogueKiller*.exe", "(?i)^RogueKiller(.*)\.exe$", $descriptionPattern)
 	EndIf
 
