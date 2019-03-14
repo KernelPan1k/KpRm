@@ -6,14 +6,9 @@ Func RemoveRogueKiller($retry = False)
 
 	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^(RogueKiller|Anti-Malware)"
+	Local $processList[1] = ["(?i)^RogueKiller"]
 
-	If @OSArch = "X64" Then
-		$return += CloseProcessAndWait("RogueKiller64.exe")
-		$return += CloseProcessAndWait("RogueKiller_portable64.exe")
-	Else
-		$return += CloseProcessAndWait("RogueKiller.exe")
-		$return += CloseProcessAndWait("RogueKiller_portable32.exe")
-	EndIf
+	$return += RemoveAllProcess($processList)
 
 	RunWait('schtasks.exe /delete /tn "RogueKiller Anti-Malware" /f', @TempDir, @SW_HIDE)
 

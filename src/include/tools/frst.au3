@@ -6,6 +6,9 @@ Func RemoveFRST()
 
 	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^Farbar"
+	Local $processList[1] = ["(?i)^FRST"]
+
+	$return += RemoveAllProcess($processList)
 
 	Local Const $files[6] = [ _
 			@DesktopDir & "\FRST.exe", _

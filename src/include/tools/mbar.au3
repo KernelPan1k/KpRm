@@ -6,6 +6,9 @@ Func RemoveMBAR($retry = False)
 
 	Local $return = 0
 	Local Const $descriptionPattern = "(?i)^Malwarebytes"
+	Local $processList[1] = [$descriptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	If FileExists(@DesktopDir & "\mbar\mbar.exe") Then
 		$return = 1

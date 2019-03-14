@@ -5,10 +5,10 @@ Func RemoveZHPCleaner()
 	If $KPDebug Then logMessage(@CRLF & "- Search ZHPCleaner Files -" & @CRLF)
 
 	Local $return = 0
-
-	$return += CloseProcessAndWait("ZHPCleaner.exe")
-
 	Local Const $desciptionPattern = "(?i)^ZHPCleaner"
+	Local $processList[1] = [$desciptionPattern]
+
+	$return += RemoveAllProcess($processList)
 
 	$return += RemoveFile(@DesktopDir & "\ZHPCleaner.txt")
 	$return += RemoveFile(@DesktopDir & "\ZHPCleaner.lnk")

@@ -3,7 +3,6 @@
 #include "tools/frst.au3"
 #include "tools/zhpdiag.au3"
 #include "tools/zhpfix.au3"
-#include "tools/mbam.au3"
 #include "tools/mbar.au3"
 #include "tools/roguekiller.au3"
 #include "tools/adwcleaner.au3"
@@ -16,7 +15,6 @@ Func RunRemoveTools()
 	RemoveZHPDiag()
 	RemoveZHPFix()
 	RemoveZHPCleaner()
-	RemoveMBAM()
 	RemoveMBAR()
 	RemoveRogueKiller()
 	RemoveAdwcleaner()

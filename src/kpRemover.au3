@@ -56,6 +56,13 @@ EndIf
 
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
+#RequireAdmin
+
+If Not IsAdmin() Then
+	MsgBox(16, $lFail, $lAdminRequired)
+	Exit
+EndIf
+
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
 
