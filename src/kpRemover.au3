@@ -64,7 +64,7 @@ If Not IsAdmin() Then
 EndIf
 
 Global $ProgramName = "KpRm"
-Global $KPDebug = False
+Global $KPDebug = True
 
 Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)

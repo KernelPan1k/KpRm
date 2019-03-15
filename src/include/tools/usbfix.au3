@@ -1,67 +1,26 @@
 
-Func RemoveUSBFIX()
-	Dim $KPDebug
-	If $KPDebug Then logMessage(@CRLF & "- Search UsbFix Files -" & @CRLF)
-
-	Local $return = 0
+Func LoadUSBFIX()
+	Local Const $UsbFixFixExistCpt = "usbfix"
+	Dim $KPRemoveProcessList
+	Dim $KPUninstallNormalyList
+	Dim $KPRemoveDesktopList
+	Dim $KPRemoveDesktopCommonList
+	Dim $KPRemoveDownloadList
+	Dim $KPRemoveSoftwareKeyList
+	Dim $KPRemoveHomeDriveList
 	Local Const $descriptionPattern = "(?i)^UsbFix"
-	Local $processList[1] = [$descriptionPattern]
 
-	$return += RemoveAllProcess($processList)
+	Local Const $arr1[1][2] = [[$UsbFixFixExistCpt, $descriptionPattern]]
+	Local Const $arr2[1][3] = [[$UsbFixFixExistCpt, $descriptionPattern, "(?i)^Un-UsbFix.exe$"]]
+	Local Const $arr3[1][3] = [[$UsbFixFixExistCpt, $descriptionPattern, "(?i)^UsbFix.*\.(exe|lnk)$"]]
+	Local Const $arr4[1][2] = [[$UsbFixFixExistCpt, "(?i)^UsbFixQuarantine$"]]
 
-	If FileExists(@HomeDrive & "\Program Files (x86)" & "\UsbFix\Un-UsbFix.exe") Then
-		$return = 1
-
-		RunWait(@HomeDrive & "\Program Files (x86)" & "\UsbFix\Un-UsbFix.exe")
-
-		$return += RemoveFolder(@HomeDrive & "\Program Files (x86)" & "\UsbFix")
-	EndIf
-
-	If FileExists(@HomeDrive & "\Program Files" & "\UsbFix\Un-UsbFix.exe") Then
-		$return = 1
-
-		RunWait(@HomeDrive & "\Program Files" & "\UsbFix\Un-UsbFix.exe")
-
-		$return += RemoveFolder(@HomeDrive & "\Program Files" & "\UsbFix")
-	EndIf
-
-	$return += RemoveFile(@DesktopDir & "\UsbFix Anti-Malware.lnk")
-	$return += RemoveFile(@DesktopCommonDir & "\UsbFix Anti-Malware.lnk")
-	$return += RemoveGlobFile(@DesktopDir, "UsbFix*.exe", "^(?i)UsbFix.*\.exe$", $descriptionPattern)
-
-	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
-	Local Const $iFileExists = FileExists($userDownloadFolder)
-
-	If $iFileExists Then
-		$return += RemoveGlobFile($userDownloadFolder, "UsbFix*.exe", "^(?i)UsbFix.*\.exe$", $descriptionPattern)
-	EndIf
-
-	$return += RemoveSoftwareKey("UsbFix")
-	$return += RemoveFolder(@HomeDrive & "\UsbFixQuarantine")
-
-	If $return > 0 Then
-		If Not $KPDebug Then logMessage(@CRLF & "- Search UsbFix Files -" & @CRLF)
-		Local $errors = ""
-
-		Local Const $existingFolders[3] = [ _
-				@HomeDrive & "\Program Files (x86)" & "\UsbFix", _
-				@HomeDrive & "\Program Files" & "\UsbFix", _
-				@HomeDrive & "\UsbFixQuarantine"]
-
-		For $i = 0 To UBound($existingFolders) - 1
-			If FileExists($existingFolders[$i]) Then
-				$errors += "  [X] " & $existingFolders[$i] & " still exists" & @CRLF
-			EndIf
-		Next
-
-		If $errors <> "" Then
-			logMessage($errors)
-		Else
-			logMessage("  [OK] UsbFix has been successfully removed")
-		EndIf
-
-	EndIf
-
-	ProgressBarUpdate()
+	_ArrayAdd($KPRemoveProcessList, $arr1)
+	_ArrayAdd($KPUninstallNormalyList, $arr2)
+	_ArrayAdd($KPRemoveDesktopList, $arr3)
+	_ArrayAdd($KPRemoveDesktopCommonList, $arr3)
+	_ArrayAdd($KPRemoveDownloadList, $arr3)
+	_ArrayAdd($KPRemoveSoftwareKeyList, $arr1)
+	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
 
 EndFunc   ;==>RemoveUSBFIX

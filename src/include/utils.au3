@@ -77,3 +77,22 @@ Func TasksExist($task)
 
 	Return StringRegExp($out, "(?i)\Q" & $task & "\E\R") ? True : False
 EndFunc   ;==>TasksExist
+
+Func GetProgramFilesList()
+	Local $ProgramFilesList = []
+
+	If FileExists(@HomeDrive & "\Program Files") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files")
+	EndIf
+
+	If FileExists(@HomeDrive & "\Program Files (x86)") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files (x86)")
+
+	EndIf
+
+	If FileExists(@HomeDrive & "\Program Files(x86)") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files(x86)")
+	EndIf
+
+	Return $ProgramFilesList
+EndFunc   ;==>GetProgramFilesList

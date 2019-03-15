@@ -1,37 +1,21 @@
 
-Func RemoveAdwcleaner()
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage(@CRLF & "- Search AdwCleaner Files -" & @CRLF)
-
-	Local $return = 0
+Func LoadAdwcleaner()
+	Dim $KPRemoveProcessList
+	Dim $KPRemoveDesktopList
+	Dim $KPRemoveDownloadList
+	Dim $KPRemoveHomeDriveList
+	Local Const  $AdwcleanerFixExistCpt = "adwcleaner"
 	Local Const $descriptionPattern = "(?i)^AdwCleaner"
-	Local $processList[1] = [$descriptionPattern]
 
-	$return += RemoveAllProcess($processList)
+	Local Const $arr1[1][2] = [[$AdwcleanerFixExistCpt, $descriptionPattern]]
+	Local Const $arr2[1][3] = [[$AdwcleanerFixExistCpt, $descriptionPattern, "(?i)^AdwCleaner.*\.exe$"]]
 
-	$return += RemoveGlobFile(@DesktopDir, "adwcleaner*.exe", "(?i)^adwcleaner(.*)\.exe$", $descriptionPattern)
+	_ArrayAdd($KPRemoveProcessList, $arr1)
+	_ArrayAdd($KPRemoveDesktopList, $arr2)
+	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($KPRemoveHomeDriveList, $arr1)
 
-	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
-	Local Const $iFileExists = FileExists($userDownloadFolder)
+;~ 	If $KPDebug Then logMessage(@CRLF & "- Search AdwCleaner Files -" & @CRLF)
 
-	If $iFileExists Then
-		$return += RemoveGlobFile($userDownloadFolder, "adwcleaner*.exe", "(?i)^adwcleaner(.*)\.exe$", $descriptionPattern)
-	EndIf
 
-	$return += RemoveFolder(@HomeDrive & "\AdwCleaner")
-
-	If $return > 0 Then
-		If Not $KPDebug Then logMessage(@CRLF & "- Search AdwCleaner Files -" & @CRLF)
-
-		If FileExists(@HomeDrive & "\AdwCleaner") Then
-			logMessage("  [X] Directory " & @HomeDrive & "\AdwCleaner" & " delete failure")
-		Else
-			logMessage("  [OK] AdwCleaner has been successfully removed")
-		EndIf
-
-	EndIf
-
-	ProgressBarUpdate()
-
-EndFunc
+EndFunc   ;==>RemoveAdwcleaner
