@@ -96,3 +96,11 @@ Func GetProgramFilesList()
 
 	Return $ProgramFilesList
 EndFunc   ;==>GetProgramFilesList
+
+Func IsFile($sFilePath)
+	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) = 0)
+EndFunc   ;==>IsFilee
+
+Func IsDir($sFilePath)
+	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) > 0)
+EndFunc   ;==>IsDir
