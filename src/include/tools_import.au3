@@ -7,6 +7,7 @@ $ToolsCpt.add("mbar", 0)
 $ToolsCpt.add("roguekiller", 0)
 $ToolsCpt.add("usbfix", 0)
 $ToolsCpt.add("adwcleaner", 0)
+$ToolsCpt.add("adsfix", 0)
 $ToolsCpt.add("fake", 0)
 
 Global $KPRemoveProcessList[1][2] = [[Null, Null]]
@@ -21,6 +22,8 @@ Global $KPRemoveDownloadFolderList[1][2] = [[Null, Null]]
 Global $KPRemoveProgramFilesList[1][2] = [[Null, Null]] ; C:\Program Files...
 
 Global $KPRemoveHomeDriveList[1][2] = [[Null, Null]] ; C:\
+Global $KPRemoveHomeDriveFileList[1][3] = [[Null, Null, Null]] ; C:\
+
 Global $KPRemoveSoftwareKeyList[1][2] = [[Null, Null]]
 
 Global $KPRemoveScheduleTasksList[1][2] = [[Null, Null]]
@@ -44,16 +47,18 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/adwcleaner.au3"
 #include "tools/zhpcleaner.au3"
 #include "tools/usbfix.au3"
+#include "tools/adsfix.au3"
 
 LoadFRST()
-LoadCommonZHP()
 LoadZHPDiag()
 LoadZHPFix()
 LoadZHPCleaner()
+LoadCommonZHP()
 LoadMBAR()
 LoadRogueKiller()
 LoadAdwcleaner()
 LoadUSBFIX()
+LoadADSFix()
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)
@@ -89,6 +94,9 @@ Func RunRemoveTools()
 	ProgressBarUpdate()
 
 	RemoveAllDirFrom(@HomeDrive, $KPRemoveHomeDriveList)
+	ProgressBarUpdate()
+
+	RemoveAllFileFrom(@HomeDrive, $KPRemoveHomeDriveFileList)
 	ProgressBarUpdate()
 
 	RemoveAllDirFrom(@AppDataDir, $KPRemoveAppDataDirList)

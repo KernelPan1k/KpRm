@@ -8,7 +8,7 @@ EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null)
 	Dim $KPDebug
-	Local Const $iFileExists = FileExists($file)
+	Local Const $iFileExists = isFile($file)
 
 	If $iFileExists Then
 		If $descriptionPattern And StringRegExp($file, "(?i)\.exe$") Then
@@ -39,7 +39,7 @@ EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($path)
 	Dim $KPDebug
-	Local $iFileExists = FileExists($path)
+	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
 
@@ -101,6 +101,7 @@ EndFunc   ;==>RemoveGlobFile
 Func RemoveGlobFolder($path, $file, $reg)
 	Local $return = 0
 	Local Const $fileList = FindGlob($path, $file, $reg)
+
 	For $i = 1 To UBound($fileList) - 1
 		If $fileList[$i] And $fileList[$i] <> "" Then
 			$return += RemoveFolder($fileList[$i])
@@ -235,7 +236,7 @@ Func RemoveScheduleTask($list)
 	Dim $ToolsCpt
 
 	For $i = 1 To UBound($list) - 1
-		RunWait('schtasks.exe /delete /tn ' & $list[$i][1] & ' /f', @TempDir, @SW_HIDE)
+		RunWait('schtasks.exe /delete /tn "' & $list[$i][1] & '" /f', @TempDir, @SW_HIDE)
 
 		If @error = 0 Then
 			If $KPDebug Then logMessage("  [OK] RogueKiller.exe was deleted from schedule")
@@ -322,7 +323,7 @@ Func RemoveUninstallStringWithSearch($list)
 	Dim $ToolsCpt
 
 	For $i = 1 To UBound($list) - 1
-		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][3], $list[$i][2])
+		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
 
 		If $keyFound And $keyFound <> "" Then
 			$ToolsCpt.Item($list[$i][0]) += RemoveRegistryKey($keyFound)

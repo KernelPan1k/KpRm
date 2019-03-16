@@ -8,6 +8,7 @@ Func LoadUSBFIX()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveSoftwareKeyList
 	Dim $KPRemoveHomeDriveList
+	Dim $KPRemoveProgramFilesList
 	Local Const $descriptionPattern = "(?i)^UsbFix"
 
 	Local Const $arr1[1][2] = [[$UsbFixFixExistCpt, $descriptionPattern]]
@@ -22,5 +23,6 @@ Func LoadUSBFIX()
 	_ArrayAdd($KPRemoveDownloadList, $arr3)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr1)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
+	_ArrayAdd($KPRemoveHomeDriveList, $arr1)
 
 EndFunc   ;==>RemoveUSBFIX
