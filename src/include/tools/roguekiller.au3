@@ -10,6 +10,7 @@ Func LoadRogueKiller($retry = False)
 	Dim $KPRemoveDesktopCommonList
 	Dim $KPRemoveDownloadFolderList
 	Dim $KPRemoveAppDataCommonDirStartMenuFolderList
+	Dim $KPRemoveDownloadList
 
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
@@ -30,6 +31,7 @@ Func LoadRogueKiller($retry = False)
 	_ArrayAdd($KPRemoveProgramFilesList, $arr1)
 	_ArrayAdd($KPRemoveAppDataCommonDirList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr4)
+	_ArrayAdd($KPRemoveDownloadList, $arr4)
 	_ArrayAdd($KPRemoveDesktopCommonList, $arr5)
 	_ArrayAdd($KPRemoveDownloadFolderList, $arr4)
 	_ArrayAdd($KPRemoveAppDataCommonDirStartMenuFolderList, $arr1)

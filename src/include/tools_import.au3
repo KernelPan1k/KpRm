@@ -45,20 +45,17 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/zhpcleaner.au3"
 #include "tools/usbfix.au3"
 
+LoadFRST()
+LoadCommonZHP()
+LoadZHPDiag()
+LoadZHPFix()
+LoadZHPCleaner()
+LoadMBAR()
+LoadRogueKiller()
+LoadAdwcleaner()
+LoadUSBFIX()
+
 Func RunRemoveTools()
-	LoadFRST()
-	LoadZHPDiag()
-	LoadZHPFix()
-	LoadZHPCleaner()
-	LoadMBAR()
-	LoadRogueKiller()
-	LoadAdwcleaner()
-	LoadUSBFIX()
-
-	removeAll()
-EndFunc   ;==>RunRemoveTools
-
-Func removeAll()
 	RemoveAllProcess($KPRemoveProcessList)
 	ProgressBarUpdate()
 
@@ -112,4 +109,4 @@ Func removeAll()
 	RemoveAllDirFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonDirStartMenuFolderList)
 	ProgressBarUpdate()
 
-EndFunc   ;==>removeAll
+EndFunc   ;==>RunRemoveTools
