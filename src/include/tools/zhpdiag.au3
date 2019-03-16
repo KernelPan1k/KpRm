@@ -4,7 +4,7 @@ Func LoadCommonZHP()
 	Dim $KPRemoveSoftwareKeyList
 
 	Local $fake = "fake"
-	Local Const $val[2] = [$fake, "(?i)^ZHP$"]
+	Local Const $val[1][2] = [[$fake, "(?i)^ZHP$"]]
 
 	_ArrayAdd($KPRemoveAppDataDirList, $val)
 	_ArrayAdd($KPRemoveAppDataLoacalDirList, $val)
@@ -12,8 +12,6 @@ Func LoadCommonZHP()
 EndFunc   ;==>CommonZHP
 
 Func LoadZHPDiag()
-	LoadCommonZHP()
-
 	Local Const $desciptionPattern = "(?i)^ZHPDiag"
 
 	Local Const  $ZhpDiagExistCpt = "zhpdiag"

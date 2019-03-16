@@ -11,7 +11,7 @@ Func RemoveFile($file, $descriptionPattern = Null)
 	Local Const $iFileExists = FileExists($file)
 
 	If $iFileExists Then
-		If $descriptionPattern Then
+		If $descriptionPattern And StringRegExp($file, "(?i)\.exe$") Then
 			Local Const $fileDescription = FileGetVersion($file, "FileDescription")
 
 			If @error Then
@@ -88,6 +88,7 @@ EndFunc   ;==>FindGlob
 Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
 	Local $return = 0
 	Local Const $fileList = FindGlob($path, $file, $reg)
+
 	For $i = 1 To UBound($fileList) - 1
 		If $fileList[$i] And $fileList[$i] <> "" Then
 			$return += RemoveFile($fileList[$i], $descriptionPattern)
@@ -298,7 +299,7 @@ Func RemoveAllSoftwareKeyList($list)
 	Dim $ToolsCpt
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
-	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE\", "HKLM" & $s64Bit & "\SOFTWARE\"]
+	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE\", "HKLM\" & $s64Bit & "\SOFTWARE\"]
 
 	For $k = 0 To UBound($keys) - 1
 		For $c = 1 To UBound($list) - 1
@@ -306,9 +307,10 @@ Func RemoveAllSoftwareKeyList($list)
 			While True
 				$i += 1
 				Local $entry = RegEnumKey($keys[$k], $i)
+
 				If @error <> 0 Then ExitLoop
 
-				If StringRegExp($entry, $list[$c][1]) Then
+				If $entry And $list[$c][1] And StringRegExp($entry, $list[$c][1]) Then
 					$ToolsCpt.Item($list[$c][0]) += RemoveRegistryKey($keys[$k] & $entry)
 				EndIf
 			WEnd
