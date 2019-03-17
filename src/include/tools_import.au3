@@ -10,6 +10,8 @@ $ToolsCpt.add("adwcleaner", 0)
 $ToolsCpt.add("adsfix", 0)
 $ToolsCpt.add("aswmbr", 0)
 $ToolsCpt.add("fss", 0)
+$ToolsCpt.add("toolsdiag", 0)
+$ToolsCpt.add("scanrapide", 0)
 $ToolsCpt.add("fake", 0)
 
 Global $KPRemoveProcessList[1][2] = [[Null, Null]]
@@ -52,6 +54,8 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/adsfix.au3"
 #include "tools/aswmbr.au3"
 #include "tools/fss.au3"
+#include "tools/toolsdiag.au3"
+#include "tools/scanrapide.au3"
 
 LoadFRST()
 LoadZHPDiag()
@@ -65,6 +69,8 @@ LoadUSBFIX()
 LoadADSFix()
 LoadAswMbr()
 LoadFSS()
+LoadToolsDiag()
+LoadScanRapide()
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)

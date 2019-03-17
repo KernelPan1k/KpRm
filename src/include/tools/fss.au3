@@ -6,8 +6,8 @@ Func LoadFSS()
 	Dim $KPRemoveDownloadList
 
 	Local Const $descriptionPattern = "(?i)^Farbar"
-	Local Const $reg1 = "(?i)^FSS*\.(exe|txt|lnk)$"
-	Local Const $reg2 = "(?i)^FSS*\.exe$"
+	Local Const $reg1 = "(?i)^FSS.*\.(exe|txt|lnk)$"
+	Local Const $reg2 = "(?i)^FSS.*\.exe$"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg2]]
 	Local Const $arr2[1][3] = [[$ToolExistCpt, $descriptionPattern, $reg1]]
