@@ -24,7 +24,7 @@ Func RestoreSystemSettingsByDefault()
 
 	$status = 0
 
-	For $i = 0 To 6
+	For $i = 0 To UBound($commands) -1
 		RunWait(@ComSpec & " /c " & $commands[$i], @TempDir, @SW_HIDE)
 
 		If @error <> 0 Then

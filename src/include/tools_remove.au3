@@ -289,7 +289,7 @@ Func RemoveAllDirFrom($path, $list)
 EndFunc   ;==>RemoveAllDirFrom
 
 Func RemoveAllProgramFilesDir($list)
-	$ProgramFilesList = GetProgramFilesList()
+	Local Const $ProgramFilesList = GetProgramFilesList()
 
 	For $i = 1 To UBound($ProgramFilesList) - 1
 		RemoveAllDirFrom($ProgramFilesList[$i], $list)
@@ -300,22 +300,22 @@ Func RemoveAllSoftwareKeyList($list)
 	Dim $ToolsCpt
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
-	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE\", "HKLM\" & $s64Bit & "\SOFTWARE\"]
+	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
 
 	For $k = 0 To UBound($keys) - 1
-		For $c = 1 To UBound($list) - 1
-			$i = 0
-			While True
-				$i += 1
-				Local $entry = RegEnumKey($keys[$k], $i)
-
-				If @error <> 0 Then ExitLoop
-
-				If $entry And $list[$c][1] And StringRegExp($entry, $list[$c][1]) Then
-					$ToolsCpt.Item($list[$c][0]) += RemoveRegistryKey($keys[$k] & $entry)
+		Local $i = 0
+		While True
+			$i += 1
+			Local $entry = RegEnumKey($keys[$k], $i)
+			If @error <> 0 Then ExitLoop
+			For $c = 1 To UBound($list) - 1
+				If $entry And $list[$c][1] Then
+					If StringRegExp($entry, $list[$c][1]) Then
+						$ToolsCpt.Item($list[$c][0]) += RemoveRegistryKey($keys[$k] & "\" & $entry)
+					EndIf
 				EndIf
-			WEnd
-		Next
+			Next
+		WEnd
 	Next
 EndFunc   ;==>RemoveAllSoftwareKeyList
 
