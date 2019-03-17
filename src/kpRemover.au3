@@ -1,3 +1,5 @@
+#RequireAdmin
+
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=kpRm.exe
@@ -34,6 +36,8 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 
+AutoItSetOption("MustDeclareVars", 1)
+
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
 If _ArraySearch($codeFR, @MUILang) <> 1 Then
@@ -52,7 +56,6 @@ EndIf
 #include "include\restore_uac.au3"
 #include "include\restore_system_settings.au3"
 #include "include\tools_import.au3"
-#RequireAdmin
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
@@ -82,7 +85,7 @@ GUISetState(@SW_SHOW)
 
 While 1
 
-	$nMsg = GUIGetMsg()
+	Local $nMsg = GUIGetMsg()
 
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE

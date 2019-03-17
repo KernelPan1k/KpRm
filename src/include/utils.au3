@@ -49,13 +49,13 @@ Func TryResolveUserDesktop($User)
 EndFunc   ;==>TryResolveUserDesktop
 
 Func searchRegistryKeyStrings($path, $pattern, $key)
-	$i = 0
+	Local $i = 0
 	While True
 		$i += 1
 		Local $entry = RegEnumKey($path, $i)
 		If @error <> 0 Then ExitLoop
-		$regPath = $path & "\" & $entry
-		$name = RegRead($regPath, $key)
+		Local $regPath = $path & "\" & $entry
+		Local $name = RegRead($regPath, $key)
 
 		If StringRegExp($name, $pattern) Then
 			Return $regPath
