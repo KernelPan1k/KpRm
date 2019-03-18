@@ -1,9 +1,6 @@
 
 Func prepareRemove($path, $recursive = 0)
-	FileSetAttrib($path, "-R", $recursive)
-	FileSetAttrib($path, "-A", $recursive)
-	FileSetAttrib($path, "-S", $recursive)
-	FileSetAttrib($path, "-H", $recursive)
+	FileSetAttrib($path, "-RASHNOT", $recursive)
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null)

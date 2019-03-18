@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[20] = [ _
+Local Const $allToolsList[21] = [ _
 	"frst", _
 	"zhpdiag", _
 	"zhpcleaner", _
@@ -20,6 +20,7 @@ Local Const $allToolsList[20] = [ _
 	"minitoolbox", _
 	"miniregtool", _
 	"zhp", _
+	"combofix", _
 	"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) -1
@@ -70,6 +71,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/minitoolbox.au3"
 #include "tools/miniregtool.au3"
 #include "tools/grantperms.au3"
+#include "tools/combofix.au3"
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)
