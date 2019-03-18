@@ -19,3 +19,5 @@ Func LoadAdwcleaner()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
 
 EndFunc   ;==>LoadAdwcleaner
+
+LoadAdwcleaner()

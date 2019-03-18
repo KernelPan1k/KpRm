@@ -17,3 +17,5 @@ Func LoadZHPFix()
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 EndFunc   ;==>RemoveZHPFix
+
+LoadZHPFix()

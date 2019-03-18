@@ -34,3 +34,5 @@ Func LoadUSBFIX()
 	_ArrayAdd($KPRemoveProgramFilesList, $arr5)
 
 EndFunc   ;==>RemoveUSBFIX
+
+LoadUSBFIX()

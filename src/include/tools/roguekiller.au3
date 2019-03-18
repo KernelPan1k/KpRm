@@ -1,5 +1,5 @@
 
-Func LoadRogueKiller($retry = False)
+Func LoadRogueKiller()
 	Local Const $ToolExistCpt = "roguekiller"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveScheduleTasksList
@@ -38,4 +38,6 @@ Func LoadRogueKiller($retry = False)
 	_ArrayAdd($KPRemoveAppDataCommonStartMenuFolderList, $arr6)
 
 EndFunc   ;==>RemoveRogueKiller
+
+LoadRogueKiller()
 
