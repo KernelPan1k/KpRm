@@ -17,3 +17,5 @@ Func LoadFSS()
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 
 EndFunc   ;==>LoadAswMbr
+
+LoadFSS()

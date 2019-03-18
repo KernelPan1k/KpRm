@@ -17,3 +17,5 @@ Func LoadScanRapide()
 	_ArrayAdd($KPRemoveDownloadList, $arr1)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr2)
 EndFunc
+
+LoadScanRapide()

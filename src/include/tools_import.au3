@@ -1,18 +1,30 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
-$ToolsCpt.add("frst", 0)
-$ToolsCpt.add("zhpdiag", 0)
-$ToolsCpt.add("zhpcleaner", 0)
-$ToolsCpt.add("zhpfix", 0)
-$ToolsCpt.add("mbar", 0)
-$ToolsCpt.add("roguekiller", 0)
-$ToolsCpt.add("usbfix", 0)
-$ToolsCpt.add("adwcleaner", 0)
-$ToolsCpt.add("adsfix", 0)
-$ToolsCpt.add("aswmbr", 0)
-$ToolsCpt.add("fss", 0)
-$ToolsCpt.add("toolsdiag", 0)
-$ToolsCpt.add("scanrapide", 0)
-$ToolsCpt.add("fake", 0)
+
+Local Const $allToolsList[20] = [ _
+	"frst", _
+	"zhpdiag", _
+	"zhpcleaner", _
+	"zhpfix", _
+	"mbar", _
+	"roguekiller", _
+	"usbfix", _
+	"adwcleaner", _
+	"adsfix", _
+	"aswmbr", _
+	"fss", _
+	"toolsdiag", _
+	"scanrapide", _
+	"otl", _
+	"otm", _
+	"listparts", _
+	"minitoolbox", _
+	"miniregtool", _
+	"zhp", _
+	"grantperms"]
+
+For $ti = 0 To UBound($allToolsList) -1
+	$ToolsCpt.add($allToolsList[$ti], 0)
+Next
 
 Global $KPRemoveProcessList[1][2] = [[Null, Null]]
 
@@ -52,21 +64,12 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/fss.au3"
 #include "tools/toolsdiag.au3"
 #include "tools/scanrapide.au3"
-
-LoadFRST()
-LoadZHPDiag()
-LoadZHPFix()
-LoadZHPCleaner()
-LoadCommonZHP()
-LoadMBAR()
-LoadRogueKiller()
-LoadAdwcleaner()
-LoadUSBFIX()
-LoadADSFix()
-LoadAswMbr()
-LoadFSS()
-LoadToolsDiag()
-LoadScanRapide()
+#include "tools/otl.au3"
+#include "tools/otm.au3"
+#include "tools/listparts.au3"
+#include "tools/minitoolbox.au3"
+#include "tools/miniregtool.au3"
+#include "tools/grantperms.au3"
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)

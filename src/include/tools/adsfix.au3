@@ -28,3 +28,5 @@ Func LoadADSFix()
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr5)
 
 EndFunc   ;==>LoadADSFix
+
+LoadADSFix()

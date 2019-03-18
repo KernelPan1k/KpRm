@@ -18,3 +18,5 @@ Func LoadZHPCleaner()
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 
 EndFunc   ;==>RemoveZHPCleaner
+
+LoadZHPCleaner()

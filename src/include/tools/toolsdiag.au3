@@ -19,3 +19,5 @@ Func LoadToolsDiag()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr1)
 
 EndFunc   ;==>LoadAswMbr
+
+LoadToolsDiag()

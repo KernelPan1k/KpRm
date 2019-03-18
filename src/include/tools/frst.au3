@@ -27,3 +27,5 @@ Func LoadFRST()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
 
 EndFunc   ;==>RemoveFRST
+
+LoadFRST()

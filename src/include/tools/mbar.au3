@@ -24,3 +24,5 @@ Func LoadMBAR($retry = False)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr2)
 
 EndFunc   ;==>RemoveMBAR
+
+LoadMBAR()
