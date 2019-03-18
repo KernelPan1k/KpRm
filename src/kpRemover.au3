@@ -46,6 +46,7 @@ Else
 	#include "locales\en.au3"
 EndIf
 
+#include "lib\Permissions.au3"
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
 #include "include\check_before.au3"
