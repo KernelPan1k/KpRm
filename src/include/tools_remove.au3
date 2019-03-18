@@ -8,10 +8,10 @@ EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null)
 	Dim $KPDebug
-	Local Const $iFileExists = FileExists($file)
+	Local Const $iFileExists = isFile($file)
 
 	If $iFileExists Then
-		If $descriptionPattern Then
+		If $descriptionPattern And StringRegExp($file, "(?i)\.exe$") Then
 			Local Const $fileDescription = FileGetVersion($file, "FileDescription")
 
 			If @error Then
@@ -39,7 +39,7 @@ EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($path)
 	Dim $KPDebug
-	Local $iFileExists = FileExists($path)
+	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
 
@@ -85,29 +85,37 @@ Func FindGlob($path, $file, $reg)
 	Return $return
 EndFunc   ;==>FindGlob
 
-Func RemoveGlobFile($path, $file, $reg, $descriptionPattern = Null)
-	Local $return = 0
-	Local Const $fileList = FindGlob($path, $file, $reg)
-	For $i = 1 To UBound($fileList) - 1
-		If $fileList[$i] And $fileList[$i] <> "" Then
-			$return += RemoveFile($fileList[$i], $descriptionPattern)
-		EndIf
-	Next
+Func RemoveAllFileFrom($path, $elements)
+	Dim $ToolsCpt
+	Local Const $filePathGlob = $path & "\*"
+	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 
-	Return $return
-EndFunc   ;==>RemoveGlobFile
+	If $hSearch = -1 Then
+		Return Null
+	EndIf
 
-Func RemoveGlobFolder($path, $file, $reg)
-	Local $return = 0
-	Local Const $fileList = FindGlob($path, $file, $reg)
-	For $i = 1 To UBound($fileList) - 1
-		If $fileList[$i] And $fileList[$i] <> "" Then
-			$return += RemoveFolder($fileList[$i])
-		EndIf
-	Next
+	Local $sFileName = FileFindNextFile($hSearch)
 
-	Return $return
-EndFunc   ;==>RemoveGlobFolder
+	While @error = 0
+		For $e = 0 To Ubound($elements) -1
+			Local $pathOfFile = $path & "\" & $sFileName
+			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
+
+			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
+				If $typeOfFile = 'file' Then
+					$ToolsCpt.Item($elements[$e][0]) += RemoveFile($pathOfFile, $elements[$e][2])
+				ElseIf $typeOfFile = 'folder' Then
+					$ToolsCpt.Item($elements[$e][0]) += RemoveFolder($pathOfFile)
+				EndIf
+			EndIf
+		Next
+
+		$sFileName = FileFindNextFile($hSearch)
+	WEnd
+
+	FileClose($hSearch)
+
+EndFunc   ;==>RemoveAllFileFrom
 
 Func RemoveRegistryKey($key)
 	Dim $KPDebug
@@ -213,7 +221,7 @@ Func CloseProcessAndWait($process)
 EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess($processList)
-	Local $return = 0
+	Dim $cpt
 
 	Local $aProcessList = ProcessList()
 
@@ -221,10 +229,94 @@ Func RemoveAllProcess($processList)
 		Local $processName = $aProcessList[$i][0]
 		Local $pid = $aProcessList[$i][1]
 
-		For $cpt = 0 To UBound($processList) - 1
-			If StringRegExp($processName, $processList[$cpt]) Then
-				$return += CloseProcessAndWait($pid)
+		For $cpt = 1 To UBound($processList) - 1
+			If StringRegExp($processName, $processList[$cpt][1]) Then
+				$ToolsCpt.Item($processList[$cpt][0]) += CloseProcessAndWait($pid)
 			EndIf
 		Next
 	Next
 EndFunc   ;==>RemoveAllProcess
+
+Func RemoveScheduleTask($list)
+	Dim $KPDebug
+	Dim $ToolsCpt
+
+	For $i = 1 To UBound($list) - 1
+		RunWait('schtasks.exe /delete /tn "' & $list[$i][1] & '" /f', @TempDir, @SW_HIDE)
+
+		If @error = 0 Then
+			If $KPDebug Then logMessage("  [OK] RogueKiller.exe was deleted from schedule")
+			$ToolsCpt.Item($list[$i][0]) += 1
+		EndIf
+
+	Next
+EndFunc   ;==>RemoveScheduleTask
+
+Func UninstallNormaly($list)
+	Dim $ToolsCpt
+
+	Local Const $ProgramFilesList = GetProgramFilesList()
+
+	For $i = 1 To UBound($ProgramFilesList) - 1
+		For $c = 1 To UBound($list) - 1
+			Local $folderReg = $list[$c][1]
+			Local $FileReg = $list[$c][2]
+
+			Local $globFolder = FindGlob($ProgramFilesList[$i], "*", $folderReg)
+
+			For $f = 1 To UBound($globFolder) - 1
+				Local $uninstallFiles = FindGlob($globFolder[$f], "*", $FileReg)
+
+				For $u = 1 To UBound($uninstallFiles) - 1
+					If isFile($uninstallFiles[$u]) Then
+						RunWait($uninstallFiles[$u])
+						$ToolsCpt.Item($list[$c][0]) += 1
+					EndIf
+				Next
+			Next
+		Next
+	Next
+EndFunc   ;==>UninstallNormaly
+
+Func RemoveAllProgramFilesDir($list)
+	Local Const $ProgramFilesList = GetProgramFilesList()
+
+	For $i = 1 To UBound($ProgramFilesList) - 1
+		RemoveAllFileFrom($ProgramFilesList[$i], $list)
+	Next
+EndFunc   ;==>RemoveAllProgramFilesDir
+
+Func RemoveAllSoftwareKeyList($list)
+	Dim $ToolsCpt
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
+
+	For $k = 0 To UBound($keys) - 1
+		Local $i = 0
+		While True
+			$i += 1
+			Local $entry = RegEnumKey($keys[$k], $i)
+			If @error <> 0 Then ExitLoop
+			For $c = 1 To UBound($list) - 1
+				If $entry And $list[$c][1] Then
+					If StringRegExp($entry, $list[$c][1]) Then
+						$ToolsCpt.Item($list[$c][0]) += RemoveRegistryKey($keys[$k] & "\" & $entry)
+					EndIf
+				EndIf
+			Next
+		WEnd
+	Next
+EndFunc   ;==>RemoveAllSoftwareKeyList
+
+Func RemoveUninstallStringWithSearch($list)
+	Dim $ToolsCpt
+
+	For $i = 1 To UBound($list) - 1
+		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
+
+		If $keyFound And $keyFound <> "" Then
+			$ToolsCpt.Item($list[$i][0]) += RemoveRegistryKey($keyFound)
+		EndIf
+	Next
+EndFunc   ;==>RemoveUninstallStringWithSearch

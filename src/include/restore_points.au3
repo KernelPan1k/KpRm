@@ -10,7 +10,7 @@ Func ClearRestorePoint()
 		Return Null
 	EndIf
 
-	Local $errors = []
+	Local $errors[1][3] = [[Null, Null, Null]]
 
 	For $i = 1 To $aRP[0][0]
 		Local $status = _SR_RemoveRestorePoint($aRP[$i][0])

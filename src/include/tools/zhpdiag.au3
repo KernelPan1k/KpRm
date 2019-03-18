@@ -1,60 +1,35 @@
+Func LoadCommonZHP()
+	Dim $KPRemoveAppDataList
+	Dim $KPRemoveAppDataLocalList
+	Dim $KPRemoveSoftwareKeyList
 
-Func RemoveZHPDiag()
-	Dim $KPDebug
+	Local $fake = "fake"
+	Local Const $val[1][2] = [[$fake, "(?i)^ZHP$"]]
+	Local Const $val2[1][4] = [[$fake, 'folder', Null, "(?i)^ZHP$"]]
 
-	If $KPDebug Then logMessage(@CRLF & "- Search ZHPDiag Files -" & @CRLF)
+	_ArrayAdd($KPRemoveAppDataList, $val2)
+	_ArrayAdd($KPRemoveAppDataLocalList, $val2)
+	_ArrayAdd($KPRemoveSoftwareKeyList, $val)
+EndFunc   ;==>CommonZHP
 
-	Local $return = 0
+Func LoadZHPDiag()
 	Local Const $desciptionPattern = "(?i)^ZHPDiag"
-	Local $processList[1] = [$desciptionPattern]
+	Local Const  $ToolExistCpt = "zhpdiag"
 
-	$return += RemoveAllProcess($processList)
+	Dim $KPRemoveProcessList
+	Dim $KPRemoveDesktopList
+	Dim $KPRemoveDesktopCommonList
+	Dim $KPRemoveDownloadList
 
-	$return += CloseProcessAndWait("ZHPDiag.exe")
-	$return += CloseProcessAndWait("ZHPDiag3.exe")
+	Local Const $reg1 = "(?i)^ZHPDiag.*\.exe$"
+	Local Const $reg2 = "(?i)^ZHPDiag.*\.(exe|txt|lnk)$"
 
+	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr2[1][4] = [[$ToolExistCpt, 'file',  $desciptionPattern, $reg2]]
 
-	$return += RemoveFile(@DesktopDir & "\ZHPDiag.txt")
-	$return += RemoveFile(@DesktopDir & "\ZHPDiag.lnk")
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag?.exe", "(?i)^ZHPDiag3?\.exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag (?).exe", "(?i)^ZHPDiag \([0-9]\)\.exe$", $desciptionPattern)
-	$return += RemoveGlobFile(@DesktopDir, "ZHPDiag3 (?).exe", "(?i)^ZHPDiag3 \([0-9]\)\.exe$", $desciptionPattern)
-	$return += RemoveFile(@DesktopCommonDir & "\ZHPDiag.lnk")
+	_ArrayAdd($KPRemoveProcessList, $arr1)
+	_ArrayAdd($KPRemoveDesktopList, $arr2)
+	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($KPRemoveDesktopCommonList, $arr2)
 
-	Local Const $userDownloadFolder = @UserProfileDir & "\Downloads"
-	Local Const $iFileExists = FileExists($userDownloadFolder)
-
-	If $iFileExists Then
-		$return += RemoveFile($userDownloadFolder & "\ZHPDiag.txt")
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag?.exe", "(?i)^ZHPDiag3?\.exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag (?).exe", "(?i)^ZHPDiag \([0-9]\)\.exe$", $desciptionPattern)
-		$return += RemoveGlobFile($userDownloadFolder, "ZHPDiag3 (?).exe", "(?i)^ZHPDiag3 \([0-9]\)\.exe$", $desciptionPattern)
-	EndIf
-
-	$return += RemoveFolder(@AppDataDir & "\ZHP")
-	$return += RemoveFolder(@LocalAppDataDir & "\ZHP")
-
-	$return += RemoveSoftwareKey("ZHP")
-
-	If $return > 0 Then
-		If Not $KPDebug Then logMessage(@CRLF & "- Search ZHPDiag Files -" & @CRLF)
-		Local $errors = ""
-
-		If FileExists(@AppDataDir & "\ZHP") Then
-			$errors += " [X] The folder " & @AppDataDir & "\ZHP still exists" & @CRLF
-		EndIf
-
-		If FileExists(@LocalAppDataDir & "\ZHP") Then
-			$errors += " [X] The folder " & @LocalAppDataDir & "\ZHP still exists" & @CRLF
-		EndIf
-
-		If $errors <> "" Then
-			logMessage($errors)
-		Else
-			logMessage("  [OK] ZHPDiag has been successfully removed")
-		EndIf
-
-	EndIf
-
-	ProgressBarUpdate()
 EndFunc   ;==>RemoveZHPDiag

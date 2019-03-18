@@ -1,3 +1,5 @@
+#RequireAdmin
+
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=kpRm.exe
@@ -34,6 +36,8 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 
+AutoItSetOption("MustDeclareVars", 1)
+
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
 If _ArraySearch($codeFR, @MUILang) <> 1 Then
@@ -44,6 +48,7 @@ EndIf
 
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
+#include "include\check_before.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
 #include "include\restore_points.au3"
@@ -56,15 +61,8 @@ EndIf
 
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
-#RequireAdmin
-
-If Not IsAdmin() Then
-	MsgBox(16, $lFail, $lAdminRequired)
-	Exit
-EndIf
-
 Global $ProgramName = "KpRm"
-Global $KPDebug = False
+Global $KPDebug = True
 
 Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
@@ -87,7 +85,7 @@ GUISetState(@SW_SHOW)
 
 While 1
 
-	$nMsg = GUIGetMsg()
+	Local $nMsg = GUIGetMsg()
 
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
