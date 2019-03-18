@@ -49,13 +49,13 @@ Func TryResolveUserDesktop($User)
 EndFunc   ;==>TryResolveUserDesktop
 
 Func searchRegistryKeyStrings($path, $pattern, $key)
-	$i = 0
+	Local $i = 0
 	While True
 		$i += 1
 		Local $entry = RegEnumKey($path, $i)
 		If @error <> 0 Then ExitLoop
-		$regPath = $path & "\" & $entry
-		$name = RegRead($regPath, $key)
+		Local $regPath = $path & "\" & $entry
+		Local $name = RegRead($regPath, $key)
 
 		If StringRegExp($name, $pattern) Then
 			Return $regPath
@@ -77,3 +77,46 @@ Func TasksExist($task)
 
 	Return StringRegExp($out, "(?i)\Q" & $task & "\E\R") ? True : False
 EndFunc   ;==>TasksExist
+
+Func GetProgramFilesList()
+	Local $ProgramFilesList = []
+
+	If FileExists(@HomeDrive & "\Program Files") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files")
+	EndIf
+
+	If FileExists(@HomeDrive & "\Program Files (x86)") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files (x86)")
+
+	EndIf
+
+	If FileExists(@HomeDrive & "\Program Files(x86)") Then
+		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files(x86)")
+	EndIf
+
+	Return $ProgramFilesList
+EndFunc   ;==>GetProgramFilesList
+
+Func IsFile($sFilePath)
+	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) = 0)
+EndFunc   ;==>IsFilee
+
+Func IsDir($sFilePath)
+	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) > 0)
+EndFunc   ;==>IsDir
+
+Func FileExistsAndGetType($sFilePath)
+	Local $fileType = Null
+
+	If FileExists($sFilePath) Then
+		Local $val = StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1)
+
+		If $val = 0 Then
+			$fileType = 'file'
+		ElseIf $val > 0 Then
+			$fileType = 'folder'
+		EndIf
+	EndIf
+
+	Return $fileType
+EndFunc
