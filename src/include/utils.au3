@@ -1,6 +1,9 @@
 
 Func logMessage($message)
-	FileWrite(@DesktopDir & "\kp-remover.txt", $message & @CRLF)
+	Dim $KPLogFile
+
+	FileWrite(@DesktopDir & "\" & $KPLogFile, $message & @CRLF)
+	FileWrite(@HomeDrive & "\KPRM" & "\" & $KPLogFile, $message & @CRLF)
 EndFunc   ;==>logMessage
 
 Func _Restart_Windows_Explorer()
@@ -87,7 +90,6 @@ Func GetProgramFilesList()
 
 	If FileExists(@HomeDrive & "\Program Files (x86)") Then
 		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files (x86)")
-
 	EndIf
 
 	If FileExists(@HomeDrive & "\Program Files(x86)") Then
@@ -99,7 +101,7 @@ EndFunc   ;==>GetProgramFilesList
 
 Func IsFile($sFilePath)
 	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) = 0)
-EndFunc   ;==>IsFilee
+EndFunc   ;==>IsFile
 
 Func IsDir($sFilePath)
 	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) > 0)
@@ -119,4 +121,4 @@ Func FileExistsAndGetType($sFilePath)
 	EndIf
 
 	Return $fileType
-EndFunc
+EndFunc   ;==>FileExistsAndGetType

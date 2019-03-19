@@ -61,9 +61,11 @@ Global $KPRemoveAppDataCommonStartMenuFolderList[1][4] = [[Null, Null, Null, Nul
 
 Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
+
 #include-once
 #include "tools_remove.au3"
 #include "tools/frst.au3"
+#include "tools/zhp.au3"
 #include "tools/zhpdiag.au3"
 #include "tools/zhpfix.au3"
 #include "tools/mbar.au3"
@@ -94,6 +96,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/remediate-vbs-worm.au3"
 #include "tools/ckscanner.au3"
 #include "tools/quickdiag.au3"
+#include "tools/custom_end.au3"
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)
@@ -141,5 +144,15 @@ Func RunRemoveTools()
 
 	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonStartMenuFolderList)
 	ProgressBarUpdate()
+
+	CustomEnd()
+
+	For $ti = 0 To UBound($allToolsList) -1
+		Local  $cpt = $ToolsCpt.Item($allToolsList[$ti])
+
+		If $cpt Then
+			logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
+		EndIf
+	Next
 
 EndFunc   ;==>RunRemoveTools

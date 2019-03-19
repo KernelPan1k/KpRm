@@ -242,12 +242,6 @@ Func RemoveScheduleTask($list)
 
 	For $i = 1 To UBound($list) - 1
 		RunWait('schtasks.exe /delete /tn "' & $list[$i][1] & '" /f', @TempDir, @SW_HIDE)
-
-		If @error = 0 Then
-			If $KPDebug Then logMessage("  [OK] RogueKiller.exe was deleted from schedule")
-			$ToolsCpt.Item($list[$i][0]) += 1
-		EndIf
-
 	Next
 EndFunc   ;==>RemoveScheduleTask
 
