@@ -35,7 +35,8 @@ Local Const $allToolsList[32] = [ _
 	"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) -1
-	$ToolsCpt.add($allToolsList[$ti], 0)
+	Local $toolsValue[2] = [0, ""]
+	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
 Next
 
 Global $KPRemoveProcessList[1][2] = [[Null, Null]]
@@ -148,10 +149,15 @@ Func RunRemoveTools()
 	CustomEnd()
 
 	For $ti = 0 To UBound($allToolsList) -1
-		Local  $cpt = $ToolsCpt.Item($allToolsList[$ti])
+		Local  $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
 
-		If $cpt Then
-			logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
+		If $toolsValue[0] > 0 Then
+			If $toolsValue[1] = "" Then
+				logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
+			Else
+				logMessage(@CRLF & "  [X] " & StringUpper($allToolsList[$ti]) & " was found but there were errors :")
+				logMessage($toolsValue[1])
+			EndIf
 		EndIf
 	Next
 
