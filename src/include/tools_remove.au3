@@ -18,6 +18,8 @@ Func RemoveFile($file, $descriptionPattern = Null)
 			EndIf
 		EndIf
 
+		prepareRemove($file)
+
 		Local $iDelete = FileDelete($file)
 
 		If $iDelete Then

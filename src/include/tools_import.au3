@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[28] = [ _
+Local Const $allToolsList[32] = [ _
 	"frst", _
 	"zhpdiag", _
 	"zhpcleaner", _
@@ -28,6 +28,10 @@ Local Const $allToolsList[28] = [ _
 	"winchk", _
 	"avenger", _
 	"blitzblank", _
+	"zoek", _
+	"remediate-vbs-worm", _
+	"ckscanner", _
+	"quickdiag", _
 	"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) -1
@@ -86,6 +90,10 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/winchk.au3"
 #include "tools/avenger.au3"
 #include "tools/blitzblank.au3"
+#include "tools/zoek.au3"
+#include "tools/remediate-vbs-worm.au3"
+#include "tools/ckscanner.au3"
+#include "tools/quickdiag.au3"
 
 Func RunRemoveTools()
 	RemoveAllProcess($KPRemoveProcessList)
