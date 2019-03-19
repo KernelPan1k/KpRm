@@ -30,6 +30,8 @@ Func RemoveFile($file, $descriptionPattern = Null)
 			Return 1
 		EndIf
 
+		Return 2
+
 	EndIf
 
 	Return 0
@@ -53,6 +55,8 @@ Func RemoveFolder($path)
 
 			Return 1
 		EndIf
+
+		Return 2
 
 	EndIf
 
@@ -96,16 +100,27 @@ Func RemoveAllFileFrom($path, $elements)
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
-		For $e = 0 To Ubound($elements) -1
+		For $e = 0 To UBound($elements) - 1
 			Local $pathOfFile = $path & "\" & $sFileName
 			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
 
 			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
+				Local $toolsData = $ToolsCpt.Item($elements[$e][0])
+				Local $status = 0
+
 				If $typeOfFile = 'file' Then
-					$ToolsCpt.Item($elements[$e][0]) += RemoveFile($pathOfFile, $elements[$e][2])
+					$status = RemoveFile($pathOfFile, $elements[$e][2])
 				ElseIf $typeOfFile = 'folder' Then
-					$ToolsCpt.Item($elements[$e][0]) += RemoveFolder($pathOfFile)
+					$status = RemoveFolder($pathOfFile)
 				EndIf
+
+				If $status = 1 Then
+					$toolsData[0] += 1
+				ElseIf $status = 2 Then
+					$toolsData[1] += "  [X] " & $pathOfFile & " delete failed" & @CRLF
+				EndIf
+
+				$ToolsCpt.Item($elements[$e][0]) = $toolsData
 			EndIf
 		Next
 
@@ -124,14 +139,14 @@ Func RemoveRegistryKey($key)
 		If $KPDebug Then
 			logMessage("  [OK] " & $key & " deleted successfully")
 		EndIf
-		Return 1
 	ElseIf $status = 2 Then
 		If $KPDebug Then
 			logMessage("  [X] " & $key & " deleted failed")
 		EndIf
+
 	EndIf
 
-	Return 0
+	Return $status
 EndFunc   ;==>RemoveRegistryKey
 
 Func RemoveService($name)
@@ -212,7 +227,7 @@ Func CloseProcessAndWait($process)
 	Local Const $status = ProcessExists($process)
 
 	If 0 = $status Then
-		If $KPDebug Then logMessage("  [OK] Porccess " & $process & " stopped successfully")
+		If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
 		Return 1
 	EndIf
 
@@ -230,7 +245,16 @@ Func RemoveAllProcess($processList)
 
 		For $cpt = 1 To UBound($processList) - 1
 			If StringRegExp($processName, $processList[$cpt][1]) Then
-				$ToolsCpt.Item($processList[$cpt][0]) += CloseProcessAndWait($pid)
+				Local $toolsData = $ToolsCpt.Item($processList[$cpt][0])
+				Local $status = CloseProcessAndWait($pid)
+
+				If $status Then
+					$toolsData[0] += 1
+				Else
+					$toolsData[1] += "  [X] The process could not be stopped, the program may not have been deleted correctly" & @CRLF
+				EndIf
+
+				$ToolsCpt.Item($processList[$cpt][0]) = $toolsData
 			EndIf
 		Next
 	Next
@@ -263,7 +287,9 @@ Func UninstallNormaly($list)
 				For $u = 1 To UBound($uninstallFiles) - 1
 					If isFile($uninstallFiles[$u]) Then
 						RunWait($uninstallFiles[$u])
-						$ToolsCpt.Item($list[$c][0]) += 1
+						Local $toolsData = $ToolsCpt.Item($list[$c][0])
+						$toolsData[0] += 1
+						$ToolsCpt.Item($list[$c][0]) = $toolsData
 					EndIf
 				Next
 			Next
@@ -287,14 +313,26 @@ Func RemoveAllSoftwareKeyList($list)
 
 	For $k = 0 To UBound($keys) - 1
 		Local $i = 0
+
 		While True
 			$i += 1
 			Local $entry = RegEnumKey($keys[$k], $i)
+
 			If @error <> 0 Then ExitLoop
+
 			For $c = 1 To UBound($list) - 1
 				If $entry And $list[$c][1] Then
 					If StringRegExp($entry, $list[$c][1]) Then
-						$ToolsCpt.Item($list[$c][0]) += RemoveRegistryKey($keys[$k] & "\" & $entry)
+						Local $status = RemoveRegistryKey($keys[$k] & "\" & $entry)
+						Local $toolsData = $ToolsCpt.Item($list[$c][0])
+
+						If $status = 1 Then
+							$toolsData[0] += 1
+						ElseIf $status = 2 Then
+							$toolsData[1] += "[X] " & $keys[$k] & "\" & $entry & " delete failed" & @CRLF
+						EndIf
+
+						$ToolsCpt.Item($list[$c][0]) = $toolsData
 					EndIf
 				EndIf
 			Next
@@ -309,7 +347,16 @@ Func RemoveUninstallStringWithSearch($list)
 		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
 
 		If $keyFound And $keyFound <> "" Then
-			$ToolsCpt.Item($list[$i][0]) += RemoveRegistryKey($keyFound)
+			Local $status = RemoveRegistryKey($keyFound)
+			Local $toolsData = $ToolsCpt.Item($list[$i][0])
+
+			If $status = 1 Then
+				$toolsData[0] += 1
+			ElseIf $status = 2 Then
+				$toolsData[1] += "[X] " & $keyFound & " delete failed" & @CRLF
+			EndIf
+
+			$ToolsCpt.Item($list[$i][0]) = $toolsData
 		EndIf
 	Next
 EndFunc   ;==>RemoveUninstallStringWithSearch
