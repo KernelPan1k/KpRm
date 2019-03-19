@@ -2,19 +2,9 @@
 Func CreateBackupRegistry()
 	logMessage(@CRLF & "- Create Registry Backup -" & @CRLF)
 
-	Local Const $backUpPath = @WindowsDir & "\KPRM-REGISTRY-BACKUP"
+	Local Const $backUpPath = @HomeDrive & "\KPRM"
 
-	If Not FileExists($backUpPath) Then
-		DirCreate($backUpPath)
-	EndIf
-
-	If Not FileExists($backUpPath) Then
-		logMessage("  [X] Failed to create " & $backUpPath & " directory")
-		MsgBox(16, $lFail, $lRegistryBackupError)
-		Exit
-	EndIf
-
-	Local Const $backupLocation = $backUpPath & "\kprm-registry-backup-" & @MON & @MDAY & @HOUR & @MIN & ".reg"
+	Local Const $backupLocation = $backUpPath & "\regedit-backup-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".reg"
 
 	If FileExists($backupLocation) Then
 		FileMove($backupLocation, $backupLocation & ".old")

@@ -36,7 +36,7 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 
-AutoItSetOption("MustDeclareVars", 1)
+;~ AutoItSetOption("MustDeclareVars", 1)
 
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
@@ -64,6 +64,7 @@ FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = True
+Global $KPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 
 Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
 Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
@@ -98,11 +99,27 @@ While 1
 	EndSwitch
 WEnd
 
+Func CreateKPRMDir()
+	Local Const $dir = @HomeDrive & "\KPRM"
+
+	If Not FileExists($dir) Then
+		DirCreate($dir)
+	EndIf
+
+	If Not FileExists($dir) Then
+		MsgBox(16, $lFail, $lRegistryBackupError)
+		Exit
+	EndIf
+EndFunc
+
 Func Init()
-	FileWrite(@DesktopDir & "\kp-remover.txt", "#################################################################################################################" & @CRLF & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run at " & _Now() & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Run by " & @UserName & " in " & @ComputerName & @CRLF)
-	FileWrite(@DesktopDir & "\kp-remover.txt", "# Launch fom " & @WorkingDir & @CRLF)
+	CreateKPRMDir()
+
+	logMessage("#################################################################################################################" & @CRLF)
+	logMessage("# Run at " & _Now())
+	logMessage("# Run by " & @UserName & " in " & @ComputerName)
+	logMessage("# Launch fom " & @WorkingDir)
+
 	ProgressBarInit()
 EndFunc   ;==>Init
 
