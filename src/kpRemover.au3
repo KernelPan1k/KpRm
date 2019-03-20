@@ -35,7 +35,7 @@
 #include <WinAPIShellEx.au3>
 #include <SendMessage.au3>
 #include <Array.au3>
-
+#include <File.au3>
 ;~ AutoItSetOption("MustDeclareVars", 1)
 
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]

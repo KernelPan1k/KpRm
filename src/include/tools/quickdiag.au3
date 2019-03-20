@@ -15,9 +15,9 @@ Func LoadQuickDiag()
 	Local Const $reg5 = "(?i)^QuickDiag"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, False]]
-	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, False]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, True]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, True]]
+	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, True]]
 	Local Const $arr5[1][5] = [[$ToolExistCpt, 'folder', Null, $reg5, True]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)

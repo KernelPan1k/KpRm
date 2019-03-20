@@ -15,9 +15,9 @@ Func LoadRemediateVbsWorm()
 	Local Const $reg3 = "(?i)^Rem-VBSqt"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1]]
-	Local Const $arr3[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2]]
-	Local Const $arr4[1][4] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg3]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
+	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg3, True]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)

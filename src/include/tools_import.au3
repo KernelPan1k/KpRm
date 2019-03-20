@@ -1,40 +1,40 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
 Local Const $allToolsList[32] = [ _
-	"frst", _
-	"zhpdiag", _
-	"zhpcleaner", _
-	"zhpfix", _
-	"mbar", _
-	"roguekiller", _
-	"usbfix", _
-	"adwcleaner", _
-	"adsfix", _
-	"aswmbr", _
-	"fss", _
-	"toolsdiag", _
-	"scanrapide", _
-	"otl", _
-	"otm", _
-	"listparts", _
-	"minitoolbox", _
-	"miniregtool", _
-	"zhp", _
-	"combofix", _
-	"regtoolexport", _
-	"tdsskiller", _
-	"winupdatefix", _
-	"rsthosts", _
-	"winchk", _
-	"avenger", _
-	"blitzblank", _
-	"zoek", _
-	"remediate-vbs-worm", _
-	"ckscanner", _
-	"quickdiag", _
-	"grantperms"]
+		"frst", _
+		"zhpdiag", _
+		"zhpcleaner", _
+		"zhpfix", _
+		"mbar", _
+		"roguekiller", _
+		"usbfix", _
+		"adwcleaner", _
+		"adsfix", _
+		"aswmbr", _
+		"fss", _
+		"toolsdiag", _
+		"scanrapide", _
+		"otl", _
+		"otm", _
+		"listparts", _
+		"minitoolbox", _
+		"miniregtool", _
+		"zhp", _
+		"combofix", _
+		"regtoolexport", _
+		"tdsskiller", _
+		"winupdatefix", _
+		"rsthosts", _
+		"winchk", _
+		"avenger", _
+		"blitzblank", _
+		"zoek", _
+		"remediate-vbs-worm", _
+		"ckscanner", _
+		"quickdiag", _
+		"grantperms"]
 
-For $ti = 0 To UBound($allToolsList) -1
+For $ti = 0 To UBound($allToolsList) - 1
 	Local $toolsValue[2] = [0, ""]
 	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
 Next
@@ -58,7 +58,7 @@ Global $KPRemoveAppDataCommonList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\
 Global $KPRemoveAppDataList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Roaming
 Global $KPRemoveAppDataLocalList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Local
 
-Global $KPRemoveAppDataCommonStartMenuFolderList[1][4] = [[Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
+Global $KPRemoveAppDataCommonStartMenuFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 
 Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
@@ -150,8 +150,11 @@ Func RunRemoveTools()
 
 	CustomEnd()
 
-	For $ti = 0 To UBound($allToolsList) -1
-		Local  $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
+	ProgressBarUpdate()
+
+
+	For $ti = 0 To UBound($allToolsList) - 1
+		Local $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
 
 		If $toolsValue[0] > 0 Then
 			If $toolsValue[1] = "" Then
@@ -162,5 +165,8 @@ Func RunRemoveTools()
 			EndIf
 		EndIf
 	Next
+
+	ProgressBarUpdate()
+
 
 EndFunc   ;==>RunRemoveTools
