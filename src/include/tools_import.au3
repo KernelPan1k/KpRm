@@ -41,22 +41,22 @@ Next
 
 Global $KPRemoveProcessList[1][2] = [[Null, Null]]
 
-Global $KPRemoveDesktopList[1][4] = [[Null, Null, Null, Null]]
-Global $KPRemoveDesktopCommonList[1][4] = [[Null, Null, Null, Null]]
-Global $KPRemoveDownloadList[1][4] = [[Null, Null, Null, Null]]
+Global $KPRemoveDesktopList[1][5] = [[Null, Null, Null, Null, Null]]
+Global $KPRemoveDesktopCommonList[1][5] = [[Null, Null, Null, Null, Null]]
+Global $KPRemoveDownloadList[1][5] = [[Null, Null, Null, Null, Null]]
 
-Global $KPRemoveProgramFilesList[1][4] = [[Null, Null, Null, Null]] ; C:\Program Files...
+Global $KPRemoveProgramFilesList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Program Files...
 
-Global $KPRemoveHomeDriveList[1][4] = [[Null, Null]] ; C:\
+Global $KPRemoveHomeDriveList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\
 
 Global $KPRemoveSoftwareKeyList[1][2] = [[Null, Null]]
 
 Global $KPRemoveScheduleTasksList[1][2] = [[Null, Null]]
 Global $KPRemoveSearchRegistryKeyStringsList[1][4] = [[Null, Null, Null, Null]]
 
-Global $KPRemoveAppDataCommonList[1][4] = [[Null, Null, Null, Null]] ; C:\ProgramData
-Global $KPRemoveAppDataList[1][4] = [[Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Roaming
-Global $KPRemoveAppDataLocalList[1][4] = [[Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Local
+Global $KPRemoveAppDataCommonList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\ProgramData
+Global $KPRemoveAppDataList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Roaming
+Global $KPRemoveAppDataLocalList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Local
 
 Global $KPRemoveAppDataCommonStartMenuFolderList[1][4] = [[Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 
@@ -100,6 +100,8 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools()
+	logMessage(@CRLF & "- Search Tools -" & @CRLF)
+
 	RemoveAllProcess($KPRemoveProcessList)
 	ProgressBarUpdate()
 

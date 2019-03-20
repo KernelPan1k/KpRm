@@ -1,9 +1,13 @@
 
-Func prepareRemove($path, $recursive = 0)
+Func prepareRemove($path, $recursive = 0, $force = False)
 	FileSetAttrib($path, "-RASHNOT", $recursive)
+
+	If $force Then
+		_GrantAllAccess($path)
+	EndIf
 EndFunc   ;==>prepareRemove
 
-Func RemoveFile($file, $descriptionPattern = Null)
+Func RemoveFile($file, $descriptionPattern = Null, $force = False)
 	Dim $KPDebug
 	Local Const $iFileExists = isFile($file)
 
@@ -18,7 +22,7 @@ Func RemoveFile($file, $descriptionPattern = Null)
 			EndIf
 		EndIf
 
-		prepareRemove($file)
+		prepareRemove($file, 0, $force)
 
 		Local $iDelete = FileDelete($file)
 
@@ -38,13 +42,13 @@ Func RemoveFile($file, $descriptionPattern = Null)
 
 EndFunc   ;==>RemoveFile
 
-Func RemoveFolder($path)
+Func RemoveFolder($path, $force = False)
 	Dim $KPDebug
 	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
 
-		prepareRemove($path, 1)
+		prepareRemove($path, 1, $force)
 
 		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
 
@@ -100,18 +104,23 @@ Func RemoveAllFileFrom($path, $elements)
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
-		For $e = 0 To UBound($elements) - 1
+		For $e = 1 To UBound($elements) - 1
 			Local $pathOfFile = $path & "\" & $sFileName
 			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
 
 			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
 				Local $toolsData = $ToolsCpt.Item($elements[$e][0])
 				Local $status = 0
+				Local $force = False
+
+				If  $elements[$e][4] = True Then
+					$force = True
+				EndIf
 
 				If $typeOfFile = 'file' Then
-					$status = RemoveFile($pathOfFile, $elements[$e][2])
+					$status = RemoveFile($pathOfFile,  $elements[$e][2], $force)
 				ElseIf $typeOfFile = 'folder' Then
-					$status = RemoveFolder($pathOfFile)
+					$status = RemoveFolder($pathOfFile, $force)
 				EndIf
 
 				If $status = 1 Then

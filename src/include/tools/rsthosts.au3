@@ -11,8 +11,8 @@ Func LoadRstHosts()
 	Local Const $reg2 = "(?i)^RstHosts.*\.txt$"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1]]
-	Local Const $arr3[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, Null]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, Null]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
