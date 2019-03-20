@@ -1,14 +1,37 @@
 
 Func prepareRemove($path, $recursive = 0, $force = False)
-	FileSetAttrib($path, "-RASHNOT", $recursive)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] prepareRemove " & $path)
 
 	If $force Then
+		_ClearObjectDacl($path)
 		_GrantAllAccess($path)
+	EndIf
+
+	Local Const $attrib = FileGetAttrib($path)
+
+	If StringInStr($attrib, "R") Then
+		FileSetAttrib($path, "-R", $recursive)
+	EndIf
+
+	If StringInStr($attrib, "S") Then
+		FileSetAttrib($path, "-S", $recursive)
+	EndIf
+
+	If StringInStr($attrib, "H") Then
+		FileSetAttrib($path, "-H", $recursive)
+	EndIf
+
+	If StringInStr($attrib, "A") Then
+		FileSetAttrib($path, "-A", $recursive)
 	EndIf
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $descriptionPattern = Null, $force = False)
 	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveFile " & $file)
 	Local Const $iFileExists = isFile($file)
 
 	If $iFileExists Then
@@ -44,6 +67,8 @@ EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($path, $force = False)
 	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveFolder " & $path)
 	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
@@ -69,6 +94,10 @@ Func RemoveFolder($path, $force = False)
 EndFunc   ;==>RemoveFolder
 
 Func FindGlob($path, $file, $reg)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] FindGlob " & $path & " " & $file)
+
 	Local Const $filePathGlob = $path & "\" & $file
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 	Local $return = []
@@ -93,6 +122,10 @@ Func FindGlob($path, $file, $reg)
 EndFunc   ;==>FindGlob
 
 Func RemoveAllFileFrom($path, $elements)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveAllFileFrom " & $path)
+
 	Dim $ToolsCpt
 	Local Const $filePathGlob = $path & "\*"
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
@@ -113,12 +146,12 @@ Func RemoveAllFileFrom($path, $elements)
 				Local $status = 0
 				Local $force = False
 
-				If  $elements[$e][4] = True Then
+				If $elements[$e][4] = True Then
 					$force = True
 				EndIf
 
 				If $typeOfFile = 'file' Then
-					$status = RemoveFile($pathOfFile,  $elements[$e][2], $force)
+					$status = RemoveFile($pathOfFile, $elements[$e][2], $force)
 				ElseIf $typeOfFile = 'folder' Then
 					$status = RemoveFolder($pathOfFile, $force)
 				EndIf
@@ -142,6 +175,8 @@ EndFunc   ;==>RemoveAllFileFrom
 
 Func RemoveRegistryKey($key)
 	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveRegistryKey " & $key)
 	Local Const $status = RegDelete($key)
 
 	If $status = 1 Then
@@ -162,6 +197,8 @@ Func RemoveService($name)
 	Local Const $status = RunWait(@ComSpec & " /c " & "sc query " & $name, @TempDir, @SW_HIDE)
 	Local $return = 0
 	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveService " & $name)
 
 	If $status = 1060 Then
 		Return 0
@@ -195,6 +232,10 @@ Func RemoveService($name)
 EndFunc   ;==>RemoveService
 
 Func RemoveSoftwareKey($name)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveSoftwareKey " & $name)
+
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 	Local $return = 0
@@ -206,6 +247,10 @@ Func RemoveSoftwareKey($name)
 EndFunc   ;==>RemoveSoftwareKey
 
 Func RemoveContextMenu($name)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveContextMenu " & $name)
+
 	Local $return = 0
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
@@ -223,6 +268,8 @@ EndFunc   ;==>RemoveContextMenu
 Func CloseProcessAndWait($process)
 	Local $cpt = 50
 	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] CloseProcessAndWait " & $process)
 
 	If 0 = ProcessExists($process) Then Return 0
 
@@ -245,6 +292,9 @@ EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess($processList)
 	Dim $cpt
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveAllProcess")
 
 	Local $aProcessList = ProcessList()
 
@@ -273,6 +323,8 @@ Func RemoveScheduleTask($list)
 	Dim $KPDebug
 	Dim $ToolsCpt
 
+	If $KPDebug Then logMessage("[I] RemoveScheduleTask")
+
 	For $i = 1 To UBound($list) - 1
 		RunWait('schtasks.exe /delete /tn "' & $list[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
@@ -280,6 +332,9 @@ EndFunc   ;==>RemoveScheduleTask
 
 Func UninstallNormaly($list)
 	Dim $ToolsCpt
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] UninstallNormaly")
 
 	Local Const $ProgramFilesList = GetProgramFilesList()
 
@@ -307,6 +362,10 @@ Func UninstallNormaly($list)
 EndFunc   ;==>UninstallNormaly
 
 Func RemoveAllProgramFilesDir($list)
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveAllProgramFilesDir")
+
 	Local Const $ProgramFilesList = GetProgramFilesList()
 
 	For $i = 1 To UBound($ProgramFilesList) - 1
@@ -316,6 +375,10 @@ EndFunc   ;==>RemoveAllProgramFilesDir
 
 Func RemoveAllSoftwareKeyList($list)
 	Dim $ToolsCpt
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveAllSoftwareKeyList")
+
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
@@ -351,6 +414,9 @@ EndFunc   ;==>RemoveAllSoftwareKeyList
 
 Func RemoveUninstallStringWithSearch($list)
 	Dim $ToolsCpt
+	Dim $KPDebug
+
+	If $KPDebug Then logMessage("[I] RemoveUninstallStringWithSearch")
 
 	For $i = 1 To UBound($list) - 1
 		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])

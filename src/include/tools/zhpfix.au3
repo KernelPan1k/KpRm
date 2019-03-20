@@ -11,7 +11,7 @@ Func LoadZHPFix()
 	Local Const $reg2 = "(?i)^ZHPFix.*\.(exe|txt|lnk)$"
 
 	Local Const $arr1[1][2] = [[$ZhpFixExistCpt, $reg1]]
-	Local Const $arr2[1][4] = [[$ZhpFixExistCpt, 'file', $desciptionPattern, $reg2]]
+	Local Const $arr2[1][5] = [[$ZhpFixExistCpt, 'file', $desciptionPattern, $reg2, False]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
