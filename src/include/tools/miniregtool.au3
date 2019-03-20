@@ -13,9 +13,9 @@ Func LoadMiniRegTool()
 	Local Const $reg4 = "(?i)^MiniRegTool"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2]]
-	Local Const $arr3[1][4] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3]]
-	Local Const $arr4[1][4] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg4]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, False]]
+	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg4, False]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)

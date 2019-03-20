@@ -49,6 +49,7 @@ EndIf
 ;~ #include "lib\Permissions.au3"
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
+#include "lib\Permissions.au3"
 #include "include\check_before.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
