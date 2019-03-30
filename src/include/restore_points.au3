@@ -10,7 +10,7 @@ Func ClearRestorePoint()
 		Return Null
 	EndIf
 
-	Local $errors[1][3] = [[Null, Null, Null]]
+	Local $errors[1][2] = [[Null, Null]]
 
 	For $i = 1 To $aRP[0][0]
 		Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
@@ -18,8 +18,11 @@ Func ClearRestorePoint()
 
 		If $status = 1 Then
 			logMessage("    => [OK] RP named " & $aRP[$i][1] & " has been successfully deleted")
+		ElseIf UBound($aRP[$i]) = 3 Then
+			Local $error[1][2] = [[$aRP[$i][0], $aRP[$i][1]]]
+			_ArrayAdd($errors, $error)
 		Else
-			_ArrayAdd($errors, $aRP[$i])
+			logMessage("    => [X] RP named " & $aRP[$i][1] & " has not been successfully deleted")
 		EndIf
 	Next
 
