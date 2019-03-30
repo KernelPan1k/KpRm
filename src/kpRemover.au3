@@ -79,6 +79,8 @@ Global $ProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
+guictrlsetstate ($RemoveTools, 1)
+
 Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
 Local Const $RunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
 
@@ -119,7 +121,7 @@ Func Init()
 	logMessage("#################################################################################################################" & @CRLF)
 	logMessage("# Run at " & _Now())
 	logMessage("# Run by " & @UserName & " in " & @ComputerName)
-	logMessage("# Launch fom " & @WorkingDir)
+	logMessage("# Launch from " & @WorkingDir)
 
 	ProgressBarInit()
 EndFunc   ;==>Init
