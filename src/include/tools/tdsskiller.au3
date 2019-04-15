@@ -7,7 +7,7 @@ Func LoadTDSSKiller()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = Null
+	Local Const $descriptionPattern = "(?i)^.*Kaspersky"
 	Local Const $reg1 = "(?i)^tdsskiller.*\.exe$"
 	Local Const $reg2 = "(?i)^tdsskiller.*\.(exe|zip)$"
 	Local Const $reg3 = "(?i)^TDSSKiller.*_log\.txt$"

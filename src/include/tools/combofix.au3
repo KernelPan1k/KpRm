@@ -6,7 +6,7 @@ Func LoadCombofix()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = "(?i)^Combofix"
+	Local Const $descriptionPattern = "(?i)^Swearware"
 	Local Const $reg1 = "(?i)^Combofix.*\.exe$"
 	Local Const $reg2 = "(?i)^CFScript\.txt$"
 	Local Const $reg3 = "(?i)^Qoobox$"

@@ -50,6 +50,14 @@ Func ClearRestorePoint()
 
 EndFunc   ;==>ClearRestorePoint
 
+Func CreateSystemRestorePoint($n)
+    Local $obj = ObjGet("winmgmts:{impersonationLevel=impersonate}!root/default:SystemRestore")
+    $obj.Enable("")
+    Local Const $return = $obj.CreateRestorePoint($n, 12, 100)
+
+	Return $return
+EndFunc
+
 
 Func CreateRestorePoint($retry = False)
 	If $retry = False Then
@@ -75,16 +83,9 @@ Func CreateRestorePoint($retry = False)
 		logMessage("  [OK] System Restore enabled successfully")
 	EndIf
 
-	Local Const $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
+	Local Const $createdPointStatus = CreateSystemRestorePoint($ProgramName)
 
-	Local $nbr = 50
-
-	Do
-		Sleep(250)
-		$nbr -= 1
-	Until $createdPointStatus = 0 Or $createdPointStatus = 1 Or $nbr = 0
-
-	If $createdPointStatus = 0 Or $nbr = 0 Then
+	If $createdPointStatus <> 0 Then
 		logMessage("  [X] Failed to create System Restore Point!")
 
 		If $retry = False Then
@@ -92,7 +93,7 @@ Func CreateRestorePoint($retry = False)
 			Return
 		EndIf
 
-	ElseIf $createdPointStatus = 1 Then
+	ElseIf $createdPointStatus = 0 Then
 		logMessage("  [OK] System Restore Point successfully created")
 	EndIf
 

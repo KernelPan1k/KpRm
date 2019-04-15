@@ -7,7 +7,7 @@ Func LoadQuickDiag()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = "(?i)^QuickDiag"
+	Local Const $descriptionPattern = "(?i)^SosVirus"
 	Local Const $reg1 = "(?i)^QuickDiag.*\.exe$"
 	Local Const $reg2 = "(?i)^QuickDiag.*\.(exe|txt)$"
 	Local Const $reg3 = "(?i)^QuickScript.*\.txt$"
@@ -16,7 +16,7 @@ Func LoadQuickDiag()
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, True]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, True]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, True]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, True]]
 	Local Const $arr5[1][5] = [[$ToolExistCpt, 'folder', Null, $reg5, True]]
 

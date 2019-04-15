@@ -6,7 +6,7 @@ Func LoadMiniToolBox()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = "(?i)^MiniToolBox"
+	Local Const $descriptionPattern = "(?i)^Farbar"
 	Local Const $reg1 = "(?i)^MiniToolBox.*\.exe$"
 	Local Const $reg2 = "(?i)^MTB\.txt$"
 

@@ -10,13 +10,14 @@ Func LoadRemediateVbsWorm()
 	Dim $KPRemoveSoftwareKeyList
 
 	Local Const $descriptionPattern = "(?i).*VBS autorun worms.*"
+	Local Const $companyPattern = Null
 	Local Const $reg1 = "(?i)^remediate.?vbs.?worm.*\.exe$"
 	Local Const $reg2 = "(?i)^Rem-VBS.*\.log$"
-	Local Const $reg3 = "(?i)^Rem-VBSqt"
+	Local Const $reg3 = "(?i)^Rem-VBS"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg2, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg3, True]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
