@@ -1,6 +1,6 @@
 
 Func LoadZHPCleaner()
-	Local Const $desciptionPattern = "(?i)^ZHPCleaner"
+	Local Const $desciptionPattern = Null
 	Local Const $ToolExistCpt = "zhpcleaner"
 
 	Dim $KPRemoveProcessList

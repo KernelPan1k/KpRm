@@ -9,7 +9,7 @@ Func LoadBlitzBlank()
 	Dim $KPRemoveDesktopCommonList
 	Dim $KPRemoveSoftwareKeyList
 
-	Local Const $descriptionPattern = "(?i)^BlitzBlank"
+	Local Const $descriptionPattern = "(?i)^Emsi"
 	Local Const $reg1 = "(?i)^BlitzBlank.*\.exe$"
 	Local Const $reg2 = "(?i)^BlitzBlank.*\.log$"
 

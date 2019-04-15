@@ -6,11 +6,13 @@ Func LoadOTM()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
+	Local Const $descriptionPattern = "(?i)^OldTimer"
+
 	Local Const $reg1 = "(?i)^OTM.*\.exe$"
 	Local Const $reg2 = "(?i)^_OTM$"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', Null, $reg1, False]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'folder', Null, $reg2, True]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)

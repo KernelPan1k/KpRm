@@ -36,11 +36,11 @@ Func RemoveFile($file, $descriptionPattern = Null, $force = False)
 
 	If $iFileExists Then
 		If $descriptionPattern And StringRegExp($file, "(?i)\.exe$") Then
-			Local Const $fileDescription = FileGetVersion($file, "FileDescription")
+			Local Const $companyName = FileGetVersion($file, "CompanyName")
 
 			If @error Then
 				Return 0
-			ElseIf Not StringRegExp($fileDescription, $descriptionPattern) Then
+			ElseIf Not StringRegExp($companyName, $descriptionPattern) Then
 				Return 0
 			EndIf
 		EndIf

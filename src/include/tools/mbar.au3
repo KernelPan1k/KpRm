@@ -1,6 +1,7 @@
 
 Func LoadMBAR($retry = False)
 	Local Const $descriptionPattern = "(?i)^Malwarebytes Anti-Rootkit$"
+	Local Const $companyPattern = "(?i)^Malwarebytes"
 	Local Const $ToolExistCpt = "mbar"
 
 	Dim $KPRemoveProcessList
@@ -13,7 +14,7 @@ Func LoadMBAR($retry = False)
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
 	Local Const $arr2[1][2] = [[$ToolExistCpt, $descriptionPattern]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern,  $reg1, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern,  $reg1, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern,  $reg2, False]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)

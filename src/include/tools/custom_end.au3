@@ -33,7 +33,7 @@ Func CustomEnd()
 ;~ 	MBAR
 
 	If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
-		$FileList = _FileListToArray(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
+		Local $FileList = _FileListToArray(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
 
 		If @error = 0 Then
 			For $i = 1 To $FileList[0]

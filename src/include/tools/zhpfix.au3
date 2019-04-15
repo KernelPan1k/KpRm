@@ -1,6 +1,6 @@
 
 Func LoadZHPFix()
-	Local Const $desciptionPattern = "(?i)^ZHPFix"
+	Local Const $desciptionPattern = Null
 	Local Const $ZhpFixExistCpt = "zhpfix"
 
 	Dim $KPRemoveProcessList

@@ -11,6 +11,7 @@ Func LoadUSBFIX()
 	Dim $KPRemoveProgramFilesList
 
 	Local Const $descriptionPattern = "(?i)^UsbFix"
+	Local Const $companyPattern = "(?i)^SosVirus"
 	Local Const $reg1 = "(?i)^UsbFix.*\.(exe|lnk|txt)$"
 	Local Const $reg2 = "(?i)^Un-UsbFix.exe$"
 	Local Const $reg3 = "(?i)^UsbFixQuarantine$"
@@ -19,7 +20,7 @@ Func LoadUSBFIX()
 	Local Const $arr0[1][2] = [[$ToolExistCpt, $reg4]]
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $descriptionPattern]]
 	Local Const $arr2[1][3] = [[$ToolExistCpt, $descriptionPattern, $reg2]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', Null, $reg3, True]]
 	Local Const $arr5[1][5] = [[$ToolExistCpt, 'folder', Null, $descriptionPattern, False]]
 
