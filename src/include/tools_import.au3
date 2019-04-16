@@ -99,7 +99,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/quickdiag.au3"
 #include "tools/custom_end.au3"
 
-Func RunRemoveTools()
+Func RunRemoveTools($retry = False)
 	logMessage(@CRLF & "- Search Tools -" & @CRLF)
 
 	RemoveAllProcess($KPRemoveProcessList)
@@ -148,7 +148,9 @@ Func RunRemoveTools()
 	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonStartMenuFolderList)
 	ProgressBarUpdate()
 
-	CustomEnd()
+	If $retry = True Then
+		CustomEnd()
+	EndIf
 
 	ProgressBarUpdate()
 
