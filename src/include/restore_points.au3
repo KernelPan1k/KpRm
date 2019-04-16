@@ -50,13 +50,44 @@ Func ClearRestorePoint()
 
 EndFunc   ;==>ClearRestorePoint
 
-Func CreateSystemRestorePoint($n)
-    Local $obj = ObjGet("winmgmts:{impersonationLevel=impersonate}!root/default:SystemRestore")
-    $obj.Enable("")
-    Local Const $return = $obj.CreateRestorePoint($n, 12, 100)
+Func convertDate($dtmDate)
+	Local $y = StringLeft($dtmDate, 4)
+	Local $m = StringMid($dtmDate, 6, 2)
+	Local $d = StringMid($dtmDate, 9, 2)
+	Local $t = StringRight($dtmDate, 8)
 
-	Return $return
-EndFunc
+	Return $m & "/" & $d & "/" & $y & " " & $t
+EndFunc   ;==>convertDate
+
+Func ClearDayRestorePoint($retry = False)
+	Local Const $aRP = _SR_EnumRestorePoints()
+
+	If $aRP[0][0] = 0 Then
+		Return Null
+	EndIf
+
+	Local Const $in24h = convertDate(_DateAdd('h', -25, _NowCalc()))
+
+	For $i = 1 To $aRP[0][0]
+		Local $dateCreated = $aRP[$i][2]
+
+		If $dateCreated > $in24h Then
+			Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
+
+			If $status = 1 Then
+				logMessage("    => [OK] RP named " & $aRP[$i][1] & " has been successfully deleted")
+				Return True
+			ElseIf $retry = False Then
+				Sleep(3000)
+				ClearDayRestorePoint(True)
+			Else
+				logMessage("  [X] Failure when deleting restore point " & $aRP[$i][1])
+				Return False
+			EndIf
+		EndIf
+	Next
+
+EndFunc   ;==>ClearDayRestorePoint
 
 
 Func CreateRestorePoint($retry = False)
@@ -83,9 +114,10 @@ Func CreateRestorePoint($retry = False)
 		logMessage("  [OK] System Restore enabled successfully")
 	EndIf
 
-	Local Const $createdPointStatus = CreateSystemRestorePoint($ProgramName)
+	ClearDayRestorePoint()
+	Local Const $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
 
-	If $createdPointStatus <> 0 Then
+	If $createdPointStatus <> 1 Then
 		logMessage("  [X] Failed to create System Restore Point!")
 
 		If $retry = False Then
@@ -93,7 +125,7 @@ Func CreateRestorePoint($retry = False)
 			Return
 		EndIf
 
-	ElseIf $createdPointStatus = 0 Then
+	ElseIf $createdPointStatus = 1 Then
 		logMessage("  [OK] System Restore Point successfully created")
 	EndIf
 
