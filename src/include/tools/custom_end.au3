@@ -27,7 +27,7 @@ Func CustomEnd()
 
 		Local $task = 'schtasks /create /f /tn "kprm-zhp-appdata" /tr ' & @HomeDrive & "\KPRM\kprm-zhp-appdata.bat" & ' /sc MINUTE /mo 5  /st 00:01 /sd ' & $tasksDate & ' /ed ' & $tasksEnd & ' /RU SYSTEM'
 
-		Run($task)
+		Run($task,  @TempDir, @SW_HIDE)
 	EndIf
 
 ;~ 	MBAR

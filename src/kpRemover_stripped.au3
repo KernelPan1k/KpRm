@@ -2435,15 +2435,18 @@ Local Const $9j = Null
 Local Const $ad = "(?i)^zoek.*\.exe$"
 Local Const $ae = "(?i)^zoek.*\.log$"
 Local Const $af = "(?i)^zoek"
+Local Const $ag = "(?i)^runcheck.*\.txt$"
 Local Const $ah[1][2] = [[$aa, $ad]]
 Local Const $ai[1][5] = [[$aa, 'file', $9j, $ad, False]]
 Local Const $aj[1][5] = [[$aa, 'file', $9j, $ae, False]]
 Local Const $ak[1][5] = [[$aa, 'folder', $9j, $af, True]]
+Local Const $aq[1][5] = [[$aa, 'file', $9j, $ag, False]]
 _vv($90, $ah)
 _vv($91, $ai)
 _vv($93, $ai)
 _vv($95, $aj)
 _vv($95, $ak)
+_vv($95, $aq)
 EndFunc
 _119()
 Func _11a()
@@ -2532,7 +2535,7 @@ Local $aw = _3f(_31('y', 1, _3q()), 2)
 $aw = StringReplace($aw, ".", "/")
 $aw = StringReplace($aw, "-", "/")
 Local $ax = 'schtasks /create /f /tn "kprm-zhp-appdata" /tr ' & @HomeDrive & "\KPRM\kprm-zhp-appdata.bat" & ' /sc MINUTE /mo 5  /st 00:01 /sd ' & $av & ' /ed ' & $aw & ' /RU SYSTEM'
-Run($ax)
+Run($ax, @TempDir, @SW_HIDE)
 EndIf
 If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
 Local $ay = _x1(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
@@ -2547,7 +2550,7 @@ For $az = 0 To UBound($9n) - 1
 _106($9n[$az])
 Next
 EndFunc
-Func _11e()
+Func _11e($8m = False)
 _zi(@CRLF & "- Search Tools -" & @CRLF)
 _10b($90)
 _zs()
@@ -2581,7 +2584,9 @@ _10g($98)
 _zs()
 _105(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $9c)
 _zs()
+If $8m = True Then
 _11d()
+EndIf
 _zs()
 For $8y = 0 To UBound($8x) - 1
 Local $8z = $8w.Item($8x[$8y])
@@ -2596,7 +2601,7 @@ EndIf
 Next
 _zs()
 EndFunc
-FileInstall("C:\Users\test\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 Global $8p = "KpRm"
 Global $9g = False
 Global $7v = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
@@ -2650,7 +2655,7 @@ EndIf
 _zs()
 If GUICtrlRead($b2) = $1 Then
 _11e()
-_11e()
+_11e(True)
 Else
 _zs(32)
 EndIf
