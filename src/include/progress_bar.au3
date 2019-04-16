@@ -1,9 +1,9 @@
-Local $nbrTask = 23
+Local $nbrTask = 39
 Local $currentNbrTask
 Local Const $taskStep = Floor(100 / $nbrTask)
 
-Func ProgressBarUpdate()
-	$currentNbrTask += 1
+Func ProgressBarUpdate($nbr = 1)
+	$currentNbrTask += $nbr
 	Dim $ProgressBar
 	GUICtrlSetData($ProgressBar, $currentNbrTask * $taskStep)
 

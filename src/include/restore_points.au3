@@ -115,6 +115,9 @@ Func CreateRestorePoint($retry = False)
 	EndIf
 
 	ClearDayRestorePoint()
+
+	Sleep(1000)
+
 	Local Const $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
 
 	If $createdPointStatus <> 1 Then
