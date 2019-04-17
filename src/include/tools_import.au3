@@ -100,7 +100,9 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)
-	logMessage(@CRLF & "- Search Tools -" & @CRLF)
+	If $retry = True Then
+		logMessage(@CRLF & "- Search Tools -" & @CRLF)
+	EndIf
 
 	RemoveAllProcess($KPRemoveProcessList)
 	ProgressBarUpdate()
