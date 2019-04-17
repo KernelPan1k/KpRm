@@ -151,22 +151,23 @@ Func RunRemoveTools($retry = False)
 	If $retry = True Then
 		CustomEnd()
 
-		ProgressBarUpdate()
 
-		For $ti = 0 To UBound($allToolsList) - 1
-			Local $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
+	ProgressBarUpdate()
 
-			If $toolsValue[0] > 0 Then
-				If $toolsValue[1] = "" Then
-					logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
-				Else
-					logMessage(@CRLF & "  [X] " & StringUpper($allToolsList[$ti]) & " was found but there were errors :")
-					logMessage($toolsValue[1])
-				EndIf
+
+	For $ti = 0 To UBound($allToolsList) - 1
+		Local $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
+
+		If $toolsValue[0] > 0 Then
+			If $toolsValue[1] = "" Then
+				logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
+			Else
+				logMessage(@CRLF & "  [X] " & StringUpper($allToolsList[$ti]) & " was found but there were errors :")
+				logMessage($toolsValue[1])
 			EndIf
-		Next
-	Else
-		ProgressBarUpdate()
+		EndIf
+	Next
+
 	EndIf
 
 	ProgressBarUpdate()
