@@ -882,432 +882,414 @@ Return SetError(@error, 0, $2g)
 EndFunc
 Global $57 = Null, $58 = Null
 Global $59 = EnvGet('SystemDrive') & '\'
-Func _y1($5a)
-Local Const $5b = 64
-#forceref $5b
-Local Const $5c = 256
-Local Const $5d = 100
-Local Const $5e = 12
-Local $5f = DllStructCreate('DWORD dwEventType;DWORD dwRestorePtType;INT64 llSequenceNumber;WCHAR szDescription[' & $5c & ']')
-DllStructSetData($5f, 'dwEventType', $5d)
-DllStructSetData($5f, 'dwRestorePtType', $5e)
-DllStructSetData($5f, 'llSequenceNumber', 0)
-DllStructSetData($5f, 'szDescription', $5a)
-Local $5g = DllStructGetPtr($5f)
-Local $5h = DllStructCreate('UINT  nStatus;INT64 llSequenceNumber')
-Local $5i = DllStructGetPtr($5h)
-Local $q = DllCall('SrClient.dll', 'BOOL', 'SRSetRestorePointW', 'ptr', $5g, 'ptr', $5i)
-If @error Then Return 0
-Return $q[0]
-EndFunc
 Func _y2()
-Local $5j[1][3], $5k = 0
-$5j[0][0] = $5k
+Local $5a[1][3], $5b = 0
+$5a[0][0] = $5b
 If Not IsObj($58) Then $58 = ObjGet("winmgmts:root/default")
-If Not IsObj($58) Then Return $5j
-Local $5l = $58.InstancesOf("SystemRestore")
-If Not IsObj($5l) Then Return $5j
-For $5m In $5l
-$5k += 1
-ReDim $5j[$5k + 1][3]
-$5j[$5k][0] = $5m.SequenceNumber
-$5j[$5k][1] = $5m.Description
-$5j[$5k][2] = _y3($5m.CreationTime)
+If Not IsObj($58) Then Return $5a
+Local $5c = $58.InstancesOf("SystemRestore")
+If Not IsObj($5c) Then Return $5a
+For $5d In $5c
+$5b += 1
+ReDim $5a[$5b + 1][3]
+$5a[$5b][0] = $5d.SequenceNumber
+$5a[$5b][1] = $5d.Description
+$5a[$5b][2] = _y3($5d.CreationTime)
 Next
-$5j[0][0] = $5k
-Return $5j
+$5a[0][0] = $5b
+Return $5a
 EndFunc
-Func _y3($5n)
-Return(StringMid($5n, 5, 2) & "/" & StringMid($5n, 7, 2) & "/" & StringLeft($5n, 4) & " " & StringMid($5n, 9, 2) & ":" & StringMid($5n, 11, 2) & ":" & StringMid($5n, 13, 2))
+Func _y3($5e)
+Return(StringMid($5e, 5, 2) & "/" & StringMid($5e, 7, 2) & "/" & StringLeft($5e, 4) & " " & StringMid($5e, 9, 2) & ":" & StringMid($5e, 11, 2) & ":" & StringMid($5e, 13, 2))
 EndFunc
-Func _y4($5o)
-Local $q = DllCall('SrClient.dll', 'DWORD', 'SRRemoveRestorePoint', 'DWORD', $5o)
+Func _y4($5f)
+Local $q = DllCall('SrClient.dll', 'DWORD', 'SRRemoveRestorePoint', 'DWORD', $5f)
 If @error Then Return SetError(1, 0, 0)
 If $q[0] = 0 Then Return 1
 Return SetError(1, 0, 0)
 EndFunc
-Func _y6($5p = $59)
+Func _y6($5g = $59)
 If Not IsObj($57) Then $57 = ObjGet("winmgmts:{impersonationLevel=impersonate}!root/default:SystemRestore")
 If Not IsObj($57) Then Return 0
-If $57.Enable($5p) = 0 Then Return 1
+If $57.Enable($5g) = 0 Then Return 1
 Return 0
 EndFunc
-Global Enum $5q = 0, $5r, $5s, $5t, $5u, $5v, $5w, $5x, $5y, $5z, $60, $61, $62
-Global Const $63 = 2
-Global $64 = @SystemDir&'\Advapi32.dll'
-Global $65 = @SystemDir&'\Kernel32.dll'
-Global $66[4][2], $67[4][2]
-Global $68 = 0
+Global Enum $5h = 0, $5i, $5j, $5k, $5l, $5m, $5n, $5o, $5p, $5q, $5r, $5s, $5t
+Global Const $5u = 2
+Global $5v = @SystemDir&'\Advapi32.dll'
+Global $5w = @SystemDir&'\Kernel32.dll'
+Global $5x[4][2], $5y[4][2]
+Global $5z = 0
 Func _y9()
-$64 = DllOpen(@SystemDir&'\Advapi32.dll')
-$65 = DllOpen(@SystemDir&'\Kernel32.dll')
-$66[0][0] = "SeRestorePrivilege"
-$66[0][1] = 2
-$66[1][0] = "SeTakeOwnershipPrivilege"
-$66[1][1] = 2
-$66[2][0] = "SeDebugPrivilege"
-$66[2][1] = 2
-$66[3][0] = "SeSecurityPrivilege"
-$66[3][1] = 2
-$67 = _zh($66)
-$68 = 1
+$5v = DllOpen(@SystemDir&'\Advapi32.dll')
+$5w = DllOpen(@SystemDir&'\Kernel32.dll')
+$5x[0][0] = "SeRestorePrivilege"
+$5x[0][1] = 2
+$5x[1][0] = "SeTakeOwnershipPrivilege"
+$5x[1][1] = 2
+$5x[2][0] = "SeDebugPrivilege"
+$5x[2][1] = 2
+$5x[3][0] = "SeSecurityPrivilege"
+$5x[3][1] = 2
+$5y = _zh($5x)
+$5z = 1
 EndFunc
-Func _yf($69, $6a = $5r, $6b = 'Administrators', $6c = 1)
-Local $6d[1][3]
-$6d[0][0] = 'Everyone'
-$6d[0][1] = 1
-$6d[0][2] = $l
-Return _yi($69, $6d, $6a, $6b, 1, $6c)
+Func _yf($60, $61 = $5i, $62 = 'Administrators', $63 = 1)
+Local $64[1][3]
+$64[0][0] = 'Everyone'
+$64[0][1] = 1
+$64[0][2] = $l
+Return _yi($60, $64, $61, $62, 1, $63)
 EndFunc
-Func _yi($69, $6e, $6a = $5r, $6b = '', $6f = 0, $6c = 0, $6g = 3)
-If $68 = 0 Then _y9()
-If Not IsArray($6e) Or UBound($6e,2) < 3 Then Return SetError(1,0,0)
-Local $6h = _yn($6e,$6g)
-Local $6i = @extended
-Local $6j = 4, $6k = 0
-If $6b <> '' Then
-If Not IsDllStruct($6b) Then $6b = _za($6b)
-$6k = DllStructGetPtr($6b)
-If $6k And _zg($6k) Then
-$6j = 5
+Func _yi($60, $65, $61 = $5i, $62 = '', $66 = 0, $63 = 0, $67 = 3)
+If $5z = 0 Then _y9()
+If Not IsArray($65) Or UBound($65,2) < 3 Then Return SetError(1,0,0)
+Local $68 = _yn($65,$67)
+Local $69 = @extended
+Local $6a = 4, $6b = 0
+If $62 <> '' Then
+If Not IsDllStruct($62) Then $62 = _za($62)
+$6b = DllStructGetPtr($62)
+If $6b And _zg($6b) Then
+$6a = 5
 Else
-$6k = 0
+$6b = 0
 EndIf
 EndIf
-If Not IsPtr($69) And $6a = $5r Then
-Return _yv($69, $6h, $6k, $6f, $6c, $6i, $6j)
-ElseIf Not IsPtr($69) And $6a = $5u Then
-Return _yw($69, $6h, $6k, $6f, $6c, $6i, $6j)
+If Not IsPtr($60) And $61 = $5i Then
+Return _yv($60, $68, $6b, $66, $63, $69, $6a)
+ElseIf Not IsPtr($60) And $61 = $5l Then
+Return _yw($60, $68, $6b, $66, $63, $69, $6a)
 Else
-If $6f Then _yx($69,$6a)
-Return _yo($69, $6a, $6j, $6k, 0, $6h,0)
+If $66 Then _yx($60,$61)
+Return _yo($60, $61, $6a, $6b, 0, $68,0)
 EndIf
 EndFunc
-Func _yn(ByRef $6e, ByRef $6g)
-Local $6l = UBound($6e,2)
-If Not IsArray($6e) Or $6l < 3 Then Return SetError(1,0,0)
-Local $6m = UBound($6e), $6n[$6m], $6o = 0, $6p = 1
-Local $6q, $6i = 0, $6r
-Local $6s, $6t = 'DWORD;DWORD;DWORD;ptr;DWORD;DWORD;DWORD;ptr'
-For $3x = 1 To $6m - 1
-$6t &= ';DWORD;DWORD;DWORD;ptr;DWORD;DWORD;DWORD;ptr'
+Func _yn(ByRef $65, ByRef $67)
+Local $6c = UBound($65,2)
+If Not IsArray($65) Or $6c < 3 Then Return SetError(1,0,0)
+Local $6d = UBound($65), $6e[$6d], $6f = 0, $6g = 1
+Local $6h, $69 = 0, $6i
+Local $6j, $6k = 'DWORD;DWORD;DWORD;ptr;DWORD;DWORD;DWORD;ptr'
+For $3x = 1 To $6d - 1
+$6k &= ';DWORD;DWORD;DWORD;ptr;DWORD;DWORD;DWORD;ptr'
 Next
-$6s = DllStructCreate($6t)
-For $3x = 0 To $6m -1
-If Not IsDllStruct($6e[$3x][0]) Then $6e[$3x][0] = _za($6e[$3x][0])
-$6n[$3x] = DllStructGetPtr($6e[$3x][0])
-If Not _zg($6n[$3x]) Then ContinueLoop
-DllStructSetData($6s,$6o+1,$6e[$3x][2])
-If $6e[$3x][1] = 0 Then
-$6i = 1
-$6q = $8
+$6j = DllStructCreate($6k)
+For $3x = 0 To $6d -1
+If Not IsDllStruct($65[$3x][0]) Then $65[$3x][0] = _za($65[$3x][0])
+$6e[$3x] = DllStructGetPtr($65[$3x][0])
+If Not _zg($6e[$3x]) Then ContinueLoop
+DllStructSetData($6j,$6f+1,$65[$3x][2])
+If $65[$3x][1] = 0 Then
+$69 = 1
+$6h = $8
 Else
-$6q = $7
+$6h = $7
 EndIf
-If $6l > 3 Then $6g = $6e[$3x][3]
-DllStructSetData($6s,$6o+2,$6q)
-DllStructSetData($6s,$6o+3,$6g)
-DllStructSetData($6s,$6o+6,0)
-$6r = DllCall($64,'BOOL','LookupAccountSid','ptr',0,'ptr',$6n[$3x],'ptr*',0,'dword*',32,'ptr*',0,'dword*',32,'dword*',0)
-If Not @error Then $6p = $6r[7]
-DllStructSetData($6s,$6o+7,$6p)
-DllStructSetData($6s,$6o+8,$6n[$3x])
-$6o += 8
+If $6c > 3 Then $67 = $65[$3x][3]
+DllStructSetData($6j,$6f+2,$6h)
+DllStructSetData($6j,$6f+3,$67)
+DllStructSetData($6j,$6f+6,0)
+$6i = DllCall($5v,'BOOL','LookupAccountSid','ptr',0,'ptr',$6e[$3x],'ptr*',0,'dword*',32,'ptr*',0,'dword*',32,'dword*',0)
+If Not @error Then $6g = $6i[7]
+DllStructSetData($6j,$6f+7,$6g)
+DllStructSetData($6j,$6f+8,$6e[$3x])
+$6f += 8
 Next
-Local $6u = DllStructGetPtr($6s)
-$6r = DllCall($64,'DWORD','SetEntriesInAcl','ULONG',$6m,'ptr',$6u ,'ptr',0,'ptr*',0)
-If @error Or $6r[0] Then Return SetError(1,0,0)
-Return SetExtended($6i, $6r[4])
+Local $6l = DllStructGetPtr($6j)
+$6i = DllCall($5v,'DWORD','SetEntriesInAcl','ULONG',$6d,'ptr',$6l ,'ptr',0,'ptr*',0)
+If @error Or $6i[0] Then Return SetError(1,0,0)
+Return SetExtended($69, $6i[4])
 EndFunc
-Func _yo($69, $6a, $6j, $6k = 0, $6v = 0, $6h = 0, $6w = 0)
-Local $6r
-If $68 = 0 Then _y9()
-If $6h And Not _yp($6h) Then Return 0
-If $6w And Not _yp($6w) Then Return 0
-If IsPtr($69) Then
-$6r = DllCall($64,'dword','SetSecurityInfo','handle',$69,'dword',$6a, 'dword',$6j,'ptr',$6k,'ptr',$6v,'ptr',$6h,'ptr',$6w)
+Func _yo($60, $61, $6a, $6b = 0, $6m = 0, $68 = 0, $6n = 0)
+Local $6i
+If $5z = 0 Then _y9()
+If $68 And Not _yp($68) Then Return 0
+If $6n And Not _yp($6n) Then Return 0
+If IsPtr($60) Then
+$6i = DllCall($5v,'dword','SetSecurityInfo','handle',$60,'dword',$61, 'dword',$6a,'ptr',$6b,'ptr',$6m,'ptr',$68,'ptr',$6n)
 Else
-If $6a = $5u Then $69 = _zb($69)
-$6r = DllCall($64,'dword','SetNamedSecurityInfo','str',$69,'dword',$6a, 'dword',$6j,'ptr',$6k,'ptr',$6v,'ptr',$6h,'ptr',$6w)
+If $61 = $5l Then $60 = _zb($60)
+$6i = DllCall($5v,'dword','SetNamedSecurityInfo','str',$60,'dword',$61, 'dword',$6a,'ptr',$6b,'ptr',$6m,'ptr',$68,'ptr',$6n)
 EndIf
 If @error Then Return SetError(1,0,0)
-If $6r[0] And $6k Then
-If _z0($69, $6a,_zf($6k)) Then Return _yo($69, $6a, $6j - 1, 0, $6v, $6h, $6w)
+If $6i[0] And $6b Then
+If _z0($60, $61,_zf($6b)) Then Return _yo($60, $61, $6a - 1, 0, $6m, $68, $6n)
 EndIf
-Return SetError($6r[0] , 0, Number($6r[0] = 0))
+Return SetError($6i[0] , 0, Number($6i[0] = 0))
 EndFunc
-Func _yp($6x)
-If $6x = 0 Then Return SetError(1,0,0)
-Local $6r = DllCall($64,'bool','IsValidAcl','ptr',$6x)
-If @error Or Not $6r[0] Then Return 0
+Func _yp($6o)
+If $6o = 0 Then Return SetError(1,0,0)
+Local $6i = DllCall($5v,'bool','IsValidAcl','ptr',$6o)
+If @error Or Not $6i[0] Then Return 0
 Return 1
 EndFunc
-Func _yv($69, ByRef $6h, ByRef $6k, ByRef $6f, ByRef $6c, ByRef $6i, ByRef $6j)
-Local $6y, $6z
-If Not $6i Then
-If $6f Then _yx($69,$5r)
-$6y = _yo($69, $5r, $6j, $6k, 0, $6h,0)
+Func _yv($60, ByRef $68, ByRef $6b, ByRef $66, ByRef $63, ByRef $69, ByRef $6a)
+Local $6p, $6q
+If Not $69 Then
+If $66 Then _yx($60,$5i)
+$6p = _yo($60, $5i, $6a, $6b, 0, $68,0)
 EndIf
-If $6c Then
-Local $70 = FileFindFirstFile($69&'\*')
+If $63 Then
+Local $6r = FileFindFirstFile($60&'\*')
 While 1
-$6z = FileFindNextFile($70)
-If $6c = 1 Or $6c = 2 And @extended = 1 Then
-_yv($69&'\'&$6z, $6h, $6k, $6f, $6c, $6i,$6j)
+$6q = FileFindNextFile($6r)
+If $63 = 1 Or $63 = 2 And @extended = 1 Then
+_yv($60&'\'&$6q, $68, $6b, $66, $63, $69,$6a)
 ElseIf @error Then
 ExitLoop
-ElseIf $6c = 1 Or $6c = 3 Then
-If $6f Then _yx($69&'\'&$6z,$5r)
-_yo($69&'\'&$6z, $5r, $6j, $6k, 0, $6h,0)
+ElseIf $63 = 1 Or $63 = 3 Then
+If $66 Then _yx($60&'\'&$6q,$5i)
+_yo($60&'\'&$6q, $5i, $6a, $6b, 0, $68,0)
 EndIf
 WEnd
-FileClose($70)
+FileClose($6r)
 EndIf
-If $6i Then
-If $6f Then _yx($69,$5r)
-$6y = _yo($69, $5r, $6j, $6k, 0, $6h,0)
+If $69 Then
+If $66 Then _yx($60,$5i)
+$6p = _yo($60, $5i, $6a, $6b, 0, $68,0)
 EndIf
-Return $6y
+Return $6p
 EndFunc
-Func _yw($69, ByRef $6h, ByRef $6k, ByRef $6f, ByRef $6c, ByRef $6i, ByRef $6j)
-If $68 = 0 Then _y9()
-Local $6y, $3x = 0, $6z
-If Not $6i Then
-If $6f Then _yx($69,$5u)
-$6y = _yo($69, $5u, $6j, $6k, 0, $6h,0)
+Func _yw($60, ByRef $68, ByRef $6b, ByRef $66, ByRef $63, ByRef $69, ByRef $6a)
+If $5z = 0 Then _y9()
+Local $6p, $3x = 0, $6q
+If Not $69 Then
+If $66 Then _yx($60,$5l)
+$6p = _yo($60, $5l, $6a, $6b, 0, $68,0)
 EndIf
-If $6c Then
+If $63 Then
 While 1
 $3x += 1
-$6z = RegEnumKey($69,$3x)
+$6q = RegEnumKey($60,$3x)
 If @error Then ExitLoop
-_yw($69&'\'&$6z, $6h, $6k, $6f, $6c, $6i, $6j)
+_yw($60&'\'&$6q, $68, $6b, $66, $63, $69, $6a)
 WEnd
 EndIf
-If $6i Then
-If $6f Then _yx($69,$5u)
-$6y = _yo($69, $5u, $6j, $6k, 0, $6h,0)
+If $69 Then
+If $66 Then _yx($60,$5l)
+$6p = _yo($60, $5l, $6a, $6b, 0, $68,0)
 EndIf
-Return $6y
+Return $6p
 EndFunc
-Func _yx($69, $6a = $5r)
-If $68 = 0 Then _y9()
-Local $71 = DllStructCreate('byte[32]'), $q
-Local $6h = DllStructGetPtr($71,1)
-DllCall($64,'bool','InitializeAcl','Ptr',$6h,'dword',DllStructGetSize($71),'dword',$63)
-If IsPtr($69) Then
-$q = DllCall($64,"dword","SetSecurityInfo",'handle',$69,'dword',$6a,'dword',4,'ptr',0,'ptr',0,'ptr',$6h,'ptr',0)
+Func _yx($60, $61 = $5i)
+If $5z = 0 Then _y9()
+Local $6s = DllStructCreate('byte[32]'), $q
+Local $68 = DllStructGetPtr($6s,1)
+DllCall($5v,'bool','InitializeAcl','Ptr',$68,'dword',DllStructGetSize($6s),'dword',$5u)
+If IsPtr($60) Then
+$q = DllCall($5v,"dword","SetSecurityInfo",'handle',$60,'dword',$61,'dword',4,'ptr',0,'ptr',0,'ptr',$68,'ptr',0)
 Else
-If $6a = $5u Then $69 = _zb($69)
-DllCall($64,'DWORD','SetNamedSecurityInfo','str',$69,'dword',$6a,'DWORD',4,'ptr',0,'ptr',0,'ptr',0,'ptr',0)
-$q = DllCall($64,'DWORD','SetNamedSecurityInfo','str',$69,'dword',$6a,'DWORD',4,'ptr',0,'ptr',0,'ptr',$6h,'ptr',0)
+If $61 = $5l Then $60 = _zb($60)
+DllCall($5v,'DWORD','SetNamedSecurityInfo','str',$60,'dword',$61,'DWORD',4,'ptr',0,'ptr',0,'ptr',0,'ptr',0)
+$q = DllCall($5v,'DWORD','SetNamedSecurityInfo','str',$60,'dword',$61,'DWORD',4,'ptr',0,'ptr',0,'ptr',$68,'ptr',0)
 EndIf
 If @error Then Return SetError(@error,0,0)
 Return SetError($q[0],0,Number($q[0] = 0))
 EndFunc
-Func _z0($69, $6a = $5r, $72 = 'Administrators')
-If $68 = 0 Then _y9()
-Local $73 = _za($72), $q
-Local $6n = DllStructGetPtr($73)
-If IsPtr($69) Then
-$q = DllCall($64,"dword","SetSecurityInfo",'handle',$69,'dword',$6a,'dword',1,'ptr',$6n,'ptr',0,'ptr',0,'ptr',0)
+Func _z0($60, $61 = $5i, $6t = 'Administrators')
+If $5z = 0 Then _y9()
+Local $6u = _za($6t), $q
+Local $6e = DllStructGetPtr($6u)
+If IsPtr($60) Then
+$q = DllCall($5v,"dword","SetSecurityInfo",'handle',$60,'dword',$61,'dword',1,'ptr',$6e,'ptr',0,'ptr',0,'ptr',0)
 Else
-If $6a = $5u Then $69 = _zb($69)
-$q = DllCall($64,'DWORD','SetNamedSecurityInfo','str',$69,'dword',$6a,'DWORD',1,'ptr',$6n,'ptr',0,'ptr',0,'ptr',0)
+If $61 = $5l Then $60 = _zb($60)
+$q = DllCall($5v,'DWORD','SetNamedSecurityInfo','str',$60,'dword',$61,'DWORD',1,'ptr',$6e,'ptr',0,'ptr',0,'ptr',0)
 EndIf
 If @error Then Return SetError(@error,0,False)
 Return SetError($q[0],0,Number($q[0] = 0))
 EndFunc
-Func _za($72)
-If $72 = 'TrustedInstaller' Then $72 = 'NT SERVICE\TrustedInstaller'
-If $72 = 'Everyone' Then
+Func _za($6t)
+If $6t = 'TrustedInstaller' Then $6t = 'NT SERVICE\TrustedInstaller'
+If $6t = 'Everyone' Then
 Return _zd('S-1-1-0')
-ElseIf $72 = 'Authenticated Users' Then
+ElseIf $6t = 'Authenticated Users' Then
 Return _zd('S-1-5-11')
-ElseIf $72 = 'System' Then
+ElseIf $6t = 'System' Then
 Return _zd('S-1-5-18')
-ElseIf $72 = 'Administrators' Then
+ElseIf $6t = 'Administrators' Then
 Return _zd('S-1-5-32-544')
-ElseIf $72 = 'Users' Then
+ElseIf $6t = 'Users' Then
 Return _zd('S-1-5-32-545')
-ElseIf $72 = 'Guests' Then
+ElseIf $6t = 'Guests' Then
 Return _zd('S-1-5-32-546')
-ElseIf $72 = 'Power Users' Then
+ElseIf $6t = 'Power Users' Then
 Return _zd('S-1-5-32-547')
-ElseIf $72 = 'Local Authority' Then
+ElseIf $6t = 'Local Authority' Then
 Return _zd('S-1-2')
-ElseIf $72 = 'Creator Owner' Then
+ElseIf $6t = 'Creator Owner' Then
 Return _zd('S-1-3-0')
-ElseIf $72 = 'NT Authority' Then
+ElseIf $6t = 'NT Authority' Then
 Return _zd('S-1-5-1')
-ElseIf $72 = 'Restricted' Then
+ElseIf $6t = 'Restricted' Then
 Return _zd('S-1-5-12')
-ElseIf StringRegExp($72,'\A(S-1-\d+(-\d+){0,5})\z') Then
-Return _zd($72)
+ElseIf StringRegExp($6t,'\A(S-1-\d+(-\d+){0,5})\z') Then
+Return _zd($6t)
 Else
-Local $73 = _zc($72)
-Return _zd($73)
+Local $6u = _zc($6t)
+Return _zd($6u)
 EndIf
 EndFunc
-Func _zb($74)
-If StringInStr($74,'\\') = 1 Then
-$74 = StringRegExpReplace($74,'(?i)\\(HKEY_CLASSES_ROOT|HKCR)','\CLASSES_ROOT')
-$74 = StringRegExpReplace($74,'(?i)\\(HKEY_CURRENT_USER|HKCU)','\CURRENT_USER')
-$74 = StringRegExpReplace($74,'(?i)\\(HKEY_LOCAL_MACHINE|HKLM)','\MACHINE')
-$74 = StringRegExpReplace($74,'(?i)\\(HKEY_USERS|HKU)','\USERS')
+Func _zb($6v)
+If StringInStr($6v,'\\') = 1 Then
+$6v = StringRegExpReplace($6v,'(?i)\\(HKEY_CLASSES_ROOT|HKCR)','\CLASSES_ROOT')
+$6v = StringRegExpReplace($6v,'(?i)\\(HKEY_CURRENT_USER|HKCU)','\CURRENT_USER')
+$6v = StringRegExpReplace($6v,'(?i)\\(HKEY_LOCAL_MACHINE|HKLM)','\MACHINE')
+$6v = StringRegExpReplace($6v,'(?i)\\(HKEY_USERS|HKU)','\USERS')
 Else
-$74 = StringRegExpReplace($74,'(?i)\A(HKEY_CLASSES_ROOT|HKCR)','CLASSES_ROOT')
-$74 = StringRegExpReplace($74,'(?i)\A(HKEY_CURRENT_USER|HKCU)','CURRENT_USER')
-$74 = StringRegExpReplace($74,'(?i)\A(HKEY_LOCAL_MACHINE|HKLM)','MACHINE')
-$74 = StringRegExpReplace($74,'(?i)\A(HKEY_USERS|HKU)','USERS')
+$6v = StringRegExpReplace($6v,'(?i)\A(HKEY_CLASSES_ROOT|HKCR)','CLASSES_ROOT')
+$6v = StringRegExpReplace($6v,'(?i)\A(HKEY_CURRENT_USER|HKCU)','CURRENT_USER')
+$6v = StringRegExpReplace($6v,'(?i)\A(HKEY_LOCAL_MACHINE|HKLM)','MACHINE')
+$6v = StringRegExpReplace($6v,'(?i)\A(HKEY_USERS|HKU)','USERS')
 EndIf
-Return $74
+Return $6v
 EndFunc
-Func _zc($75, $76 = "")
-Local $77 = DllStructCreate("byte SID[256]")
-Local $6n = DllStructGetPtr($77, "SID")
-Local $2k = DllCall($64, "bool", "LookupAccountNameW", "wstr", $76, "wstr", $75, "ptr", $6n, "dword*", 256, "wstr", "", "dword*", 256, "int*", 0)
+Func _zc($6w, $6x = "")
+Local $6y = DllStructCreate("byte SID[256]")
+Local $6e = DllStructGetPtr($6y, "SID")
+Local $2k = DllCall($5v, "bool", "LookupAccountNameW", "wstr", $6x, "wstr", $6w, "ptr", $6e, "dword*", 256, "wstr", "", "dword*", 256, "int*", 0)
 If @error Then Return SetError(@error, @extended, 0)
 If Not $2k[0] Then Return 0
-Return _zf($6n)
+Return _zf($6e)
 EndFunc
-Func _zd($78)
-Local $2k = DllCall($64, "bool", "ConvertStringSidToSidW", "wstr", $78, "ptr*", 0)
+Func _zd($6z)
+Local $2k = DllCall($5v, "bool", "ConvertStringSidToSidW", "wstr", $6z, "ptr*", 0)
 If @error Then Return SetError(@error, @extended, 0)
 If Not $2k[0] Then Return 0
-Local $79 = _ze($2k[2])
-Local $3b = DllStructCreate("byte Data[" & $79 & "]", $2k[2])
-Local $7a = DllStructCreate("byte Data[" & $79 & "]")
-DllStructSetData($7a, "Data", DllStructGetData($3b, "Data"))
-DllCall($65, "ptr", "LocalFree", "ptr", $2k[2])
-Return $7a
+Local $70 = _ze($2k[2])
+Local $3b = DllStructCreate("byte Data[" & $70 & "]", $2k[2])
+Local $71 = DllStructCreate("byte Data[" & $70 & "]")
+DllStructSetData($71, "Data", DllStructGetData($3b, "Data"))
+DllCall($5w, "ptr", "LocalFree", "ptr", $2k[2])
+Return $71
 EndFunc
-Func _ze($6n)
-If Not _zg($6n) Then Return SetError(-1, 0, "")
-Local $2k = DllCall($64, "dword", "GetLengthSid", "ptr", $6n)
+Func _ze($6e)
+If Not _zg($6e) Then Return SetError(-1, 0, "")
+Local $2k = DllCall($5v, "dword", "GetLengthSid", "ptr", $6e)
 If @error Then Return SetError(@error, @extended, 0)
 Return $2k[0]
 EndFunc
-Func _zf($6n)
-If Not _zg($6n) Then Return SetError(-1, 0, "")
-Local $2k = DllCall($64, "int", "ConvertSidToStringSidW", "ptr", $6n, "ptr*", 0)
+Func _zf($6e)
+If Not _zg($6e) Then Return SetError(-1, 0, "")
+Local $2k = DllCall($5v, "int", "ConvertSidToStringSidW", "ptr", $6e, "ptr*", 0)
 If @error Then Return SetError(@error, @extended, "")
 If Not $2k[0] Then Return ""
 Local $3b = DllStructCreate("wchar Text[256]", $2k[2])
-Local $78 = DllStructGetData($3b, "Text")
-DllCall($65, "ptr", "LocalFree", "ptr", $2k[2])
-Return $78
+Local $6z = DllStructGetData($3b, "Text")
+DllCall($5w, "ptr", "LocalFree", "ptr", $2k[2])
+Return $6z
 EndFunc
-Func _zg($6n)
-Local $2k = DllCall($64, "bool", "IsValidSid", "ptr", $6n)
+Func _zg($6e)
+Local $2k = DllCall($5v, "bool", "IsValidSid", "ptr", $6e)
 If @error Then Return SetError(@error, @extended, False)
 Return $2k[0]
 EndFunc
-Func _zh($7b)
-Local $7c = UBound($7b, 0), $7d[1][2]
-If Not($7c <= 2 And UBound($7b, $7c) = 2 ) Then Return SetError(1300, 0, $7d)
-If $7c = 1 Then
-Local $7e[1][2]
-$7e[0][0] = $7b[0]
-$7e[0][1] = $7b[1]
-$7b = $7e
-$7e = 0
+Func _zh($72)
+Local $73 = UBound($72, 0), $74[1][2]
+If Not($73 <= 2 And UBound($72, $73) = 2 ) Then Return SetError(1300, 0, $74)
+If $73 = 1 Then
+Local $75[1][2]
+$75[0][0] = $72[0]
+$75[0][1] = $72[1]
+$72 = $75
+$75 = 0
 EndIf
-Local $7f, $7g = "dword", $7h = UBound($7b, 1)
+Local $76, $77 = "dword", $78 = UBound($72, 1)
 Do
-$7f += 1
-$7g &= ";dword;long;dword"
-Until $7f = $7h
-Local $7i, $7j, $7k, $7l, $7m, $7n, $7o
-$7i = DLLStructCreate($7g)
-$7j = DllStructCreate($7g)
-$7k = DllStructGetPtr($7j)
-$7l = DllStructCreate("dword;long")
-DLLStructSetData($7i, 1, $7h)
-For $3x = 0 To $7h - 1
-DllCall($64, "int", "LookupPrivilegeValue", "str", "", "str", $7b[$3x][0], "ptr", DllStructGetPtr($7l) )
-DLLStructSetData( $7i, 3 * $3x + 2, DllStructGetData($7l, 1) )
-DLLStructSetData( $7i, 3 * $3x + 3, DllStructGetData($7l, 2) )
-DLLStructSetData( $7i, 3 * $3x + 4, $7b[$3x][1] )
+$76 += 1
+$77 &= ";dword;long;dword"
+Until $76 = $78
+Local $79, $7a, $7b, $7c, $7d, $7e, $7f
+$79 = DLLStructCreate($77)
+$7a = DllStructCreate($77)
+$7b = DllStructGetPtr($7a)
+$7c = DllStructCreate("dword;long")
+DLLStructSetData($79, 1, $78)
+For $3x = 0 To $78 - 1
+DllCall($5v, "int", "LookupPrivilegeValue", "str", "", "str", $72[$3x][0], "ptr", DllStructGetPtr($7c) )
+DLLStructSetData( $79, 3 * $3x + 2, DllStructGetData($7c, 1) )
+DLLStructSetData( $79, 3 * $3x + 3, DllStructGetData($7c, 2) )
+DLLStructSetData( $79, 3 * $3x + 4, $72[$3x][1] )
 Next
-$7m = DllCall($65, "hwnd", "GetCurrentProcess")
-$7n = DllCall($64, "int", "OpenProcessToken", "hwnd", $7m[0], "dword", BitOR(0x00000020, 0x00000008), "hwnd*", 0 )
-DllCall( $64, "int", "AdjustTokenPrivileges", "hwnd", $7n[3], "int", False, "ptr", DllStructGetPtr($7i), "dword", DllStructGetSize($7i), "ptr", $7k, "dword*", 0 )
-$7o = DllCall($65, "dword", "GetLastError")
-DllCall($65, "int", "CloseHandle", "hwnd", $7n[3])
-Local $7p = DllStructGetData($7j, 1)
-If $7p > 0 Then
-Local $7q, $7r, $7s, $7d[$7p][2]
-For $3x = 0 To $7p - 1
-$7q = $7k + 12 * $3x + 4
-$7r = DllCall($64, "int", "LookupPrivilegeName", "str", "", "ptr", $7q, "ptr", 0, "dword*", 0 )
-$7s = DllStructCreate("char[" & $7r[4] & "]")
-DllCall($64, "int", "LookupPrivilegeName", "str", "", "ptr", $7q, "ptr", DllStructGetPtr($7s), "dword*", DllStructGetSize($7s) )
-$7d[$3x][0] = DllStructGetData($7s, 1)
-$7d[$3x][1] = DllStructGetData($7j, 3 * $3x + 4)
+$7d = DllCall($5w, "hwnd", "GetCurrentProcess")
+$7e = DllCall($5v, "int", "OpenProcessToken", "hwnd", $7d[0], "dword", BitOR(0x00000020, 0x00000008), "hwnd*", 0 )
+DllCall( $5v, "int", "AdjustTokenPrivileges", "hwnd", $7e[3], "int", False, "ptr", DllStructGetPtr($79), "dword", DllStructGetSize($79), "ptr", $7b, "dword*", 0 )
+$7f = DllCall($5w, "dword", "GetLastError")
+DllCall($5w, "int", "CloseHandle", "hwnd", $7e[3])
+Local $7g = DllStructGetData($7a, 1)
+If $7g > 0 Then
+Local $7h, $7i, $7j, $74[$7g][2]
+For $3x = 0 To $7g - 1
+$7h = $7b + 12 * $3x + 4
+$7i = DllCall($5v, "int", "LookupPrivilegeName", "str", "", "ptr", $7h, "ptr", 0, "dword*", 0 )
+$7j = DllStructCreate("char[" & $7i[4] & "]")
+DllCall($5v, "int", "LookupPrivilegeName", "str", "", "ptr", $7h, "ptr", DllStructGetPtr($7j), "dword*", DllStructGetSize($7j) )
+$74[$3x][0] = DllStructGetData($7j, 1)
+$74[$3x][1] = DllStructGetData($7a, 3 * $3x + 4)
 Next
 EndIf
-Return SetError($7o[0], 0, $7d)
+Return SetError($7f[0], 0, $74)
 EndFunc
 If Not IsAdmin() Then
 MsgBox(16, $4x, $4z)
 Exit
 EndIf
-Local $7t = ProcessList("mbar.exe")
-If $7t[0][0] > 0 Then
+Local $7k = ProcessList("mbar.exe")
+If $7k[0][0] > 0 Then
 MsgBox(16, $4x, $50)
 Exit
 EndIf
-Func _zi($7u)
-Dim $7v
-FileWrite(@DesktopDir & "\" & $7v, $7u & @CRLF)
-FileWrite(@HomeDrive & "\KPRM" & "\" & $7v, $7u & @CRLF)
+Func _zi($7l)
+Dim $7m
+FileWrite(@DesktopDir & "\" & $7m, $7l & @CRLF)
+FileWrite(@HomeDrive & "\KPRM" & "\" & $7m, $7l & @CRLF)
 EndFunc
 Func _zj()
-Local $7w = 100, $7x = 100, $7y = 0, $7z = @WindowsDir & "\Explorer.exe"
+Local $7n = 100, $7o = 100, $7p = 0, $7q = @WindowsDir & "\Explorer.exe"
 _hf($2t, 0, 0, 0)
-Local $80 = _d0("Shell_TrayWnd", "")
-_51($80, 1460, 0, 0)
+Local $7r = _d0("Shell_TrayWnd", "")
+_51($7r, 1460, 0, 0)
 While ProcessExists("Explorer.exe")
 Sleep(10)
-$7w -= ProcessClose("Explorer.exe") ? 0 : 1
-If $7w < 1 Then Return SetError(1, 0, 0)
+$7n -= ProcessClose("Explorer.exe") ? 0 : 1
+If $7n < 1 Then Return SetError(1, 0, 0)
 WEnd
 While(Not ProcessExists("Explorer.exe"))
-If Not FileExists($7z) Then Return SetError(-1, 0, 0)
+If Not FileExists($7q) Then Return SetError(-1, 0, 0)
 Sleep(500)
-$7y = ShellExecute($7z)
-$7x -= $7y ? 0 : 1
-If $7x < 1 Then Return SetError(2, 0, 0)
+$7p = ShellExecute($7q)
+$7o -= $7p ? 0 : 1
+If $7o < 1 Then Return SetError(2, 0, 0)
 WEnd
-Return $7y
+Return $7p
 EndFunc
-Func _zm($81, $82, $83)
+Func _zm($7s, $7t, $7u)
 Local $3x = 0
 While True
 $3x += 1
-Local $84 = RegEnumKey($81, $3x)
+Local $7v = RegEnumKey($7s, $3x)
 If @error <> 0 Then ExitLoop
-Local $85 = $81 & "\" & $84
-Local $6z = RegRead($85, $83)
-If StringRegExp($6z, $82) Then
-Return $85
+Local $7w = $7s & "\" & $7v
+Local $6q = RegRead($7w, $7u)
+If StringRegExp($6q, $7t) Then
+Return $7w
 EndIf
 WEnd
 Return Null
 EndFunc
 Func _zo()
-Local $86 = []
+Local $7x = []
 If FileExists(@HomeDrive & "\Program Files") Then
-_vv($86, @HomeDrive & "\Program Files")
+_vv($7x, @HomeDrive & "\Program Files")
 EndIf
 If FileExists(@HomeDrive & "\Program Files (x86)") Then
-_vv($86, @HomeDrive & "\Program Files (x86)")
+_vv($7x, @HomeDrive & "\Program Files (x86)")
 EndIf
 If FileExists(@HomeDrive & "\Program Files(x86)") Then
-_vv($86, @HomeDrive & "\Program Files(x86)")
+_vv($7x, @HomeDrive & "\Program Files(x86)")
 EndIf
-Return $86
+Return $7x
 EndFunc
 Func _zp($4f)
 Return Int(FileExists($4f) And StringInStr(FileGetAttrib($4f), 'D', Default, 1) = 0)
@@ -1316,314 +1298,318 @@ Func _zq($4f)
 Return Int(FileExists($4f) And StringInStr(FileGetAttrib($4f), 'D', Default, 1) > 0)
 EndFunc
 Func _zr($4f)
-Local $87 = Null
+Local $7y = Null
 If FileExists($4f) Then
-Local $88 = StringInStr(FileGetAttrib($4f), 'D', Default, 1)
-If $88 = 0 Then
-$87 = 'file'
-ElseIf $88 > 0 Then
-$87 = 'folder'
+Local $7z = StringInStr(FileGetAttrib($4f), 'D', Default, 1)
+If $7z = 0 Then
+$7y = 'file'
+ElseIf $7z > 0 Then
+$7y = 'folder'
 EndIf
 EndIf
-Return $87
+Return $7y
 EndFunc
-Local $89 = 39
-Local $8a
-Local Const $8b = Floor(100 / $89)
-Func _zs($8c = 1)
-$8a += $8c
-Dim $8d
-GUICtrlSetData($8d, $8a * $8b)
-If $8a = $89 Then
-GUICtrlSetData($8d, 100)
+Local $80 = 39
+Local $81
+Local Const $82 = Floor(100 / $80)
+Func _zs($83 = 1)
+$81 += $83
+Dim $84
+GUICtrlSetData($84, $81 * $82)
+If $81 = $80 Then
+GUICtrlSetData($84, 100)
 EndIf
 EndFunc
 Func _zt()
-$8a = 0
-Dim $8d
-GUICtrlSetData($8d, 0)
+$81 = 0
+Dim $84
+GUICtrlSetData($84, 0)
 EndFunc
 Func _zu()
 _zi(@CRLF & "- Clear All System Restore Points -" & @CRLF)
-Local Const $8e = _y2()
-Local $6y = 0
-If $8e[0][0] = 0 Then
+Local Const $85 = _y2()
+Local $6p = 0
+If $85[0][0] = 0 Then
 _zi("  [I] No system recovery points were found")
 Return Null
 EndIf
-Local $8f[1][2] = [[Null, Null]]
-For $3x = 1 To $8e[0][0]
-Local $8g = _y4($8e[$3x][0])
-$6y += $8g
-If $8g = 1 Then
-_zi("    => [OK] RP named " & $8e[$3x][1] & " has been successfully deleted")
-ElseIf UBound($8e[$3x]) = 3 Then
-Local $8h[1][2] = [[$8e[$3x][0], $8e[$3x][1]]]
-_vv($8f, $8h)
+Local $86[1][2] = [[Null, Null]]
+For $3x = 1 To $85[0][0]
+Local $87 = _y4($85[$3x][0])
+$6p += $87
+If $87 = 1 Then
+_zi("    => [OK] RP named " & $85[$3x][1] & " has been successfully deleted")
+ElseIf UBound($85[$3x]) = 3 Then
+Local $88[1][2] = [[$85[$3x][0], $85[$3x][1]]]
+_vv($86, $88)
 Else
-_zi("    => [X] RP named " & $8e[$3x][1] & " has not been successfully deleted")
+_zi("    => [X] RP named " & $85[$3x][1] & " has not been successfully deleted")
 EndIf
 Next
-If 1 < UBound($8f) Then
+If 1 < UBound($86) Then
 Sleep(3000)
-For $3x = 1 To UBound($8f) - 1
-Local $8g = _y4($8f[$3x][0])
-$6y += $8g
-If $8g = 1 Then
-_zi("    => [OK] RP named " & $8f[$3x][1] & " has been successfully deleted")
+For $3x = 1 To UBound($86) - 1
+Local $87 = _y4($86[$3x][0])
+$6p += $87
+If $87 = 1 Then
+_zi("    => [OK] RP named " & $86[$3x][1] & " has been successfully deleted")
 Else
-_zi("    => [X] RP named " & $8f[$3x][1] & " has not been successfully deleted")
+_zi("    => [X] RP named " & $86[$3x][1] & " has not been successfully deleted")
 EndIf
 Next
 EndIf
-If $8e[0][0] = $6y Then
+If $85[0][0] = $6p Then
 _zi("  [OK] All system restore points have been successfully deleted")
 Else
 _zi("  [X] Failure when deleting all restore points")
 EndIf
 EndFunc
-Func _zv($5n)
-Local $8i = StringLeft($5n, 4)
-Local $8j = StringMid($5n, 6, 2)
-Local $8k = StringMid($5n, 9, 2)
-Local $8l = StringRight($5n, 8)
-Return $8j & "/" & $8k & "/" & $8i & " " & $8l
+Func _zv($5e)
+Local $89 = StringLeft($5e, 4)
+Local $8a = StringMid($5e, 6, 2)
+Local $8b = StringMid($5e, 9, 2)
+Local $8c = StringRight($5e, 8)
+Return $8a & "/" & $8b & "/" & $89 & " " & $8c
 EndFunc
-Func _zw($8m = False)
-Local Const $8e = _y2()
-If $8e[0][0] = 0 Then
+Func _zw($8d = False)
+Local Const $85 = _y2()
+If $85[0][0] = 0 Then
 Return Null
 EndIf
-Local Const $8n = _zv(_31('h', -25, _3p()))
-Local $8o = False
-For $3x = 1 To $8e[0][0]
-Local $8p = $8e[$3x][2]
-If $8p > $8n Then
-Local $8g = _y4($8e[$3x][0])
-If $8g = 1 Then
-_zi("    => [OK] RP named " & $8e[$3x][1] & " has been successfully deleted")
-ElseIf $8m = False Then
-$8o = True
+Local Const $8e = _zv(_31('h', -25, _3p()))
+Local $8f = False
+For $3x = 1 To $85[0][0]
+Local $8g = $85[$3x][2]
+If $8g > $8e Then
+Local $87 = _y4($85[$3x][0])
+If $87 = 1 Then
+_zi("    => [OK] RP named " & $85[$3x][1] & " has been successfully deleted")
+ElseIf $8d = False Then
+$8f = True
 Else
-_zi("  [X] Failure when deleting restore point " & $8e[$3x][1])
+_zi("  [X] Failure when deleting restore point " & $85[$3x][1])
 EndIf
 EndIf
 Next
-If $8o = True Then
+If $8f = True Then
 Sleep(3000)
 _zw(True)
 EndIf
+Sleep(3000)
 EndFunc
-Func _zx($8m = False)
-If $8m = False Then
+Func _zx()
+RunWait('powershell Checkpoint-Computer -Description "kprm" -RestorePointType MODIFY_SETTINGS')
+Return @error
+EndFunc
+Func _zy($8d = False)
+If $8d = False Then
 _zi(@CRLF & "- Create New System Restore Point -" & @CRLF)
 Else
 _zi("  [I] Retry Create New System Restore Point")
 EndIf
-Dim $8q
-Local $8r = _y6()
-If $8r = 0 Then
+Dim $8h
+Local $8i = _y6()
+If $8i = 0 Then
 Sleep(3000)
-$8r = _y6()
-If $8r = 0 Then
+$8i = _y6()
+If $8i = 0 Then
 _zi("  [X] Failed to enable System Restore")
 EndIf
-ElseIf $8r = 1 Then
+ElseIf $8i = 1 Then
 _zi("  [OK] System Restore enabled successfully")
 EndIf
 _zw()
-Sleep(1000)
-Local Const $8s = _y1($8q)
-If $8s <> 1 Then
+Local Const $8j = _zx()
+If $8j <> 0 Then
 _zi("  [X] Failed to create System Restore Point!")
-If $8m = False Then
-_zx(True)
+If $8d = False Then
+_zy(True)
 Return
 EndIf
-ElseIf $8s = 1 Then
+ElseIf $8j = 0 Then
 _zi("  [OK] System Restore Point successfully created")
 EndIf
 EndFunc
-Func _zy()
+Func _0zz()
 _zi(@CRLF & "- Create Registry Backup -" & @CRLF)
-Local Const $8t = @HomeDrive & "\KPRM"
-Local Const $8u = $8t & "\regedit-backup-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".reg"
-If FileExists($8u) Then
-FileMove($8u, $8u & ".old")
+Local Const $8k = @HomeDrive & "\KPRM"
+Local Const $8l = $8k & "\regedit-backup-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".reg"
+If FileExists($8l) Then
+FileMove($8l, $8l & ".old")
 EndIf
-Local Const $8g = RunWait("Regedit /e " & $8u)
-If Not FileExists($8u) Or @error <> 0 Then
+Local Const $87 = RunWait("Regedit /e " & $8l)
+If Not FileExists($8l) Or @error <> 0 Then
 _zi("  [X] Failed to create registry backup")
 MsgBox(16, $4x, $4y)
 Exit
 Else
-_zi("  [OK] Registry Backup created successfully at " & $8u)
+_zi("  [OK] Registry Backup created successfully at " & $8l)
 EndIf
 EndFunc
-Func _0zz()
+Func _100()
 _zi(@CRLF & "- Restore UAC Default Value -" & @CRLF)
-Local $8g = _xr()
-If $8g = 1 Then
+Local $87 = _xr()
+If $87 = 1 Then
 _zi("  [OK] Set ConsentPromptBehaviorAdmin with default value successfully.")
 Else
 _zi("  [X] Set ConsentPromptBehaviorAdmin with default value failed")
 EndIf
-Local $8g = _xs()
-If $8g = 1 Then
+Local $87 = _xs()
+If $87 = 1 Then
 _zi("  [OK] Set ConsentPromptBehaviorUser with default value successfully.")
 Else
 _zi("  [X] Set ConsentPromptBehaviorUser with default value failed")
 EndIf
-Local $8g = _xt()
-If $8g = 1 Then
+Local $87 = _xt()
+If $87 = 1 Then
 _zi("  [OK] Set EnableInstallerDetection with default value successfully.")
 Else
 _zi("  [X] Set EnableInstallerDetection with default value failed")
 EndIf
-Local $8g = _xu()
-If $8g = 1 Then
+Local $87 = _xu()
+If $87 = 1 Then
 _zi("  [OK] Set EnableLUA with default value successfully.")
 Else
 _zi("  [X] Set EnableLUA with default value failed")
 EndIf
-Local $8g = _xv()
-If $8g = 1 Then
+Local $87 = _xv()
+If $87 = 1 Then
 _zi("  [OK] Set EnableSecureUIAPaths with default value successfully.")
 Else
 _zi("  [X] Set EnableSecureUIAPaths with default value failed")
 EndIf
-Local $8g = _xw()
-If $8g = 1 Then
+Local $87 = _xw()
+If $87 = 1 Then
 _zi("  [OK] Set EnableUIADesktopToggle with default value successfully.")
 Else
 _zi("  [X] Set EnableUIADesktopToggle with default value failed")
 EndIf
-Local $8g = _xx()
-If $8g = 1 Then
+Local $87 = _xx()
+If $87 = 1 Then
 _zi("  [OK] Set EnableVirtualization with default value successfully.")
 Else
 _zi("  [X] Set EnableVirtualization with default value failed")
 EndIf
-Local $8g = _xy()
-If $8g = 1 Then
+Local $87 = _xy()
+If $87 = 1 Then
 _zi("  [OK] Set FilterAdministratorToken with default value successfully.")
 Else
 _zi("  [X] Set FilterAdministratorToken with default value failed")
 EndIf
-Local $8g = _xz()
-If $8g = 1 Then
+Local $87 = _xz()
+If $87 = 1 Then
 _zi("  [OK] Set PromptOnSecureDesktop with default value successfully.")
 Else
 _zi("  [X] Set PromptOnSecureDesktop with default value failed")
 EndIf
-Local $8g = _y0()
-If $8g = 1 Then
+Local $87 = _y0()
+If $87 = 1 Then
 _zi("  [OK] Set ValidateAdminCodeSignatures with default value successfully.")
 Else
 _zi("  [X] Set ValidateAdminCodeSignatures with default value failed")
 EndIf
 EndFunc
-Func _100()
+Func _101()
 _zi(@CRLF & "- Restore Default System Settings -" & @CRLF)
-Local $8g = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
+Local $87 = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
 If @error <> 0 Then
 _zi("  [X] Flush DNS failure")
 Else
 _zi("  [OK] Flush DNS successfully completed")
 EndIf
-Local Const $8v[7] = [ "netsh winsock reset", "netsh winhttp reset proxy", "netsh winhttp reset tracing", "netsh winsock reset catalog", "netsh int ip reset all", "netsh int ipv4 reset catalog", "netsh int ipv6 reset catalog" ]
-$8g = 0
-For $3x = 0 To UBound($8v) -1
-RunWait(@ComSpec & " /c " & $8v[$3x], @TempDir, @SW_HIDE)
+Local Const $8m[7] = [ "netsh winsock reset", "netsh winhttp reset proxy", "netsh winhttp reset tracing", "netsh winsock reset catalog", "netsh int ip reset all", "netsh int ipv4 reset catalog", "netsh int ipv6 reset catalog" ]
+$87 = 0
+For $3x = 0 To UBound($8m) -1
+RunWait(@ComSpec & " /c " & $8m[$3x], @TempDir, @SW_HIDE)
 If @error <> 0 Then
-$8g += 1
+$87 += 1
 EndIf
 Next
-If $8g = 0 Then
+If $87 = 0 Then
 _zi("  [OK] Reset WinSock successfully completed")
 Else
 _zi("  [X] Reset WinSock failure")
 EndIf
-Local $8w = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
-$8g = RegWrite($8w, "Hidden", "REG_DWORD", "2")
-If $8g = 1 Then
+Local $8n = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+$87 = RegWrite($8n, "Hidden", "REG_DWORD", "2")
+If $87 = 1 Then
 _zi("  [OK] Hide Hidden file successfully.")
 Else
 _zi("  [X] Hide Hidden File failure")
 EndIf
-$8g = RegWrite($8w, "HideFileExt", "REG_DWORD", "1")
-If $8g = 1 Then
+$87 = RegWrite($8n, "HideFileExt", "REG_DWORD", "1")
+If $87 = 1 Then
 _zi("  [OK] Hide Extensions for known file types successfully.")
 Else
 _zi("  [X] Hide Extensions for known file types failure")
 EndIf
-$8g = RegWrite($8w, "ShowSuperHidden", "REG_DWORD", "0")
-If $8g = 1 Then
+$87 = RegWrite($8n, "ShowSuperHidden", "REG_DWORD", "0")
+If $87 = 1 Then
 _zi("  [OK] Hide protected operating system files successfully.")
 Else
 _zi("  [X] Hide protected operating system files failure")
 EndIf
 _zj()
 EndFunc
-Global $8x = ObjCreate("Scripting.Dictionary")
-Local Const $8y[32] = [ "frst", "zhpdiag", "zhpcleaner", "zhpfix", "mbar", "roguekiller", "usbfix", "adwcleaner", "adsfix", "aswmbr", "fss", "toolsdiag", "scanrapide", "otl", "otm", "listparts", "minitoolbox", "miniregtool", "zhp", "combofix", "regtoolexport", "tdsskiller", "winupdatefix", "rsthosts", "winchk", "avenger", "blitzblank", "zoek", "remediate-vbs-worm", "ckscanner", "quickdiag", "grantperms"]
-For $8z = 0 To UBound($8y) - 1
-Local $90[2] = [0, ""]
-$8x.add($8y[$8z], $90)
+Global $8o = ObjCreate("Scripting.Dictionary")
+Local Const $8p[32] = [ "frst", "zhpdiag", "zhpcleaner", "zhpfix", "mbar", "roguekiller", "usbfix", "adwcleaner", "adsfix", "aswmbr", "fss", "toolsdiag", "scanrapide", "otl", "otm", "listparts", "minitoolbox", "miniregtool", "zhp", "combofix", "regtoolexport", "tdsskiller", "winupdatefix", "rsthosts", "winchk", "avenger", "blitzblank", "zoek", "remediate-vbs-worm", "ckscanner", "quickdiag", "grantperms"]
+For $8q = 0 To UBound($8p) - 1
+Local $8r[2] = [0, ""]
+$8o.add($8p[$8q], $8r)
 Next
-Global $91[1][2] = [[Null, Null]]
+Global $8s[1][2] = [[Null, Null]]
+Global $8t[1][5] = [[Null, Null, Null, Null, Null]]
+Global $8u[1][5] = [[Null, Null, Null, Null, Null]]
+Global $8v[1][5] = [[Null, Null, Null, Null, Null]]
+Global $8w[1][5] = [[Null, Null, Null, Null, Null]]
+Global $8x[1][5] = [[Null, Null, Null, Null, Null]]
+Global $8y[1][2] = [[Null, Null]]
+Global $8z[1][2] = [[Null, Null]]
+Global $90[1][4] = [[Null, Null, Null, Null]]
+Global $91[1][5] = [[Null, Null, Null, Null, Null]]
 Global $92[1][5] = [[Null, Null, Null, Null, Null]]
 Global $93[1][5] = [[Null, Null, Null, Null, Null]]
 Global $94[1][5] = [[Null, Null, Null, Null, Null]]
-Global $95[1][5] = [[Null, Null, Null, Null, Null]]
-Global $96[1][5] = [[Null, Null, Null, Null, Null]]
-Global $97[1][2] = [[Null, Null]]
-Global $98[1][2] = [[Null, Null]]
-Global $99[1][4] = [[Null, Null, Null, Null]]
-Global $9a[1][5] = [[Null, Null, Null, Null, Null]]
-Global $9b[1][5] = [[Null, Null, Null, Null, Null]]
-Global $9c[1][5] = [[Null, Null, Null, Null, Null]]
-Global $9d[1][5] = [[Null, Null, Null, Null, Null]]
-Global $9e[1][3] = [[Null, Null, Null]]
-Func _101($81, $9f = 0, $9g = False)
-Dim $9h
-If $9h Then _zi("[I] prepareRemove " & $81)
-If $9g Then
-_yx($81)
-_yf($81)
+Global $95[1][3] = [[Null, Null, Null]]
+Func _102($7s, $96 = 0, $97 = False)
+Dim $98
+If $98 Then _zi("[I] prepareRemove " & $7s)
+If $97 Then
+_yx($7s)
+_yf($7s)
 EndIf
-Local Const $9i = FileGetAttrib($81)
-If StringInStr($9i, "R") Then
-FileSetAttrib($81, "-R", $9f)
+Local Const $99 = FileGetAttrib($7s)
+If StringInStr($99, "R") Then
+FileSetAttrib($7s, "-R", $96)
 EndIf
-If StringInStr($9i, "S") Then
-FileSetAttrib($81, "-S", $9f)
+If StringInStr($99, "S") Then
+FileSetAttrib($7s, "-S", $96)
 EndIf
-If StringInStr($9i, "H") Then
-FileSetAttrib($81, "-H", $9f)
+If StringInStr($99, "H") Then
+FileSetAttrib($7s, "-H", $96)
 EndIf
-If StringInStr($9i, "A") Then
-FileSetAttrib($81, "-A", $9f)
+If StringInStr($99, "A") Then
+FileSetAttrib($7s, "-A", $96)
 EndIf
 EndFunc
-Func _102($9j, $9k = Null, $9g = False)
-Dim $9h
-If $9h Then _zi("[I] RemoveFile " & $9j)
-Local Const $9l = _zp($9j)
-If $9l Then
-If $9k And StringRegExp($9j, "(?i)\.exe$") Then
-Local Const $9m = FileGetVersion($9j, "CompanyName")
+Func _103($9a, $9b = Null, $97 = False)
+Dim $98
+If $98 Then _zi("[I] RemoveFile " & $9a)
+Local Const $9c = _zp($9a)
+If $9c Then
+If $9b And StringRegExp($9a, "(?i)\.exe$") Then
+Local Const $9d = FileGetVersion($9a, "CompanyName")
 If @error Then
 Return 0
-ElseIf Not StringRegExp($9m, $9k) Then
+ElseIf Not StringRegExp($9d, $9b) Then
 Return 0
 EndIf
 EndIf
-_101($9j, 0, $9g)
-Local $9n = FileDelete($9j)
-If $9n Then
-If $9h Then
-_zi("  [OK] File " & $9j & " deleted successfully")
+_102($9a, 0, $97)
+Local $9e = FileDelete($9a)
+If $9e Then
+If $98 Then
+_zi("  [OK] File " & $9a & " deleted successfully")
 EndIf
 Return 1
 EndIf
@@ -1631,16 +1617,16 @@ Return 2
 EndIf
 Return 0
 EndFunc
-Func _103($81, $9g = False)
-Dim $9h
-If $9h Then _zi("[I] RemoveFolder " & $81)
-Local $9l = _zq($81)
-If $9l Then
-_101($81, 1, $9g)
-Local Const $9n = DirRemove($81, $k)
-If $9n Then
-If $9h Then
-_zi("  [OK] Directory " & $81 & " deleted successfully")
+Func _104($7s, $97 = False)
+Dim $98
+If $98 Then _zi("[I] RemoveFolder " & $7s)
+Local $9c = _zq($7s)
+If $9c Then
+_102($7s, 1, $97)
+Local Const $9e = DirRemove($7s, $k)
+If $9e Then
+If $98 Then
+_zi("  [OK] Directory " & $7s & " deleted successfully")
 EndIf
 Return 1
 EndIf
@@ -1648,955 +1634,957 @@ Return 2
 EndIf
 Return 0
 EndFunc
-Func _104($81, $9j, $9o)
-Dim $9h
-If $9h Then _zi("[I] FindGlob " & $81 & " " & $9j)
-Local Const $9p = $81 & "\" & $9j
-Local Const $4n = FileFindFirstFile($9p)
-Local $9q = []
+Func _105($7s, $9a, $9f)
+Dim $98
+If $98 Then _zi("[I] FindGlob " & $7s & " " & $9a)
+Local Const $9g = $7s & "\" & $9a
+Local Const $4n = FileFindFirstFile($9g)
+Local $9h = []
 If $4n = -1 Then
-Return $9q
+Return $9h
 EndIf
 Local $4l = FileFindNextFile($4n)
 While @error = 0
-If StringRegExp($4l, $9o) Then
-_vv($9q, $81 & "\" & $4l)
+If StringRegExp($4l, $9f) Then
+_vv($9h, $7s & "\" & $4l)
 EndIf
 $4l = FileFindNextFile($4n)
 WEnd
 FileClose($4n)
-Return $9q
+Return $9h
 EndFunc
-Func _105($81, $9r)
-Dim $9h
-If $9h Then _zi("[I] RemoveAllFileFrom " & $81)
-Dim $8x
-Local Const $9p = $81 & "\*"
-Local Const $4n = FileFindFirstFile($9p)
+Func _106($7s, $9i)
+Dim $98
+If $98 Then _zi("[I] RemoveAllFileFrom " & $7s)
+Dim $8o
+Local Const $9g = $7s & "\*"
+Local Const $4n = FileFindFirstFile($9g)
 If $4n = -1 Then
 Return Null
 EndIf
 Local $4l = FileFindNextFile($4n)
 While @error = 0
-For $9s = 1 To UBound($9r) - 1
-Local $9t = $81 & "\" & $4l
-Local $9u = _zr($9t)
-If $9u And $9r[$9s][3] And $9u = $9r[$9s][1] And StringRegExp($4l, $9r[$9s][3]) Then
-Local $9v = $8x.Item($9r[$9s][0])
-Local $8g = 0
-Local $9g = False
-If $9r[$9s][4] = True Then
-$9g = True
+For $9j = 1 To UBound($9i) - 1
+Local $9k = $7s & "\" & $4l
+Local $9l = _zr($9k)
+If $9l And $9i[$9j][3] And $9l = $9i[$9j][1] And StringRegExp($4l, $9i[$9j][3]) Then
+Local $9m = $8o.Item($9i[$9j][0])
+Local $87 = 0
+Local $97 = False
+If $9i[$9j][4] = True Then
+$97 = True
 EndIf
-If $9u = 'file' Then
-$8g = _102($9t, $9r[$9s][2], $9g)
-ElseIf $9u = 'folder' Then
-$8g = _103($9t, $9g)
+If $9l = 'file' Then
+$87 = _103($9k, $9i[$9j][2], $97)
+ElseIf $9l = 'folder' Then
+$87 = _104($9k, $97)
 EndIf
-If $8g = 1 Then
-$9v[0] += 1
-ElseIf $8g = 2 Then
-$9v[1] += "  [X] " & $9t & " delete failed" & @CRLF
+If $87 = 1 Then
+$9m[0] += 1
+ElseIf $87 = 2 Then
+$9m[1] += "  [X] " & $9k & " delete failed" & @CRLF
 EndIf
-$8x.Item($9r[$9s][0]) = $9v
+$8o.Item($9i[$9j][0]) = $9m
 EndIf
 Next
 $4l = FileFindNextFile($4n)
 WEnd
 FileClose($4n)
 EndFunc
-Func _106($83)
-Dim $9h
-If $9h Then _zi("[I] RemoveRegistryKey " & $83)
-Local Const $8g = RegDelete($83)
-If $8g = 1 Then
-If $9h Then
-_zi("  [OK] " & $83 & " deleted successfully")
+Func _107($7u)
+Dim $98
+If $98 Then _zi("[I] RemoveRegistryKey " & $7u)
+Local Const $87 = RegDelete($7u)
+If $87 = 1 Then
+If $98 Then
+_zi("  [OK] " & $7u & " deleted successfully")
 EndIf
-ElseIf $8g = 2 Then
-If $9h Then
-_zi("  [X] " & $83 & " deleted failed")
+ElseIf $87 = 2 Then
+If $98 Then
+_zi("  [X] " & $7u & " deleted failed")
 EndIf
 EndIf
-Return $8g
+Return $87
 EndFunc
-Func _10a($9w)
-Local $9x = 50
-Dim $9h
-If $9h Then _zi("[I] CloseProcessAndWait " & $9w)
-If 0 = ProcessExists($9w) Then Return 0
-ProcessClose($9w)
+Func _10b($9n)
+Local $9o = 50
+Dim $98
+If $98 Then _zi("[I] CloseProcessAndWait " & $9n)
+If 0 = ProcessExists($9n) Then Return 0
+ProcessClose($9n)
 Do
-$9x -= 1
+$9o -= 1
 Sleep(250)
-Until($9x = 0 Or 0 = ProcessExists($9w))
-Local Const $8g = ProcessExists($9w)
-If 0 = $8g Then
-If $9h Then _zi("  [OK] Proccess " & $9w & " stopped successfully")
+Until($9o = 0 Or 0 = ProcessExists($9n))
+Local Const $87 = ProcessExists($9n)
+If 0 = $87 Then
+If $98 Then _zi("  [OK] Proccess " & $9n & " stopped successfully")
 Return 1
 EndIf
 Return 0
 EndFunc
-Func _10b($7t)
-Dim $9x
-Dim $9h
-If $9h Then _zi("[I] RemoveAllProcess")
-Local $9y = ProcessList()
-For $3x = 1 To $9y[0][0]
-Local $9z = $9y[$3x][0]
-Local $a0 = $9y[$3x][1]
-For $9x = 1 To UBound($7t) - 1
-If StringRegExp($9z, $7t[$9x][1]) Then
-Local $9v = $8x.Item($7t[$9x][0])
-Local $8g = _10a($a0)
-If $8g Then
-$9v[0] += 1
+Func _10c($7k)
+Dim $9o
+Dim $98
+If $98 Then _zi("[I] RemoveAllProcess")
+Local $9p = ProcessList()
+For $3x = 1 To $9p[0][0]
+Local $9q = $9p[$3x][0]
+Local $9r = $9p[$3x][1]
+For $9o = 1 To UBound($7k) - 1
+If StringRegExp($9q, $7k[$9o][1]) Then
+Local $9m = $8o.Item($7k[$9o][0])
+Local $87 = _10b($9r)
+If $87 Then
+$9m[0] += 1
 Else
-$9v[1] += "  [X] The process could not be stopped, the program may not have been deleted correctly" & @CRLF
+$9m[1] += "  [X] The process could not be stopped, the program may not have been deleted correctly" & @CRLF
 EndIf
-$8x.Item($7t[$9x][0]) = $9v
-EndIf
-Next
-Next
-EndFunc
-Func _10c($a1)
-Dim $9h
-Dim $8x
-If $9h Then _zi("[I] RemoveScheduleTask")
-For $3x = 1 To UBound($a1) - 1
-RunWait('schtasks.exe /delete /tn "' & $a1[$3x][1] & '" /f', @TempDir, @SW_HIDE)
-Next
-EndFunc
-Func _10d($a1)
-Dim $8x
-Dim $9h
-If $9h Then _zi("[I] UninstallNormaly")
-Local Const $86 = _zo()
-For $3x = 1 To UBound($86) - 1
-For $a2 = 1 To UBound($a1) - 1
-Local $a3 = $a1[$a2][1]
-Local $a4 = $a1[$a2][2]
-Local $a5 = _104($86[$3x], "*", $a3)
-For $a6 = 1 To UBound($a5) - 1
-Local $a7 = _104($a5[$a6], "*", $a4)
-For $a8 = 1 To UBound($a7) - 1
-If _zp($a7[$a8]) Then
-RunWait($a7[$a8])
-Local $9v = $8x.Item($a1[$a2][0])
-$9v[0] += 1
-$8x.Item($a1[$a2][0]) = $9v
+$8o.Item($7k[$9o][0]) = $9m
 EndIf
 Next
 Next
+EndFunc
+Func _10d($9s)
+Dim $98
+Dim $8o
+If $98 Then _zi("[I] RemoveScheduleTask")
+For $3x = 1 To UBound($9s) - 1
+RunWait('schtasks.exe /delete /tn "' & $9s[$3x][1] & '" /f', @TempDir, @SW_HIDE)
+Next
+EndFunc
+Func _10e($9s)
+Dim $8o
+Dim $98
+If $98 Then _zi("[I] UninstallNormaly")
+Local Const $7x = _zo()
+For $3x = 1 To UBound($7x) - 1
+For $9t = 1 To UBound($9s) - 1
+Local $9u = $9s[$9t][1]
+Local $9v = $9s[$9t][2]
+Local $9w = _105($7x[$3x], "*", $9u)
+For $9x = 1 To UBound($9w) - 1
+Local $9y = _105($9w[$9x], "*", $9v)
+For $9z = 1 To UBound($9y) - 1
+If _zp($9y[$9z]) Then
+RunWait($9y[$9z])
+Local $9m = $8o.Item($9s[$9t][0])
+$9m[0] += 1
+$8o.Item($9s[$9t][0]) = $9m
+EndIf
+Next
+Next
 Next
 Next
 EndFunc
-Func _10e($a1)
-Dim $9h
-If $9h Then _zi("[I] RemoveAllProgramFilesDir")
-Local Const $86 = _zo()
-For $3x = 1 To UBound($86) - 1
-_105($86[$3x], $a1)
+Func _10f($9s)
+Dim $98
+If $98 Then _zi("[I] RemoveAllProgramFilesDir")
+Local Const $7x = _zo()
+For $3x = 1 To UBound($7x) - 1
+_106($7x[$3x], $9s)
 Next
 EndFunc
-Func _10f($a1)
-Dim $8x
-Dim $9h
-If $9h Then _zi("[I] RemoveAllSoftwareKeyList")
+Func _10g($9s)
+Dim $8o
+Dim $98
+If $98 Then _zi("[I] RemoveAllSoftwareKeyList")
 Local $56 = ""
 If @OSArch = "X64" Then $56 = "64"
-Local $a9[2] = ["HKCU" & $56 & "\SOFTWARE", "HKLM" & $56 & "\SOFTWARE"]
-For $7f = 0 To UBound($a9) - 1
+Local $a0[2] = ["HKCU" & $56 & "\SOFTWARE", "HKLM" & $56 & "\SOFTWARE"]
+For $76 = 0 To UBound($a0) - 1
 Local $3x = 0
 While True
 $3x += 1
-Local $84 = RegEnumKey($a9[$7f], $3x)
+Local $7v = RegEnumKey($a0[$76], $3x)
 If @error <> 0 Then ExitLoop
-For $a2 = 1 To UBound($a1) - 1
-If $84 And $a1[$a2][1] Then
-If StringRegExp($84, $a1[$a2][1]) Then
-Local $8g = _106($a9[$7f] & "\" & $84)
-Local $9v = $8x.Item($a1[$a2][0])
-If $8g = 1 Then
-$9v[0] += 1
-ElseIf $8g = 2 Then
-$9v[1] += "[X] " & $a9[$7f] & "\" & $84 & " delete failed" & @CRLF
+For $9t = 1 To UBound($9s) - 1
+If $7v And $9s[$9t][1] Then
+If StringRegExp($7v, $9s[$9t][1]) Then
+Local $87 = _107($a0[$76] & "\" & $7v)
+Local $9m = $8o.Item($9s[$9t][0])
+If $87 = 1 Then
+$9m[0] += 1
+ElseIf $87 = 2 Then
+$9m[1] += "[X] " & $a0[$76] & "\" & $7v & " delete failed" & @CRLF
 EndIf
-$8x.Item($a1[$a2][0]) = $9v
+$8o.Item($9s[$9t][0]) = $9m
 EndIf
 EndIf
 Next
 WEnd
 Next
 EndFunc
-Func _10g($a1)
-Dim $8x
-Dim $9h
-If $9h Then _zi("[I] RemoveUninstallStringWithSearch")
-For $3x = 1 To UBound($a1) - 1
-Local $aa = _zm($a1[$3x][1], $a1[$3x][2], $a1[$3x][3])
-If $aa And $aa <> "" Then
-Local $8g = _106($aa)
-Local $9v = $8x.Item($a1[$3x][0])
-If $8g = 1 Then
-$9v[0] += 1
-ElseIf $8g = 2 Then
-$9v[1] += "[X] " & $aa & " delete failed" & @CRLF
+Func _10h($9s)
+Dim $8o
+Dim $98
+If $98 Then _zi("[I] RemoveUninstallStringWithSearch")
+For $3x = 1 To UBound($9s) - 1
+Local $a1 = _zm($9s[$3x][1], $9s[$3x][2], $9s[$3x][3])
+If $a1 And $a1 <> "" Then
+Local $87 = _107($a1)
+Local $9m = $8o.Item($9s[$3x][0])
+If $87 = 1 Then
+$9m[0] += 1
+ElseIf $87 = 2 Then
+$9m[1] += "[X] " & $a1 & " delete failed" & @CRLF
 EndIf
-$8x.Item($a1[$3x][0]) = $9v
+$8o.Item($9s[$3x][0]) = $9m
 EndIf
 Next
 EndFunc
-Func _10h()
-Local Const $ab = "frst"
-Dim $91
-Dim $92
-Dim $ac
-Dim $94
-Dim $ad
-Dim $96
-Local Const $9k = "(?i)^Farbar"
-Local Const $ae = "(?i)^FRST.*\.exe$"
-Local Const $af = "(?i)^FRST-OlderVersion$"
-Local Const $ag = "(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$"
-Local Const $ah = "(?i)^FRST"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ag, False]]
-Local Const $ak[1][5] = [[$ab, 'folder', Null, $af, False]]
-Local Const $al[1][5] = [[$ab, 'folder', Null, $ah, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($92, $ak)
-_vv($94, $ak)
-_vv($96, $al)
-EndFunc
-_10h()
 Func _10i()
-Dim $9c
-Dim $97
-Local $ab = "zhp"
-Local Const $88[1][2] = [[$ab, "(?i)^ZHP$"]]
-Local Const $am[1][5] = [[$ab, 'folder', Null, "(?i)^ZHP$", True]]
-_vv($9c, $am)
-_vv($97, $88)
+Local Const $a2 = "frst"
+Dim $8s
+Dim $8t
+Dim $a3
+Dim $8v
+Dim $a4
+Dim $8x
+Local Const $9b = "(?i)^Farbar"
+Local Const $a5 = "(?i)^FRST.*\.exe$"
+Local Const $a6 = "(?i)^FRST-OlderVersion$"
+Local Const $a7 = "(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$"
+Local Const $a8 = "(?i)^FRST"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a7, False]]
+Local Const $ab[1][5] = [[$a2, 'folder', Null, $a6, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', Null, $a8, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8t, $ab)
+_vv($8v, $ab)
+_vv($8x, $ac)
 EndFunc
 _10i()
 Func _10j()
-Local Const $an = Null
-Local Const $ab = "zhpdiag"
-Dim $91
-Dim $92
 Dim $93
-Dim $94
-Dim $96
-Local Const $ae = "(?i)^ZHPDiag.*\.exe$"
-Local Const $af = "(?i)^ZHPDiag.*\.(exe|txt|lnk)$"
-Local Const $ag = "(?i)^PhysicalDisk[0-9]_MBR\.bin$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $an, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $ag, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($93, $aj)
-_vv($96, $ak)
+Dim $8y
+Local $a2 = "zhp"
+Local Const $7z[1][2] = [[$a2, "(?i)^ZHP$"]]
+Local Const $ad[1][5] = [[$a2, 'folder', Null, "(?i)^ZHP$", True]]
+_vv($93, $ad)
+_vv($8y, $7z)
 EndFunc
 _10j()
 Func _10k()
-Local Const $an = Null
-Local Const $ao = "zhpfix"
-Dim $91
-Dim $92
-Dim $94
-Local Const $ae = "(?i)^ZHPFix.*\.exe$"
-Local Const $af = "(?i)^ZHPFix.*\.(exe|txt|lnk)$"
-Local Const $ai[1][2] = [[$ao, $ae]]
-Local Const $aj[1][5] = [[$ao, 'file', $an, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
+Local Const $ae = Null
+Local Const $a2 = "zhpdiag"
+Dim $8s
+Dim $8t
+Dim $8u
+Dim $8v
+Dim $8x
+Local Const $a5 = "(?i)^ZHPDiag.*\.exe$"
+Local Const $a6 = "(?i)^ZHPDiag.*\.(exe|txt|lnk)$"
+Local Const $a7 = "(?i)^PhysicalDisk[0-9]_MBR\.bin$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $ae, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a7, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8u, $aa)
+_vv($8x, $ab)
 EndFunc
 _10k()
-Func _10l($8m = False)
-Local Const $9k = "(?i)^Malwarebytes Anti-Rootkit$"
-Local Const $ap = "(?i)^Malwarebytes"
-Local Const $ab = "mbar"
-Dim $91
-Dim $92
-Dim $94
-Dim $97
-Local Const $ae = "(?i)^mbar.*\.exe$"
-Local Const $af = "(?i)^mbar"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][2] = [[$ab, $9k]]
-Local Const $ak[1][5] = [[$ab, 'file', $ap, $ae, False]]
-Local Const $al[1][5] = [[$ab, 'folder', $9k, $af, False]]
-_vv($91, $ai)
-_vv($92, $ak)
-_vv($94, $ak)
-_vv($92, $al)
-_vv($94, $al)
-_vv($97, $aj)
+Func _10l()
+Local Const $ae = Null
+Local Const $af = "zhpfix"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $a5 = "(?i)^ZHPFix.*\.exe$"
+Local Const $a6 = "(?i)^ZHPFix.*\.(exe|txt|lnk)$"
+Local Const $a9[1][2] = [[$af, $a5]]
+Local Const $aa[1][5] = [[$af, 'file', $ae, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
 EndFunc
 _10l()
-Func _10m()
-Local Const $ab = "roguekiller"
-Dim $91
-Dim $98
-Dim $99
-Dim $95
-Dim $9a
-Dim $92
-Dim $93
-Dim $9d
-Dim $94
-Local $56 = ""
-If @OSArch = "X64" Then $56 = "64"
-Local Const $aq = "(?i)^Adlice"
-Local Const $ae = "(?i)^RogueKiller"
-Local Const $af = "(?i)^RogueKiller.*\.(exe|lnk|txt)$"
-Local Const $ag = "(?i)^RogueKiller.*\.exe$"
-Local Const $ah = "(?i)^RogueKiller_portable(32|64)\.exe$"
-Local Const $ai[1][2] = [[$ab, $ag]]
-Local Const $aj[1][2] = [[$ab, "RogueKiller Anti-Malware"]]
-Local Const $ak[1][4] = [[$ab, "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $ae, "DisplayName"]]
-Local Const $al[1][5] = [[$ab, 'file', $aq, $af, False]]
-Local Const $ar[1][5] = [[$ab, 'folder', Null, $ae, True]]
-Local Const $as[1][5] = [[$ab, 'file', Null, $ah, False]]
-_vv($91, $ai)
-_vv($98, $aj)
-_vv($99, $ak)
-_vv($95, $ar)
-_vv($9a, $ar)
-_vv($92, $as)
-_vv($92, $al)
-_vv($92, $ar)
-_vv($94, $as)
-_vv($94, $al)
-_vv($94, $ar)
-_vv($93, $al)
-_vv($9d, $ar)
+Func _10m($8d = False)
+Local Const $9b = "(?i)^Malwarebytes Anti-Rootkit$"
+Local Const $ag = "(?i)^Malwarebytes"
+Local Const $a2 = "mbar"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8y
+Local Const $a5 = "(?i)^mbar.*\.exe$"
+Local Const $a6 = "(?i)^mbar"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][2] = [[$a2, $9b]]
+Local Const $ab[1][5] = [[$a2, 'file', $ag, $a5, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', $9b, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $ab)
+_vv($8v, $ab)
+_vv($8t, $ac)
+_vv($8v, $ac)
+_vv($8y, $aa)
 EndFunc
 _10m()
 Func _10n()
-Local Const $ab = "adwcleaner"
-Local Const $9k = "(?i)^AdwCleaner"
-Local Const $ap = "(?i)^Malwarebytes"
-Local Const $ae = "(?i)^AdwCleaner.*\.exe$"
+Local Const $a2 = "roguekiller"
+Dim $8s
+Dim $8z
+Dim $90
+Dim $8w
 Dim $91
-Dim $92
+Dim $8t
+Dim $8u
 Dim $94
-Dim $96
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $ap, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'folder', Null, $9k, True]]
+Dim $8v
+Local $56 = ""
+If @OSArch = "X64" Then $56 = "64"
+Local Const $ah = "(?i)^Adlice"
+Local Const $a5 = "(?i)^RogueKiller"
+Local Const $a6 = "(?i)^RogueKiller.*\.(exe|lnk|txt)$"
+Local Const $a7 = "(?i)^RogueKiller.*\.exe$"
+Local Const $a8 = "(?i)^RogueKiller_portable(32|64)\.exe$"
+Local Const $a9[1][2] = [[$a2, $a7]]
+Local Const $aa[1][2] = [[$a2, "RogueKiller Anti-Malware"]]
+Local Const $ab[1][4] = [[$a2, "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $a5, "DisplayName"]]
+Local Const $ac[1][5] = [[$a2, 'file', $ah, $a6, False]]
+Local Const $ai[1][5] = [[$a2, 'folder', Null, $a5, True]]
+Local Const $aj[1][5] = [[$a2, 'file', Null, $a8, False]]
+_vv($8s, $a9)
+_vv($8z, $aa)
+_vv($90, $ab)
+_vv($8w, $ai)
 _vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+_vv($8t, $aj)
+_vv($8t, $ac)
+_vv($8t, $ai)
+_vv($8v, $aj)
+_vv($8v, $ac)
+_vv($8v, $ai)
+_vv($8u, $ac)
+_vv($94, $ai)
 EndFunc
 _10n()
 Func _10o()
-Local Const $an = Null
-Local Const $ab = "zhpcleaner"
-Dim $91
-Dim $92
-Dim $94
-Local Const $ae = "(?i)^ZHPCleaner.*\.exe$"
-Local Const $af = "(?i)^ZHPCleaner.*\.(exe|txt|lnk)$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $an, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
+Local Const $a2 = "adwcleaner"
+Local Const $9b = "(?i)^AdwCleaner"
+Local Const $ag = "(?i)^Malwarebytes"
+Local Const $a5 = "(?i)^AdwCleaner.*\.exe$"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $ag, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'folder', Null, $9b, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _10o()
 Func _10p()
-Local Const $ab = "usbfix"
-Dim $91
-Dim $9e
-Dim $92
-Dim $93
-Dim $94
-Dim $97
-Dim $96
-Dim $95
-Local Const $9k = "(?i)^UsbFix"
-Local Const $ap = "(?i)^SosVirus"
-Local Const $ae = "(?i)^UsbFix.*\.(exe|lnk|txt)$"
-Local Const $af = "(?i)^Un-UsbFix.exe$"
-Local Const $ag = "(?i)^UsbFixQuarantine$"
-Local Const $ah = "(?i)^UsbFix.*\.exe$"
-Local Const $at[1][2] = [[$ab, $ah]]
-Local Const $ai[1][2] = [[$ab, $9k]]
-Local Const $aj[1][3] = [[$ab, $9k, $af]]
-Local Const $ak[1][5] = [[$ab, 'file', $ap, $ae, False]]
-Local Const $al[1][5] = [[$ab, 'folder', Null, $ag, True]]
-Local Const $ar[1][5] = [[$ab, 'folder', Null, $9k, False]]
-_vv($91, $at)
-_vv($9e, $aj)
-_vv($92, $ak)
-_vv($93, $ak)
-_vv($94, $ak)
-_vv($97, $ai)
-_vv($96, $al)
-_vv($96, $ar)
-_vv($95, $ar)
+Local Const $ae = Null
+Local Const $a2 = "zhpcleaner"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $a5 = "(?i)^ZHPCleaner.*\.exe$"
+Local Const $a6 = "(?i)^ZHPCleaner.*\.(exe|txt|lnk)$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $ae, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
 EndFunc
 _10p()
 Func _10q()
-Local Const $ab = "adsfix"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Dim $93
-Dim $97
-Local Const $9k = "(?i)^AdsFix"
-Local Const $ap = "(?i)^SosVirus"
-Local Const $ae = "(?i)^AdsFix.*\.exe$"
-Local Const $af = "(?i)^AdsFix.*\.(exe|txt|lnk)$"
-Local Const $ag = "(?i)^AdsFix.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $ap, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $ag, False]]
-Local Const $al[1][5] = [[$ab, 'folder', Null, $9k, True]]
-Local Const $ar[1][2] = [[$ab, $9k]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($93, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
-_vv($96, $al)
-_vv($97, $ar)
+Local Const $a2 = "usbfix"
+Dim $8s
+Dim $95
+Dim $8t
+Dim $8u
+Dim $8v
+Dim $8y
+Dim $8x
+Dim $8w
+Local Const $9b = "(?i)^UsbFix"
+Local Const $ag = "(?i)^SosVirus"
+Local Const $a5 = "(?i)^UsbFix.*\.(exe|lnk|txt)$"
+Local Const $a6 = "(?i)^Un-UsbFix.exe$"
+Local Const $a7 = "(?i)^UsbFixQuarantine$"
+Local Const $a8 = "(?i)^UsbFix.*\.exe$"
+Local Const $ak[1][2] = [[$a2, $a8]]
+Local Const $a9[1][2] = [[$a2, $9b]]
+Local Const $aa[1][3] = [[$a2, $9b, $a6]]
+Local Const $ab[1][5] = [[$a2, 'file', $ag, $a5, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', Null, $a7, True]]
+Local Const $ai[1][5] = [[$a2, 'folder', Null, $9b, False]]
+_vv($8s, $ak)
+_vv($95, $aa)
+_vv($8t, $ab)
+_vv($8u, $ab)
+_vv($8v, $ab)
+_vv($8y, $a9)
+_vv($8x, $ac)
+_vv($8x, $ai)
+_vv($8w, $ai)
 EndFunc
 _10q()
 Func _10r()
-Local Const $ab = "aswmbr"
-Dim $91
-Dim $92
-Dim $94
-Local Const $9k = "(?i)^avast"
-Local Const $ae = "(?i)^aswmbr.*\.(exe|txt|lnk)$"
-Local Const $af = "(?i)^MBR\.dat$"
-Local Const $ag = "(?i)^aswmbr.*\.exe$"
-Local Const $ai[1][2] = [[$ab, $ag]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
+Local Const $a2 = "adsfix"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Dim $8u
+Dim $8y
+Local Const $9b = "(?i)^AdsFix"
+Local Const $ag = "(?i)^SosVirus"
+Local Const $a5 = "(?i)^AdsFix.*\.exe$"
+Local Const $a6 = "(?i)^AdsFix.*\.(exe|txt|lnk)$"
+Local Const $a7 = "(?i)^AdsFix.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $ag, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a7, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', Null, $9b, True]]
+Local Const $ai[1][2] = [[$a2, $9b]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8u, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
+_vv($8x, $ac)
+_vv($8y, $ai)
 EndFunc
 _10r()
 Func _10s()
-Local Const $ab = "fss"
-Dim $91
-Dim $92
-Dim $94
-Local Const $9k = "(?i)^Farbar"
-Local Const $ae = "(?i)^FSS.*\.(exe|txt|lnk)$"
-Local Const $af = "(?i)^FSS.*\.exe$"
-Local Const $ai[1][2] = [[$ab, $af]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
+Local Const $a2 = "aswmbr"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $9b = "(?i)^avast"
+Local Const $a5 = "(?i)^aswmbr.*\.(exe|txt|lnk)$"
+Local Const $a6 = "(?i)^MBR\.dat$"
+Local Const $a7 = "(?i)^aswmbr.*\.exe$"
+Local Const $a9[1][2] = [[$a2, $a7]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
 EndFunc
 _10s()
 Func _10t()
-Local Const $ab = "toolsdiag"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $ae = "(?i)^toolsdiag.*\.exe$"
-Local Const $af = "(?i)^ToolsDiag$"
-Local Const $ai[1][5] = [[$ab, 'folder', Null, $af, False]]
-Local Const $aj[1][5] = [[$ab, 'file', Null, $ae, False]]
-Local Const $ak[1][2] = [[$ab, $ae]]
-_vv($91, $ak)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ai)
+Local Const $a2 = "fss"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $9b = "(?i)^Farbar"
+Local Const $a5 = "(?i)^FSS.*\.(exe|txt|lnk)$"
+Local Const $a6 = "(?i)^FSS.*\.exe$"
+Local Const $a9[1][2] = [[$a2, $a6]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
 EndFunc
 _10t()
 Func _10u()
-Local Const $ab = "scanrapide"
-Dim $96
-Dim $92
-Dim $94
-Local Const $9k = Null
-Local Const $ae = "(?i)^ScanRapide.*\.exe$"
-Local Const $af = "(?i)^ScanRapide\[R[0-9]+\]\.txt$"
-Local Const $ai[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $aj[1][5] = [[$ab, 'file', Null, $af, False]]
-_vv($92, $ai)
-_vv($94, $ai)
-_vv($96, $aj)
+Local Const $a2 = "toolsdiag"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $a5 = "(?i)^toolsdiag.*\.exe$"
+Local Const $a6 = "(?i)^ToolsDiag$"
+Local Const $a9[1][5] = [[$a2, 'folder', Null, $a6, False]]
+Local Const $aa[1][5] = [[$a2, 'file', Null, $a5, False]]
+Local Const $ab[1][2] = [[$a2, $a5]]
+_vv($8s, $ab)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $a9)
 EndFunc
 _10u()
 Func _10v()
-Local Const $ab = "otl"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^OldTimer"
-Local Const $ae = "(?i)^OTL.*\.exe$"
-Local Const $af = "(?i)^OTL.*\.(exe|txt)$"
-Local Const $ag = "(?i)^Extras\.txt$"
-Local Const $ah = "(?i)^_OTL$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $ag, False]]
-Local Const $al[1][5] = [[$ab, 'folder', Null, $ah, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
-_vv($96, $al)
+Local Const $a2 = "scanrapide"
+Dim $8x
+Dim $8t
+Dim $8v
+Local Const $9b = Null
+Local Const $a5 = "(?i)^ScanRapide.*\.exe$"
+Local Const $a6 = "(?i)^ScanRapide\[R[0-9]+\]\.txt$"
+Local Const $a9[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $aa[1][5] = [[$a2, 'file', Null, $a6, False]]
+_vv($8t, $a9)
+_vv($8v, $a9)
+_vv($8x, $aa)
 EndFunc
 _10v()
 Func _10w()
-Local Const $ab = "otm"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^OldTimer"
-Local Const $ae = "(?i)^OTM.*\.exe$"
-Local Const $af = "(?i)^_OTM$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'folder', Null, $af, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+Local Const $a2 = "otl"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^OldTimer"
+Local Const $a5 = "(?i)^OTL.*\.exe$"
+Local Const $a6 = "(?i)^OTL.*\.(exe|txt)$"
+Local Const $a7 = "(?i)^Extras\.txt$"
+Local Const $a8 = "(?i)^_OTL$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a7, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', Null, $a8, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
+_vv($8x, $ac)
 EndFunc
 _10w()
 Func _10x()
-Local Const $ab = "listparts"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^Farbar"
-Local Const $ae = "(?i)^listParts.*\.exe$"
-Local Const $af = "(?i)^Results\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
-_vv($94, $ak)
+Local Const $a2 = "otm"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^OldTimer"
+Local Const $a5 = "(?i)^OTM.*\.exe$"
+Local Const $a6 = "(?i)^_OTM$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'folder', Null, $a6, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _10x()
 Func _10y()
-Local Const $ab = "minitoolbox"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^Farbar"
-Local Const $ae = "(?i)^MiniToolBox.*\.exe$"
-Local Const $af = "(?i)^MTB\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
-_vv($94, $ak)
+Local Const $a2 = "listparts"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^Farbar"
+Local Const $a5 = "(?i)^listParts.*\.exe$"
+Local Const $a6 = "(?i)^Results\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
+_vv($8v, $ab)
 EndFunc
 _10y()
 Func _10z()
-Local Const $ab = "miniregtool"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^MiniRegTool.*\.exe$"
-Local Const $af = "(?i)^MiniRegTool.*\.(exe|zip)$"
-Local Const $ag = "(?i)^Result\.txt$"
-Local Const $ah = "(?i)^MiniRegTool"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $ag, False]]
-Local Const $al[1][5] = [[$ab, 'folder', $9k, $ah, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($92, $al)
-_vv($94, $aj)
-_vv($94, $ak)
-_vv($94, $al)
+Local Const $a2 = "minitoolbox"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^Farbar"
+Local Const $a5 = "(?i)^MiniToolBox.*\.exe$"
+Local Const $a6 = "(?i)^MTB\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
+_vv($8v, $ab)
 EndFunc
 _10z()
 Func _110()
-Local Const $ab = "grantperms"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^GrantPerms.*\.exe$"
-Local Const $af = "(?i)^GrantPerms.*\.(exe|zip)$"
-Local Const $ag = "(?i)^Perms\.txt$"
-Local Const $ah = "(?i)^GrantPerms"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $ag, False]]
-Local Const $al[1][5] = [[$ab, 'folder', $9k, $ah, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($92, $al)
-_vv($94, $aj)
-_vv($94, $ak)
-_vv($94, $al)
+Local Const $a2 = "miniregtool"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^MiniRegTool.*\.exe$"
+Local Const $a6 = "(?i)^MiniRegTool.*\.(exe|zip)$"
+Local Const $a7 = "(?i)^Result\.txt$"
+Local Const $a8 = "(?i)^MiniRegTool"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a7, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', $9b, $a8, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8t, $ac)
+_vv($8v, $aa)
+_vv($8v, $ab)
+_vv($8v, $ac)
 EndFunc
 _110()
 Func _111()
-Local Const $ab = "combofix"
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^Swearware"
-Local Const $ae = "(?i)^Combofix.*\.exe$"
-Local Const $af = "(?i)^CFScript\.txt$"
-Local Const $ag = "(?i)^Qoobox$"
-Local Const $ah = "(?i)^Combofix.*\.txt$"
-Local Const $ai[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $aj[1][5] = [[$ab, 'file', Null, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'folder', Null, $ag, True]]
-Local Const $al[1][5] = [[$ab, 'file', Null, $ah, False]]
-_vv($92, $ai)
-_vv($92, $aj)
-_vv($94, $ai)
-_vv($94, $aj)
-_vv($96, $ak)
-_vv($96, $al)
+Local Const $a2 = "grantperms"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^GrantPerms.*\.exe$"
+Local Const $a6 = "(?i)^GrantPerms.*\.(exe|zip)$"
+Local Const $a7 = "(?i)^Perms\.txt$"
+Local Const $a8 = "(?i)^GrantPerms"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a7, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', $9b, $a8, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8t, $ac)
+_vv($8v, $aa)
+_vv($8v, $ab)
+_vv($8v, $ac)
 EndFunc
 _111()
 Func _112()
-Local Const $ab = "regtoolexport"
-Dim $91
-Dim $92
-Dim $94
-Local Const $9k = Null
-Local Const $ae = "(?i)^regtoolexport.*\.exe$"
-Local Const $af = "(?i)^Export.*\.reg$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
-_vv($94, $ak)
+Local Const $a2 = "combofix"
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^Swearware"
+Local Const $a5 = "(?i)^Combofix.*\.exe$"
+Local Const $a6 = "(?i)^CFScript\.txt$"
+Local Const $a7 = "(?i)^Qoobox$"
+Local Const $a8 = "(?i)^Combofix.*\.txt$"
+Local Const $a9[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $aa[1][5] = [[$a2, 'file', Null, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'folder', Null, $a7, True]]
+Local Const $ac[1][5] = [[$a2, 'file', Null, $a8, False]]
+_vv($8t, $a9)
+_vv($8t, $aa)
+_vv($8v, $a9)
+_vv($8v, $aa)
+_vv($8x, $ab)
+_vv($8x, $ac)
 EndFunc
 _112()
 Func _113()
-Local Const $ab = "tdsskiller"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^.*Kaspersky"
-Local Const $ae = "(?i)^tdsskiller.*\.exe$"
-Local Const $af = "(?i)^tdsskiller.*\.(exe|zip)$"
-Local Const $ag = "(?i)^TDSSKiller.*_log\.txt$"
-Local Const $ah = "(?i)^TDSSKiller"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $af, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $ag, False]]
-Local Const $al[1][5] = [[$ab, 'folder', Null, $ah, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $al)
-_vv($94, $aj)
-_vv($94, $al)
-_vv($96, $ak)
-_vv($96, $al)
+Local Const $a2 = "regtoolexport"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $9b = Null
+Local Const $a5 = "(?i)^regtoolexport.*\.exe$"
+Local Const $a6 = "(?i)^Export.*\.reg$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
+_vv($8v, $ab)
 EndFunc
 _113()
 Func _114()
-Local Const $ab = "winupdatefix"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^winupdatefix.*\.exe$"
-Local Const $af = "(?i)^winupdatefix.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+Local Const $a2 = "tdsskiller"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^.*Kaspersky"
+Local Const $a5 = "(?i)^tdsskiller.*\.exe$"
+Local Const $a6 = "(?i)^tdsskiller.*\.(exe|zip)$"
+Local Const $a7 = "(?i)^TDSSKiller.*_log\.txt$"
+Local Const $a8 = "(?i)^TDSSKiller"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a6, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a7, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', Null, $a8, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ac)
+_vv($8v, $aa)
+_vv($8v, $ac)
+_vv($8x, $ab)
+_vv($8x, $ac)
 EndFunc
 _114()
 Func _115()
-Local Const $ab = "rsthosts"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^rsthosts.*\.exe$"
-Local Const $af = "(?i)^RstHosts.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, Null]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, Null]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+Local Const $a2 = "winupdatefix"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^winupdatefix.*\.exe$"
+Local Const $a6 = "(?i)^winupdatefix.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _115()
 Func _116()
-Local Const $ab = "winchk"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^winchk.*\.exe$"
-Local Const $af = "(?i)^WinChk.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+Local Const $a2 = "rsthosts"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^rsthosts.*\.exe$"
+Local Const $a6 = "(?i)^RstHosts.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, Null]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, Null]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _116()
 Func _117()
-Local Const $ab = "avenger"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = Null
-Local Const $ae = "(?i)^avenger.*\.(exe|zip)$"
-Local Const $af = "(?i)^avenger"
-Local Const $ag = "(?i)^avenger.*\.txt$"
-Local Const $ah = "(?i)^avenger.*\.exe$"
-Local Const $ai[1][2] = [[$ab, $ah]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'folder', $9k, $af, False]]
-Local Const $al[1][5] = [[$ab, 'file', $9k, $ag, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($92, $ak)
-_vv($94, $aj)
-_vv($94, $ak)
-_vv($96, $ak)
-_vv($96, $al)
+Local Const $a2 = "winchk"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^winchk.*\.exe$"
+Local Const $a6 = "(?i)^WinChk.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _117()
 Func _118()
-Local Const $ab = "blitzblank"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Dim $93
-Dim $97
-Local Const $9k = "(?i)^Emsi"
-Local Const $ae = "(?i)^BlitzBlank.*\.exe$"
-Local Const $af = "(?i)^BlitzBlank.*\.log$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
+Local Const $a2 = "avenger"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = Null
+Local Const $a5 = "(?i)^avenger.*\.(exe|zip)$"
+Local Const $a6 = "(?i)^avenger"
+Local Const $a7 = "(?i)^avenger.*\.txt$"
+Local Const $a8 = "(?i)^avenger.*\.exe$"
+Local Const $a9[1][2] = [[$a2, $a8]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'folder', $9b, $a6, False]]
+Local Const $ac[1][5] = [[$a2, 'file', $9b, $a7, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8t, $ab)
+_vv($8v, $aa)
+_vv($8v, $ab)
+_vv($8x, $ab)
+_vv($8x, $ac)
 EndFunc
 _118()
 Func _119()
-Local Const $ab = "zoek"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Dim $93
-Dim $97
-Local Const $9k = Null
-Local Const $ae = "(?i)^zoek.*\.exe$"
-Local Const $af = "(?i)^zoek.*\.log$"
-Local Const $ag = "(?i)^zoek"
-Local Const $ah = "(?i)^runcheck.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, False]]
-Local Const $al[1][5] = [[$ab, 'folder', $9k, $ag, True]]
-Local Const $ar[1][5] = [[$ab, 'file', $9k, $ah, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
-_vv($96, $al)
-_vv($96, $ar)
+Local Const $a2 = "blitzblank"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Dim $8u
+Dim $8y
+Local Const $9b = "(?i)^Emsi"
+Local Const $a5 = "(?i)^BlitzBlank.*\.exe$"
+Local Const $a6 = "(?i)^BlitzBlank.*\.log$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
 EndFunc
 _119()
 Func _11a()
-Local Const $ab = "remediate-vbs-worm"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Dim $93
-Dim $97
-Local Const $9k = "(?i).*VBS autorun worms.*"
-Local Const $ap = Null
-Local Const $ae = "(?i)^remediate.?vbs.?worm.*\.exe$"
-Local Const $af = "(?i)^Rem-VBS.*\.log$"
-Local Const $ag = "(?i)^Rem-VBS"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $ap, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $ap, $af, False]]
-Local Const $al[1][5] = [[$ab, 'folder', $9k, $ag, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($96, $ak)
-_vv($96, $al)
+Local Const $a2 = "zoek"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Dim $8u
+Dim $8y
+Local Const $9b = Null
+Local Const $a5 = "(?i)^zoek.*\.exe$"
+Local Const $a6 = "(?i)^zoek.*\.log$"
+Local Const $a7 = "(?i)^zoek"
+Local Const $a8 = "(?i)^runcheck.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', $9b, $a7, True]]
+Local Const $ai[1][5] = [[$a2, 'file', $9b, $a8, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
+_vv($8x, $ac)
+_vv($8x, $ai)
 EndFunc
 _11a()
 Func _11b()
-Local Const $ab = "ckscanner"
-Dim $91
-Dim $92
-Dim $94
-Local Const $9k = Null
-Local Const $ae = "(?i)^CKScanner.*\.exe$"
-Local Const $af = "(?i)^CKfiles.*\.txt$"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $ae, False]]
-Local Const $ak[1][5] = [[$ab, 'file', $9k, $af, False]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($92, $ak)
-_vv($94, $ak)
+Local Const $a2 = "remediate-vbs-worm"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Dim $8u
+Dim $8y
+Local Const $9b = "(?i).*VBS autorun worms.*"
+Local Const $ag = Null
+Local Const $a5 = "(?i)^remediate.?vbs.?worm.*\.exe$"
+Local Const $a6 = "(?i)^Rem-VBS.*\.log$"
+Local Const $a7 = "(?i)^Rem-VBS"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $ag, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $ag, $a6, False]]
+Local Const $ac[1][5] = [[$a2, 'folder', $9b, $a7, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8x, $ab)
+_vv($8x, $ac)
 EndFunc
 _11b()
 Func _11c()
-Local Const $ab = "quickdiag"
-Dim $91
-Dim $92
-Dim $94
-Dim $96
-Local Const $9k = "(?i)^SosVirus"
-Local Const $ae = "(?i)^QuickDiag.*\.exe$"
-Local Const $af = "(?i)^QuickDiag.*\.(exe|txt)$"
-Local Const $ag = "(?i)^QuickScript.*\.txt$"
-Local Const $ah = "(?i)^QuickDiag.*\.txt$"
-Local Const $au = "(?i)^QuickDiag"
-Local Const $ai[1][2] = [[$ab, $ae]]
-Local Const $aj[1][5] = [[$ab, 'file', $9k, $af, True]]
-Local Const $ak[1][5] = [[$ab, 'file', Null, $ag, True]]
-Local Const $al[1][5] = [[$ab, 'file', Null, $ah, True]]
-Local Const $ar[1][5] = [[$ab, 'folder', Null, $au, True]]
-_vv($91, $ai)
-_vv($92, $aj)
-_vv($94, $aj)
-_vv($92, $ak)
-_vv($94, $ak)
-_vv($96, $al)
-_vv($96, $ar)
+Local Const $a2 = "ckscanner"
+Dim $8s
+Dim $8t
+Dim $8v
+Local Const $9b = Null
+Local Const $a5 = "(?i)^CKScanner.*\.exe$"
+Local Const $a6 = "(?i)^CKfiles.*\.txt$"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a5, False]]
+Local Const $ab[1][5] = [[$a2, 'file', $9b, $a6, False]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8t, $ab)
+_vv($8v, $ab)
 EndFunc
 _11c()
 Func _11d()
+Local Const $a2 = "quickdiag"
+Dim $8s
+Dim $8t
+Dim $8v
+Dim $8x
+Local Const $9b = "(?i)^SosVirus"
+Local Const $a5 = "(?i)^QuickDiag.*\.exe$"
+Local Const $a6 = "(?i)^QuickDiag.*\.(exe|txt)$"
+Local Const $a7 = "(?i)^QuickScript.*\.txt$"
+Local Const $a8 = "(?i)^QuickDiag.*\.txt$"
+Local Const $al = "(?i)^QuickDiag"
+Local Const $a9[1][2] = [[$a2, $a5]]
+Local Const $aa[1][5] = [[$a2, 'file', $9b, $a6, True]]
+Local Const $ab[1][5] = [[$a2, 'file', Null, $a7, True]]
+Local Const $ac[1][5] = [[$a2, 'file', Null, $a8, True]]
+Local Const $ai[1][5] = [[$a2, 'folder', Null, $al, True]]
+_vv($8s, $a9)
+_vv($8t, $aa)
+_vv($8v, $aa)
+_vv($8t, $ab)
+_vv($8v, $ab)
+_vv($8x, $ac)
+_vv($8x, $ai)
+EndFunc
+_11d()
+Func _11e()
 Local $56 = ""
 If @OSArch = "X64" Then $56 = "64"
 If FileExists(@AppDataDir & "\ZHP") Then
-Local Const $av = "kprm-zhp-appdata"
+Local Const $am = "kprm-zhp-appdata"
 If FileExists(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat") Then
 FileDelete(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat")
 EndIf
-FileWrite(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat", 'schtasks /delete /f /tn "' & $av & '" ' & @CRLF)
+FileWrite(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat", 'schtasks /delete /f /tn "' & $am & '" ' & @CRLF)
 FileWrite(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat", "RMDIR /S /Q " & @AppDataDir & "\ZHP " & @CRLF)
 FileWrite(@HomeDrive & "\KPRM\kprm-zhp-appdata.bat", "DEL /F /Q " & @HomeDrive & "\KPRM\kprm-zhp-appdata.bat " & @CRLF)
-Local $aw = _3f(_31('d', 3, _3q()), 2)
-$aw = StringReplace($aw, ".", "/")
-$aw = StringReplace($aw, "-", "/")
-Local $ax = _3f(_31('y', 1, _3q()), 2)
-$ax = StringReplace($ax, ".", "/")
-$ax = StringReplace($ax, "-", "/")
-Local $ay = 'schtasks /create /f /tn "kprm-zhp-appdata" /tr ' & @HomeDrive & "\KPRM\kprm-zhp-appdata.bat" & ' /sc MINUTE /mo 5  /st 00:01 /sd ' & $aw & ' /ed ' & $ax & ' /RU SYSTEM'
-Run($ay, @TempDir, @SW_HIDE)
+Local $an = _3f(_31('d', 3, _3q()), 2)
+$an = StringReplace($an, ".", "/")
+$an = StringReplace($an, "-", "/")
+Local $ao = _3f(_31('y', 1, _3q()), 2)
+$ao = StringReplace($ao, ".", "/")
+$ao = StringReplace($ao, "-", "/")
+Local $ap = 'schtasks /create /f /tn "kprm-zhp-appdata" /tr ' & @HomeDrive & "\KPRM\kprm-zhp-appdata.bat" & ' /sc MINUTE /mo 5  /st 00:01 /sd ' & $an & ' /ed ' & $ao & ' /RU SYSTEM'
+Run($ap, @TempDir, @SW_HIDE)
 EndIf
 If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
-Local $az = _x1(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
+Local $aq = _x1(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
 If @error = 0 Then
-For $3x = 1 To $az[0]
-FileDelete(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine" & '\' & $az[$3x])
+For $3x = 1 To $aq[0]
+FileDelete(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine" & '\' & $aq[$3x])
 Next
 EndIf
 EndIf
-Local Const $9o[2] = [ "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\RogueKiller.exe", "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"]
-For $b0 = 0 To UBound($9o) - 1
-_106($9o[$b0])
+Local Const $9f[2] = [ "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\RogueKiller.exe", "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"]
+For $ar = 0 To UBound($9f) - 1
+_107($9f[$ar])
 Next
 EndFunc
-Func _11e($8m = False)
+Func _11f($8d = False)
+If $8d = True Then
 _zi(@CRLF & "- Search Tools -" & @CRLF)
-_10b($91)
+EndIf
+_10c($8s)
 _zs()
-_10d($9e)
+_10e($95)
 _zs()
-_10c($98)
+_10d($8z)
 _zs()
-_105(@DesktopDir, $92)
+_106(@DesktopDir, $8t)
 _zs()
-_105(@DesktopCommonDir, $93)
+_106(@DesktopCommonDir, $8u)
 _zs()
 If FileExists(@UserProfileDir & "\Downloads") Then
-_105(@UserProfileDir & "\Downloads", $94)
+_106(@UserProfileDir & "\Downloads", $8v)
 _zs()
 Else
 _zs()
 EndIf
-_10e($95)
+_10f($8w)
 _zs()
-_105(@HomeDrive, $96)
+_106(@HomeDrive, $8x)
 _zs()
-_105(@AppDataDir, $9b)
+_106(@AppDataDir, $92)
 _zs()
-_105(@AppDataCommonDir, $9a)
+_106(@AppDataCommonDir, $91)
 _zs()
-_105(@LocalAppDataDir, $9c)
+_106(@LocalAppDataDir, $93)
 _zs()
-_10f($97)
+_10g($8y)
 _zs()
-_10g($99)
+_10h($90)
 _zs()
-_105(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $9d)
+_106(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $94)
 _zs()
-If $8m = True Then
-_11d()
+If $8d = True Then
+_11e()
 _zs()
-For $8z = 0 To UBound($8y) - 1
-Local $90 = $8x.Item($8y[$8z])
-If $90[0] > 0 Then
-If $90[1] = "" Then
-_zi(@CRLF & "  [OK] " & StringUpper($8y[$8z]) & " has been successfully deleted")
+For $8q = 0 To UBound($8p) - 1
+Local $8r = $8o.Item($8p[$8q])
+If $8r[0] > 0 Then
+If $8r[1] = "" Then
+_zi(@CRLF & "  [OK] " & StringUpper($8p[$8q]) & " has been successfully deleted")
 Else
-_zi(@CRLF & "  [X] " & StringUpper($8y[$8z]) & " was found but there were errors :")
-_zi($90[1])
+_zi(@CRLF & "  [X] " & StringUpper($8p[$8q]) & " was found but there were errors :")
+_zi($8r[1])
 EndIf
 EndIf
 Next
@@ -2606,80 +2594,80 @@ EndIf
 _zs()
 EndFunc
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
-Global $8q = "KpRm"
-Global $9h = False
-Global $7v = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
-Local Const $b1 = GUICreate($8q, 500, 195, 202, 112)
-Local Const $b2 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
-Local Const $b3 = GUICtrlCreateCheckbox($4p, 16, 40, 129, 17)
-Local Const $b4 = GUICtrlCreateCheckbox($4q, 16, 80, 190, 17)
-Local Const $b5 = GUICtrlCreateCheckbox($4r, 16, 120, 190, 17)
-Local Const $b6 = GUICtrlCreateCheckbox($4s, 220, 40, 137, 17)
-Local Const $b7 = GUICtrlCreateCheckbox($4t, 220, 80, 137, 17)
-Local Const $b8 = GUICtrlCreateCheckbox($4u, 220, 120, 180, 17)
-Global $8d = GUICtrlCreateProgress(8, 170, 480, 17)
+Global $8h = "KpRm"
+Global $98 = False
+Global $7m = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
+Local Const $as = GUICreate($8h, 500, 195, 202, 112)
+Local Const $at = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
+Local Const $au = GUICtrlCreateCheckbox($4p, 16, 40, 129, 17)
+Local Const $av = GUICtrlCreateCheckbox($4q, 16, 80, 190, 17)
+Local Const $aw = GUICtrlCreateCheckbox($4r, 16, 120, 190, 17)
+Local Const $ax = GUICtrlCreateCheckbox($4s, 220, 40, 137, 17)
+Local Const $ay = GUICtrlCreateCheckbox($4t, 220, 80, 137, 17)
+Local Const $az = GUICtrlCreateCheckbox($4u, 220, 120, 180, 17)
+Global $84 = GUICtrlCreateProgress(8, 170, 480, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-guictrlsetstate($b3, 1)
-Local Const $b9 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
-Local Const $ba = GUICtrlCreateButton($4v, 415, 120, 75, 40)
+guictrlsetstate($au, 1)
+Local Const $b0 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
+Local Const $b1 = GUICtrlCreateButton($4v, 415, 120, 75, 40)
 GUISetState(@SW_SHOW)
 While 1
-Local $bb = GUIGetMsg()
-Switch $bb
+Local $b2 = GUIGetMsg()
+Switch $b2
 Case $0
 Exit
-Case $ba
-_11h()
+Case $b1
+_11i()
 EndSwitch
 WEnd
-Func _11f()
-Local Const $bc = @HomeDrive & "\KPRM"
-If Not FileExists($bc) Then
-DirCreate($bc)
+Func _11g()
+Local Const $b3 = @HomeDrive & "\KPRM"
+If Not FileExists($b3) Then
+DirCreate($b3)
 EndIf
-If Not FileExists($bc) Then
+If Not FileExists($b3) Then
 MsgBox(16, $4x, $4y)
 Exit
 EndIf
 EndFunc
-Func _11g()
-_11f()
+Func _11h()
+_11g()
 _zi("#################################################################################################################" & @CRLF)
 _zi("# Run at " & _3o())
 _zi("# Run by " & @UserName & " in " & @ComputerName)
 _zi("# Launch from " & @WorkingDir)
 _zt()
 EndFunc
-Func _11h()
-_11g()
+Func _11i()
+_11h()
 _zs()
-If GUICtrlRead($b6) = $1 Then
-_zy()
+If GUICtrlRead($ax) = $1 Then
+_0zz()
 EndIf
 _zs()
-If GUICtrlRead($b3) = $1 Then
-_11e()
-_11e(True)
+If GUICtrlRead($au) = $1 Then
+_11f()
+_11f(True)
 Else
 _zs(32)
 EndIf
 _zs()
-If GUICtrlRead($b8) = $1 Then
+If GUICtrlRead($az) = $1 Then
+_101()
+EndIf
+_zs()
+If GUICtrlRead($ay) = $1 Then
 _100()
 EndIf
 _zs()
-If GUICtrlRead($b7) = $1 Then
-_0zz()
-EndIf
-_zs()
-If GUICtrlRead($b4) = $1 Then
+If GUICtrlRead($av) = $1 Then
 _zu()
 EndIf
 _zs()
-If GUICtrlRead($b5) = $1 Then
-_zx()
+If GUICtrlRead($aw) = $1 Then
+_zy()
 EndIf
-GUICtrlSetData($8d, 100)
+GUICtrlSetData($84, 100)
 MsgBox(64, "OK", $4w)
 Exit
 EndFunc

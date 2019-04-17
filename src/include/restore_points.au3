@@ -90,7 +90,16 @@ Func ClearDayRestorePoint($retry = False)
 		ClearDayRestorePoint(True)
 	EndIf
 
+	Sleep(3000)
+
 EndFunc   ;==>ClearDayRestorePoint
+
+Func CreateSystemRestorePoint()
+    #RequireAdmin
+    RunWait('powershell Checkpoint-Computer -Description "kprm" -RestorePointType MODIFY_SETTINGS')
+
+	Return @error
+EndFunc
 
 
 Func CreateRestorePoint($retry = False)
@@ -119,11 +128,9 @@ Func CreateRestorePoint($retry = False)
 
 	ClearDayRestorePoint()
 
-	Sleep(1000)
+	Local Const $createdPointStatus = CreateSystemRestorePoint()
 
-	Local Const $createdPointStatus = _SR_CreateRestorePoint($ProgramName)
-
-	If $createdPointStatus <> 1 Then
+	If $createdPointStatus <> 0 Then
 		logMessage("  [X] Failed to create System Restore Point!")
 
 		If $retry = False Then
@@ -131,7 +138,7 @@ Func CreateRestorePoint($retry = False)
 			Return
 		EndIf
 
-	ElseIf $createdPointStatus = 1 Then
+	ElseIf $createdPointStatus = 0 Then
 		logMessage("  [OK] System Restore Point successfully created")
 	EndIf
 
