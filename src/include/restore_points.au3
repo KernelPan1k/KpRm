@@ -66,13 +66,13 @@ Func ClearDayRestorePoint($retry = False)
 		Return Null
 	EndIf
 
-	Local Const $in24h = convertDate(_DateAdd('h', -25, _NowCalc()))
+	Local Const $timeBefore = convertDate(_DateAdd('n', -1470, _NowCalc()))
 	Local $relaunch = False
 
 	For $i = 1 To $aRP[0][0]
 		Local $dateCreated = $aRP[$i][2]
 
-		If $dateCreated > $in24h Then
+		If $dateCreated > $timeBefore Then
 			Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
 
 			If $status = 1 Then
