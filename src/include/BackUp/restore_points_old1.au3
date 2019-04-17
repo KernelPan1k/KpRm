@@ -87,7 +87,7 @@ Func ClearDayRestorePoint($retry = False)
 
 	If $relaunch = True Then
 		Sleep(3000)
-		ClearDayRestorePoint(True)
+						ClearDayRestorePoint(True)
 	EndIf
 
 EndFunc   ;==>ClearDayRestorePoint

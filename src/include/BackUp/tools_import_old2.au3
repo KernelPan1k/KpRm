@@ -165,8 +165,9 @@ Func RunRemoveTools($retry = False)
 				EndIf
 			EndIf
 		Next
-	Else
-		ProgressBarUpdate()
+		Else
+				ProgressBarUpdate()
+
 	EndIf
 
 	ProgressBarUpdate()
