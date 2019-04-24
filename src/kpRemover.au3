@@ -9,8 +9,8 @@
 #AutoIt3Wrapper_Res_ProductVersion=0.7
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
-#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif
+#AutoIt3Wrapper_Res_Icon_Add=C:\Users\parfa\Desktop\kpRemover\src\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -48,9 +48,9 @@ EndIf
 #include "include\restore_system_settings.au3"
 #include "include\tools_import.au3"
 
-#Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
+#Region ### START Koda GUI section ### Form=C:\Users\parfa\Desktop\kpRemover\gui\Form1.kxf
 
-FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
