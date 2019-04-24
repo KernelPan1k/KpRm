@@ -4,9 +4,9 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=kpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.6
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.7
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.6
+#AutoIt3Wrapper_Res_ProductVersion=0.7
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
@@ -68,7 +68,7 @@ Global $ProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-guictrlsetstate ($RemoveTools, 1)
+GUICtrlSetState($RemoveTools, 1)
 
 Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
 Local Const $RunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
@@ -102,7 +102,7 @@ Func CreateKPRMDir()
 		MsgBox(16, $lFail, $lRegistryBackupError)
 		Exit
 	EndIf
-EndFunc
+EndFunc   ;==>CreateKPRMDir
 
 Func Init()
 	CreateKPRMDir()
@@ -159,5 +159,6 @@ Func KpRemover()
 
 	GUICtrlSetData($ProgressBar, 100)
 	MsgBox(64, "OK", $lFinish)
-	Exit
+
+	quitKprm()
 EndFunc   ;==>KpRemover
