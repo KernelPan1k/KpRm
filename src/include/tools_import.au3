@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[32] = [ _
+Local Const $allToolsList[33] = [ _
 		"frst", _
 		"zhpdiag", _
 		"zhpcleaner", _
@@ -32,6 +32,7 @@ Local Const $allToolsList[32] = [ _
 		"remediate-vbs-worm", _
 		"ckscanner", _
 		"quickdiag", _
+		"adlicediag", _
 		"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) - 1
@@ -97,6 +98,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/remediate-vbs-worm.au3"
 #include "tools/ckscanner.au3"
 #include "tools/quickdiag.au3"
+#include "tools/adlice_diag.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)

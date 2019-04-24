@@ -96,7 +96,7 @@ EndFunc   ;==>ClearDayRestorePoint
 
 Func CreateSystemRestorePoint()
     #RequireAdmin
-    RunWait('powershell Checkpoint-Computer -Description "kprm" -RestorePointType MODIFY_SETTINGS')
+    RunWait(@ComSpec & ' /c ' & 'wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "KpRm", 100, 7', "", @SW_HIDE)
 
 	Return @error
 EndFunc

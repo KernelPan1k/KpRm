@@ -15,7 +15,7 @@ Func CreateBackupRegistry()
 	If Not FileExists($backupLocation) Or @error <> 0 Then
 		logMessage("  [X] Failed to create registry backup")
 		MsgBox(16, $lFail, $lRegistryBackupError)
-		Exit
+		quitKprm()
 	Else
 		logMessage("  [OK] Registry Backup created successfully at " & $backupLocation)
 	EndIf
