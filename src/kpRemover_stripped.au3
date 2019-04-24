@@ -2528,7 +2528,7 @@ Local Const $a7 = "(?i)^ADiag$"
 Local Const $a8 = "(?i)^Diag_portable(32|64)\.exe$"
 Local Const $al = "(?i)^Diag\.lnk$"
 Local Const $an = "(?i)^Diag_setup\.exe$"
-Local Const $ao = "(?i)^Diag\.exe$"
+Local Const $ao = "(?i)^Diag(32|64)?\.exe$"
 Local Const $a9[1][2] = [[$a2, $am]]
 Local Const $aa[1][4] = [[$a2, "HKLM" & $56 & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $a5, "DisplayName"]]
 Local Const $ab[1][5] = [[$a2, 'folder', Null, $a6, True]]
@@ -2639,7 +2639,7 @@ _zt()
 EndIf
 _zt()
 EndFunc
-FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 Global $8h = "KpRm"
 Global $98 = False
 Global $7m = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"

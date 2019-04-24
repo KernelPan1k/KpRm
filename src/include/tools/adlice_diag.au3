@@ -20,7 +20,7 @@ Func LoadAdliceDiag()
 	Local Const $reg4 = "(?i)^Diag_portable(32|64)\.exe$"
 	Local Const $reg5 = "(?i)^Diag\.lnk$"
 	Local Const $reg6 = "(?i)^Diag_setup\.exe$"
-	Local Const $reg7 = "(?i)^Diag\.exe$"
+	Local Const $reg7 = "(?i)^Diag(32|64)?\.exe$"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $processDescription]]
 	Local Const $arr2[1][4] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $reg1, "DisplayName"]]
