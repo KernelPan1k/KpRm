@@ -122,3 +122,20 @@ Func FileExistsAndGetType($sFilePath)
 
 	Return $fileType
 EndFunc   ;==>FileExistsAndGetType
+
+Func GetHumanVersion()
+	Switch @OSVersion
+        Case "WIN_VISTA"
+            Return "Windows Vista"
+        Case "WIN_7"
+            Return "Windows 7"
+        Case "WIN_8"
+            Return "Windows 8"
+        Case "WIN_81"
+            Return "Windows 8.1"
+        Case "WIN_10"
+            Return "Windows 10"
+        Case Else
+            Return "Unsupported OS"
+    EndSwitch
+EndFunc
