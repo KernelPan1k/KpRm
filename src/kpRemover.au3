@@ -109,8 +109,9 @@ Func Init()
 
 	logMessage("#################################################################################################################" & @CRLF)
 	logMessage("# Run at " & _Now())
-	logMessage("# Run by " & @UserName & " in " & @ComputerName)
-	logMessage("# Launch from " & @WorkingDir)
+	logMessage("# Run by " & @UserName & " from " & @WorkingDir)
+	logMessage("# Computer Name: " & @ComputerName)
+	logMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 
 	ProgressBarInit()
 EndFunc   ;==>Init
