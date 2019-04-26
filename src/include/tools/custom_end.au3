@@ -10,9 +10,8 @@ Func CustomEnd()
 
 		If @error = 0 Then
 			For $i = 1 To $FileList[0]
-				FileDelete(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine" & '\' & $FileList[$i])
+				RemoveFile(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine" & '\' & $FileList[$i], "mbar", Null, True)
 			Next
-			UpdateToolCpt("mbar", 'special', @AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine\*")
 		EndIf
 	EndIf
 
