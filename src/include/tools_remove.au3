@@ -28,7 +28,7 @@ Func prepareRemove($path, $recursive = 0, $force = False)
 	EndIf
 EndFunc   ;==>prepareRemove
 
-Func RemoveFile($file, $descriptionPattern = Null, $force = False)
+Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveFile " & $file)
@@ -45,6 +45,7 @@ Func RemoveFile($file, $descriptionPattern = Null, $force = False)
 			EndIf
 		EndIf
 
+		UpdateToolCpt($toolKey, 'element', $file)
 		prepareRemove($file, 0, $force)
 
 		Local $iDelete = FileDelete($file)
@@ -65,14 +66,14 @@ Func RemoveFile($file, $descriptionPattern = Null, $force = False)
 
 EndFunc   ;==>RemoveFile
 
-Func RemoveFolder($path, $force = False)
+Func RemoveFolder($path, $toolKey, $force = False)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveFolder " & $path)
 	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
-
+		UpdateToolCpt($toolKey, 'element', $path)
 		prepareRemove($path, 1, $force)
 
 		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
@@ -126,7 +127,6 @@ Func RemoveAllFileFrom($path, $elements)
 
 	If $KPDebug Then logMessage("[I] RemoveAllFileFrom " & $path)
 
-	Dim $ToolsCpt
 	Local Const $filePathGlob = $path & "\*"
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 
@@ -142,7 +142,6 @@ Func RemoveAllFileFrom($path, $elements)
 			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
 
 			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
-				Local $toolsData = $ToolsCpt.Item($elements[$e][0])
 				Local $status = 0
 				Local $force = False
 
@@ -151,18 +150,10 @@ Func RemoveAllFileFrom($path, $elements)
 				EndIf
 
 				If $typeOfFile = 'file' Then
-					$status = RemoveFile($pathOfFile, $elements[$e][2], $force)
+					$status = RemoveFile($pathOfFile, $elements[$e][0], $elements[$e][2], $force)
 				ElseIf $typeOfFile = 'folder' Then
-					$status = RemoveFolder($pathOfFile, $force)
+					$status = RemoveFolder($pathOfFile, $elements[$e][0], $force)
 				EndIf
-
-				If $status = 1 Then
-					$toolsData[0] += 1
-				ElseIf $status = 2 Then
-					$toolsData[1] += "  [X] " & $pathOfFile & " delete failed" & @CRLF
-				EndIf
-
-				$ToolsCpt.Item($elements[$e][0]) = $toolsData
 			EndIf
 		Next
 
@@ -173,97 +164,26 @@ Func RemoveAllFileFrom($path, $elements)
 
 EndFunc   ;==>RemoveAllFileFrom
 
-Func RemoveRegistryKey($key)
+Func RemoveRegistryKey($key, $toolKey)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveRegistryKey " & $key)
 	Local Const $status = RegDelete($key)
 
-	If $status = 1 Then
-		If $KPDebug Then
-			logMessage("  [OK] " & $key & " deleted successfully")
-		EndIf
-	ElseIf $status = 2 Then
-		If $KPDebug Then
-			logMessage("  [X] " & $key & " deleted failed")
-		EndIf
+	If $status <> 0 Then
+		UpdateToolCpt($toolKey, "key", $key)
 
+		If $KPDebug Then
+			If $status = 1 Then
+				logMessage("  [OK] " & $key & " deleted successfully")
+			ElseIf $status = 2 Then
+				logMessage("  [X] " & $key & " deleted failed")
+			EndIf
+		EndIf
 	EndIf
 
 	Return $status
 EndFunc   ;==>RemoveRegistryKey
-
-Func RemoveService($name)
-	Local Const $status = RunWait(@ComSpec & " /c " & "sc query " & $name, @TempDir, @SW_HIDE)
-	Local $return = 0
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveService " & $name)
-
-	If $status = 1060 Then
-		Return 0
-	EndIf
-
-	RunWait(@ComSpec & " /c " & "sc stop " & $name, @TempDir, @SW_HIDE)
-
-	If @error = 0 Then
-		If $KPDebug Then logMessage("  [OK] Stop service " & $name & " successfully")
-		$return += 1
-	EndIf
-
-	RunWait(@ComSpec & " /c " & "sc config " & $name & " start= disabled", @TempDir, @SW_HIDE)
-
-	If @error = 0 Then
-		If $KPDebug Then logMessage("  [OK] Disable service " & $name & " successfully")
-		$return += 1
-	EndIf
-
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
-
-	Local $key = "HKLM" & $s64Bit & "\SYSTEM\CurrentControlSet\Services\" & $name
-
-	$return += RemoveRegistryKey($key)
-
-	Local $key = "HKLM" & $s64Bit & "\SYSTEM\ControlSet002\Services\" & $name
-	$return += RemoveRegistryKey($key)
-
-	Return $return
-EndFunc   ;==>RemoveService
-
-Func RemoveSoftwareKey($name)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveSoftwareKey " & $name)
-
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
-	Local $return = 0
-
-	$return += RemoveRegistryKey("HKCU" & $s64Bit & "\SOFTWARE\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\" & $name)
-
-	Return $return
-EndFunc   ;==>RemoveSoftwareKey
-
-Func RemoveContextMenu($name)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveContextMenu " & $name)
-
-	Local $return = 0
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
-
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\lnkfile\shellex\ContextMenuHandlers\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\ShellEx\ContextMenuHandlers\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\Background\ShellEx\ContextMenuHandlers\" & $name)
-	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\Drive\shellex\ContextMenuHandlers\" & $name)
-
-	Return $return
-EndFunc   ;==>RemoveContextMenu
 
 Func CloseProcessAndWait($process)
 	Local $cpt = 50
@@ -304,16 +224,8 @@ Func RemoveAllProcess($processList)
 
 		For $cpt = 1 To UBound($processList) - 1
 			If StringRegExp($processName, $processList[$cpt][1]) Then
-				Local $toolsData = $ToolsCpt.Item($processList[$cpt][0])
-				Local $status = CloseProcessAndWait($pid)
-
-				If $status Then
-					$toolsData[0] += 1
-				Else
-					$toolsData[1] += "  [X] The process could not be stopped, the program may not have been deleted correctly" & @CRLF
-				EndIf
-
-				$ToolsCpt.Item($processList[$cpt][0]) = $toolsData
+				CloseProcessAndWait($pid)
+				UpdateToolCpt($processList[$cpt][0], "process", $processName)
 			EndIf
 		Next
 	Next
@@ -321,7 +233,6 @@ EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($list)
 	Dim $KPDebug
-	Dim $ToolsCpt
 
 	If $KPDebug Then logMessage("[I] RemoveScheduleTask")
 
@@ -331,7 +242,6 @@ Func RemoveScheduleTask($list)
 EndFunc   ;==>RemoveScheduleTask
 
 Func UninstallNormaly($list)
-	Dim $ToolsCpt
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] UninstallNormaly")
@@ -351,9 +261,7 @@ Func UninstallNormaly($list)
 				For $u = 1 To UBound($uninstallFiles) - 1
 					If isFile($uninstallFiles[$u]) Then
 						RunWait($uninstallFiles[$u])
-						Local $toolsData = $ToolsCpt.Item($list[$c][0])
-						$toolsData[0] += 1
-						$ToolsCpt.Item($list[$c][0]) = $toolsData
+						UpdateToolCpt($list[$c][0], "uninstall", $uninstallFiles[$u])
 					EndIf
 				Next
 			Next
@@ -374,7 +282,6 @@ Func RemoveAllProgramFilesDir($list)
 EndFunc   ;==>RemoveAllProgramFilesDir
 
 Func RemoveAllSoftwareKeyList($list)
-	Dim $ToolsCpt
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveAllSoftwareKeyList")
@@ -395,16 +302,8 @@ Func RemoveAllSoftwareKeyList($list)
 			For $c = 1 To UBound($list) - 1
 				If $entry And $list[$c][1] Then
 					If StringRegExp($entry, $list[$c][1]) Then
-						Local $status = RemoveRegistryKey($keys[$k] & "\" & $entry)
-						Local $toolsData = $ToolsCpt.Item($list[$c][0])
-
-						If $status = 1 Then
-							$toolsData[0] += 1
-						ElseIf $status = 2 Then
-							$toolsData[1] += "[X] " & $keys[$k] & "\" & $entry & " delete failed" & @CRLF
-						EndIf
-
-						$ToolsCpt.Item($list[$c][0]) = $toolsData
+						Local $keyFound = $keys[$k] & "\" & $entry
+						RemoveRegistryKey($keyFound, $list[$c][0])
 					EndIf
 				EndIf
 			Next
@@ -413,7 +312,6 @@ Func RemoveAllSoftwareKeyList($list)
 EndFunc   ;==>RemoveAllSoftwareKeyList
 
 Func RemoveUninstallStringWithSearch($list)
-	Dim $ToolsCpt
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveUninstallStringWithSearch")
@@ -422,16 +320,64 @@ Func RemoveUninstallStringWithSearch($list)
 		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
 
 		If $keyFound And $keyFound <> "" Then
-			Local $status = RemoveRegistryKey($keyFound)
-			Local $toolsData = $ToolsCpt.Item($list[$i][0])
-
-			If $status = 1 Then
-				$toolsData[0] += 1
-			ElseIf $status = 2 Then
-				$toolsData[1] += "[X] " & $keyFound & " delete failed" & @CRLF
-			EndIf
-
-			$ToolsCpt.Item($list[$i][0]) = $toolsData
+			RemoveRegistryKey($keyFound, list[$i][0])
 		EndIf
 	Next
 EndFunc   ;==>RemoveUninstallStringWithSearch
+
+;~ Func RemoveContextMenu($name)
+;~ 	Dim $KPDebug
+
+;~ 	If $KPDebug Then logMessage("[I] RemoveContextMenu " & $name)
+
+;~ 	Local $return = 0
+;~ 	Local $s64Bit = ""
+;~ 	If @OSArch = "X64" Then $s64Bit = "64"
+
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\*\shellex\ContextMenuHandlers\" & $name)
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\lnkfile\shellex\ContextMenuHandlers\" & $name)
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\" & $name)
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\ShellEx\ContextMenuHandlers\" & $name)
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\Software\Classes\Directory\Background\ShellEx\ContextMenuHandlers\" & $name)
+;~ 	$return += RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Classes\Drive\shellex\ContextMenuHandlers\" & $name)
+
+;~ 	Return $return
+;~ EndFunc   ;==>RemoveContextMenu
+
+;~ Func RemoveService($name)
+;~ 	Local Const $status = RunWait(@ComSpec & " /c " & "sc query " & $name, @TempDir, @SW_HIDE)
+;~ 	Local $return = 0
+;~ 	Dim $KPDebug
+
+;~ 	If $KPDebug Then logMessage("[I] RemoveService " & $name)
+
+;~ 	If $status = 1060 Then
+;~ 		Return 0
+;~ 	EndIf
+
+;~ 	RunWait(@ComSpec & " /c " & "sc stop " & $name, @TempDir, @SW_HIDE)
+
+;~ 	If @error = 0 Then
+;~ 		If $KPDebug Then logMessage("  [OK] Stop service " & $name & " successfully")
+;~ 		$return += 1
+;~ 	EndIf
+
+;~ 	RunWait(@ComSpec & " /c " & "sc config " & $name & " start= disabled", @TempDir, @SW_HIDE)
+
+;~ 	If @error = 0 Then
+;~ 		If $KPDebug Then logMessage("  [OK] Disable service " & $name & " successfully")
+;~ 		$return += 1
+;~ 	EndIf
+
+;~ 	Local $s64Bit = ""
+;~ 	If @OSArch = "X64" Then $s64Bit = "64"
+
+;~ 	Local $key = "HKLM" & $s64Bit & "\SYSTEM\CurrentControlSet\Services\" & $name
+
+;~ 	$return += RemoveRegistryKey($key)
+
+;~ 	Local $key = "HKLM" & $s64Bit & "\SYSTEM\ControlSet002\Services\" & $name
+;~ 	$return += RemoveRegistryKey($key)
+
+;~ 	Return $return
+;~ EndFunc   ;==>RemoveService

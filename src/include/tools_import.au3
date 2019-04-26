@@ -36,7 +36,19 @@ Local Const $allToolsList[33] = [ _
 		"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) - 1
-	Local $toolsValue[2] = [0, ""]
+	Local $toolsValue = ObjCreate("Scripting.Dictionary")
+	Local $toolsValueKey = ObjCreate("Scripting.Dictionary")
+	Local $toolsValueFile = ObjCreate("Scripting.Dictionary")
+	Local $toolsValueUninstall = ObjCreate("Scripting.Dictionary")
+	Local $toolsValueProcess = ObjCreate("Scripting.Dictionary")
+	Local $toolsValueSpecial = ObjCreate("Scripting.Dictionary")
+
+	$toolsValue.add("key", $toolsValueKey)
+	$toolsValue.add("element", $toolsValueFile)
+	$toolsValue.add("uninstall", $toolsValueUninstall)
+	$toolsValue.add("process", $toolsValueProcess)
+	$toolsValue.add("special", $toolsValueSpecial)
+
 	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
 Next
 
