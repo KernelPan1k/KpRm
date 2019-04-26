@@ -17,6 +17,6 @@ Func CreateBackupRegistry()
 		MsgBox(16, $lFail, $lRegistryBackupError)
 		quitKprm()
 	Else
-		logMessage("  [OK] Registry Backup created successfully at " & $backupLocation)
+		logMessage("  [OK] Registry Backup: " & $backupLocation)
 	EndIf
 EndFunc   ;==>CreateBackupRegistry

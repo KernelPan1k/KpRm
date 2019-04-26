@@ -5,9 +5,9 @@ Func RestoreSystemSettingsByDefault()
 	Local $status = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Then
-		logMessage("  [X] Flush DNS failure")
+		logMessage("  [X] Flush DNS")
 	Else
-		logMessage("  [OK] Flush DNS successfully completed")
+		logMessage("  [OK] Flush DNS")
 	EndIf
 
 ;~ #################
@@ -33,9 +33,9 @@ Func RestoreSystemSettingsByDefault()
 	Next
 
 	If $status = 0 Then
-		logMessage("  [OK] Reset WinSock successfully completed")
+		logMessage("  [OK] Reset WinSock")
 	Else
-		logMessage("  [X] Reset WinSock failure")
+		logMessage("  [X] Reset WinSock")
 	EndIf
 
 	Local $regvar = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
@@ -43,25 +43,25 @@ Func RestoreSystemSettingsByDefault()
 	$status = RegWrite($regvar, "Hidden", "REG_DWORD", "2")
 
 	If $status = 1 Then
-		logMessage("  [OK] Hide Hidden file successfully.")
+		logMessage("  [OK] Hide Hidden file.")
 	Else
-		logMessage("  [X] Hide Hidden File failure")
+		logMessage("  [X] Hide Hidden File")
 	EndIf
 
 	$status = RegWrite($regvar, "HideFileExt", "REG_DWORD", "1")
 
 	If $status = 1 Then
-		logMessage("  [OK] Hide Extensions for known file types successfully.")
+		logMessage("  [OK] Hide Extensions for known file types")
 	Else
-		logMessage("  [X] Hide Extensions for known file types failure")
+		logMessage("  [X] Hide Extensions for known file types")
 	EndIf
 
 	$status = RegWrite($regvar, "ShowSuperHidden", "REG_DWORD", "0")
 
 	If $status = 1 Then
-		logMessage("  [OK] Hide protected operating system files successfully.")
+		logMessage("  [OK] Hide protected operating system files")
 	Else
-		logMessage("  [X] Hide protected operating system files failure")
+		logMessage("  [X] Hide protected operating system files")
 	EndIf
 
 	_Restart_Windows_Explorer()

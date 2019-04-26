@@ -17,12 +17,7 @@ Func CustomEnd()
 
 ;~  All
 
-	Local Const $reg[2] = [ _
-			"HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\RogueKiller.exe", _
-			"HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"]
-
-	For $r = 0 To UBound($reg) - 1
-		RemoveRegistryKey($reg[$r], "roguekiller")
-	Next
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps\RogueKiller.exe", "roguekiller")
+	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", "combofix")
 
 EndFunc   ;==>CustomEnd

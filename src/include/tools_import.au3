@@ -182,10 +182,11 @@ Func RunRemoveTools($retry = False)
 					If $ToolExistDisplayMessage = False Then
 						$ToolExistDisplayMessage = True
 						$hasFoundTools = True
-						logMessage(@CRLF & "  [I] " & StringUpper($ToolsCptKey) & " found")
+						logMessage(@CRLF & "  ## " & StringUpper($ToolsCptKey) & " found")
 					EndIf
 
-					For $ToolCptSubToolKey In UBound($ToolCptSubToolKeys) - 1
+					For $ToolCptSubToolKeyI = 0 To UBound($ToolCptSubToolKeys) - 1
+						Local $ToolCptSubToolKey = $ToolCptSubToolKeys[$ToolCptSubToolKeyI]
 						Local $ToolCptSubToolVal = $ToolCptSubTool.Item($ToolCptSubToolKey)
 						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
 					Next
