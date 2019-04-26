@@ -320,7 +320,7 @@ Func RemoveUninstallStringWithSearch($list)
 		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
 
 		If $keyFound And $keyFound <> "" Then
-			RemoveRegistryKey($keyFound, list[$i][0])
+			RemoveRegistryKey($keyFound, $list[$i][0])
 		EndIf
 	Next
 EndFunc   ;==>RemoveUninstallStringWithSearch

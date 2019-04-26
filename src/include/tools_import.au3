@@ -41,13 +41,11 @@ For $ti = 0 To UBound($allToolsList) - 1
 	Local $toolsValueFile = ObjCreate("Scripting.Dictionary")
 	Local $toolsValueUninstall = ObjCreate("Scripting.Dictionary")
 	Local $toolsValueProcess = ObjCreate("Scripting.Dictionary")
-	Local $toolsValueSpecial = ObjCreate("Scripting.Dictionary")
 
 	$toolsValue.add("key", $toolsValueKey)
 	$toolsValue.add("element", $toolsValueFile)
 	$toolsValue.add("uninstall", $toolsValueUninstall)
 	$toolsValue.add("process", $toolsValueProcess)
-	$toolsValue.add("special", $toolsValueSpecial)
 
 	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
 Next
@@ -164,25 +162,40 @@ Func RunRemoveTools($retry = False)
 	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonStartMenuFolderList)
 	ProgressBarUpdate()
 
+	CustomEnd()
+	ProgressBarUpdate()
+
 	If $retry = True Then
-		CustomEnd()
+		Local $hasFoundTools = False
+		Local Const $ToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
 
-		ProgressBarUpdate()
+		For $ToolsCptKey In $ToolsCpt
+			Local $toolCptTool = $ToolsCpt.Item($ToolsCptKey)
+			Local $ToolExistDisplayMessage = False
 
-		For $ti = 0 To UBound($allToolsList) - 1
-			Local $toolsValue = $ToolsCpt.Item($allToolsList[$ti])
+			For $ToolCptSubKeyI = 0 To UBound($ToolCptSubKeys) - 1
+				Local $ToolCptSubKey = $ToolCptSubKeys[$ToolCptSubKeyI]
+				Local $ToolCptSubTool = $toolCptTool.Item($ToolCptSubKey)
+				Local $ToolCptSubToolKeys = $ToolCptSubTool.Keys
 
-			If $toolsValue[0] > 0 Then
-				If $toolsValue[1] = "" Then
-					logMessage(@CRLF & "  [OK] " & StringUpper($allToolsList[$ti]) & " has been successfully deleted")
-				Else
-					logMessage(@CRLF & "  [X] " & StringUpper($allToolsList[$ti]) & " was found but there were errors :")
-					logMessage($toolsValue[1])
+				If UBound($ToolCptSubToolKeys) > 0 Then
+					If $ToolExistDisplayMessage = False Then
+						$ToolExistDisplayMessage = True
+						$hasFoundTools = True
+						logMessage(@CRLF & "  [I] " & StringUpper($ToolsCptKey) & " found")
+					EndIf
+
+					For $ToolCptSubToolKey In UBound($ToolCptSubToolKeys) - 1
+						Local $ToolCptSubToolVal = $ToolCptSubTool.Item($ToolCptSubToolKey)
+						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
+					Next
 				EndIf
-			EndIf
+			Next
 		Next
-	Else
-		ProgressBarUpdate()
+
+		If $hasFoundTools = False Then
+			logMessage("  [I] No tools found")
+		EndIf
 	EndIf
 
 	ProgressBarUpdate()

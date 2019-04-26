@@ -156,6 +156,75 @@ Func UpdateToolCpt($toolKey, $elementkey, $elementValue)
 
 	Local $toolsData = $ToolsCpt.Item($toolKey)
 	Local $toolsDict = AddInDictionaryIfNotExistAndIncrement($toolsData.Item($elementkey), $elementValue)
-	$toolsData.Item($elementkey) = $toolsKey
+	$toolsData.Item($elementkey) = $toolKey
 	$ToolsCpt.Item($toolKey) = $toolsData
 EndFunc   ;==>UpdateToolCpt
+
+
+Func UCheckIfProcessExist($process, $toolVal)
+	If $process = Null Or $process = "" Then Return
+
+	Local $status = ProcessExists($process)
+
+	If $status <> 0 Then
+		logMessage("     [!] The process " & $process & " exists, it is possible that the deletion is not complete (" & $toolVal & ")")
+	EndIf
+EndFunc   ;==>UCheckIfProcessExist
+
+Func UCheckIfRegistyKeyExist($toolElement, $toolVal)
+	If $toolElement = Null Or $toolElement = "" Then Return
+
+	RegEnumVal($toolElement, "1")
+	Local $symbol = "[OK]"
+
+	If @error <> 0 Then
+		$symbol = "[X]"
+	EndIf
+
+	logMessage("     " & $symbol & " Registry key " & $toolElement & " deleted (" & $toolVal & ")")
+EndFunc   ;==>UCheckIfRegistyKeyExist
+
+Func UCheckIfUninstallOk($toolElement, $toolVal)
+	If $toolElement = Null Or $toolElement = "" Then Return
+
+	Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
+	Local $aPathSplit = _PathSplit($toolElement, $sDrive, $sDir, $sFileName, $sExtension)
+
+	If $sExtension = ".exe" Then
+		Local $folderPath = $aPathSplit[1] & $aPathSplit[2]
+		Local $symbol = "[OK]"
+
+		If FileExists($folderPath) Then
+			$symbol = "[X]"
+		EndIf
+
+		logMessage("     " & $symbol & " Uninstaller run correctly (" & $toolVal & ")")
+	EndIf
+EndFunc   ;==>UCheckIfUninstallOk
+
+Func UCheckIfElementExist($toolElement, $toolVal)
+	If $toolElement = Null Or $toolElement = "" Then Return
+
+	Local $symbol = "[OK]"
+
+	If FileExists($toolElement) Then
+		$symbol = "[X]"
+	EndIf
+
+	logMessage("     " & $symbol & " " & $toolElement & " deleted (" & $toolVal & ")")
+EndFunc   ;==>UCheckIfElementExist
+
+Func CheckIfExist($type, $toolElement, $toolVal)
+	Switch $type
+		Case "process"
+			UCheckIfProcessExist($toolElement, $toolVal)
+		Case "key"
+			UCheckIfRegistyKeyExist($toolElement, $toolVal)
+		Case "uninstall"
+			UCheckIfUninstallOk($toolElement, $toolVal)
+		Case "element"
+			UCheckIfElementExist($toolElement, $toolVal)
+		Case Else
+			logMessage("     [?] Unknown type " & $type)
+	EndSwitch
+EndFunc   ;==>CheckIfExist
