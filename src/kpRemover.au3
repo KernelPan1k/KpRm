@@ -2,15 +2,15 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm.exe
+#AutoIt3Wrapper_Outfile=kpRm-008.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.7
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.8
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.7
+#AutoIt3Wrapper_Res_ProductVersion=0.8
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
-#AutoIt3Wrapper_Res_Icon_Add=C:\Users\parfa\Desktop\kpRemover\src\assets\bug.ico
-#AutoIt3Wrapper_Res_File_Add=C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif
+#AutoIt3Wrapper_Res_Icon_Add=C:\Users\test\Desktop\kpRemover\src\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=C:\Users\test\Desktop\kpRemover\src\assets\bug.gif
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
@@ -25,7 +25,7 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 #include <File.au3>
-AutoItSetOption("MustDeclareVars", 1)
+;~ AutoItSetOption("MustDeclareVars", 1)
 
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
@@ -48,9 +48,9 @@ EndIf
 #include "include\restore_system_settings.au3"
 #include "include\tools_import.au3"
 
-#Region ### START Koda GUI section ### Form=C:\Users\parfa\Desktop\kpRemover\gui\Form1.kxf
+#Region ### START Koda GUI section ### Form=C:\Users\test\Desktop\kpRemover\gui\Form1.kxf
 
-FileInstall("C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\test\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
 Global $ProgramName = "KpRm"
 Global $KPDebug = False
