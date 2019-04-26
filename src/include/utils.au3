@@ -140,6 +140,15 @@ Func GetHumanVersion()
 	EndSwitch
 EndFunc   ;==>GetHumanVersion
 
+Func FormatForDisplayRegistryKey($key)
+	If StringRegExp($key, "^(HKLM|HKCU|HKU|HKCR|HKCC)64") Then
+		Local $sKey = StringReplace($key, "64", "", 1)
+		Return $sKey
+	EndIf
+	
+	Return $key
+EndFunc
+
 Func AddInDictionaryIfNotExistAndIncrement($dict, $key)
 	If $dict.Exists($key) Then
 		Local $val = $dict.Item($key) + 1
@@ -156,7 +165,7 @@ Func UpdateToolCpt($toolKey, $elementkey, $elementValue)
 
 	Local $toolsData = $ToolsCpt.Item($toolKey)
 	Local $toolsDict = AddInDictionaryIfNotExistAndIncrement($toolsData.Item($elementkey), $elementValue)
-	$toolsData.Item($elementkey) = $toolKey
+	$toolsData.Item($elementkey) = $toolsDict
 	$ToolsCpt.Item($toolKey) = $toolsData
 EndFunc   ;==>UpdateToolCpt
 
@@ -167,21 +176,21 @@ Func UCheckIfProcessExist($process, $toolVal)
 	Local $status = ProcessExists($process)
 
 	If $status <> 0 Then
-		logMessage("     [!] The process " & $process & " exists, it is possible that the deletion is not complete (" & $toolVal & ")")
+		logMessage("     [!] Process " & $process & " exists, it is possible that the deletion is not complete (" & $toolVal & ")")
 	EndIf
 EndFunc   ;==>UCheckIfProcessExist
 
 Func UCheckIfRegistyKeyExist($toolElement, $toolVal)
 	If $toolElement = Null Or $toolElement = "" Then Return
 
+	Local $symbol = "[X]"
 	RegEnumVal($toolElement, "1")
-	Local $symbol = "[OK]"
 
-	If @error <> 0 Then
-		$symbol = "[X]"
+	If @error >= 0 Then
+		$symbol = "[OK]"
 	EndIf
 
-	logMessage("     " & $symbol & " Registry key " & $toolElement & " deleted (" & $toolVal & ")")
+	logMessage("     " & $symbol & " " & FormatForDisplayRegistryKey($toolElement) & " deleted (" & $toolVal & ")")
 EndFunc   ;==>UCheckIfRegistyKeyExist
 
 Func UCheckIfUninstallOk($toolElement, $toolVal)

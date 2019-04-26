@@ -17,12 +17,10 @@ Func ClearRestorePoint()
 		$ret += $status
 
 		If $status = 1 Then
-			logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " has been successfully deleted")
-		ElseIf UBound($aRP[$i]) = 3 Then
+			logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")			
+		Else
 			Local $error[1][3] = [[$aRP[$i][0], $aRP[$i][1], $aRP[$i][2]]]
 			_ArrayAdd($errors, $error)
-		Else
-			logMessage("    => [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " has not been successfully deleted")
 		EndIf
 	Next
 
@@ -34,9 +32,9 @@ Func ClearRestorePoint()
 			$ret += $status
 
 			If $status = 1 Then
-				logMessage("    => [OK] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " has been successfully deleted")
+				logMessage("    => [OK] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			Else
-				logMessage("    => [X] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " has not been successfully deleted")
+				logMessage("    => [X] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			EndIf
 		Next
 
@@ -84,11 +82,11 @@ Func ClearDayRestorePoint($retry = False)
 			Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
 
 			If $status = 1 Then
-				logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $dateCreated & " has been successfully deleted")
+				logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $dateCreated & " deleted")
 			ElseIf $retry = False Then
 				$relaunch = True
 			Else
-				logMessage("  [X] Failure when deleting restore point " & $aRP[$i][1] & " created at " & $dateCreated)
+				logMessage("    => [X] RP named " & $aRP[$i][1] & " created at " & $dateCreated & " deleted")
 			EndIf
 		EndIf
 	Next
@@ -120,7 +118,7 @@ Func ShowCurrentRestorePoint()
 	EndIf
 
 	For $i = 1 To $aRP[0][0]
-		logMessage("    => [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " was found")
+		logMessage("    => [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
 	Next
 
 EndFunc   ;==>ShowCurrentRestorePoint
@@ -150,11 +148,11 @@ Func CreateRestorePoint($retry = False)
 		$iSR_Enabled = _SR_Enable()
 
 		If $iSR_Enabled = 0 Then
-			logMessage("  [X] Failed to enable System Restore")
+			logMessage("  [X] Enable System Restore")
 		EndIf
 
 	ElseIf $iSR_Enabled = 1 Then
-		logMessage("  [OK] System Restore enabled successfully")
+		logMessage("  [OK] Enable System Restore")
 	EndIf
 
 	ClearDayRestorePoint()
@@ -162,7 +160,7 @@ Func CreateRestorePoint($retry = False)
 	Local Const $createdPointStatus = CreateSystemRestorePoint()
 
 	If $createdPointStatus <> 0 Then
-		logMessage("  [X] Failed to create System Restore Point!")
+		logMessage("  [X] System Restore Point created")
 
 		If $retry = False Then
 			logMessage("  [I] Retry to create System Restore Point!")
@@ -174,7 +172,7 @@ Func CreateRestorePoint($retry = False)
 		EndIf
 
 	ElseIf $createdPointStatus = 0 Then
-		logMessage("  [OK] System Restore Point successfully created")
+		logMessage("  [OK] System Restore Point created")
 		ShowCurrentRestorePoint()
 	EndIf
 
