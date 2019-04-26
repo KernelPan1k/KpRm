@@ -8,9 +8,9 @@ Func LoadCommonZHP()
 	Local Const $val[1][2] = [[$ToolExistCpt, "(?i)^ZHP$"]]
 	Local Const $val2[1][5] = [[$ToolExistCpt, 'folder', Null, "(?i)^ZHP$", True]]
 
+_ArrayAdd($KPRemoveAppDataLocalList, $val2)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $val)
-	_ArrayAdd($KPRemoveAppDataLocalList, $val2)
-	_ArrayAdd($KPRemoveAppDataList, $val2)
-EndFunc   ;==>LoadCommonZHP
+	_ArrayAdd($KPRemoveAppDataList, $val)
+EndFunc   ;==>CommonZHP
 
 LoadCommonZHP()

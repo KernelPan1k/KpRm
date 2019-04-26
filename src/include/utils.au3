@@ -125,17 +125,37 @@ EndFunc   ;==>FileExistsAndGetType
 
 Func GetHumanVersion()
 	Switch @OSVersion
-        Case "WIN_VISTA"
-            Return "Windows Vista"
-        Case "WIN_7"
-            Return "Windows 7"
-        Case "WIN_8"
-            Return "Windows 8"
-        Case "WIN_81"
-            Return "Windows 8.1"
-        Case "WIN_10"
-            Return "Windows 10"
-        Case Else
-            Return "Unsupported OS"
-    EndSwitch
-EndFunc
+		Case "WIN_VISTA"
+			Return "Windows Vista"
+		Case "WIN_7"
+			Return "Windows 7"
+		Case "WIN_8"
+			Return "Windows 8"
+		Case "WIN_81"
+			Return "Windows 8.1"
+		Case "WIN_10"
+			Return "Windows 10"
+		Case Else
+			Return "Unsupported OS"
+	EndSwitch
+EndFunc   ;==>GetHumanVersion
+
+Func AddInDictionaryIfNotExistAndIncrement($dict, $key)
+	If $dict.Exists($key) Then
+		Local $val = $dict.Item($key) + 1
+		$dict.Item($key) = $val
+	Else
+		$dict.add($key, 1)
+	EndIf
+
+	Return $dict
+EndFunc   ;==>AddInDictionaryIfNotExistAndIncrement
+
+Func UpdateToolCpt($toolKey, $elementkey, $elementValue)
+	Dim $ToolsCpt
+
+	Local $toolsData = $ToolsCpt.Item($toolKey)
+	Local $toolsDict = AddInDictionaryIfNotExistAndIncrement($toolsData.Item($elementkey), $elementValue)
+	$toolsData.Item($elementkey) = $toolsKey
+	$ToolsCpt.Item($toolKey) = $toolsData
+EndFunc   ;==>UpdateToolCpt
