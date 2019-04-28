@@ -1,10 +1,11 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[33] = [ _
+Local Const $allToolsList[36] = [ _
 		"frst", _
 		"zhpdiag", _
 		"zhpcleaner", _
 		"zhpfix", _
+		"zhplite", _
 		"mbar", _
 		"roguekiller", _
 		"usbfix", _
@@ -33,6 +34,8 @@ Local Const $allToolsList[33] = [ _
 		"ckscanner", _
 		"quickdiag", _
 		"adlicediag", _
+		"rstassociations", _
+		"sft", _
 		"grantperms"]
 
 For $ti = 0 To UBound($allToolsList) - 1
@@ -80,6 +83,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/zhp.au3"
 #include "tools/zhpdiag.au3"
 #include "tools/zhpfix.au3"
+#include "tools/zhplite.au3"
 #include "tools/mbar.au3"
 #include "tools/roguekiller.au3"
 #include "tools/adwcleaner.au3"
@@ -109,6 +113,8 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/ckscanner.au3"
 #include "tools/quickdiag.au3"
 #include "tools/adlice_diag.au3"
+#include "tools/rstassociations.au3"
+#include "tools/sft.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)
