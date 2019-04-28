@@ -12,10 +12,10 @@ Func RestaureUACByDefault()
 
 ;~ #################
 
-	Local $status = _UAC_SetConsentPromptBehaviorUser()
+	Local $status = _UAC_SetConsentPromptBehaviorUser(3)
 
 	If $status = 1 Then
-		logMessage("  [OK] Set ConsentPromptBehaviorUser with default (1) value")
+		logMessage("  [OK] Set ConsentPromptBehaviorUser with default (3) value")
 	Else
 		logMessage("  [X] Set ConsentPromptBehaviorUser with default value")
 	EndIf

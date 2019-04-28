@@ -2,11 +2,11 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-008.exe
+#AutoIt3Wrapper_Outfile=kpRm-009.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.8
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.9
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.8
+#AutoIt3Wrapper_Res_ProductVersion=0.0.9
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\test\Desktop\kpRemover\src\assets\bug.ico
@@ -27,6 +27,7 @@
 #include <File.au3>
 ;~ AutoItSetOption("MustDeclareVars", 1)
 
+Local Const $kprmVersion = "0.0.9"
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
 If _ArraySearch($codeFR, @MUILang) <> 1 Then
@@ -109,6 +110,7 @@ Func Init()
 
 	logMessage("#################################################################################################################" & @CRLF)
 	logMessage("# Run at " & _Now())
+	logMessage("# KpRm version " & $kprmVersion)
 	logMessage("# Run by " & @UserName & " from " & @WorkingDir)
 	logMessage("# Computer Name: " & @ComputerName)
 	logMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
