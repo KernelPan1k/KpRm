@@ -2616,13 +2616,19 @@ Local Const $bb = Null
 Local Const $b0 = "(?i)^remediate.?vbs.?worm.*\.exe$"
 Local Const $b1 = "(?i)^Rem-VBS.*\.log$"
 Local Const $b2 = "(?i)^Rem-VBS"
+Local Const $b3 = "(?i)^Rem-VBSworm.*\.exe$"
 Local Const $b4[1][2] = [[$ax, $b0]]
 Local Const $b5[1][5] = [[$ax, 'file', $bb, $b0, False]]
 Local Const $b6[1][5] = [[$ax, 'file', $bb, $b1, False]]
 Local Const $b7[1][5] = [[$ax, 'folder', $a8, $b2, True]]
+Local Const $bd[1][2] = [[$ax, $b3]]
+Local Const $be[1][5] = [[$ax, 'file', $bb, $b3, False]]
 _vv($9o, $b4)
+_vv($9o, $bd)
 _vv($9p, $b5)
+_vv($9p, $be)
 _vv($9r, $b5)
+_vv($9r, $be)
 _vv($9t, $b6)
 _vv($9t, $b7)
 EndFunc
