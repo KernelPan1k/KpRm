@@ -74,6 +74,8 @@ Global $KPRemoveAppDataLocalList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\U
 
 Global $KPRemoveAppDataCommonStartMenuFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 
+Global $KPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(C:\Windows)
+
 Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
 
@@ -157,6 +159,9 @@ Func RunRemoveTools($retry = False)
 	ProgressBarUpdate()
 
 	RemoveAllFileFrom(@LocalAppDataDir, $KPRemoveAppDataLocalList)
+	ProgressBarUpdate()
+
+	RemoveAllFileFrom(@WindowsDir, $KPRemoveWindowsFolderList)
 	ProgressBarUpdate()
 
 	RemoveAllSoftwareKeyList($KPRemoveSoftwareKeyList)

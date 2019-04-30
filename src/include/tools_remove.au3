@@ -164,10 +164,16 @@ Func RemoveAllFileFrom($path, $elements)
 
 EndFunc   ;==>RemoveAllFileFrom
 
-Func RemoveRegistryKey($key, $toolKey)
+Func RemoveRegistryKey($key, $toolKey, $force = False)
 	Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveRegistryKey " & $key)
+
+	If $force = True Then
+		_ClearObjectDacl($key)
+		_GrantAllAccess($key, $SE_REGISTRY_KEY)
+	EndIf
+
 	Local Const $status = RegDelete($key)
 
 	If $status <> 0 Then

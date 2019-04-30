@@ -5,6 +5,7 @@ Func LoadOTL()
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
+	Dim $KPRemoveSoftwareKeyList
 
 	Local Const $descriptionPattern = "(?i)^OldTimer"
 
@@ -12,17 +13,21 @@ Func LoadOTL()
 	Local Const $reg2 = "(?i)^OTL.*\.(exe|txt)$"
 	Local Const $reg3 = "(?i)^Extras\.txt$"
 	Local Const $reg4 = "(?i)^_OTL$"
+	Local Const $reg5 = "(?i)^OldTimer Tools$"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', Null, $reg4, True]]
+	Local Const $arr5[1][2] = [[$ToolExistCpt, $reg5]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
 	_ArrayAdd($KPRemoveDesktopList, $arr3)
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
+	_ArrayAdd($KPRemoveSoftwareKeyList, $arr5)
+
 EndFunc   ;==>LoadOTL
 
 LoadOTL()
