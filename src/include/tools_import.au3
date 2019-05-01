@@ -78,7 +78,6 @@ Global $KPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; Rem
 
 Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
-
 #include-once
 #include "tools_remove.au3"
 #include "tools/frst.au3"
@@ -179,6 +178,7 @@ Func RunRemoveTools($retry = False)
 	If $retry = True Then
 		Local $hasFoundTools = False
 		Local Const $ToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
+		Local Const $messageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
 
 		For $ToolsCptKey In $ToolsCpt
 			Local $toolCptTool = $ToolsCpt.Item($ToolsCptKey)
@@ -201,6 +201,10 @@ Func RunRemoveTools($retry = False)
 						Local $ToolCptSubToolVal = $ToolCptSubTool.Item($ToolCptSubToolKey)
 						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
 					Next
+
+					If $ToolsCptKey = "zhp" And IsDir(@AppDataDir & "\ZHP") Then
+						logMessage("     [!] " & $messageZHP)
+					EndIf
 				EndIf
 			Next
 		Next

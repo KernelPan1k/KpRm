@@ -2,11 +2,11 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-0010.exe
+#AutoIt3Wrapper_Outfile=kpRm-0011.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.10
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.11
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.0.10
+#AutoIt3Wrapper_Res_ProductVersion=0.0.11
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
@@ -28,7 +28,7 @@
 ;~ AutoItSetOption("MustDeclareVars", 1)
 Global $KpRmDev = False
 
-Local Const $kprmVersion = "0.0.10"
+Local Const $kprmVersion = "0.0.11"
 Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
 If _ArraySearch($codeFR, @MUILang) <> 1 Then
