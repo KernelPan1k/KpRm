@@ -1,4 +1,4 @@
-Global $lDeleteTools = "Supprimer des outils"
+Global $lDeleteTools = "Supprimer les outils"
 Global $lDeleteSystemRestorePoints = "Supprimer les points de restaurations"
 Global $lCreateRestorePoint = "Créer un point de restauration"
 Global $lSaveRegistry = "Sauvegarder le registre"

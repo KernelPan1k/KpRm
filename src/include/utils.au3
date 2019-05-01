@@ -145,7 +145,7 @@ Func FormatForDisplayRegistryKey($key)
 		Local $sKey = StringReplace($key, "64", "", 1)
 		Return $sKey
 	EndIf
-	
+
 	Return $key
 EndFunc
 
