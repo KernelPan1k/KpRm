@@ -1,6 +1,6 @@
 
-Func LoadFSS()
-	Local Const $ToolExistCpt = "fss"
+Func LoadLogonFix()
+	Local Const $ToolExistCpt = "logonfix"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
@@ -18,4 +18,4 @@ Func LoadFSS()
 
 EndFunc   ;==>LoadFSS
 
-LoadFSS()
+LoadLogonFix()
