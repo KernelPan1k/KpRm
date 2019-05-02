@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[38] = [ _
+Local Const $allToolsList[39] = [ _
 		"adlicediag", _
 		"adsfix", _
 		"adwcleaner", _
@@ -23,6 +23,7 @@ Local Const $allToolsList[38] = [ _
 		"quickdiag", _
 		"regtoolexport", _
 		"remediate-vbs-worm", _
+		"report_chkdsk", _
 		"roguekiller", _
 		"rstassociations", _
 		"rsthosts", _
@@ -120,6 +121,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/sft.au3"
 #include "tools/logonfix.au3"
 #include "tools/cmd-command.au3"
+#include "tools/report_chkdsk.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)

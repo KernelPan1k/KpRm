@@ -147,7 +147,7 @@ Func FormatForDisplayRegistryKey($key)
 	EndIf
 
 	Return $key
-EndFunc   ;==>FormatForDisplayRegistryKey
+EndFunc
 
 Func AddInDictionaryIfNotExistAndIncrement($dict, $key)
 	If $dict.Exists($key) Then
@@ -176,9 +176,9 @@ Func UCheckIfProcessExist($process, $toolVal)
 	Local $status = ProcessExists($process)
 
 	If $status <> 0 Then
-		logMessage("     [X] Process " & $process & " not killed, it is possible that the deletion is not complete (" & $toolVal & ")")
+		logMessage("     [X] Process " & $process & " exists, it is possible that the deletion is not complete (" & $toolVal & ")")
 	Else
-		logMessage("     [OK] Process " & $process & " killed (" & $toolVal & ")")
+				logMessage("     [X] Process " & $process & " exists, it is possible that the deletion is not complete (" & $toolVal & ")")
 	EndIf
 EndFunc   ;==>UCheckIfProcessExist
 

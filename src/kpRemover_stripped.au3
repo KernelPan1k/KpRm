@@ -769,7 +769,7 @@ $4w = $3t[$s]
 Return $3t
 EndFunc
 Global $4x = False
-Local Const $4y = "0.0.11"
+Local Const $4y = "0.0.12"
 Local Const $4z[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($4z, @MUILang) <> 1 Then
 Global $50 = "Supprimer les outils"
@@ -1387,7 +1387,9 @@ Func _zx($8k, $8l)
 If $8k = Null Or $8k = "" Then Return
 Local $8m = ProcessExists($8k)
 If $8m <> 0 Then
-_zj("     [!] Process " & $8k & " exists, it is possible that the deletion is not complete (" & $8l & ")")
+_zj("     [X] Process " & $8k & " not killed, it is possible that the deletion is not complete (" & $8l & ")")
+Else
+_zj("     [OK] Process " & $8k & " killed (" & $8l & ")")
 EndIf
 EndFunc
 Func _zy($8n, $8l)
@@ -1703,7 +1705,7 @@ EndIf
 _zk()
 EndFunc
 Global $8h = ObjCreate("Scripting.Dictionary")
-Local Const $9h[38] = [ "adlicediag", "adsfix", "adwcleaner", "aswmbr", "avenger", "blitzblank", "ckscanner", "cmd-command", "combofix", "frst", "fss", "grantperms", "listparts", "logonfix", "mbar", "miniregtool", "minitoolbox", "otl", "otm", "quickdiag", "regtoolexport", "remediate-vbs-worm", "roguekiller", "rstassociations", "rsthosts", "scanrapide", "sft", "tdsskiller", "toolsdiag", "usbfix", "winchk", "winupdatefix", "zhp", "zhpcleaner", "zhpdiag", "zhpfix", "zhplite", "zoek"]
+Local Const $9h[39] = [ "adlicediag", "adsfix", "adwcleaner", "aswmbr", "avenger", "blitzblank", "ckscanner", "cmd-command", "combofix", "frst", "fss", "grantperms", "listparts", "logonfix", "mbar", "miniregtool", "minitoolbox", "otl", "otm", "quickdiag", "regtoolexport", "remediate-vbs-worm", "report_chkdsk", "roguekiller", "rstassociations", "rsthosts", "scanrapide", "sft", "tdsskiller", "toolsdiag", "usbfix", "winchk", "winupdatefix", "zhp", "zhpcleaner", "zhpdiag", "zhpfix", "zhplite", "zoek"]
 For $9i = 0 To UBound($9h) - 1
 Local $9j = ObjCreate("Scripting.Dictionary")
 Local $9k = ObjCreate("Scripting.Dictionary")
@@ -2760,11 +2762,12 @@ Dim $9o
 Dim $9p
 Dim $9r
 Dim $9t
+Local Const $a8 = Null
 Local Const $b0 = "(?i)^logonfix.*\.exe$"
-Local Const $b1 = "(?i)^logonfix.*\.txt$"
+Local Const $b1 = "(?i)^LogonFix.*\.txt$"
 Local Const $b4[1][2] = [[$ax, $b0]]
-Local Const $b5[1][5] = [[$ax, 'file', Null, $b0, False]]
-Local Const $b6[1][5] = [[$ax, 'file', Null, $b1, False]]
+Local Const $b5[1][5] = [[$ax, 'file', $a8, $b0, False]]
+Local Const $b6[1][5] = [[$ax, 'file', $a8, $b1, False]]
 _vv($9o, $b4)
 _vv($9p, $b5)
 _vv($9r, $b5)
@@ -2786,6 +2789,24 @@ _vv($9r, $b5)
 EndFunc
 _11r()
 Func _11s()
+Local Const $ax = "report_chkdsk"
+Dim $9o
+Dim $9p
+Dim $9r
+Local Const $a8 = Null
+Local Const $b0 = "(?i)^Report_CHKDSK.*\.exe$"
+Local Const $b1 = "(?i)^RapportCHK.*\.txt$"
+Local Const $b4[1][2] = [[$ax, $b0]]
+Local Const $b5[1][5] = [[$ax, 'file', $a8, $b0, False]]
+Local Const $b6[1][5] = [[$ax, 'file', $a8, $b1, False]]
+_vv($9o, $b4)
+_vv($9p, $b5)
+_vv($9p, $b6)
+_vv($9r, $b5)
+_vv($9r, $b6)
+EndFunc
+_11s()
+Func _11t()
 Local $5h = ""
 If @OSArch = "X64" Then $5h = "64"
 If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
@@ -2799,7 +2820,7 @@ EndIf
 _10i("HKLM" & $5h & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", "combofix")
 _10i("HKLM" & $5h & "\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR", "aswmbr", True)
 EndFunc
-Func _11t($94 = False)
+Func _11u($94 = False)
 If $94 = True Then
 _zj(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -2837,7 +2858,7 @@ _10p($9w)
 _102()
 _10h(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $a0)
 _102()
-_11s()
+_11t()
 _102()
 If $94 = True Then
 Local $bn = False
@@ -2903,10 +2924,10 @@ Switch $cc
 Case $0
 Exit
 Case $cb
-_11w()
+_11x()
 EndSwitch
 WEnd
-Func _11u()
+Func _11v()
 Local Const $cd = @HomeDrive & "\KPRM"
 If Not FileExists($cd) Then
 DirCreate($cd)
@@ -2916,26 +2937,27 @@ MsgBox(16, $58, $59)
 Exit
 EndIf
 EndFunc
-Func _11v()
-_11u()
+Func _11w()
+_11v()
 _zj("#################################################################################################################" & @CRLF)
 _zj("# Run at " & _3o())
-_zj("# KpRm version " & $4y)
+_zj("# KpRm (Kernel-panik) version " & $4y)
+_zj("# Website https://kernel-panik.me/tool/kprm/")
 _zj("# Run by " & @UserName & " from " & @WorkingDir)
 _zj("# Computer Name: " & @ComputerName)
 _zj("# OS: " & _zt() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _103()
 EndFunc
-Func _11w()
-_11v()
+Func _11x()
+_11w()
 _102()
 If GUICtrlRead($c7) = $1 Then
 _10a()
 EndIf
 _102()
 If GUICtrlRead($c4) = $1 Then
-_11t()
-_11t(True)
+_11u()
+_11u(True)
 Else
 _102(32)
 EndIf
