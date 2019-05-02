@@ -769,10 +769,10 @@ $4w = $3t[$s]
 Return $3t
 EndFunc
 Global $4x = False
-Local Const $4y = "0.0.10"
+Local Const $4y = "0.0.11"
 Local Const $4z[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($4z, @MUILang) <> 1 Then
-Global $50 = "Supprimer des outils"
+Global $50 = "Supprimer les outils"
 Global $51 = "Supprimer les points de restaurations"
 Global $52 = "Créer un point de restauration"
 Global $53 = "Sauvegarder le registre"
@@ -1703,7 +1703,7 @@ EndIf
 _zk()
 EndFunc
 Global $8h = ObjCreate("Scripting.Dictionary")
-Local Const $9h[36] = [ "frst", "zhpdiag", "zhpcleaner", "zhpfix", "zhplite", "mbar", "roguekiller", "usbfix", "adwcleaner", "adsfix", "aswmbr", "fss", "toolsdiag", "scanrapide", "otl", "otm", "listparts", "minitoolbox", "miniregtool", "zhp", "combofix", "regtoolexport", "tdsskiller", "winupdatefix", "rsthosts", "winchk", "avenger", "blitzblank", "zoek", "remediate-vbs-worm", "ckscanner", "quickdiag", "adlicediag", "rstassociations", "sft", "grantperms"]
+Local Const $9h[38] = [ "adlicediag", "adsfix", "adwcleaner", "aswmbr", "avenger", "blitzblank", "ckscanner", "cmd-command", "combofix", "frst", "fss", "grantperms", "listparts", "logonfix", "mbar", "miniregtool", "minitoolbox", "otl", "otm", "quickdiag", "regtoolexport", "remediate-vbs-worm", "roguekiller", "rstassociations", "rsthosts", "scanrapide", "sft", "tdsskiller", "toolsdiag", "usbfix", "winchk", "winupdatefix", "zhp", "zhpcleaner", "zhpdiag", "zhpfix", "zhplite", "zoek"]
 For $9i = 0 To UBound($9h) - 1
 Local $9j = ObjCreate("Scripting.Dictionary")
 Local $9k = ObjCreate("Scripting.Dictionary")
@@ -1995,13 +1995,11 @@ _10q()
 Func _10r()
 Dim $9z
 Dim $9u
-Dim $9y
 Local $ax = "zhp"
 Local Const $8b[1][2] = [[$ax, "(?i)^ZHP$"]]
 Local Const $b8[1][5] = [[$ax, 'folder', Null, "(?i)^ZHP$", True]]
 _vv($9u, $8b)
 _vv($9z, $b8)
-_vv($9y, $b8)
 EndFunc
 _10r()
 Func _10s()
@@ -2757,6 +2755,37 @@ _vv($9r, $b5)
 EndFunc
 _11p()
 Func _11q()
+Local Const $ax = "logonfix"
+Dim $9o
+Dim $9p
+Dim $9r
+Dim $9t
+Local Const $b0 = "(?i)^logonfix.*\.exe$"
+Local Const $b1 = "(?i)^logonfix.*\.txt$"
+Local Const $b4[1][2] = [[$ax, $b0]]
+Local Const $b5[1][5] = [[$ax, 'file', Null, $b0, False]]
+Local Const $b6[1][5] = [[$ax, 'file', Null, $b1, False]]
+_vv($9o, $b4)
+_vv($9p, $b5)
+_vv($9r, $b5)
+_vv($9t, $b6)
+EndFunc
+_11q()
+Func _11r()
+Local Const $ax = "cmd-command"
+Dim $9o
+Dim $9p
+Dim $9r
+Local Const $a8 = "(?i)^g3n-h@ckm@n$"
+Local Const $b0 = "(?i)^cmd-command.*\.exe$"
+Local Const $b4[1][2] = [[$ax, $b0]]
+Local Const $b5[1][5] = [[$ax, 'file', $a8, $b0, False]]
+_vv($9o, $b4)
+_vv($9p, $b5)
+_vv($9r, $b5)
+EndFunc
+_11r()
+Func _11s()
 Local $5h = ""
 If @OSArch = "X64" Then $5h = "64"
 If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
@@ -2770,7 +2799,7 @@ EndIf
 _10i("HKLM" & $5h & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", "combofix")
 _10i("HKLM" & $5h & "\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR", "aswmbr", True)
 EndFunc
-Func _11r($94 = False)
+Func _11t($94 = False)
 If $94 = True Then
 _zj(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -2808,33 +2837,43 @@ _10p($9w)
 _102()
 _10h(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $a0)
 _102()
-_11q()
+_11s()
 _102()
 If $94 = True Then
 Local $bn = False
 Local Const $bo[4] = ["process", "uninstall", "element", "key"]
-For $bp In $8h
-Local $bq = $8h.Item($bp)
-Local $br = False
-For $bs = 0 To UBound($bo) - 1
-Local $bt = $bo[$bs]
-Local $bu = $bq.Item($bt)
-Local $bv = $bu.Keys
-If UBound($bv) > 0 Then
-If $br = False Then
-$br = True
+Local Const $bp = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
+Local $bq = False
+Local Const $br = _zr(@AppDataDir & "\ZHP")
+For $bs In $8h
+Local $bt = $8h.Item($bs)
+Local $bu = False
+For $bv = 0 To UBound($bo) - 1
+Local $bw = $bo[$bv]
+Local $bx = $bt.Item($bw)
+Local $by = $bx.Keys
+If UBound($by) > 0 Then
+If $bu = False Then
+$bu = True
 $bn = True
-_zj(@CRLF & "  ## " & StringUpper($bp) & " found")
+_zj(@CRLF & "  ## " & StringUpper($bs) & " found")
 EndIf
-For $bw = 0 To UBound($bv) - 1
-Local $bx = $bv[$bw]
-Local $by = $bu.Item($bx)
-_101($bt, $bx, $by)
+For $bz = 0 To UBound($by) - 1
+Local $c0 = $by[$bz]
+Local $c1 = $bx.Item($c0)
+_101($bw, $c0, $c1)
 Next
+If $bs = "zhp" And $br = True Then
+_zj("     [!] " & $bp)
+$bq = True
+EndIf
 EndIf
 Next
 Next
-If $bn = False Then
+If $bq = False And $br = True Then
+_zj(@CRLF & "  ## " & StringUpper("zhp") & " found")
+_zj("     [!] " & $bp)
+ElseIf $bn = False Then
 _zj("  [I] No tools found")
 EndIf
 EndIf
@@ -2844,41 +2883,41 @@ FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "
 Global $9a = "KpRm"
 Global $a5 = False
 Global $7w = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
-Local Const $bz = GUICreate($9a, 500, 195, 202, 112)
-Local Const $c0 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
-Local Const $c1 = GUICtrlCreateCheckbox($50, 16, 40, 129, 17)
-Local Const $c2 = GUICtrlCreateCheckbox($51, 16, 80, 190, 17)
-Local Const $c3 = GUICtrlCreateCheckbox($52, 16, 120, 190, 17)
-Local Const $c4 = GUICtrlCreateCheckbox($53, 220, 40, 137, 17)
-Local Const $c5 = GUICtrlCreateCheckbox($54, 220, 80, 137, 17)
-Local Const $c6 = GUICtrlCreateCheckbox($55, 220, 120, 180, 17)
+Local Const $c2 = GUICreate($9a, 500, 195, 202, 112)
+Local Const $c3 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
+Local Const $c4 = GUICtrlCreateCheckbox($50, 16, 40, 129, 17)
+Local Const $c5 = GUICtrlCreateCheckbox($51, 16, 80, 190, 17)
+Local Const $c6 = GUICtrlCreateCheckbox($52, 16, 120, 190, 17)
+Local Const $c7 = GUICtrlCreateCheckbox($53, 220, 40, 137, 17)
+Local Const $c8 = GUICtrlCreateCheckbox($54, 220, 80, 137, 17)
+Local Const $c9 = GUICtrlCreateCheckbox($55, 220, 120, 180, 17)
 Global $8w = GUICtrlCreateProgress(8, 170, 480, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlSetState($c1, 1)
-Local Const $c7 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
-Local Const $c8 = GUICtrlCreateButton($56, 415, 120, 75, 40)
+GUICtrlSetState($c4, 1)
+Local Const $ca = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
+Local Const $cb = GUICtrlCreateButton($56, 415, 120, 75, 40)
 GUISetState(@SW_SHOW)
 While 1
-Local $c9 = GUIGetMsg()
-Switch $c9
+Local $cc = GUIGetMsg()
+Switch $cc
 Case $0
 Exit
-Case $c8
-_11u()
+Case $cb
+_11w()
 EndSwitch
 WEnd
-Func _11s()
-Local Const $ca = @HomeDrive & "\KPRM"
-If Not FileExists($ca) Then
-DirCreate($ca)
+Func _11u()
+Local Const $cd = @HomeDrive & "\KPRM"
+If Not FileExists($cd) Then
+DirCreate($cd)
 EndIf
-If Not FileExists($ca) Then
+If Not FileExists($cd) Then
 MsgBox(16, $58, $59)
 Exit
 EndIf
 EndFunc
-Func _11t()
-_11s()
+Func _11v()
+_11u()
 _zj("#################################################################################################################" & @CRLF)
 _zj("# Run at " & _3o())
 _zj("# KpRm version " & $4y)
@@ -2887,33 +2926,33 @@ _zj("# Computer Name: " & @ComputerName)
 _zj("# OS: " & _zt() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _103()
 EndFunc
-Func _11u()
-_11t()
+Func _11w()
+_11v()
 _102()
-If GUICtrlRead($c4) = $1 Then
+If GUICtrlRead($c7) = $1 Then
 _10a()
 EndIf
 _102()
-If GUICtrlRead($c1) = $1 Then
-_11r()
-_11r(True)
+If GUICtrlRead($c4) = $1 Then
+_11t()
+_11t(True)
 Else
 _102(32)
 EndIf
 _102()
-If GUICtrlRead($c6) = $1 Then
+If GUICtrlRead($c9) = $1 Then
 _10c()
 EndIf
 _102()
-If GUICtrlRead($c5) = $1 Then
+If GUICtrlRead($c8) = $1 Then
 _10b()
 EndIf
 _102()
-If GUICtrlRead($c2) = $1 Then
+If GUICtrlRead($c5) = $1 Then
 _104()
 EndIf
 _102()
-If GUICtrlRead($c3) = $1 Then
+If GUICtrlRead($c6) = $1 Then
 _109()
 EndIf
 GUICtrlSetData($8w, 100)

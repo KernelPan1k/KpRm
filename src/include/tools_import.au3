@@ -1,42 +1,44 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[36] = [ _
-		"frst", _
-		"zhpdiag", _
-		"zhpcleaner", _
-		"zhpfix", _
-		"zhplite", _
-		"mbar", _
-		"roguekiller", _
-		"usbfix", _
-		"adwcleaner", _
+Local Const $allToolsList[38] = [ _
+		"adlicediag", _
 		"adsfix", _
+		"adwcleaner", _
 		"aswmbr", _
-		"fss", _
-		"toolsdiag", _
-		"scanrapide", _
-		"otl", _
-		"otm", _
-		"listparts", _
-		"minitoolbox", _
-		"miniregtool", _
-		"zhp", _
-		"combofix", _
-		"regtoolexport", _
-		"tdsskiller", _
-		"winupdatefix", _
-		"rsthosts", _
-		"winchk", _
 		"avenger", _
 		"blitzblank", _
-		"zoek", _
-		"remediate-vbs-worm", _
 		"ckscanner", _
+		"cmd-command", _
+		"combofix", _
+		"frst", _
+		"fss", _
+		"grantperms", _
+		"listparts", _
+		"logonfix", _
+		"mbar", _
+		"miniregtool", _
+		"minitoolbox", _
+		"otl", _
+		"otm", _
 		"quickdiag", _
-		"adlicediag", _
+		"regtoolexport", _
+		"remediate-vbs-worm", _
+		"roguekiller", _
 		"rstassociations", _
+		"rsthosts", _
+		"scanrapide", _
 		"sft", _
-		"grantperms"]
+		"tdsskiller", _
+		"toolsdiag", _
+		"usbfix", _
+		"winchk", _
+		"winupdatefix", _
+		"zhp", _
+		"zhpcleaner", _
+		"zhpdiag", _
+		"zhpfix", _
+		"zhplite", _
+		"zoek"]
 
 For $ti = 0 To UBound($allToolsList) - 1
 	Local $toolsValue = ObjCreate("Scripting.Dictionary")
@@ -116,6 +118,8 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/adlice_diag.au3"
 #include "tools/rstassociations.au3"
 #include "tools/sft.au3"
+#include "tools/logonfix.au3"
+#include "tools/cmd-command.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)
@@ -179,6 +183,8 @@ Func RunRemoveTools($retry = False)
 		Local $hasFoundTools = False
 		Local Const $ToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
 		Local Const $messageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
+		Local $ToolZhpQuantineDisplay = False
+		Local Const $ToolZhpQuantineExist = IsDir(@AppDataDir & "\ZHP")
 
 		For $ToolsCptKey In $ToolsCpt
 			Local $toolCptTool = $ToolsCpt.Item($ToolsCptKey)
@@ -202,14 +208,18 @@ Func RunRemoveTools($retry = False)
 						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
 					Next
 
-					If $ToolsCptKey = "zhp" And IsDir(@AppDataDir & "\ZHP") Then
+					If $ToolsCptKey = "zhp" And $ToolZhpQuantineExist = True Then
 						logMessage("     [!] " & $messageZHP)
+						$ToolZhpQuantineDisplay = True
 					EndIf
 				EndIf
 			Next
 		Next
 
-		If $hasFoundTools = False Then
+		If $ToolZhpQuantineDisplay = False And $ToolZhpQuantineExist = True Then
+			logMessage(@CRLF & "  ## " & StringUpper("zhp") & " found")
+			logMessage("     [!] " & $messageZHP)
+		ElseIf $hasFoundTools = False Then
 			logMessage("  [I] No tools found")
 		EndIf
 	EndIf
