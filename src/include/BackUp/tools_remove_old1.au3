@@ -332,14 +332,14 @@ Func RemoveUninstallStringWithSearch($list)
 EndFunc   ;==>RemoveUninstallStringWithSearch
 
 Func RemoveAllRegistryKeys($list)
-	Dim $KPDebug
+Dim $KPDebug
 
 	If $KPDebug Then logMessage("[I] RemoveAllRegistryKeys")
 
 	For $i = 1 To UBound($list) - 1
-		RemoveRegistryKey($list[$i][1], $list[$i][0], $list[$i][2])
+		RemoveRegistryKey($list[$i][1], $list[$i][0])
 	Next
-EndFunc   ;==>RemoveAllRegistryKeys
+EndFunc
 
 ;~ Func RemoveContextMenu($name)
 ;~ 	Dim $KPDebug

@@ -17,7 +17,4 @@ Func CustomEnd()
 
 ;~  All
 
-	RemoveRegistryKey("HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", "combofix")
-	RemoveRegistryKey("HKLM" & $s64Bit & "\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR", "aswmbr", True)
-
 EndFunc   ;==>CustomEnd

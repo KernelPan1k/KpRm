@@ -1,12 +1,12 @@
-Func quitKprm($autoDelete = False, $open = True)
+Func quitKprm($autoDelete = False)
 	Dim $KpRmDev
 	Dim $KPLogFile
 
 	FileDelete(@TempDir & "\kprm-logo.gif")
 
 	If $autoDelete = True Then
-		If $open = True Then
-			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $KPLogFile)
+		If FileExists(@HomeDrive & "\KPRM" & "\" & $KPLogFile) Then
+		Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $KPLogFile)
 		EndIf
 
 		If $KpRmDev = False Then
@@ -23,9 +23,9 @@ Func checkVersionOfKpRm()
 	Local Const $sGet = HttpGet("https://kernel-panik.me/_api/v1/kprm/version")
 
 	If $sGet <> Null And $sGet <> "" And $sGet <> $kprmVersion Then
-		MsgBox(64, $lgetLastVersionTitle, $lgetLastVersion)
+		MsgBox(16, $lgetLastVersionTitle, $lgetLastVersion)
 		ShellExecute("https://kernel-panik.me/tool/kprm/")
-		quitKprm(True, False)
+		quitKprm(True)
 	EndIf
 EndFunc   ;==>checkVersionOfKpRm
 

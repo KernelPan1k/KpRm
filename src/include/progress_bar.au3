@@ -1,4 +1,4 @@
-Local $nbrTask = 41
+Local $nbrTask = 43
 Local $currentNbrTask
 Local Const $taskStep = Floor(100 / $nbrTask)
 

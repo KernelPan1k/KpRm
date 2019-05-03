@@ -18,7 +18,7 @@ Func LoadCombofix()
 	Local Const $reg5 = "(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$"
 	Local Const $reg6 = "(?i)^Swearware$"
 
-	Local $s64Bit = ""
+		Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 
 	Local Const $arr1[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
@@ -39,7 +39,6 @@ Func LoadCombofix()
 	_ArrayAdd($KPRemoveWindowsFolderList, $arr5)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr6)
 	_ArrayAdd($KPRemoveProcessList, $arr7)
-	_ArrayAdd($KPRemoveRegistryKeysList, $arr8)
 
 EndFunc   ;==>LoadCombofix
 
