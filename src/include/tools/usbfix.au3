@@ -13,7 +13,7 @@ Func LoadUSBFIX()
 	Local Const $descriptionPattern = "(?i)^UsbFix"
 	Local Const $companyPattern = "(?i)^SosVirus"
 	Local Const $reg1 = "(?i)^UsbFix.*\.(exe|lnk|txt)$"
-	Local Const $reg2 = "(?i)^Un-UsbFix.exe$"
+	Local Const $reg2 = "(?i)^Un-UsbFix\.exe$"
 	Local Const $reg3 = "(?i)^UsbFixQuarantine$"
 	Local Const $reg4 = "(?i)^UsbFix.*\.exe$"
 

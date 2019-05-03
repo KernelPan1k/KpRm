@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[39] = [ _
+Local Const $allToolsList[40] = [ _
 		"adlicediag", _
 		"adsfix", _
 		"adwcleaner", _
@@ -28,6 +28,7 @@ Local Const $allToolsList[39] = [ _
 		"rstassociations", _
 		"rsthosts", _
 		"scanrapide", _
+		"seaf", _
 		"sft", _
 		"tdsskiller", _
 		"toolsdiag", _
@@ -81,6 +82,8 @@ Global $KPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; Rem
 
 Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
+Global $KPRemoveRegistryKeysList[1][3] = [[Null, Null, Null]]
+
 #include-once
 #include "tools_remove.au3"
 #include "tools/frst.au3"
@@ -122,6 +125,7 @@ Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 #include "tools/logonfix.au3"
 #include "tools/cmd-command.au3"
 #include "tools/report_chkdsk.au3"
+#include "tools/seaf.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)
@@ -170,6 +174,9 @@ Func RunRemoveTools($retry = False)
 	ProgressBarUpdate()
 
 	RemoveAllSoftwareKeyList($KPRemoveSoftwareKeyList)
+	ProgressBarUpdate()
+
+	RemoveAllRegistryKeys($KPRemoveRegistryKeysList)
 	ProgressBarUpdate()
 
 	RemoveUninstallStringWithSearch($KPRemoveSearchRegistryKeyStringsList)

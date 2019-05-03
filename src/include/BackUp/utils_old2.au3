@@ -1,17 +1,18 @@
 Func HttpGet($sURL, $sData = "")
-	Local $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")
-	$oHTTP.Open("GET", $sURL & "?" & $sData, False)
-	$oHTTP.SetTimeouts(50, 50, 50, 50)
-	If (@error) Then Return SetError(1, 0, 0)
-	$oHTTP.Send()
-	If (@error) Then Return SetError(2, 0, 0)
-	If ($oHTTP.Status <> 200) Then Return SetError(3, 0, 0)
-	Return SetError(0, 0, $oHTTP.ResponseText)
+    Local $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")
+    $oHTTP.Open("GET", $sURL & "?" & $sData, False)
+    $oHTTP.SetTimeouts(50, 50, 50, 50)
+    If (@error) Then Return SetError(1, 0, 0)
+    $oHTTP.Send()
+    If (@error) Then Return SetError(2, 0, 0)
+    If ($oHTTP.Status <> 200) Then Return SetError(3, 0, 0)
+    Return SetError(0, 0, $oHTTP.ResponseText)
 EndFunc   ;==>HttpGet
 
 Func logMessage($message)
 	Dim $KPLogFile
 
+	FileWrite(@DesktopDir & "\" & $KPLogFile, $message & @CRLF)
 	FileWrite(@HomeDrive & "\KPRM" & "\" & $KPLogFile, $message & @CRLF)
 EndFunc   ;==>logMessage
 

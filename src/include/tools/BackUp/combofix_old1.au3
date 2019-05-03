@@ -8,7 +8,7 @@ Func LoadCombofix()
 	Dim $KPRemoveWindowsFolderList
 	Dim $KPRemoveSoftwareKeyList
 	Dim $KPRemoveProcessList
-	Dim $KPRemoveRegistryKeysList
+		Dim $KPRemoveRegistryKeysList
 
 	Local Const $descriptionPattern = "(?i)^Swearware"
 	Local Const $reg1 = "(?i)^Combofix.*\.exe$"
@@ -18,9 +18,6 @@ Func LoadCombofix()
 	Local Const $reg5 = "(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$"
 	Local Const $reg6 = "(?i)^Swearware$"
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
-
 	Local Const $arr1[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', Null, $reg2, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'folder', Null, $reg3, True]]
@@ -28,7 +25,6 @@ Func LoadCombofix()
 	Local Const $arr5[1][5] = [[$ToolExistCpt, 'file', Null, $reg5, True]]
 	Local Const $arr6[1][2] = [[$ToolExistCpt, $reg6]]
 	Local Const $arr7[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr8[1][3] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", False]]
 
 	_ArrayAdd($KPRemoveDesktopList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
@@ -39,7 +35,6 @@ Func LoadCombofix()
 	_ArrayAdd($KPRemoveWindowsFolderList, $arr5)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr6)
 	_ArrayAdd($KPRemoveProcessList, $arr7)
-	_ArrayAdd($KPRemoveRegistryKeysList, $arr8)
 
 EndFunc   ;==>LoadCombofix
 

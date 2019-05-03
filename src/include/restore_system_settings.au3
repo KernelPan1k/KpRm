@@ -48,7 +48,7 @@ Func RestoreSystemSettingsByDefault()
 		logMessage("  [X] Hide Hidden File")
 	EndIf
 
-	$status = RegWrite($regvar, "HideFileExt", "REG_DWORD", "1")
+	$status = RegWrite($regvar, "HideFileExt", "REG_DWORD", "0")
 
 	If $status = 1 Then
 		logMessage("  [OK] Hide Extensions for known file types")
