@@ -180,10 +180,28 @@ Func RemoveAllFileFrom($path, $elements)
 	EndIf
 
 	Local $sFileName = FileFindNextFile($hSearch)
+			Local $pathOfFile = $path & "\" & $sFileName
 
 	While @error = 0
-		Local $pathOfFile = $path & "\" & $sFileName
-		RemoveFileHandler($pathOfFile, $elements)
+		For $e = 1 To UBound($elements) - 1
+			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
+
+			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
+				Local $status = 0
+				Local $force = False
+
+				If $elements[$e][4] = True Then
+					$force = True
+				EndIf
+
+				If $typeOfFile = 'file' Then
+					$status = RemoveFile($pathOfFile, $elements[$e][0], $elements[$e][2], $force)
+				ElseIf $typeOfFile = 'folder' Then
+					$status = RemoveFolder($pathOfFile, $elements[$e][0], $force)
+				EndIf
+			EndIf
+		Next
+
 		$sFileName = FileFindNextFile($hSearch)
 	WEnd
 

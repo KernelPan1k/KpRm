@@ -182,8 +182,8 @@ Func RemoveAllFileFrom($path, $elements)
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
-		Local $pathOfFile = $path & "\" & $sFileName
-		RemoveFileHandler($pathOfFile, $elements)
+					Local $pathOfFile = $path & "\" & $sFileName
+
 		$sFileName = FileFindNextFile($hSearch)
 	WEnd
 
