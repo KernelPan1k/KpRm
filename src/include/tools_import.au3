@@ -142,14 +142,14 @@ Func RunRemoveTools($retry = False)
 	RemoveScheduleTask($KPRemoveScheduleTasksList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@DesktopDir, $KPRemoveDesktopList)
+	RemoveAllFileFromWithMaxDepth(@DesktopDir, $KPRemoveDesktopList)
 	ProgressBarUpdate()
 
 	RemoveAllFileFrom(@DesktopCommonDir, $KPRemoveDesktopCommonList)
 	ProgressBarUpdate()
 
 	If FileExists(@UserProfileDir & "\Downloads") Then
-		RemoveAllFileFrom(@UserProfileDir & "\Downloads", $KPRemoveDownloadList)
+		RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $KPRemoveDownloadList)
 		ProgressBarUpdate()
 	Else
 		ProgressBarUpdate()

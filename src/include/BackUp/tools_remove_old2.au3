@@ -122,34 +122,25 @@ Func FindGlob($path, $file, $reg)
 	Return $return
 EndFunc   ;==>FindGlob
 
-Func RemoveFileHandler($pathOfFile, $elements)
-	Local $typeOfFile = FileExistsAndGetType($pathOfFile)
+Func RemoveFileHandler()
+	Local $pathOfFile = $path & "\" & $sFileName
+			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
 
-	If $typeOfFile = Null Then
-		Return Null
-	EndIf
+			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
+				Local $status = 0
+				Local $force = False
 
-	Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
-	Local $aPathSplit = _PathSplit($pathOfFile, $sDrive, $sDir, $sFileName, $sExtension)
-	Local $sFile = $sFileName & $sExtension
+				If $elements[$e][4] = True Then
+					$force = True
+				EndIf
 
-	For $e = 1 To UBound($elements) - 1
-		If $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFile, $elements[$e][3]) Then
-			Local $status = 0
-			Local $force = False
-
-			If $elements[$e][4] = True Then
-				$force = True
+				If $typeOfFile = 'file' Then
+					$status = RemoveFile($pathOfFile, $elements[$e][0], $elements[$e][2], $force)
+				ElseIf $typeOfFile = 'folder' Then
+					$status = RemoveFolder($pathOfFile, $elements[$e][0], $force)
+				EndIf
 			EndIf
-
-			If $typeOfFile = 'file' Then
-				$status = RemoveFile($pathOfFile, $elements[$e][0], $elements[$e][2], $force)
-			ElseIf $typeOfFile = 'folder' Then
-				$status = RemoveFolder($pathOfFile, $elements[$e][0], $force)
-			EndIf
-		EndIf
-	Next
-EndFunc   ;==>RemoveFileHandler
+EndFunc
 
 Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 	Dim $KPDebug
@@ -163,9 +154,9 @@ Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 	EndIf
 
 	For $i = 1 To $aArray[0]
-		RemoveFileHandler($aArray[$i], $elements)
+
 	Next
-EndFunc   ;==>RemoveAllFileFromWithMaxDepth
+EndFunc
 
 Func RemoveAllFileFrom($path, $elements)
 	Dim $KPDebug
@@ -182,8 +173,26 @@ Func RemoveAllFileFrom($path, $elements)
 	Local $sFileName = FileFindNextFile($hSearch)
 
 	While @error = 0
-		Local $pathOfFile = $path & "\" & $sFileName
-		RemoveFileHandler($pathOfFile, $elements)
+		For $e = 1 To UBound($elements) - 1
+			Local $pathOfFile = $path & "\" & $sFileName
+			Local $typeOfFile = FileExistsAndGetType($pathOfFile)
+
+			If $typeOfFile And $elements[$e][3] And $typeOfFile = $elements[$e][1] And StringRegExp($sFileName, $elements[$e][3]) Then
+				Local $status = 0
+				Local $force = False
+
+				If $elements[$e][4] = True Then
+					$force = True
+				EndIf
+
+				If $typeOfFile = 'file' Then
+					$status = RemoveFile($pathOfFile, $elements[$e][0], $elements[$e][2], $force)
+				ElseIf $typeOfFile = 'folder' Then
+					$status = RemoveFolder($pathOfFile, $elements[$e][0], $force)
+				EndIf
+			EndIf
+		Next
+
 		$sFileName = FileFindNextFile($hSearch)
 	WEnd
 
