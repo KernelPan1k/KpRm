@@ -153,7 +153,6 @@ EndFunc   ;==>RemoveFileHandler
 
 Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 	Dim $KPDebug
-	MsgBox
 
 	If $KPDebug Then logMessage("[I] RemoveAllFileFromWithMaxDepth " & $path)
 
