@@ -153,10 +153,11 @@ EndFunc   ;==>RemoveFileHandler
 
 Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 	Dim $KPDebug
+	MsgBox
 
 	If $KPDebug Then logMessage("[I] RemoveAllFileFromWithMaxDepth " & $path)
 
-	Local $aArray = _FileListToArrayRec(@DesktopDir, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 
 	If @error <> 0 Then
 		Return Null

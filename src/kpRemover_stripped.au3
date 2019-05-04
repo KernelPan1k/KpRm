@@ -2428,8 +2428,9 @@ Next
 EndFunc
 Func _10k($ak, $cw, $d0 = -2)
 Dim $cl
+MsgBox
 If $cl Then _zl("[I] RemoveAllFileFromWithMaxDepth " & $ak)
-Local $42 = _x2(@DesktopDir, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr", $p, $d0, $u, $w)
+Local $42 = _x2($ak, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr", $p, $d0, $u, $w)
 If @error <> 0 Then
 Return Null
 EndIf

@@ -1,7 +1,0 @@
-
-
-Func LoadSeaf()
-
-EndFunc
-
-LoadSeaf()
