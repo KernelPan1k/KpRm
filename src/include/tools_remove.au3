@@ -35,7 +35,7 @@ Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
 	Local Const $iFileExists = isFile($file)
 
 	If $iFileExists Then
-		If $descriptionPattern And StringRegExp($file, "(?i)\.exe$") Then
+		If $descriptionPattern And StringRegExp($file, "(?i)\.(exe|com)$") Then
 			Local Const $companyName = FileGetVersion($file, "CompanyName")
 			MsgBox(0, "", $companyName)
 
@@ -157,7 +157,7 @@ Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 
 	If $KPDebug Then logMessage("[I] RemoveAllFileFromWithMaxDepth " & $path)
 
-	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 
 	If @error <> 0 Then
 		Return Null

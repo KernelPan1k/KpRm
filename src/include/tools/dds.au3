@@ -5,13 +5,13 @@ Func LoadDDS()
 	Dim $KPRemoveDownloadList
 
 	Local Const $ToolExistCpt = "dds"
-	Local Const $descriptionPattern = Null
+	Local Const $descriptionPattern = "(?i)^Swearware"
 
 	Local Const $reg1 = "(?i)dds.*\.com"
 	Local Const $reg2 = "(?i)(dds|attach).*\.txt"
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', Null, $reg1, False]]
+	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg2, False]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
