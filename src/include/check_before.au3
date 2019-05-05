@@ -17,8 +17,22 @@ Func quitKprm($autoDelete = False, $open = True)
 	Exit
 EndFunc   ;==>quitKprm
 
+Func _IsInternetConnected()
+	Local $aReturn = DllCall('connect.dll', 'long', 'IsInternetConnected')
+	If @error Then
+		Return SetError(1, 0, False)
+	EndIf
+	Return $aReturn[0] = 0
+EndFunc   ;==>_IsInternetConnected
+
 Func checkVersionOfKpRm()
 	Dim $kprmVersion
+
+	Local Const $hasInternet = _IsInternetConnected()
+
+	If $hasInternet = False Then
+		Return Null
+	EndIf
 
 	Local Const $sGet = HttpGet("https://kernel-panik.me/_api/v1/kprm/version")
 
