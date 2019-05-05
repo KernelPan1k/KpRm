@@ -198,7 +198,7 @@ Func RunRemoveTools($retry = False)
 	ProgressBarUpdate()
 
 	CleanDirectoryContent($KPCleanDirectoryContentList)
-	ProgressBarUpdate()
+		ProgressBarUpdate()
 
 
 	If $retry = True Then
