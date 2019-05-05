@@ -23,6 +23,7 @@ Func LoadAswMbr()
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
 	_ArrayAdd($KPRemoveDesktopList, $arr3)
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($KPRemoveDownloadList, $arr3)
 	_ArrayAdd($KPRemoveRegistryKeysList, $arr4)
 
 EndFunc   ;==>LoadAswMbr

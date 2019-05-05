@@ -2290,7 +2290,7 @@ EndIf
 _zm()
 EndFunc
 Global $ax = ObjCreate("Scripting.Dictionary")
-Local Const $bw[40] = [ "adlicediag", "adsfix", "adwcleaner", "aswmbr", "avenger", "blitzblank", "ckscanner", "cmd-command", "combofix", "frst", "fss", "grantperms", "listparts", "logonfix", "mbar", "miniregtool", "minitoolbox", "otl", "otm", "quickdiag", "regtoolexport", "remediate-vbs-worm", "report_chkdsk", "roguekiller", "rstassociations", "rsthosts", "scanrapide", "seaf", "sft", "tdsskiller", "toolsdiag", "usbfix", "winchk", "winupdatefix", "zhp", "zhpcleaner", "zhpdiag", "zhpfix", "zhplite", "zoek"]
+Local Const $bw[41] = [ "adlicediag", "adsfix", "adwcleaner", "aswmbr", "avenger", "blitzblank", "ckscanner", "cmd-command", "combofix", "dds", "frst", "fss", "grantperms", "listparts", "logonfix", "mbar", "miniregtool", "minitoolbox", "otl", "otm", "quickdiag", "regtoolexport", "remediate-vbs-worm", "report_chkdsk", "roguekiller", "rstassociations", "rsthosts", "scanrapide", "seaf", "sft", "tdsskiller", "toolsdiag", "usbfix", "winchk", "winupdatefix", "zhp", "zhpcleaner", "zhpdiag", "zhpfix", "zhplite", "zoek"]
 For $bx = 0 To UBound($bw) - 1
 Local $by = ObjCreate("Scripting.Dictionary")
 Local $bz = ObjCreate("Scripting.Dictionary")
@@ -2347,6 +2347,7 @@ Local Const $cp = _zs($cn)
 If $cp Then
 If $co And StringRegExp($cn, "(?i)\.exe$") Then
 Local Const $cq = FileGetVersion($cn, "CompanyName")
+MsgBox(0, "", $cq)
 If @error Then
 Return 0
 ElseIf Not StringRegExp($cq, $co) Then
@@ -2842,6 +2843,7 @@ _vv($c3, $dm)
 _vv($c4, $dn)
 _vv($c4, $do)
 _vv($c6, $dn)
+_vv($c6, $do)
 _vv($ci, $dp)
 EndFunc
 _116()
@@ -3461,6 +3463,24 @@ _vv($c7, $dw)
 EndFunc
 _11y()
 Func _11z()
+Dim $c3
+Dim $c4
+Dim $c6
+Local Const $df = "dds"
+Local Const $co = "(?i)^Swearware"
+Local Const $di = "(?i)dds.*\.com"
+Local Const $dj = "(?i)(dds|attach).*\.txt"
+Local Const $dm[1][2] = [[$df, $di]]
+Local Const $dn[1][5] = [[$df, 'file', $co, $di, False]]
+Local Const $do[1][5] = [[$df, 'file', Null, $dj, False]]
+_vv($c3, $dm)
+_vv($c4, $dn)
+_vv($c4, $do)
+_vv($c6, $dn)
+_vv($c6, $do)
+EndFunc
+_11z()
+Func _120()
 Local $7t = ""
 If @OSArch = "X64" Then $7t = "64"
 If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
@@ -3472,7 +3492,7 @@ Next
 EndIf
 EndIf
 EndFunc
-Func _120($bj = False)
+Func _121($bj = False)
 If $bj = True Then
 _zl(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3512,7 +3532,7 @@ _10t($cb)
 _104()
 _10l(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $cf)
 _104()
-_11z()
+_120()
 _104()
 If $bj = True Then
 Local $e6 = False
@@ -3578,10 +3598,10 @@ Switch $ev
 Case $0
 Exit
 Case $eu
-_123()
+_124()
 EndSwitch
 WEnd
-Func _121()
+Func _122()
 Local Const $ew = @HomeDrive & "\KPRM"
 If Not FileExists($ew) Then
 DirCreate($ew)
@@ -3591,8 +3611,8 @@ MsgBox(16, $7i, $7j)
 Exit
 EndIf
 EndFunc
-Func _122()
-_121()
+Func _123()
+_122()
 _zl("#################################################################################################################" & @CRLF)
 _zl("# Run at " & _3o())
 _zl("# KpRm (Kernel-panik) version " & $78)
@@ -3602,16 +3622,16 @@ _zl("# Computer Name: " & @ComputerName)
 _zl("# OS: " & _zv() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _105()
 EndFunc
-Func _123()
-_122()
+Func _124()
+_123()
 _104()
 If GUICtrlRead($eq) = $1 Then
 _10c()
 EndIf
 _104()
 If GUICtrlRead($en) = $1 Then
-_120()
-_120(True)
+_121()
+_121(True)
 Else
 _104(32)
 EndIf
