@@ -370,16 +370,17 @@ EndFunc   ;==>RemoveAllRegistryKeys
 
 Func CleanDirectoryContent($list)
 	For $i = 1 To UBound($list) - 1
-		If FileExists($list[$i][1]) Then
-			Local $FileList = _FileListToArray($list[$i][1])
+If FileExists(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine") Then
+		Local $FileList = _FileListToArray(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine")
 
-			If @error = 0 Then
-				For $f = 1 To $FileList[0]
-					RemoveFile($list[$i][1] & '\' & $FileList[$f], $list[$i][0], $list[$i][2], $list[$i][3])
-				Next
-			EndIf
+		If @error = 0 Then
+			For $i = 1 To $FileList[0]
+				RemoveFile(@AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine" & '\' & $FileList[$i], "mbar", Null, True)
+			Next
 		EndIf
+	EndIf
 	Next
+
 
 EndFunc   ;==>CleanDirectoryContent
 

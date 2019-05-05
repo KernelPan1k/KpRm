@@ -197,9 +197,8 @@ Func RunRemoveTools($retry = False)
 	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonStartMenuFolderList)
 	ProgressBarUpdate()
 
+	CustomEnd()
 	CleanDirectoryContent($KPCleanDirectoryContentList)
-	ProgressBarUpdate()
-
 
 	If $retry = True Then
 		Local $hasFoundTools = False

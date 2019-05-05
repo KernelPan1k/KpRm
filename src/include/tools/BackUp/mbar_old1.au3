@@ -14,8 +14,8 @@ Func LoadMBAR($retry = False)
 
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
 	Local Const $arr2[1][2] = [[$ToolExistCpt, $descriptionPattern]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
-	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg2, False]]
+	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern,  $reg1, False]]
+	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern,  $reg2, False]]
 
 	_ArrayAdd($KPRemoveProcessList, $arr1)
 	_ArrayAdd($KPRemoveDesktopList, $arr3)
@@ -24,18 +24,15 @@ Func LoadMBAR($retry = False)
 	_ArrayAdd($KPRemoveDownloadList, $arr4)
 	_ArrayAdd($KPRemoveSoftwareKeyList, $arr2)
 
-EndFunc   ;==>LoadMBAR
+EndFunc   ;==>RemoveMBAR
 
 LoadMBAR()
 
 Func LoadMalwarebytesTools()
 	Dim $KPCleanDirectoryContentList
-	Local Const $ToolExistCpt = "malwarebytes_tools"
+		Local Const $ToolExistCpt = "mbar"
 
-	Local Const $arr1[1][4] = [[$ToolExistCpt, @AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine", Null, True]]
 
-	_ArrayAdd($KPCleanDirectoryContentList, $arr1)
-
-EndFunc   ;==>LoadMalwarebytesTools
+EndFunc
 
 LoadMalwarebytesTools()
