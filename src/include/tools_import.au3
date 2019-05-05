@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[41] = [ _
+Local Const $allToolsList[42] = [ _
 		"adlicediag", _
 		"adsfix", _
 		"adwcleaner", _
@@ -11,6 +11,7 @@ Local Const $allToolsList[41] = [ _
 		"cmd-command", _
 		"combofix", _
 		"dds", _
+		"defogger", _
 		"frst", _
 		"fss", _
 		"grantperms", _
@@ -128,6 +129,7 @@ Global $KPRemoveRegistryKeysList[1][3] = [[Null, Null, Null]]
 #include "tools/report_chkdsk.au3"
 #include "tools/seaf.au3"
 #include "tools/dds.au3"
+#include "tools/defogger.au3"
 #include "tools/custom_end.au3"
 
 Func RunRemoveTools($retry = False)

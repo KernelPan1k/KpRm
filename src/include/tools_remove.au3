@@ -37,7 +37,6 @@ Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
 	If $iFileExists Then
 		If $descriptionPattern And StringRegExp($file, "(?i)\.(exe|com)$") Then
 			Local Const $companyName = FileGetVersion($file, "CompanyName")
-			MsgBox(0, "", $companyName)
 
 			If @error Then
 				Return 0
