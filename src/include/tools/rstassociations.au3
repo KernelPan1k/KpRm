@@ -11,7 +11,7 @@ Func LoadRstAssociation()
 	Local Const $reg1 = "(?i)^rstassociations.*\.(exe|scr)$"
 	Local Const $reg2 = "(?i)^RstAssociations.*\.txt$"
 
-	Local Const $arr1[1][2] = [[$toolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$toolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$toolExistCpt, 'file', $desciptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$toolExistCpt, 'file', $desciptionPattern, $reg2, False]]
 
@@ -19,6 +19,6 @@ Func LoadRstAssociation()
 	_ArrayAdd($KPRemoveDesktopList, $arr2)
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
-EndFunc   ;==>RemoveZHPFix
+EndFunc   ;==>LoadRstAssociation
 
 LoadRstAssociation()

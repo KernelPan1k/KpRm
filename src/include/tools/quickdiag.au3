@@ -14,7 +14,7 @@ Func LoadQuickDiag()
 	Local Const $reg4 = "(?i)^QuickDiag.*\.txt$"
 	Local Const $reg5 = "(?i)^QuickDiag"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, True]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, True]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, True]]
@@ -28,6 +28,6 @@ Func LoadQuickDiag()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr5)
 
-EndFunc
+EndFunc   ;==>LoadQuickDiag
 
 LoadQuickDiag()

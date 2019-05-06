@@ -12,7 +12,7 @@ Func LoadMBAR($retry = False)
 	Local Const $reg1 = "(?i)^mbar.*\.exe$"
 	Local Const $reg2 = "(?i)^mbar"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, True]]
 	Local Const $arr2[1][2] = [[$ToolExistCpt, $descriptionPattern]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg2, False]]

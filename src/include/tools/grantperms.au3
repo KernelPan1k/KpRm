@@ -12,7 +12,7 @@ Func LoadGrantPerms()
 	Local Const $reg3 = "(?i)^Perms\.txt$"
 	Local Const $reg4 = "(?i)^GrantPerms"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg4, False]]
@@ -24,6 +24,6 @@ Func LoadGrantPerms()
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 	_ArrayAdd($KPRemoveDownloadList, $arr3)
 	_ArrayAdd($KPRemoveDownloadList, $arr4)
-EndFunc
+EndFunc   ;==>LoadGrantPerms
 
 LoadGrantPerms()
