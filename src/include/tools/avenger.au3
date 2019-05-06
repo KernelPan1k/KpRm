@@ -2,7 +2,7 @@
 
 Func LoadAvenger()
 
-	Local Const $ToolExistCpt = "avenger"
+	Local Const $ToolExistCpt = "Avenger"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

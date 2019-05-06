@@ -1,6 +1,6 @@
 
 Func LoadToolsDiag()
-	Local Const $ToolExistCpt = "toolsdiag"
+	Local Const $ToolExistCpt = "ToolsDiag"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

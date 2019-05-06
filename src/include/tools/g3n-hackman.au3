@@ -1,6 +1,6 @@
 
 Func LoadGenHackman()
-	Local Const $ToolExistCpt = "g3n-h@ckm@n_tools"
+	Local Const $ToolExistCpt = "g3n-h@ckm@n tools"
 
 	Dim $KPRemoveSoftwareKeyList
 

@@ -1,7 +1,7 @@
 
 Func LoadSFT()
 	Local Const $desciptionPattern = Null
-	Local Const $toolExistCpt = "sft"
+	Local Const $toolExistCpt = "SFT"
 
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList

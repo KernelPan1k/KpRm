@@ -1,7 +1,7 @@
 
 
 Func LoadCKScanner()
-	Local Const $ToolExistCpt = "ckscanner"
+	Local Const $ToolExistCpt = "CKScanner"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

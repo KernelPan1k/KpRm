@@ -1,7 +1,7 @@
 
 Func LoadZHPDiag()
 	Local Const $desciptionPattern = Null
-	Local Const $ToolExistCpt = "zhpdiag"
+	Local Const $ToolExistCpt = "ZHPDiag"
 
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList

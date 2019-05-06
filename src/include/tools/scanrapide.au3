@@ -1,6 +1,6 @@
 
 Func LoadScanRapide()
-	Local Const $ToolExistCpt = "scanrapide"
+	Local Const $ToolExistCpt = "ScanRapide"
 
 	Dim $KPRemoveHomeDriveList
 	Dim $KPRemoveDesktopList

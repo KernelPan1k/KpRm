@@ -1,7 +1,7 @@
 
 
 Func LoadSeaf()
-	Local Const $ToolExistCpt = "seaf"
+	Local Const $ToolExistCpt = "SEAF"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

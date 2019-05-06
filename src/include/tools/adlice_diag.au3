@@ -1,6 +1,6 @@
 
 Func LoadAdliceDiag()
-	Local Const $ToolExistCpt = "adlicediag"
+	Local Const $ToolExistCpt = "AdliceDiag"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveSearchRegistryKeyStringsList
 	Dim $KPRemoveProgramFilesList

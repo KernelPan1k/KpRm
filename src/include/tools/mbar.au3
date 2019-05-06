@@ -2,7 +2,7 @@
 Func LoadMBAR($retry = False)
 	Local Const $descriptionPattern = "(?i)^Malwarebytes Anti-Rootkit$"
 	Local Const $companyPattern = "(?i)^Malwarebytes"
-	Local Const $ToolExistCpt = "mbar"
+	Local Const $ToolExistCpt = "Malwarebytes Anti-Rootkit"
 
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
@@ -30,7 +30,7 @@ LoadMBAR()
 
 Func LoadMalwarebytesTools()
 	Dim $KPCleanDirectoryContentList
-	Local Const $ToolExistCpt = "malwarebytes_tools"
+	Local Const $ToolExistCpt = "Malwarebytes tools"
 
 	Local Const $arr1[1][4] = [[$ToolExistCpt, @AppDataCommonDir & "\Malwarebytes\Malwarebytes' Anti-Malware\Quarantine", Null, True]]
 

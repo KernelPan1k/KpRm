@@ -1,6 +1,6 @@
 
 Func LoadOTM()
-	Local Const $ToolExistCpt = "otm"
+	Local Const $ToolExistCpt = "OTM"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

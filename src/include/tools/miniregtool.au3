@@ -1,6 +1,6 @@
 
 Func LoadMiniRegTool()
-	Local Const $ToolExistCpt = "miniregtool"
+	Local Const $ToolExistCpt = "MiniregTool"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

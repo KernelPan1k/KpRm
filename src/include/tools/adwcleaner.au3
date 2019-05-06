@@ -1,6 +1,6 @@
 
 Func LoadAdwcleaner()
-	Local Const $ToolExistCpt = "adwcleaner"
+	Local Const $ToolExistCpt = "AdwCleaner"
 	Local Const $descriptionPattern = "(?i)^AdwCleaner"
 	Local Const $companyPattern = "(?i)^Malwarebytes"
 	Local Const $reg1 = "(?i)^AdwCleaner.*\.exe$"

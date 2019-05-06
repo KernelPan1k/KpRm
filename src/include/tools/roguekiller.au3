@@ -1,6 +1,6 @@
 
 Func LoadRogueKiller()
-	Local Const $ToolExistCpt = "roguekiller"
+	Local Const $ToolExistCpt = "RogueKiller"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveScheduleTasksList
 	Dim $KPRemoveSearchRegistryKeyStringsList

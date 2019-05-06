@@ -1,6 +1,6 @@
 
 Func LoadRegToolExport()
-	Local Const $ToolExistCpt = "regtoolexport"
+	Local Const $ToolExistCpt = "RegtoolExport"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

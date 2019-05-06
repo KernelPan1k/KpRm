@@ -1,6 +1,6 @@
 
 Func LoadMiniToolBox()
-	Local Const $ToolExistCpt = "minitoolbox"
+	Local Const $ToolExistCpt = "Minitoolbox"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

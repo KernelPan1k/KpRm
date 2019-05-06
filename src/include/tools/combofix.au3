@@ -1,7 +1,7 @@
 
 
 Func LoadCombofix()
-	Local Const $ToolExistCpt = "combofix"
+	Local Const $ToolExistCpt = "Combofix"
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList

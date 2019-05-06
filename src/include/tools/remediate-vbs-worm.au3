@@ -1,7 +1,7 @@
 
 
 Func LoadRemediateVbsWorm()
-	Local Const $ToolExistCpt = "remediate-vbs-worm"
+	Local Const $ToolExistCpt = "Remediate VBS Worm"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
