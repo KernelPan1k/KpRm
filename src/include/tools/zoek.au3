@@ -16,7 +16,7 @@ Func LoadZoek()
 	Local Const $reg3 = "(?i)^zoek"
 	Local Const $reg4 = "(?i)^runcheck.*\.txt$"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg3, True]]
@@ -29,6 +29,6 @@ Func LoadZoek()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
 	_ArrayAdd($KPRemoveHomeDriveList, $arr5)
 
-EndFunc
+EndFunc   ;==>LoadZoek
 
 LoadZoek()

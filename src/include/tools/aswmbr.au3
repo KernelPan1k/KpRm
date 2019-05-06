@@ -14,7 +14,7 @@ Func LoadAswMbr()
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg3]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg3, True]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg2, False]]
 	Local Const $arr4[1][3] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR", True]]

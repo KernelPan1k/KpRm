@@ -17,7 +17,7 @@ Func LoadUSBFIX()
 	Local Const $reg3 = "(?i)^UsbFixQuarantine$"
 	Local Const $reg4 = "(?i)^UsbFix.*\.exe$"
 
-	Local Const $arr0[1][2] = [[$ToolExistCpt, $reg4]]
+	Local Const $arr0[1][3] = [[$ToolExistCpt, $reg4, False]]
 	Local Const $arr1[1][2] = [[$ToolExistCpt, $descriptionPattern]]
 	Local Const $arr2[1][3] = [[$ToolExistCpt, $descriptionPattern, $reg2]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
@@ -34,6 +34,6 @@ Func LoadUSBFIX()
 	_ArrayAdd($KPRemoveHomeDriveList, $arr5)
 	_ArrayAdd($KPRemoveProgramFilesList, $arr5)
 
-EndFunc   ;==>RemoveUSBFIX
+EndFunc   ;==>LoadUSBFIX
 
 LoadUSBFIX()

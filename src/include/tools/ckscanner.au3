@@ -10,7 +10,7 @@ Func LoadCKScanner()
 	Local Const $reg1 = "(?i)^CKScanner.*\.exe$"
 	Local Const $reg2 = "(?i)^CKfiles.*\.txt$"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 
@@ -20,6 +20,6 @@ Func LoadCKScanner()
 	_ArrayAdd($KPRemoveDesktopList, $arr3)
 	_ArrayAdd($KPRemoveDownloadList, $arr3)
 
-EndFunc
+EndFunc   ;==>LoadCKScanner
 
 LoadCKScanner()

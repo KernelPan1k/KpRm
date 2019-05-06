@@ -13,7 +13,7 @@ Func LoadTDSSKiller()
 	Local Const $reg3 = "(?i)^TDSSKiller.*_log\.txt$"
 	Local Const $reg4 = "(?i)^TDSSKiller"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, True]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, False]]
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', Null, $reg4, False]]

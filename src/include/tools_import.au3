@@ -63,7 +63,7 @@ For $ti = 0 To UBound($allToolsList) - 1
 	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
 Next
 
-Global $KPRemoveProcessList[1][2] = [[Null, Null]]
+Global $KPRemoveProcessList[1][3] = [[Null, Null, Null]]
 
 Global $KPRemoveDesktopList[1][5] = [[Null, Null, Null, Null, Null]]
 Global $KPRemoveDesktopCommonList[1][5] = [[Null, Null, Null, Null, Null]]

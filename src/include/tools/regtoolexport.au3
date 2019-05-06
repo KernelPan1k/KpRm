@@ -9,7 +9,7 @@ Func LoadRegToolExport()
 	Local Const $reg1 = "(?i)^regtoolexport.*\.exe$"
 	Local Const $reg2 = "(?i)^Export.*\.reg$"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
 	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
 
@@ -19,7 +19,7 @@ Func LoadRegToolExport()
 	_ArrayAdd($KPRemoveDownloadList, $arr2)
 	_ArrayAdd($KPRemoveDownloadList, $arr3)
 
-EndFunc
+EndFunc   ;==>LoadRegToolExport
 
 
 LoadRegToolExport()

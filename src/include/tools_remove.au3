@@ -218,26 +218,36 @@ Func RemoveRegistryKey($key, $toolKey, $force = False)
 	Return $status
 EndFunc   ;==>RemoveRegistryKey
 
-Func CloseProcessAndWait($process)
+Func CloseProcessAndWait($process, $force)
 	Local $cpt = 50
 	Dim $KPDebug
+	Local $status = Null
 
 	If $KPDebug Then logMessage("[I] CloseProcessAndWait " & $process)
 
 	If 0 = ProcessExists($process) Then Return 0
 
-	ProcessClose($process)
+	If $force = True Then
+		$status = _Permissions_KillProcess($process)
 
-	Do
-		$cpt -= 1
-		Sleep(250)
-	Until ($cpt = 0 Or 0 = ProcessExists($process))
+		If 1 = $status Then
+			If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
+			Return 1
+		EndIf
+	Else
+		ProcessClose($process)
 
-	Local Const $status = ProcessExists($process)
+		Do
+			$cpt -= 1
+			Sleep(250)
+		Until ($cpt = 0 Or 0 = ProcessExists($process))
 
-	If 0 = $status Then
-		If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
-		Return 1
+		$status = ProcessExists($process)
+
+		If 0 = $status Then
+			If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
+			Return 1
+		EndIf
 	EndIf
 
 	Return 0
@@ -257,7 +267,7 @@ Func RemoveAllProcess($processList)
 
 		For $cpt = 1 To UBound($processList) - 1
 			If StringRegExp($processName, $processList[$cpt][1]) Then
-				CloseProcessAndWait($pid)
+				CloseProcessAndWait($pid, $processList[$cpt][2])
 				UpdateToolCpt($processList[$cpt][0], "process", $processName)
 			EndIf
 		Next

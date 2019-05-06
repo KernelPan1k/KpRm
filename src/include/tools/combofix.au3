@@ -27,7 +27,7 @@ Func LoadCombofix()
 	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, False]]
 	Local Const $arr5[1][5] = [[$ToolExistCpt, 'file', Null, $reg5, True]]
 	Local Const $arr6[1][2] = [[$ToolExistCpt, $reg6]]
-	Local Const $arr7[1][2] = [[$ToolExistCpt, $reg1]]
+	Local Const $arr7[1][3] = [[$ToolExistCpt, $reg1, True]]
 	Local Const $arr8[1][3] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe", False]]
 
 	_ArrayAdd($KPRemoveDesktopList, $arr1)
