@@ -986,7 +986,7 @@ Func _Permissions_KillProcess($Process)
 	For $i = 1 To 10
 		DllCall($h__Kernel32Dll,'bool','TerminateProcess','handle',$hProcess,'uint',0)
 		If @error Then $ret = 0
-		Sleep(5)
+		Sleep(30)
 		If Not ProcessExists($Process) Then
 			$ret = 1
 			ExitLoop
