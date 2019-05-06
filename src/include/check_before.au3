@@ -27,6 +27,9 @@ EndFunc   ;==>_IsInternetConnected
 
 Func checkVersionOfKpRm()
 	Dim $kprmVersion
+	Dim $KpRmDev
+
+	If $KpRmDev = True Then Return
 
 	Local Const $hasInternet = _IsInternetConnected()
 
