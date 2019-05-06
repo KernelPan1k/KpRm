@@ -26,19 +26,18 @@
 #include <Array.au3>
 #include <File.au3>
 
-;~ AutoItSetOption("MustDeclareVars", 1)
-Global $KpRmDev = False
+AutoItSetOption("MustDeclareVars", 1)
+Global $bKpRmDev = True
 
-Local $kprmVersion = "0.0.15"
-Local Const $codeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
+Local $sKprmVersion = "0.0.15"
+Local Const $aCodeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
-If _ArraySearch($codeFR, @MUILang) <> 1 Then
+If _ArraySearch($aCodeFR, @MUILang) <> 1 Then
 	#include "locales\fr.au3"
 Else
 	#include "locales\en.au3"
 EndIf
 
-;~ #include "lib\Permissions.au3"
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
 #include "lib\Permissions.au3"
@@ -111,7 +110,7 @@ Func Init()
 
 	logMessage("#################################################################################################################" & @CRLF)
 	logMessage("# Run at " & _Now())
-	logMessage("# KpRm (Kernel-panik) version " & $kprmVersion)
+	logMessage("# KpRm (Kernel-panik) version " & $sKprmVersion)
 	logMessage("# Website https://kernel-panik.me/tool/kprm/")
 	logMessage("# Run by " & @UserName & " from " & @WorkingDir)
 	logMessage("# Computer Name: " & @ComputerName)

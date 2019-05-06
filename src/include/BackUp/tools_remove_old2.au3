@@ -186,20 +186,20 @@ Func CloseProcessAndWait($process, $force)
 	If $force = True Then
 		_Permissions_KillProcess($process)
 
-		If 0 = ProcessExists($process) Then Return 0
-	EndIf
+			If 0 = ProcessExists($process) Then Return 0
+	Else
+		ProcessClose($process)
 
-	ProcessClose($process)
+		Do
+			$cpt -= 1
+			Sleep(250)
+		Until ($cpt = 0 Or 0 = ProcessExists($process))
 
-	Do
-		$cpt -= 1
-		Sleep(250)
-	Until ($cpt = 0 Or 0 = ProcessExists($process))
+		$status = ProcessExists($process)
 
-	$status = ProcessExists($process)
-
-	If 0 = $status Then
-		Return 1
+		If 0 = $status Then
+			Return 1
+		EndIf
 	EndIf
 
 	Return 0

@@ -1,5 +1,5 @@
 Func quitKprm($autoDelete = False, $open = True)
-	Dim $KpRmDev
+	Dim $bKpRmDev
 	Dim $KPLogFile
 
 	FileDelete(@TempDir & "\kprm-logo.gif")
@@ -9,7 +9,7 @@ Func quitKprm($autoDelete = False, $open = True)
 			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $KPLogFile)
 		EndIf
 
-		If $KpRmDev = False Then
+		If $bKpRmDev = False Then
 			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @ScriptFullPath & '"', @TempDir, @SW_HIDE)
 			FileDelete(@ScriptFullPath)
 		EndIf
@@ -26,10 +26,10 @@ Func _IsInternetConnected()
 EndFunc   ;==>_IsInternetConnected
 
 Func checkVersionOfKpRm()
-	Dim $kprmVersion
-	Dim $KpRmDev
+	Dim $sKprmVersion
+	Dim $bKpRmDev
 
-	If $KpRmDev = True Then Return
+	If $bKpRmDev = True Then Return
 
 	Local Const $hasInternet = _IsInternetConnected()
 
@@ -39,7 +39,7 @@ Func checkVersionOfKpRm()
 
 	Local Const $sGet = HttpGet("https://kernel-panik.me/_api/v1/kprm/version")
 
-	If $sGet <> Null And $sGet <> "" And $sGet <> $kprmVersion Then
+	If $sGet <> Null And $sGet <> "" And $sGet <> $sKprmVersion Then
 		MsgBox(64, $lgetLastVersionTitle, $lgetLastVersion)
 		ShellExecute("https://kernel-panik.me/tool/kprm/")
 		quitKprm(True, False)
