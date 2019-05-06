@@ -1,9 +1,5 @@
 
 Func prepareRemove($path, $recursive = 0, $force = False)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] prepareRemove " & $path)
-
 	If $force Then
 		_ClearObjectDacl($path)
 		_GrantAllAccess($path)
@@ -29,9 +25,6 @@ Func prepareRemove($path, $recursive = 0, $force = False)
 EndFunc   ;==>prepareRemove
 
 Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveFile " & $file)
 	Local Const $iFileExists = isFile($file)
 
 	If $iFileExists Then
@@ -51,10 +44,6 @@ Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
 		Local $iDelete = FileDelete($file)
 
 		If $iDelete Then
-			If $KPDebug Then
-				logMessage("  [OK] File " & $file & " deleted successfully")
-			EndIf
-
 			Return 1
 		EndIf
 
@@ -67,9 +56,6 @@ Func RemoveFile($file, $toolKey, $descriptionPattern = Null, $force = False)
 EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($path, $toolKey, $force = False)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveFolder " & $path)
 	Local $iFileExists = IsDir($path)
 
 	If $iFileExists Then
@@ -79,9 +65,6 @@ Func RemoveFolder($path, $toolKey, $force = False)
 		Local Const $iDelete = DirRemove($path, $DIR_REMOVE)
 
 		If $iDelete Then
-			If $KPDebug Then
-				logMessage("  [OK] Directory " & $path & " deleted successfully")
-			EndIf
 
 			Return 1
 		EndIf
@@ -95,10 +78,6 @@ Func RemoveFolder($path, $toolKey, $force = False)
 EndFunc   ;==>RemoveFolder
 
 Func FindGlob($path, $file, $reg)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] FindGlob " & $path & " " & $file)
-
 	Local Const $filePathGlob = $path & "\" & $file
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 	Local $return = []
@@ -152,10 +131,6 @@ Func RemoveFileHandler($pathOfFile, $elements)
 EndFunc   ;==>RemoveFileHandler
 
 Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllFileFromWithMaxDepth " & $path)
-
 	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 
 	If @error <> 0 Then
@@ -168,10 +143,6 @@ Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
 EndFunc   ;==>RemoveAllFileFromWithMaxDepth
 
 Func RemoveAllFileFrom($path, $elements)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllFileFrom " & $path)
-
 	Local Const $filePathGlob = $path & "\*"
 	Local Const $hSearch = FileFindFirstFile($filePathGlob)
 
@@ -192,10 +163,6 @@ Func RemoveAllFileFrom($path, $elements)
 EndFunc   ;==>RemoveAllFileFrom
 
 Func RemoveRegistryKey($key, $toolKey, $force = False)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveRegistryKey " & $key)
-
 	If $force = True Then
 		_ClearObjectDacl($key)
 		_GrantAllAccess($key, $SE_REGISTRY_KEY)
@@ -205,14 +172,6 @@ Func RemoveRegistryKey($key, $toolKey, $force = False)
 
 	If $status <> 0 Then
 		UpdateToolCpt($toolKey, "key", $key)
-
-		If $KPDebug Then
-			If $status = 1 Then
-				logMessage("  [OK] " & $key & " deleted successfully")
-			ElseIf $status = 2 Then
-				logMessage("  [X] " & $key & " deleted failed")
-			EndIf
-		EndIf
 	EndIf
 
 	Return $status
@@ -220,10 +179,7 @@ EndFunc   ;==>RemoveRegistryKey
 
 Func CloseProcessAndWait($process, $force)
 	Local $cpt = 50
-	Dim $KPDebug
 	Local $status = Null
-
-	If $KPDebug Then logMessage("[I] CloseProcessAndWait " & $process)
 
 	If 0 = ProcessExists($process) Then Return 0
 
@@ -231,7 +187,6 @@ Func CloseProcessAndWait($process, $force)
 		$status = _Permissions_KillProcess($process)
 
 		If 1 = $status Then
-			If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
 			Return 1
 		EndIf
 	Else
@@ -245,7 +200,6 @@ Func CloseProcessAndWait($process, $force)
 		$status = ProcessExists($process)
 
 		If 0 = $status Then
-			If $KPDebug Then logMessage("  [OK] Proccess " & $process & " stopped successfully")
 			Return 1
 		EndIf
 	EndIf
@@ -255,9 +209,6 @@ EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess($processList)
 	Dim $cpt
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllProcess")
 
 	Local $aProcessList = ProcessList()
 
@@ -275,20 +226,12 @@ Func RemoveAllProcess($processList)
 EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveScheduleTask")
-
 	For $i = 1 To UBound($list) - 1
 		RunWait('schtasks.exe /delete /tn "' & $list[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
 
 Func UninstallNormaly($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] UninstallNormaly")
-
 	Local Const $ProgramFilesList = GetProgramFilesList()
 
 	For $i = 1 To UBound($ProgramFilesList) - 1
@@ -313,10 +256,6 @@ Func UninstallNormaly($list)
 EndFunc   ;==>UninstallNormaly
 
 Func RemoveAllProgramFilesDir($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllProgramFilesDir")
-
 	Local Const $ProgramFilesList = GetProgramFilesList()
 
 	For $i = 1 To UBound($ProgramFilesList) - 1
@@ -325,10 +264,6 @@ Func RemoveAllProgramFilesDir($list)
 EndFunc   ;==>RemoveAllProgramFilesDir
 
 Func RemoveAllSoftwareKeyList($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllSoftwareKeyList")
-
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 	Local $keys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
@@ -355,10 +290,6 @@ Func RemoveAllSoftwareKeyList($list)
 EndFunc   ;==>RemoveAllSoftwareKeyList
 
 Func RemoveUninstallStringWithSearch($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveUninstallStringWithSearch")
-
 	For $i = 1 To UBound($list) - 1
 		Local $keyFound = searchRegistryKeyStrings($list[$i][1], $list[$i][2], $list[$i][3])
 
@@ -369,10 +300,6 @@ Func RemoveUninstallStringWithSearch($list)
 EndFunc   ;==>RemoveUninstallStringWithSearch
 
 Func RemoveAllRegistryKeys($list)
-	Dim $KPDebug
-
-	If $KPDebug Then logMessage("[I] RemoveAllRegistryKeys")
-
 	For $i = 1 To UBound($list) - 1
 		RemoveRegistryKey($list[$i][1], $list[$i][0], $list[$i][2])
 	Next
@@ -394,10 +321,6 @@ Func CleanDirectoryContent($list)
 EndFunc   ;==>CleanDirectoryContent
 
 ;~ Func RemoveContextMenu($name)
-;~ 	Dim $KPDebug
-
-;~ 	If $KPDebug Then logMessage("[I] RemoveContextMenu " & $name)
-
 ;~ 	Local $return = 0
 ;~ 	Local $s64Bit = ""
 ;~ 	If @OSArch = "X64" Then $s64Bit = "64"
@@ -415,9 +338,6 @@ EndFunc   ;==>CleanDirectoryContent
 ;~ Func RemoveService($name)
 ;~ 	Local Const $status = RunWait(@ComSpec & " /c " & "sc query " & $name, @TempDir, @SW_HIDE)
 ;~ 	Local $return = 0
-;~ 	Dim $KPDebug
-
-;~ 	If $KPDebug Then logMessage("[I] RemoveService " & $name)
 
 ;~ 	If $status = 1060 Then
 ;~ 		Return 0
@@ -426,14 +346,12 @@ EndFunc   ;==>CleanDirectoryContent
 ;~ 	RunWait(@ComSpec & " /c " & "sc stop " & $name, @TempDir, @SW_HIDE)
 
 ;~ 	If @error = 0 Then
-;~ 		If $KPDebug Then logMessage("  [OK] Stop service " & $name & " successfully")
 ;~ 		$return += 1
 ;~ 	EndIf
 
 ;~ 	RunWait(@ComSpec & " /c " & "sc config " & $name & " start= disabled", @TempDir, @SW_HIDE)
 
 ;~ 	If @error = 0 Then
-;~ 		If $KPDebug Then logMessage("  [OK] Disable service " & $name & " successfully")
 ;~ 		$return += 1
 ;~ 	EndIf
 
