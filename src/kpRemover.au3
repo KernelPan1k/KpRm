@@ -132,7 +132,7 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($RemoveTools) = $GUI_CHECKED Then
-		RunRemoveTools()
+		RunRemoveTools(False)
 		RunRemoveTools(True)
 	Else
 		ProgressBarUpdate(32)
