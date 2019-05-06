@@ -230,7 +230,7 @@ Func RunRemoveTools($retry = False)
 						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
 					Next
 
-					If $ToolsCptKey = "zhp" And $ToolZhpQuantineExist = True Then
+					If $ToolsCptKey = "zhp" And $ToolZhpQuantineExist = True And ToolZhpQuantineDisplay = False Then
 						logMessage("     [!] " & $messageZHP)
 						$ToolZhpQuantineDisplay = True
 					EndIf
