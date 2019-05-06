@@ -1,7 +1,7 @@
 
 
 Func LoadReportCHKDSK()
-	Local Const $ToolExistCpt = "report_chkdsk"
+	Local Const $ToolExistCpt = "Report_CHKDSK"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

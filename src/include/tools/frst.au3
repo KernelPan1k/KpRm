@@ -1,6 +1,6 @@
 
 Func LoadFRST()
-	Local Const $ToolExistCpt = "frst"
+	Local Const $ToolExistCpt = "FRST"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDesktopFolderList

@@ -4,7 +4,7 @@ Func LoadDefogger()
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
 
-	Local Const $ToolExistCpt = "defogger"
+	Local Const $ToolExistCpt = "Defogger"
 	Local Const $descriptionPattern = Null
 
 	Local Const $reg1 = "(?i)defogger.*\.exe"

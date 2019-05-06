@@ -1,6 +1,6 @@
 
 Func LoadOTL()
-	Local Const $ToolExistCpt = "otl"
+	Local Const $ToolExistCpt = "OTL"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

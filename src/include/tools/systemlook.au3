@@ -1,7 +1,7 @@
 
 
 Func LoadSystemLookup()
-	Local Const $ToolExistCpt = "systemlook"
+	Local Const $ToolExistCpt = "Systemlook"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

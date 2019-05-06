@@ -1,7 +1,7 @@
 
 
 Func LoadTDSSKiller()
-	Local Const $ToolExistCpt = "tdsskiller"
+	Local Const $ToolExistCpt = "TDSSKiller"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

@@ -1,6 +1,6 @@
 
 Func LoadUSBFIX()
-	Local Const $ToolExistCpt = "usbfix"
+	Local Const $ToolExistCpt = "USBFix"
 	Dim $KPRemoveProcessList
 	Dim $KPUninstallNormalyList
 	Dim $KPRemoveDesktopList

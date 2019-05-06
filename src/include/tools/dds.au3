@@ -4,7 +4,7 @@ Func LoadDDS()
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
 
-	Local Const $ToolExistCpt = "dds"
+	Local Const $ToolExistCpt = "DDS"
 	Local Const $descriptionPattern = "(?i)^Swearware"
 
 	Local Const $reg1 = "(?i)dds.*\.com"

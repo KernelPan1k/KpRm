@@ -1,7 +1,7 @@
 
 Func LoadZHPLite()
 	Local Const $desciptionPattern = Null
-	Local Const $ZhpFixExistCpt = "zhplite"
+	Local Const $ZhpFixExistCpt = "ZHPLite"
 
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList

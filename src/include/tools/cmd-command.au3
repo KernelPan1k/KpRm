@@ -1,6 +1,6 @@
 
 Func LoadCMDCommand()
-	Local Const $ToolExistCpt = "cmd-command"
+	Local Const $ToolExistCpt = "CMD_Command"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

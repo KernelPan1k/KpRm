@@ -1,6 +1,6 @@
 
 Func LoadADSFix()
-	Local Const $ToolExistCpt = "adsfix"
+	Local Const $ToolExistCpt = "AdsFix"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

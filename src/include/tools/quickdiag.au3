@@ -1,7 +1,7 @@
 
 Func LoadQuickDiag()
 
-	Local Const $ToolExistCpt = "quickdiag"
+	Local Const $ToolExistCpt = "QuickDiag"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

@@ -1,7 +1,7 @@
 
 Func LoadRstAssociation()
 	Local Const $desciptionPattern = Null
-	Local Const $toolExistCpt = "rstassociations"
+	Local Const $toolExistCpt = "RstAssociations"
 
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList

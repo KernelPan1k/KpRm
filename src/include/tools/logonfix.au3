@@ -1,6 +1,6 @@
 
 Func LoadLogonFix()
-	Local Const $ToolExistCpt = "logonfix"
+	Local Const $ToolExistCpt = "LogonFix"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

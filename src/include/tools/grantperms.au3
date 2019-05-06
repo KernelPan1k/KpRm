@@ -1,6 +1,6 @@
 
 Func LoadGrantPerms()
-	Local Const $ToolExistCpt = "grantperms"
+	Local Const $ToolExistCpt = "Grantperms"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

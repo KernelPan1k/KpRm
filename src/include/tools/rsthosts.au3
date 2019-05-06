@@ -1,6 +1,6 @@
 
 Func LoadRstHosts()
-	Local Const $ToolExistCpt = "rsthosts"
+	Local Const $ToolExistCpt = "RstHosts"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

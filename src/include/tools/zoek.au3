@@ -2,7 +2,7 @@
 
 Func LoadZoek()
 
-	Local Const $ToolExistCpt = "zoek"
+	Local Const $ToolExistCpt = "Zoek"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

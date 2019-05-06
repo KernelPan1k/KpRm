@@ -1,53 +1,53 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
 Local Const $allToolsList[47] = [ _
-		"adlicediag", _
-		"adsfix", _
-		"adwcleaner", _
-		"aswmbr", _
-		"avenger", _
-		"blitzblank", _
-		"ckscanner", _
-		"cmd-command", _
-		"combofix", _
-		"dds", _
-		"defogger", _
+		"AdliceDiag", _
+		"AdsFix", _
+		"AdwCleaner", _
+		"AswMBR", _
+		"Avenger", _
+		"BlitzBlank", _
+		"CKScanner", _
+		"CMD_Command", _
+		"Combofix", _
+		"DDS", _
+		"Defogger", _
 		"ESET Online Scanner", _
-		"frst", _
-		"fss", _
-		"g3n-h@ckm@n_tools", _
-		"grantperms", _
-		"javara", _
-		"listparts", _
-		"logonfix", _
-		"malwarebytes_tools", _
-		"mbar", _
-		"miniregtool", _
-		"minitoolbox", _
-		"otl", _
-		"otm", _
-		"quickdiag", _
-		"regtoolexport", _
-		"remediate-vbs-worm", _
-		"report_chkdsk", _
-		"roguekiller", _
-		"rstassociations", _
-		"rsthosts", _
-		"scanrapide", _
-		"seaf", _
-		"sft", _
-		"systemlook", _
-		"tdsskiller", _
-		"toolsdiag", _
-		"usbfix", _
-		"winchk", _
-		"winupdatefix", _
-		"zhp", _
-		"zhpcleaner", _
-		"zhpdiag", _
-		"zhpfix", _
-		"zhplite", _
-		"zoek"]
+		"FRST", _
+		"FSS", _
+		"g3n-h@ckm@n tools", _
+		"Grantperms", _
+		"JavaRa", _
+		"ListParts", _
+		"LogonFix", _
+		"Malwarebytes tools", _
+		"Malwarebytes Anti-Rootkit", _
+		"MiniregTool", _
+		"Minitoolbox", _
+		"OTL", _
+		"OTM", _
+		"QuickDiag", _
+		"RegtoolExport", _
+		"Remediate VBS Worm", _
+		"Report_CHKDSK", _
+		"RogueKiller", _
+		"RstAssociations", _
+		"RstHosts", _
+		"ScanRapide", _
+		"SEAF", _
+		"SFT", _
+		"Systemlook", _
+		"TDSSKiller", _
+		"ToolsDiag", _
+		"USBFix", _
+		"WinCHK", _
+		"WinUpdatefix", _
+		"ZHP Tools", _
+		"ZHPCleaner", _
+		"ZHPDiag", _
+		"ZHPFix", _
+		"ZHPLite", _
+		"Zoek"]
 
 For $ti = 0 To UBound($allToolsList) - 1
 	Local $toolsValue = ObjCreate("Scripting.Dictionary")
@@ -223,7 +223,7 @@ Func RunRemoveTools($retry = False)
 					If $ToolExistDisplayMessage = False Then
 						$ToolExistDisplayMessage = True
 						$hasFoundTools = True
-						logMessage(@CRLF & "  ## " & StringUpper($ToolsCptKey) & " found")
+						logMessage(@CRLF & "  ## " & $ToolsCptKey & " found")
 					EndIf
 
 					For $ToolCptSubToolKeyI = 0 To UBound($ToolCptSubToolKeys) - 1
@@ -232,7 +232,7 @@ Func RunRemoveTools($retry = False)
 						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
 					Next
 
-					If $ToolsCptKey = "zhp" And $ToolZhpQuantineExist = True And $ToolZhpQuantineDisplay = False Then
+					If $ToolsCptKey = "ZHP Tools" And $ToolZhpQuantineExist = True And $ToolZhpQuantineDisplay = False Then
 						logMessage("     [!] " & $messageZHP)
 						$ToolZhpQuantineDisplay = True
 					EndIf
@@ -241,7 +241,7 @@ Func RunRemoveTools($retry = False)
 		Next
 
 		If $ToolZhpQuantineDisplay = False And $ToolZhpQuantineExist = True Then
-			logMessage(@CRLF & "  ## " & StringUpper("zhp") & " found")
+			logMessage(@CRLF & "  ## " & "ZHP Tools" & " found")
 			logMessage("     [!] " & $messageZHP)
 		ElseIf $hasFoundTools = False Then
 			logMessage("  [I] No tools found")

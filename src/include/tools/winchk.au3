@@ -1,6 +1,6 @@
 
 Func LoadWinChk()
-	Local Const $ToolExistCpt = "winchk"
+	Local Const $ToolExistCpt = "WinCHK"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

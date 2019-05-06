@@ -1,6 +1,6 @@
 
 Func LoadFSS()
-	Local Const $ToolExistCpt = "fss"
+	Local Const $ToolExistCpt = "FSS"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

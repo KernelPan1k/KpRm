@@ -1,6 +1,6 @@
 
 Func LoadListParts()
-	Local Const $ToolExistCpt = "listparts"
+	Local Const $ToolExistCpt = "ListParts"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

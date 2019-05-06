@@ -1,6 +1,6 @@
 
 Func LoadWinUpdateFix()
-	Local Const $ToolExistCpt = "winupdatefix"
+	Local Const $ToolExistCpt = "WinUpdatefix"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

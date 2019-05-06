@@ -5,7 +5,7 @@ Func LoadJavara()
 	Dim $KPRemoveDownloadList
 	Dim $KPRemoveHomeDriveList
 
-	Local Const $ToolExistCpt = "javara"
+	Local Const $ToolExistCpt = "JavaRa"
 	Local Const $descriptionPattern = "(?i)^The RaProducts Team"
 
 	Local Const $reg1 = "(?i)Javara"

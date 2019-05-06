@@ -1,6 +1,6 @@
 
 Func LoadAswMbr()
-	Local Const $ToolExistCpt = "aswmbr"
+	Local Const $ToolExistCpt = "AswMBR"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList

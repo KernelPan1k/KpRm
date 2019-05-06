@@ -1,7 +1,7 @@
 
 
 Func LoadBlitzBlank()
-	Local Const $ToolExistCpt = "blitzblank"
+	Local Const $ToolExistCpt = "BlitzBlank"
 	Dim $KPRemoveProcessList
 	Dim $KPRemoveDesktopList
 	Dim $KPRemoveDownloadList
