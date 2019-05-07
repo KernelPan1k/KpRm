@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.16"
+Local $7c = "0.0.17"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -3565,23 +3565,25 @@ Dim $cb
 Dim $cc
 Dim $ce
 Dim $cm
-Dim $ch
+Dim $cq
 Local Const $dp = "ESET Online Scanner"
 Local Const $cw = "(?i)^ESET"
 Local Const $ds = "(?i)esetonlinescanner.*\.exe"
 Local Const $dt = "(?i)log.*\.txt"
+Local $7x = ""
+If @OSArch = "X64" Then $7x = "64"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $ds, False]]
 Local Const $dy[1][5] = [[$dp, 'file', Null, $dt, False]]
 Local Const $dz[1][5] = [[$dp, 'folder', Null, "(?i)^ESET$", True]]
-Local Const $e5[1][2] = [[$dp, "(?i)^Eset$"]]
+Local Const $e5[1][3] = [[$dp, "HKLM" & $7x & "\SOFTWARE\ESET\ESET Online Scanner", False]]
 _vv($cb, $dw)
 _vv($cc, $dx)
 _vv($cc, $dy)
 _vv($ce, $dx)
 _vv($ce, $dy)
 _vv($cm, $dz)
-_vv($ch, $e5)
+_vv($cq, $e5)
 EndFunc
 _127()
 Func _128($br = False)
