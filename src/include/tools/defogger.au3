@@ -7,8 +7,8 @@ Func LoadDefogger()
 	Local Const $ToolExistCpt = "Defogger"
 	Local Const $descriptionPattern = Null
 
-	Local Const $reg1 = "(?i)defogger.*\.exe"
-	Local Const $reg2 = "(?i)defogger.*\.(log|exe)"
+	Local Const $reg1 = "(?i)^defogger.*\.exe$"
+	Local Const $reg2 = "(?i)^defogger.*\.(log|exe)$"
 
 	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]

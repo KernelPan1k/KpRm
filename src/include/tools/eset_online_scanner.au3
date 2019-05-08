@@ -9,8 +9,8 @@ Func LoadEsetOnlineScanner()
 	Local Const $ToolExistCpt = "ESET Online Scanner"
 	Local Const $descriptionPattern = "(?i)^ESET"
 
-	Local Const $reg1 = "(?i)esetonlinescanner.*\.exe"
-	Local Const $reg2 = "(?i)log.*\.txt"
+	Local Const $reg1 = "(?i)^esetonlinescanner.*\.exe$"
+	Local Const $reg2 = "(?i)^log.*\.txt$"
 
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"

@@ -7,8 +7,8 @@ Func LoadDDS()
 	Local Const $ToolExistCpt = "DDS"
 	Local Const $descriptionPattern = "(?i)^Swearware"
 
-	Local Const $reg1 = "(?i)dds.*\.com"
-	Local Const $reg2 = "(?i)(dds|attach).*\.txt"
+	Local Const $reg1 = "(?i)^dds.*\.com"
+	Local Const $reg2 = "(?i)^(dds|attach).*\.txt"
 
 	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]

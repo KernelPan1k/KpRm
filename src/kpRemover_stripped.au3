@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.17"
+Local $7c = "0.0.18"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2333,7 +2333,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c4[47] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AswMBR", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c4[49] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AswMBR", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c5 = 0 To UBound($c4) - 1
 Local $c6 = ObjCreate("Scripting.Dictionary")
 Local $c7 = ObjCreate("Scripting.Dictionary")
@@ -3487,8 +3487,8 @@ Dim $cc
 Dim $ce
 Local Const $dp = "DDS"
 Local Const $cw = "(?i)^Swearware"
-Local Const $ds = "(?i)dds.*\.com"
-Local Const $dt = "(?i)(dds|attach).*\.txt"
+Local Const $ds = "(?i)^dds.*\.com"
+Local Const $dt = "(?i)^(dds|attach).*\.txt"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $ds, False]]
 Local Const $dy[1][5] = [[$dp, 'file', Null, $dt, False]]
@@ -3505,8 +3505,8 @@ Dim $cc
 Dim $ce
 Local Const $dp = "Defogger"
 Local Const $cw = Null
-Local Const $ds = "(?i)defogger.*\.exe"
-Local Const $dt = "(?i)defogger.*\.(log|exe)"
+Local Const $ds = "(?i)^defogger.*\.exe$"
+Local Const $dt = "(?i)^defogger.*\.(log|exe)$"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
 _vv($cb, $dw)
@@ -3521,10 +3521,10 @@ Dim $ce
 Dim $cg
 Local Const $dp = "JavaRa"
 Local Const $cw = "(?i)^The RaProducts Team"
-Local Const $ds = "(?i)Javara"
-Local Const $dt = "(?i)Javara.*\.exe"
-Local Const $du = "(?i)Javara.*\.(zip|exe)"
-Local Const $dv = "(?i)Javara.*\.log"
+Local Const $ds = "(?i)^Javara"
+Local Const $dt = "(?i)^Javara.*\.exe$"
+Local Const $du = "(?i)^Javara.*\.(zip|exe)$"
+Local Const $dv = "(?i)^Javara.*\.log$"
 Local Const $dw[1][3] = [[$dp, $dt, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $du, False]]
 Local Const $dy[1][5] = [[$dp, 'file', Null, $dv, False]]
@@ -3568,8 +3568,8 @@ Dim $cm
 Dim $cq
 Local Const $dp = "ESET Online Scanner"
 Local Const $cw = "(?i)^ESET"
-Local Const $ds = "(?i)esetonlinescanner.*\.exe"
-Local Const $dt = "(?i)log.*\.txt"
+Local Const $ds = "(?i)^esetonlinescanner.*\.exe$"
+Local Const $dt = "(?i)^log.*\.txt$"
 Local $7x = ""
 If @OSArch = "X64" Then $7x = "64"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
@@ -3586,7 +3586,42 @@ _vv($cm, $dz)
 _vv($cq, $e5)
 EndFunc
 _127()
-Func _128($br = False)
+Func _128()
+Local Const $dp = "SecurityCheck"
+Dim $cb
+Dim $cc
+Dim $dq
+Dim $ce
+Dim $dr
+Dim $cg
+Local Const $ds = "(?i)^SecurityCheck.*\.exe$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $ds, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_128()
+Func _129()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "Rkill"
+Local Const $cw = "(?i)^Bleeping Computer"
+Local Const $ds = "(?i)^(rkill|iExplore)\.exe$"
+Local Const $dt = "(?i)^(rkill|iExplore).*\.(exe|txt|zip)$"
+Local Const $du = "(?i)^rkill$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, True]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($cc, $dy)
+_vv($ce, $dx)
+_vv($ce, $dy)
+EndFunc
+_129()
+Func _12a($br = False)
 If $br = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3691,10 +3726,10 @@ Switch $f4
 Case $0
 Exit
 Case $f3
-_12b()
+_12d()
 EndSwitch
 WEnd
-Func _129()
+Func _12b()
 Local Const $f5 = @HomeDrive & "\KPRM"
 If Not FileExists($f5) Then
 DirCreate($f5)
@@ -3704,8 +3739,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12a()
-_129()
+Func _12c()
+_12b()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3715,16 +3750,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12b()
-_12a()
+Func _12d()
+_12c()
 _105()
 If GUICtrlRead($ez) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ew) = $1 Then
-_128(False)
-_128(True)
+_12a(False)
+_12a(True)
 Else
 _105(32)
 EndIf
