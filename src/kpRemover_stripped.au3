@@ -2333,7 +2333,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c4[49] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AswMBR", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c4[50] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c5 = 0 To UBound($c4) - 1
 Local $c6 = ObjCreate("Scripting.Dictionary")
 Local $c7 = ObjCreate("Scripting.Dictionary")
@@ -3621,7 +3621,21 @@ _vv($ce, $dx)
 _vv($ce, $dy)
 EndFunc
 _129()
-Func _12a($br = False)
+Func _12a()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "AHK_NavScan"
+Local Const $ds = "(?i)^AHK_NavScan.*\.exe"
+Local Const $dt = "(?i)^AHK_NavScan.*\.(exe|txt)"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dt, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12a()
+Func _12b($br = False)
 If $br = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3726,10 +3740,10 @@ Switch $f4
 Case $0
 Exit
 Case $f3
-_12d()
+_12e()
 EndSwitch
 WEnd
-Func _12b()
+Func _12c()
 Local Const $f5 = @HomeDrive & "\KPRM"
 If Not FileExists($f5) Then
 DirCreate($f5)
@@ -3739,8 +3753,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12c()
-_12b()
+Func _12d()
+_12c()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3750,16 +3764,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12d()
-_12c()
+Func _12e()
+_12d()
 _105()
 If GUICtrlRead($ez) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ew) = $1 Then
-_12a(False)
-_12a(True)
+_12b(False)
+_12b(True)
 Else
 _105(32)
 EndIf
