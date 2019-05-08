@@ -8,10 +8,10 @@ Func LoadJavara()
 	Local Const $ToolExistCpt = "JavaRa"
 	Local Const $descriptionPattern = "(?i)^The RaProducts Team"
 
-	Local Const $reg1 = "(?i)Javara"
-	Local Const $reg2 = "(?i)Javara.*\.exe"
-	Local Const $reg3 = "(?i)Javara.*\.(zip|exe)"
-	Local Const $reg4 = "(?i)Javara.*\.log"
+	Local Const $reg1 = "(?i)^Javara"
+	Local Const $reg2 = "(?i)^Javara.*\.exe$"
+	Local Const $reg3 = "(?i)^Javara.*\.(zip|exe)$"
+	Local Const $reg4 = "(?i)^Javara.*\.log$"
 
 	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg2, False]]
 	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg3, False]]
