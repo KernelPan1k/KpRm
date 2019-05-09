@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.18"
+Local $7c = "0.0.19"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2333,7 +2333,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c4[50] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c4[54] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "JavaRa", "ListCWall", "ListParts", "LogonFix", "Malwarebytes tools", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "Rakhni Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c5 = 0 To UBound($c4) - 1
 Local $c6 = ObjCreate("Scripting.Dictionary")
 Local $c7 = ObjCreate("Scripting.Dictionary")
@@ -3635,7 +3635,78 @@ _vv($cc, $dx)
 _vv($ce, $dx)
 EndFunc
 _12a()
-Func _12b($br = False)
+Func _12b()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "Avast Decryptor Cryptomix"
+Local Const $cw = "(?i)^Avast"
+Local Const $ds = "(?i)^avast_decryptor_cryptomix.*\.exe"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $ds, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12b()
+Func _12c()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "Decrypt CryptON"
+Local Const $cw = "(?i)^Emsisoft"
+Local Const $ds = "(?i)^decrypt_CryptON.*\.exe"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $ds, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12c()
+Func _12d()
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
+Local Const $dp = "Rakhni Decryptor"
+Local Const $cw = "(?i)^Kaspersky"
+Local Const $ds = "(?i)^RakhniDecryptor.*\.exe"
+Local Const $dt = "(?i)^RakhniDecryptor.*\.(exe|txt|zip)"
+Local Const $du = "(?i)^RakhniDecryptor"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($cc, $dy)
+_vv($ce, $dx)
+_vv($ce, $dy)
+_vv($cg, $dx)
+_vv($cg, $dy)
+EndFunc
+_12d()
+Func _12e()
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
+Local Const $dp = "ListCWall"
+Local Const $cw = "(?i)^Bleeping Computer"
+Local Const $ds = "(?i)^ListCWall.*\.exe"
+Local Const $dt = "(?i)^ListCWall.*\.(exe|txt)"
+Local Const $du = "(?i)^ListCWall"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($cc, $dy)
+_vv($ce, $dx)
+_vv($ce, $dy)
+_vv($cg, $dy)
+EndFunc
+_12e()
+Func _12f($br = False)
 If $br = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3740,10 +3811,10 @@ Switch $f4
 Case $0
 Exit
 Case $f3
-_12e()
+_12i()
 EndSwitch
 WEnd
-Func _12c()
+Func _12g()
 Local Const $f5 = @HomeDrive & "\KPRM"
 If Not FileExists($f5) Then
 DirCreate($f5)
@@ -3753,8 +3824,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12d()
-_12c()
+Func _12h()
+_12g()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3764,16 +3835,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12e()
-_12d()
+Func _12i()
+_12h()
 _105()
 If GUICtrlRead($ez) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ew) = $1 Then
-_12b(False)
-_12b(True)
+_12f(False)
+_12f(True)
 Else
 _105(32)
 EndIf

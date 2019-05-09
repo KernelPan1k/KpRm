@@ -1,17 +1,19 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[50] = [ _
+Local Const $allToolsList[54] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
 		"AHK_NavScan", _
 		"AswMBR", _
+		"Avast Decryptor Cryptomix", _
 		"Avenger", _
 		"BlitzBlank", _
 		"CKScanner", _
 		"CMD_Command", _
 		"Combofix", _
 		"DDS", _
+		"Decrypt CryptON", _
 		"Defogger", _
 		"ESET Online Scanner", _
 		"FRST", _
@@ -19,6 +21,7 @@ Local Const $allToolsList[50] = [ _
 		"g3n-h@ckm@n tools", _
 		"Grantperms", _
 		"JavaRa", _
+		"ListCWall", _
 		"ListParts", _
 		"LogonFix", _
 		"Malwarebytes tools", _
@@ -28,6 +31,7 @@ Local Const $allToolsList[50] = [ _
 		"OTL", _
 		"OTM", _
 		"QuickDiag", _
+		"Rakhni Decryptor", _
 		"RegtoolExport", _
 		"Remediate VBS Worm", _
 		"Report_CHKDSK", _
@@ -147,6 +151,10 @@ Global $KPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/security_check.au3"
 #include "tools/rkill.au3"
 #include "tools/ahk_navscan.au3"
+#include "tools/avast_decryptor_cryptomix.au3"
+#include "tools/decrypt_crypton.au3"
+#include "tools/rakhni_decryptor.au3"
+#include "tools/list_cwall.au3"
 
 Func RunRemoveTools($retry = False)
 	If $retry = True Then
