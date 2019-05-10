@@ -51,9 +51,9 @@ Func RestoreSystemSettingsByDefault()
 	$status = RegWrite($regvar, "HideFileExt", "REG_DWORD", "0")
 
 	If $status = 1 Then
-		logMessage("  [OK] Hide Extensions for known file types")
+		logMessage("  [OK] Show Extensions for known file types")
 	Else
-		logMessage("  [X] Hide Extensions for known file types")
+		logMessage("  [X] Show Extensions for known file types")
 	EndIf
 
 	$status = RegWrite($regvar, "ShowSuperHidden", "REG_DWORD", "0")
