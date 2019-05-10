@@ -131,7 +131,7 @@ Func RemoveFileHandler($pathOfFile, $elements)
 EndFunc   ;==>RemoveFileHandler
 
 Func RemoveAllFileFromWithMaxDepth($path, $elements, $detpth = -2)
-	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+	Local $aArray = _FileListToArrayRec($path, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat", $FLTAR_FILESFOLDERS, $detpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 
 	If @error <> 0 Then
 		Return Null
