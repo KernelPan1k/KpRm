@@ -1,7 +1,0 @@
-
-Func
-()
-
-EndFunc
-
-LoadSCCleaner()

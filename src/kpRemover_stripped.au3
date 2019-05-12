@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.20"
+Local $7c = "0.0.21"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2320,9 +2320,9 @@ _zm("  [X] Hide Hidden File")
 EndIf
 $ba = RegWrite($c3, "HideFileExt", "REG_DWORD", "0")
 If $ba = 1 Then
-_zm("  [OK] Hide Extensions for known file types")
+_zm("  [OK] Show Extensions for known file types")
 Else
-_zm("  [X] Hide Extensions for known file types")
+_zm("  [X] Show Extensions for known file types")
 EndIf
 $ba = RegWrite($c3, "ShowSuperHidden", "REG_DWORD", "0")
 If $ba = 1 Then
@@ -2333,7 +2333,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c4[55] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "Rakhni Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Systemlook", "TDSSKiller", "ToolsDiag", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c4[60] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c5 = 0 To UBound($c4) - 1
 Local $c6 = ObjCreate("Scripting.Dictionary")
 Local $c7 = ObjCreate("Scripting.Dictionary")
@@ -3483,8 +3483,8 @@ Dim $cc
 Dim $ce
 Local Const $dp = "DDS"
 Local Const $cw = "(?i)^Swearware"
-Local Const $ds = "(?i)^dds.*\.com"
-Local Const $dt = "(?i)^(dds|attach).*\.txt"
+Local Const $ds = "(?i)^dds.*\.com$"
+Local Const $dt = "(?i)^(dds|attach).*\.txt$"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $ds, False]]
 Local Const $dy[1][5] = [[$dp, 'file', Null, $dt, False]]
@@ -3686,18 +3686,40 @@ Dim $cb
 Dim $cc
 Dim $ce
 Dim $cg
+Local Const $dp = "Rannoh Decryptor"
+Local Const $cw = "(?i)^Kaspersky"
+Local Const $ds = "(?i)^RannohDecryptor.*\.exe"
+Local Const $dt = "(?i)^RannohDecryptor.*\.(exe|txt|zip)"
+Local Const $du = "(?i)^RannohDecryptor"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($cc, $dy)
+_vv($ce, $dx)
+_vv($ce, $dy)
+_vv($cg, $dx)
+_vv($cg, $dy)
+EndFunc
+_12d()
+Func _12e()
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
 Local Const $dp = "ListCWall"
 Local Const $cw = "(?i)^Bleeping Computer"
-Local Const $ds = "(?i)^ListCWall.*\.exe"
-Local Const $dt = "(?i)^ListCWall.*\.(exe|txt)"
+Local Const $ds = "(?i)^ListCWall.*\.exe$"
+Local Const $dt = "(?i)^ListCWall.*\.(exe|txt)$"
 Local Const $dw[1][3] = [[$dp, $ds, False]]
 Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
 _vv($cb, $dw)
 _vv($cc, $dx)
 _vv($ce, $dx)
 EndFunc
-_12d()
-Func _12e()
+_12e()
+Func _12f()
 Local Const $dp = "Hosts-perm"
 Dim $cc
 Dim $ce
@@ -3706,8 +3728,69 @@ Local Const $dw[1][5] = [[$dp, 'file', Null, $ds, False]]
 _vv($cc, $dw)
 _vv($ce, $dw)
 EndFunc
-_12e()
-Func _12f($br = False)
+_12f()
+Func _12g()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "Junkware Removal Tool"
+Local Const $cw = "(?i)^Malwarebytes"
+Local Const $ds = "(?i)^JRT.*\.exe"
+Local Const $dt = "(?i)^JRT.*\.(exe|txt)"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12g()
+Func _12h()
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
+Local Const $dp = "Shortcut Cleaner"
+Local Const $cw = "(?i)^Bleeping Computer"
+Local Const $ds = "(?i)^sc-cleaner.*\.exe$"
+Local Const $dt = "(?i)^sc-cleaner.*\.(exe|txt)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12h()
+Func _12i()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "UnHide"
+Local Const $cw = "(?i)^Bleeping Computer"
+Local Const $ds = "(?i)^unhide.*\.exe$"
+Local Const $dt = "(?i)^unhide.*\.(exe|txt)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12i()
+Func _12j()
+Dim $cb
+Dim $cc
+Dim $ce
+Local Const $dp = "FixExec"
+Local Const $cw = "(?i)^Bleeping Computer"
+Local Const $ds = "(?i)^FixExec.*\.(exe|com)$"
+Local Const $dt = "(?i)^FixExec.*\.(exe|txt|com)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+EndFunc
+_12j()
+Func _12k($br = False)
 If $br = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3789,7 +3872,7 @@ EndIf
 EndIf
 _105()
 EndFunc
-FileInstall("C:\Users\parfa\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 Global $bx = "KpRm"
 Global $ag = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 Local Const $eu = GUICreate($bx, 500, 195, 202, 112)
@@ -3812,10 +3895,10 @@ Switch $f4
 Case $0
 Exit
 Case $f3
-_12i()
+_12n()
 EndSwitch
 WEnd
-Func _12g()
+Func _12l()
 Local Const $f5 = @HomeDrive & "\KPRM"
 If Not FileExists($f5) Then
 DirCreate($f5)
@@ -3825,8 +3908,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12h()
-_12g()
+Func _12m()
+_12l()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3836,16 +3919,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12i()
-_12h()
+Func _12n()
+_12m()
 _105()
 If GUICtrlRead($ez) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ew) = $1 Then
-_12f(False)
-_12f(True)
+_12k(False)
+_12k(True)
 Else
 _105(32)
 EndIf
