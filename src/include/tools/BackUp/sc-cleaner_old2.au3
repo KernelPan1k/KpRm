@@ -1,6 +1,0 @@
-
-Func LoadSCCleaner()
-
-EndFunc   ;==>
-
-LoadSCCleaner()

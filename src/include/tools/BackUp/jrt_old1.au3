@@ -1,7 +1,0 @@
-
-
-Func LoadJRT()
-
-EndFunc
-
-LoadJRT()
