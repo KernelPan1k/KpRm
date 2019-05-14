@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.21"
+Local $7c = "0.0.22"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2333,7 +2333,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c4[60] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c4[62] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c5 = 0 To UBound($c4) - 1
 Local $c6 = ObjCreate("Scripting.Dictionary")
 Local $c7 = ObjCreate("Scripting.Dictionary")
@@ -3790,7 +3790,51 @@ _vv($cc, $dx)
 _vv($ce, $dx)
 EndFunc
 _12j()
-Func _12k($br = False)
+Func _12k()
+Local Const $dp = "Pre_Scan"
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
+Local Const $cw = "(?i)^SosVirus"
+Local Const $ds = "(?i)^Pre_Scan.*\.exe$"
+Local Const $dt = "(?i)^Pre_Scan.*\.(exe|txt|lnk)$"
+Local Const $du = "(?i)^Pre_Scan.*\.txt$"
+Local Const $dv = "(?i)^pre_scan$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'file', Null, $du, False]]
+Local Const $dz[1][5] = [[$dp, 'folder', Null, $dv, True]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+_vv($cg, $dy)
+_vv($cg, $dz)
+EndFunc
+_12k()
+Func _12l()
+Local Const $dp = "UnZacMe"
+Dim $cb
+Dim $cc
+Dim $ce
+Dim $cg
+Local Const $cw = "(?i)^SosVirus"
+Local Const $ds = "(?i)^UnZacMe.*\.exe$"
+Local Const $dt = "(?i)^UnZacMe.*\.(exe|txt|lnk)$"
+Local Const $du = "(?i)^UnZacMe.*\.txt$"
+Local Const $dv = "(?i)^UnZacMe$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cw, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'file', Null, $du, False]]
+Local Const $dz[1][5] = [[$dp, 'folder', Null, $dv, True]]
+_vv($cb, $dw)
+_vv($cc, $dx)
+_vv($ce, $dx)
+_vv($cg, $dy)
+_vv($cg, $dz)
+EndFunc
+_12l()
+Func _12m($br = False)
 If $br = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3895,10 +3939,10 @@ Switch $f4
 Case $0
 Exit
 Case $f3
-_12n()
+_12p()
 EndSwitch
 WEnd
-Func _12l()
+Func _12n()
 Local Const $f5 = @HomeDrive & "\KPRM"
 If Not FileExists($f5) Then
 DirCreate($f5)
@@ -3908,8 +3952,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12m()
-_12l()
+Func _12o()
+_12n()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3919,16 +3963,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12n()
-_12m()
+Func _12p()
+_12o()
 _105()
 If GUICtrlRead($ez) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ew) = $1 Then
-_12k(False)
-_12k(True)
+_12m(False)
+_12m(True)
 Else
 _105(32)
 EndIf

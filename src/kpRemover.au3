@@ -2,11 +2,11 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-0021.exe
+#AutoIt3Wrapper_Outfile=kpRm-0022.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.21
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.22
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.0.21
+#AutoIt3Wrapper_Res_ProductVersion=0.0.22
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
@@ -28,7 +28,7 @@
 
 ;~ AutoItSetOption("MustDeclareVars", 1)
 Global $bKpRmDev = False
-Local $sKprmVersion = "0.0.21"
+Local $sKprmVersion = "0.0.22"
 
 Local Const $aCodeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
