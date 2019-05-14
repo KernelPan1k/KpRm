@@ -1,6 +1,6 @@
 Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[60] = [ _
+Local Const $allToolsList[62] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -32,6 +32,7 @@ Local Const $allToolsList[60] = [ _
 		"Minitoolbox", _
 		"OTL", _
 		"OTM", _
+		"Pre_Scan", _
 		"QuickDiag", _
 		"Rakhni Decryptor", _
 		"Rannoh Decryptor", _
@@ -52,6 +53,7 @@ Local Const $allToolsList[60] = [ _
 		"ToolsDiag", _
 		"UnHide", _
 		"USBFix", _
+		"UnZacMe", _
 		"WinCHK", _
 		"WinUpdatefix", _
 		"ZHP Tools", _
@@ -166,6 +168,8 @@ Global $KPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/sc-cleaner.au3"
 #include "tools/unhide.au3"
 #include "tools/fixexec.au3"
+#include "tools/pre_scan.au3"
+#include "tools/unzacme.au3"
 
 Func RunRemoveTools($retry = False)
 	If $retry = True Then
