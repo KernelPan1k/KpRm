@@ -1,38 +1,38 @@
 
 
 Func LoadSeaf()
-	Local Const $ToolExistCpt = "SEAF"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPUninstallNormalyList
-	Dim $KPRemoveRegistryKeysList
-	Dim $KPRemoveHomeDriveList
-	Dim $KPRemoveProgramFilesList
+	Local Const $sToolExistCpt = "SEAF"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPUninstallNormalyList
+	Dim $aKPRemoveRegistryKeysList
+	Dim $aKPRemoveHomeDriveList
+	Dim $aKPRemoveProgramFilesList
 
-	Local Const $descriptionPattern = "(?i)^C_XX$"
+	Local Const $sDescriptionPattern = "(?i)^C_XX$"
 	Local Const $folderPattern = "(?i)^SEAF$"
-	Local Const $reg1 = "(?i)^seaf.*\.exe$"
-	Local Const $reg2 = "(?i)^Un-SEAF\.exe$"
-	Local Const $reg3 = "(?i)^SeafLog.*\.txt$"
+	Local Const $sReg1 = "(?i)^seaf.*\.exe$"
+	Local Const $sReg2 = "(?i)^Un-SEAF\.exe$"
+	Local Const $sReg3 = "(?i)^SeafLog.*\.txt$"
 
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][3] = [[$ToolExistCpt, $folderPattern, $reg2]]
-	Local Const $arr4[1][3] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF", False]]
-	Local Const $arr5[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, False]]
-	Local Const $arr6[1][5] = [[$ToolExistCpt, 'folder', Null, $folderPattern, True]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][3] = [[$sToolExistCpt, $folderPattern, $sReg2]]
+	Local Const $aArr4[1][3] = [[$sToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF", False]]
+	Local Const $aArr5[1][5] = [[$sToolExistCpt, 'file', Null, $sReg3, False]]
+	Local Const $aArr6[1][5] = [[$sToolExistCpt, 'folder', Null, $folderPattern, True]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPUninstallNormalyList, $arr3)
-	_ArrayAdd($KPRemoveRegistryKeysList, $arr4)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr5)
-	_ArrayAdd($KPRemoveProgramFilesList, $arr6)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPUninstallNormalyList, $aArr3)
+	_ArrayAdd($aKPRemoveRegistryKeysList, $aArr4)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr5)
+	_ArrayAdd($aKPRemoveProgramFilesList, $aArr6)
 
 EndFunc   ;==>LoadSeaf
 

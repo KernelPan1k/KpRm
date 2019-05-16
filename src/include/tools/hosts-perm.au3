@@ -1,16 +1,16 @@
 
 
 Func LoadHostsPerm()
-	Local Const $ToolExistCpt = "Hosts-perm"
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Local Const $sToolExistCpt = "Hosts-perm"
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $reg1 = "(?i)^hosts\-perm.*\.bat$"
+	Local Const $sReg1 = "(?i)^hosts\-perm.*\.bat$"
 
-	Local Const $arr1[1][5] = [[$ToolExistCpt, 'file', Null, $reg1, False]]
+	Local Const $aArr1[1][5] = [[$sToolExistCpt, 'file', Null, $sReg1, False]]
 
-	_ArrayAdd($KPRemoveDesktopList, $arr1)
-	_ArrayAdd($KPRemoveDownloadList, $arr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr1)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr1)
 EndFunc
 
 LoadHostsPerm()

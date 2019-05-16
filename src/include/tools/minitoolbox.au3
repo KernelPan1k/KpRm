@@ -1,24 +1,24 @@
 
 Func LoadMiniToolBox()
-	Local Const $ToolExistCpt = "Minitoolbox"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
+	Local Const $sToolExistCpt = "Minitoolbox"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = "(?i)^Farbar"
-	Local Const $reg1 = "(?i)^MiniToolBox.*\.exe$"
-	Local Const $reg2 = "(?i)^MTB\.txt$"
+	Local Const $sDescriptionPattern = "(?i)^Farbar"
+	Local Const $sReg1 = "(?i)^MiniToolBox.*\.exe$"
+	Local Const $sReg2 = "(?i)^MTB\.txt$"
 
-	Local Const $arr1[1][2] = [[$ToolExistCpt, $reg1]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg2, False]]
+	Local Const $aArr1[1][2] = [[$sToolExistCpt, $sReg1]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDesktopList, $arr3)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr3)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr3)
 EndFunc   ;==>LoadMiniToolBox
 
 LoadMiniToolBox()

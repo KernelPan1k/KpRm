@@ -1,104 +1,104 @@
 
 Func ClearRestorePoint()
-	logMessage(@CRLF & "- Clear All System Restore Points -" & @CRLF)
+	LogMessage(@CRLF & "- Clear All System Restore Points -" & @CRLF)
 
 	Local Const $aRP = _SR_EnumRestorePoints()
-	Local $ret = 0
+	Local $iRet = 0
 
 	If $aRP[0][0] = 0 Then
-		logMessage("  [I] No system recovery points were found")
+		LogMessage("  [I] No system recovery points were found")
 		Return Null
 	EndIf
 
-	Local $errors[1][3] = [[Null, Null, Null]]
+	Local $aErrors[1][3] = [[Null, Null, Null]]
 
 	For $i = 1 To $aRP[0][0]
-		Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
-		$ret += $status
+		Local $iStatus = _SR_RemoveRestorePoint($aRP[$i][0])
+		$iRet += $iStatus
 
-		If $status = 1 Then
-			logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")			
+		If $iStatus = 1 Then
+			LogMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")			
 		Else
-			Local $error[1][3] = [[$aRP[$i][0], $aRP[$i][1], $aRP[$i][2]]]
-			_ArrayAdd($errors, $error)
+			Local $aError[1][3] = [[$aRP[$i][0], $aRP[$i][1], $aRP[$i][2]]]
+			_ArrayAdd($aErrors, $aError)
 		EndIf
 	Next
 
-	If 1 < UBound($errors) Then
+	If 1 < UBound($aErrors) Then
 		Sleep(3000)
 
-		For $i = 1 To UBound($errors) - 1
-			Local $status = _SR_RemoveRestorePoint($errors[$i][0])
-			$ret += $status
+		For $i = 1 To UBound($aErrors) - 1
+			Local $iStatus = _SR_RemoveRestorePoint($aErrors[$i][0])
+			$iRet += $iStatus
 
-			If $status = 1 Then
-				logMessage("    => [OK] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+			If $iStatus = 1 Then
+				LogMessage("    => [OK] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			Else
-				logMessage("    => [X] RP named " & $errors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+				LogMessage("    => [X] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			EndIf
 		Next
 
 	EndIf
 
-	If $aRP[0][0] = $ret Then
-		logMessage(@CRLF & "  [OK] All system restore points have been successfully deleted")
+	If $aRP[0][0] = $iRet Then
+		LogMessage(@CRLF & "  [OK] All system restore points have been successfully deleted")
 	Else
-		logMessage(@CRLF & "  [X] Failure when deleting all restore points")
+		LogMessage(@CRLF & "  [X] Failure when deleting all restore points")
 	EndIf
 
 EndFunc   ;==>ClearRestorePoint
 
-Func convertDate($dtmDate)
-	Local $y = StringLeft($dtmDate, 4)
-	Local $m = StringMid($dtmDate, 6, 2)
-	Local $d = StringMid($dtmDate, 9, 2)
-	Local $t = StringRight($dtmDate, 8)
+Func convertDate($sDtmDate)
+	Local $sY = StringLeft($sDtmDate, 4)
+	Local $sM = StringMid($sDtmDate, 6, 2)
+	Local $sD = StringMid($sDtmDate, 9, 2)
+	Local $sT = StringRight($sDtmDate, 8)
 
-	Return $m & "/" & $d & "/" & $y & " " & $t
+	Return $sM & "/" & $sD & "/" & $sY & " " & $sT
 EndFunc   ;==>convertDate
 
-Func ClearDayRestorePoint($retry = False)
+Func ClearDayRestorePoint($bRetry = False)
 	Local Const $aRP = _SR_EnumRestorePoints()
 
 	If $aRP[0][0] = 0 Then
 		Return Null
 	EndIf
 
-	Local Const $timeBefore = convertDate(_DateAdd('n', -1470, _NowCalc()))
-	Local $relaunch = False
-	Local $pointExist = False
-	Local $DisplayMessage = False
+	Local Const $dTimeBefore = convertDate(_DateAdd('n', -1470, _NowCalc()))
+	Local $bRelaunch = False
+	Local $bPointExist = False
+	Local $bDisplayMessage = False
 
 	For $i = 1 To $aRP[0][0]
-		Local $dateCreated = $aRP[$i][2]
+		Local $iDateCreated = $aRP[$i][2]
 
-		If $dateCreated > $timeBefore Then
-			If $DisplayMessage = False Then
-				$DisplayMessage = True
-				$pointExist = True
-				logMessage(@CRLF & "  [I] Recent System Restore Point Deletion before create new:" & @CRLF)
+		If $iDateCreated > $dTimeBefore Then
+			If $bDisplayMessage = False Then
+				$bDisplayMessage = True
+				$bPointExist = True
+				LogMessage(@CRLF & "  [I] Recent System Restore Point Deletion before create new:" & @CRLF)
 			EndIf
 
-			Local $status = _SR_RemoveRestorePoint($aRP[$i][0])
+			Local $iStatus = _SR_RemoveRestorePoint($aRP[$i][0])
 
-			If $status = 1 Then
-				logMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $dateCreated & " deleted")
-			ElseIf $retry = False Then
-				$relaunch = True
+			If $iStatus = 1 Then
+				LogMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
+			ElseIf $bRetry = False Then
+				$bRelaunch = True
 			Else
-				logMessage("    => [X] RP named " & $aRP[$i][1] & " created at " & $dateCreated & " deleted")
+				LogMessage("    => [X] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
 			EndIf
 		EndIf
 	Next
 
-	If $relaunch = True Then
+	If $bRelaunch = True Then
 		Sleep(3000)
-		logMessage("  [I] Retry deleting restore point")
+		LogMessage("  [I] Retry deleting restore point")
 		ClearDayRestorePoint(True)
 	EndIf
 
-	If $pointExist = True Then
-		logMessage(@CRLF)
+	If $bPointExist = True Then
+		LogMessage(@CRLF)
 	EndIf
 
 	Sleep(3000)
@@ -108,17 +108,17 @@ EndFunc   ;==>ClearDayRestorePoint
 Func ShowCurrentRestorePoint()
 	Sleep(3000)
 
-	logMessage(@CRLF & "- Display All System Restore Point -" & @CRLF)
+	LogMessage(@CRLF & "- Display All System Restore Point -" & @CRLF)
 
 	Local Const $aRP = _SR_EnumRestorePoints()
 
 	If $aRP[0][0] = 0 Then
-		logMessage("  [X] No System Restore point found")
+		LogMessage("  [X] No System Restore point found")
 		Return
 	EndIf
 
 	For $i = 1 To $aRP[0][0]
-		logMessage("    => [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
+		LogMessage("    => [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
 	Next
 
 EndFunc   ;==>ShowCurrentRestorePoint
@@ -131,14 +131,12 @@ Func CreateSystemRestorePoint()
 EndFunc   ;==>CreateSystemRestorePoint
 
 
-Func CreateRestorePoint($retry = False)
-	If $retry = False Then
-		logMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
+Func CreateRestorePoint($bRetry = False)
+	If $bRetry = False Then
+		LogMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
 	Else
-		logMessage("  [I] Retry Create New System Restore Point")
+		LogMessage("  [I] Retry Create New System Restore Point")
 	EndIf
-
-	Dim $ProgramName
 
 	Local $iSR_Enabled = _SR_Enable()
 
@@ -148,22 +146,22 @@ Func CreateRestorePoint($retry = False)
 		$iSR_Enabled = _SR_Enable()
 
 		If $iSR_Enabled = 0 Then
-			logMessage("  [X] Enable System Restore")
+			LogMessage("  [X] Enable System Restore")
 		EndIf
 
 	ElseIf $iSR_Enabled = 1 Then
-		logMessage("  [OK] Enable System Restore")
+		LogMessage("  [OK] Enable System Restore")
 	EndIf
 
 	ClearDayRestorePoint()
 
-	Local Const $createdPointStatus = CreateSystemRestorePoint()
+	Local Const $iCreatedPointStatus = CreateSystemRestorePoint()
 
-	If $createdPointStatus <> 0 Then
-		logMessage("  [X] System Restore Point created")
+	If $iCreatedPointStatus <> 0 Then
+		LogMessage("  [X] System Restore Point created")
 
-		If $retry = False Then
-			logMessage("  [I] Retry to create System Restore Point!")
+		If $bRetry = False Then
+			LogMessage("  [I] Retry to create System Restore Point!")
 			CreateRestorePoint(True)
 			Return
 		Else
@@ -171,8 +169,8 @@ Func CreateRestorePoint($retry = False)
 			Return
 		EndIf
 
-	ElseIf $createdPointStatus = 0 Then
-		logMessage("  [OK] System Restore Point created")
+	ElseIf $iCreatedPointStatus = 0 Then
+		LogMessage("  [OK] System Restore Point created")
 		ShowCurrentRestorePoint()
 	EndIf
 

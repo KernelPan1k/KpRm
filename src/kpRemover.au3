@@ -2,11 +2,11 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-0022.exe
+#AutoIt3Wrapper_Outfile=kpRm-0023-dev.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.22
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.23
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.0.22
+#AutoIt3Wrapper_Res_ProductVersion=0.0.23
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
@@ -26,9 +26,9 @@
 #include <Array.au3>
 #include <File.au3>
 
-;~ AutoItSetOption("MustDeclareVars", 1)
-Global $bKpRmDev = False
-Local $sKprmVersion = "0.0.22"
+AutoItSetOption("MustDeclareVars", 1)
+Global $bKpRmDev =True
+Local $sKprmVersion = "0.0.23"
 
 Local Const $aCodeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 
@@ -54,25 +54,25 @@ EndIf
 
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
-Global $ProgramName = "KpRm"
-Global $KPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
+Global $sProgramName = "KpRm"
+Global $sKPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 
-Local Const $MainWindow = GUICreate($ProgramName, 500, 195, 202, 112)
-Local Const $Group1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
-Local Const $RemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
-Local Const $RemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
-Local Const $CreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 190, 17)
-Local Const $BackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
-Local Const $RestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
-Local Const $RestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
-Global $ProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
+Local Const $oMainWindow = GUICreate($sProgramName, 500, 195, 202, 112)
+Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
+Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
+Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
+Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 190, 17)
+Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
+Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
+Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
+Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlSetState($RemoveTools, 1)
+GUICtrlSetState($oRemoveTools, 1)
 
-Local Const $Pic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
-Local Const $RunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
+Local Const $oPic1 = GUICtrlCreatePic(@TempDir & "\kprm-logo.gif", 415, 16, 76, 76)
+Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
 
 GUISetState(@SW_SHOW)
 
@@ -86,20 +86,20 @@ While 1
 		Case $GUI_EVENT_CLOSE
 			Exit
 
-		Case $RunKp
+		Case $oRunKp
 			KpRemover()
 
 	EndSwitch
 WEnd
 
 Func CreateKPRMDir()
-	Local Const $dir = @HomeDrive & "\KPRM"
+	Local Const $sDir = @HomeDrive & "\KPRM"
 
-	If Not FileExists($dir) Then
-		DirCreate($dir)
+	If Not FileExists($sDir) Then
+		DirCreate($sDir)
 	EndIf
 
-	If Not FileExists($dir) Then
+	If Not FileExists($sDir) Then
 		MsgBox(16, $lFail, $lRegistryBackupError)
 		Exit
 	EndIf
@@ -108,13 +108,13 @@ EndFunc   ;==>CreateKPRMDir
 Func Init()
 	CreateKPRMDir()
 
-	logMessage("#################################################################################################################" & @CRLF)
-	logMessage("# Run at " & _Now())
-	logMessage("# KpRm (Kernel-panik) version " & $sKprmVersion)
-	logMessage("# Website https://kernel-panik.me/tool/kprm/")
-	logMessage("# Run by " & @UserName & " from " & @WorkingDir)
-	logMessage("# Computer Name: " & @ComputerName)
-	logMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
+	LogMessage("#################################################################################################################" & @CRLF)
+	LogMessage("# Run at " & _Now())
+	LogMessage("# KpRm (Kernel-panik) version " & $sKprmVersion)
+	LogMessage("# Website https://kernel-panik.me/tool/kprm/")
+	LogMessage("# Run by " & @UserName & " from " & @WorkingDir)
+	LogMessage("# Computer Name: " & @ComputerName)
+	LogMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 
 	ProgressBarInit()
 EndFunc   ;==>Init
@@ -124,13 +124,13 @@ Func KpRemover()
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($BackupRegistry) = $GUI_CHECKED Then
+	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
 		CreateBackupRegistry()
 	EndIf
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($RemoveTools) = $GUI_CHECKED Then
+	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
 		RunRemoveTools(False)
 		RunRemoveTools(True)
 	Else
@@ -139,30 +139,30 @@ Func KpRemover()
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($RestoreSystemSettings) = $GUI_CHECKED Then
+	If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then
 		RestoreSystemSettingsByDefault()
 	EndIf
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($RestoreUAC) = $GUI_CHECKED Then
+	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then
 		RestaureUACByDefault()
 	EndIf
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($RemoveRP) = $GUI_CHECKED Then
+	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then
 		ClearRestorePoint()
 	EndIf
 
 	ProgressBarUpdate()
 
-	If GUICtrlRead($CreateRP) = $GUI_CHECKED Then
+	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then
 		CreateRestorePoint()
 	EndIf
 
-	GUICtrlSetData($ProgressBar, 100)
+	GUICtrlSetData($oProgressBar, 100)
 	MsgBox(64, "OK", $lFinish)
 
-	quitKprm(True)
+	QuitKprm(True)
 EndFunc   ;==>KpRemover

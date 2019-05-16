@@ -1,45 +1,45 @@
 
 Func LoadRogueKiller()
-	Local Const $ToolExistCpt = "RogueKiller"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveScheduleTasksList
-	Dim $KPRemoveSearchRegistryKeyStringsList
-	Dim $KPRemoveProgramFilesList
-	Dim $KPRemoveAppDataCommonList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDesktopCommonList
-	Dim $KPRemoveAppDataCommonStartMenuFolderList
-	Dim $KPRemoveDownloadList
+	Local Const $sToolExistCpt = "RogueKiller"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveScheduleTasksList
+	Dim $aKPRemoveSearchRegistryKeyStringsList
+	Dim $aKPRemoveProgramFilesList
+	Dim $aKPRemoveAppDataCommonList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDesktopCommonList
+	Dim $aKPRemoveAppDataCommonStartMenuFolderList
+	Dim $aKPRemoveDownloadList
 
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 
 	Local Const $patternDescription = "(?i)^Adlice"
-	Local Const $reg1 = "(?i)^RogueKiller"
-	Local Const $reg2 = "(?i)^RogueKiller.*\.(exe|lnk|txt)$"
-	Local Const $reg3 = "(?i)^RogueKiller.*\.exe$"
-	Local Const $reg4 = "(?i)^RogueKiller_portable(32|64)\.exe$"
+	Local Const $sReg1 = "(?i)^RogueKiller"
+	Local Const $sReg2 = "(?i)^RogueKiller.*\.(exe|lnk|txt)$"
+	Local Const $sReg3 = "(?i)^RogueKiller.*\.exe$"
+	Local Const $sReg4 = "(?i)^RogueKiller_portable(32|64)\.exe$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg3, False]]
-	Local Const $arr2[1][2] = [[$ToolExistCpt, "RogueKiller Anti-Malware"]]
-	Local Const $arr3[1][4] = [[$ToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $reg1, "DisplayName"]]
-	Local Const $arr4[1][5] = [[$ToolExistCpt, 'file', $patternDescription, $reg2, False]]
-	Local Const $arr5[1][5] = [[$ToolExistCpt, 'folder', Null, $reg1, True]]
-	Local Const $arr6[1][5] = [[$ToolExistCpt, 'file', Null, $reg4, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg3, False]]
+	Local Const $aArr2[1][2] = [[$sToolExistCpt, "RogueKiller Anti-Malware"]]
+	Local Const $aArr3[1][4] = [[$sToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $sReg1, "DisplayName"]]
+	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'file', $patternDescription, $sReg2, False]]
+	Local Const $aArr5[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg1, True]]
+	Local Const $aArr6[1][5] = [[$sToolExistCpt, 'file', Null, $sReg4, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveScheduleTasksList, $arr2)
-	_ArrayAdd($KPRemoveSearchRegistryKeyStringsList, $arr3)
-	_ArrayAdd($KPRemoveProgramFilesList, $arr5)
-	_ArrayAdd($KPRemoveAppDataCommonList, $arr5)
-	_ArrayAdd($KPRemoveDesktopList, $arr6)
-	_ArrayAdd($KPRemoveDesktopList, $arr4)
-	_ArrayAdd($KPRemoveDesktopList, $arr5)
-	_ArrayAdd($KPRemoveDownloadList, $arr6)
-	_ArrayAdd($KPRemoveDownloadList, $arr4)
-	_ArrayAdd($KPRemoveDownloadList, $arr5)
-	_ArrayAdd($KPRemoveDesktopCommonList, $arr4)
-	_ArrayAdd($KPRemoveAppDataCommonStartMenuFolderList, $arr5)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveScheduleTasksList, $aArr2)
+	_ArrayAdd($aKPRemoveSearchRegistryKeyStringsList, $aArr3)
+	_ArrayAdd($aKPRemoveProgramFilesList, $aArr5)
+	_ArrayAdd($aKPRemoveAppDataCommonList, $aArr5)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr6)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr4)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr5)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr6)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr4)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr5)
+	_ArrayAdd($aKPRemoveDesktopCommonList, $aArr4)
+	_ArrayAdd($aKPRemoveAppDataCommonStartMenuFolderList, $aArr5)
 
 EndFunc   ;==>LoadRogueKiller
 

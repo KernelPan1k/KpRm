@@ -1,20 +1,20 @@
 
 Func LoadAHK_NavScan()
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $ToolExistCpt = "AHK_NavScan"
+	Local Const $sToolExistCpt = "AHK_NavScan"
 
-	Local Const $reg1 = "(?i)^AHK_NavScan.*\.exe"
-	Local Const $reg2 = "(?i)^AHK_NavScan.*\.(exe|txt)"
+	Local Const $sReg1 = "(?i)^AHK_NavScan.*\.exe"
+	Local Const $sReg2 = "(?i)^AHK_NavScan.*\.(exe|txt)"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', Null, $reg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
 EndFunc   ;==>LoadAHK_NavScan
 
 LoadAHK_NavScan()

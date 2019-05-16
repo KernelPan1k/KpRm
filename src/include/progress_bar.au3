@@ -1,19 +1,19 @@
-Local $nbrTask = 43
-Local $currentNbrTask
-Local Const $taskStep = Floor(100 / $nbrTask)
+Local $iNbrTask = 43
+Local $iCurrentNbrTask
+Local Const $iTaskStep = Floor(100 / $iNbrTask)
 
 Func ProgressBarUpdate($nbr = 1)
-	$currentNbrTask += $nbr
-	Dim $ProgressBar
-	GUICtrlSetData($ProgressBar, $currentNbrTask * $taskStep)
+	$iCurrentNbrTask += $nbr
+	Dim $oProgressBar
+	GUICtrlSetData($oProgressBar, $iCurrentNbrTask * $iTaskStep)
 
-	If $currentNbrTask = $nbrTask Then
-		GUICtrlSetData($ProgressBar, 100)
+	If $iCurrentNbrTask = $iNbrTask Then
+		GUICtrlSetData($oProgressBar, 100)
 	EndIf
 EndFunc   ;==>ProgressBarUpdate
 
 Func ProgressBarInit()
-	$currentNbrTask = 0
-	Dim $ProgressBar
-	GUICtrlSetData($ProgressBar, 0)
+	$iCurrentNbrTask = 0
+	Dim $oProgressBar
+	GUICtrlSetData($oProgressBar, 0)
 EndFunc   ;==>ProgressBarInit

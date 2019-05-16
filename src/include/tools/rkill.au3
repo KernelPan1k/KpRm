@@ -1,25 +1,25 @@
 
 Func LoadRkill()
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $ToolExistCpt = "Rkill"
-	Local Const $descriptionPattern = "(?i)^Bleeping Computer"
+	Local Const $sToolExistCpt = "Rkill"
+	Local Const $sDescriptionPattern = "(?i)^Bleeping Computer"
 
-	Local Const $reg1 = "(?i)^(rkill|iExplore)\.exe$"
-	Local Const $reg2 = "(?i)^(rkill|iExplore).*\.(exe|txt|zip)$"
-	Local Const $reg3 = "(?i)^rkill$"
+	Local Const $sReg1 = "(?i)^(rkill|iExplore)\.exe$"
+	Local Const $sReg2 = "(?i)^(rkill|iExplore).*\.(exe|txt|zip)$"
+	Local Const $sReg3 = "(?i)^rkill$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, True]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'folder', Null, $reg3, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, True]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg3, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDesktopList, $arr3)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr3)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr3)
 
 EndFunc
 

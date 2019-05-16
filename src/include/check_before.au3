@@ -1,12 +1,12 @@
-Func quitKprm($autoDelete = False, $open = True)
+Func QuitKprm($bAutoDelete = False, $open = True)
 	Dim $bKpRmDev
-	Dim $KPLogFile
+	Dim $sKPLogFile
 
 	FileDelete(@TempDir & "\kprm-logo.gif")
 
-	If $autoDelete = True Then
+	If $bAutoDelete = True Then
 		If $open = True Then
-			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $KPLogFile)
+			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $sKPLogFile)
 		EndIf
 
 		If $bKpRmDev = False Then
@@ -15,7 +15,7 @@ Func quitKprm($autoDelete = False, $open = True)
 		EndIf
 	EndIf
 	Exit
-EndFunc   ;==>quitKprm
+EndFunc   ;==>QuitKprm
 
 Func _IsInternetConnected()
 	Local $aReturn = DllCall('connect.dll', 'long', 'IsInternetConnected')
@@ -25,30 +25,30 @@ Func _IsInternetConnected()
 	Return $aReturn[0] = 0
 EndFunc   ;==>_IsInternetConnected
 
-Func checkVersionOfKpRm()
+Func CheckVersionOfKpRm()
 	Dim $sKprmVersion
 	Dim $bKpRmDev
 
 	If $bKpRmDev = True Then Return
 
-	Local Const $hasInternet = _IsInternetConnected()
+	Local Const $bHasInternet = _IsInternetConnected()
 
-	If $hasInternet = False Then
+	If $bHasInternet = False Then
 		Return Null
 	EndIf
 
 	Local Const $sGet = HttpGet("https://kernel-panik.me/_api/v1/kprm/version")
 
 	If $sGet <> Null And $sGet <> "" And $sGet <> $sKprmVersion Then
-		MsgBox(64, $lgetLastVersionTitle, $lgetLastVersion)
+		MsgBox(64, $lGetLastVersionTitle, $lGetLastVersion)
 		ShellExecute("https://kernel-panik.me/tool/kprm/")
-		quitKprm(True, False)
+		QuitKprm(True, False)
 	EndIf
-EndFunc   ;==>checkVersionOfKpRm
+EndFunc   ;==>CheckVersionOfKpRm
 
-checkVersionOfKpRm()
+CheckVersionOfKpRm()
 
 If Not IsAdmin() Then
 	MsgBox(16, $lFail, $lAdminRequired)
-	quitKprm()
+	QuitKprm()
 EndIf

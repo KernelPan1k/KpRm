@@ -1,21 +1,21 @@
 
 Func LoadZHPLite()
-	Local Const $desciptionPattern = Null
-	Local Const $ZhpFixExistCpt = "ZHPLite"
+	Local Const $sDescriptionPattern = Null
+	Local Const $sZhpFixExistCpt = "ZHPLite"
 
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $reg1 = "(?i)^ZHPLite.*\.exe$"
-	Local Const $reg2 = "(?i)^ZHPLite.*\.(exe|txt|lnk)$"
+	Local Const $sReg1 = "(?i)^ZHPLite.*\.exe$"
+	Local Const $sReg2 = "(?i)^ZHPLite.*\.(exe|txt|lnk)$"
 
-	Local Const $arr1[1][3] = [[$ZhpFixExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ZhpFixExistCpt, 'file', $desciptionPattern, $reg2, False]]
+	Local Const $aArr1[1][3] = [[$sZhpFixExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sZhpFixExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
 EndFunc   ;==>LoadZHPLite
 
 LoadZHPLite()

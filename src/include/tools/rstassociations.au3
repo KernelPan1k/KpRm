@@ -1,24 +1,24 @@
 
 Func LoadRstAssociation()
-	Local Const $desciptionPattern = Null
-	Local Const $toolExistCpt = "RstAssociations"
+	Local Const $sDescriptionPattern = Null
+	Local Const $sToolExistCpt = "RstAssociations"
 
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
 
-	Local Const $reg1 = "(?i)^rstassociations.*\.(exe|scr)$"
-	Local Const $reg2 = "(?i)^RstAssociations.*\.txt$"
+	Local Const $sReg1 = "(?i)^rstassociations.*\.(exe|scr)$"
+	Local Const $sReg2 = "(?i)^RstAssociations.*\.txt$"
 
-	Local Const $arr1[1][3] = [[$toolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$toolExistCpt, 'file', $desciptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$toolExistCpt, 'file', $desciptionPattern, $reg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr3)
 EndFunc   ;==>LoadRstAssociation
 
 LoadRstAssociation()
