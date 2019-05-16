@@ -1,6 +1,6 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[64] = [ _
+Local Const $aAllToolsList[65] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -11,6 +11,7 @@ Local Const $aAllToolsList[64] = [ _
 		"BlitzBlank", _
 		"Check Browsers LNK", _
 		"CKScanner", _
+		"ClearLNK", _
 		"CMD_Command", _
 		"Combofix", _
 		"DDS", _
@@ -174,6 +175,7 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/unzacme.au3"
 #include "tools/symantec_kovter_removal_tool.au3"
 #include "tools/check-browsers-lnk.au3"
+#include "tools/clearlnk.au3"
 
 Func RunRemoveTools($bRetry = False)
 	If $bRetry = True Then

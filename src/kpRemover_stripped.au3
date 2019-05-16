@@ -1332,8 +1332,7 @@ $5x = $46[$14]
 $7a = $46[$15]
 Return $46
 EndFunc
-AutoItSetOption("MustDeclareVars", 1)
-Global $7b =True
+Global $7b = False
 Local $7c = "0.0.23"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
@@ -2333,7 +2332,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c7[64] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c7[65] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "ClearLNK", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c8 = 0 To UBound($c7) - 1
 Local $c9 = ObjCreate("Scripting.Dictionary")
 Local $ca = ObjCreate("Scripting.Dictionary")
@@ -3864,7 +3863,22 @@ _vv($cf, $dx)
 _vv($ch, $dx)
 EndFunc
 _12n()
-Func _12o($bu = False)
+Func _12o()
+Local Const $cz = "(?i)^Stanislav Polshyn"
+Local Const $dp = "ClearLNK"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^clearlnk.*\.exe$"
+Local Const $dt = "(?i)^clearlnk.*\.(log|exe)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dt, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+EndFunc
+_12o()
+Func _12p($bu = False)
 If $bu = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3969,10 +3983,10 @@ Switch $f6
 Case $0
 Exit
 Case $f5
-_12r()
+_12s()
 EndSwitch
 WEnd
-Func _12p()
+Func _12q()
 Local Const $79 = @HomeDrive & "\KPRM"
 If Not FileExists($79) Then
 DirCreate($79)
@@ -3982,8 +3996,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12q()
-_12p()
+Func _12r()
+_12q()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -3993,16 +4007,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12r()
-_12q()
+Func _12s()
+_12r()
 _105()
 If GUICtrlRead($f1) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ey) = $1 Then
-_12o(False)
-_12o(True)
+_12p(False)
+_12p(True)
 Else
 _105(32)
 EndIf
