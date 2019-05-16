@@ -1,20 +1,20 @@
 
 Func LoadDecryptCryptON()
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $ToolExistCpt = "Decrypt CryptON"
-	Local Const $descriptionPattern = "(?i)^Emsisoft"
+	Local Const $sToolExistCpt = "Decrypt CryptON"
+	Local Const $sDescriptionPattern = "(?i)^Emsisoft"
 
-	Local Const $reg1 = "(?i)^decrypt_CryptON.*\.exe"
+	Local Const $sReg1 = "(?i)^decrypt_CryptON.*\.exe"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
 EndFunc   ;==>LoadAvastDecryptorCryptomix
 
 LoadDecryptCryptON()

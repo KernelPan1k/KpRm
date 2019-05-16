@@ -1,19 +1,19 @@
 
 Func LoadCMDCommand()
-	Local Const $ToolExistCpt = "CMD_Command"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Local Const $sToolExistCpt = "CMD_Command"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $descriptionPattern = "(?i)^g3n-h@ckm@n$"
-	Local Const $reg1 = "(?i)^cmd-command.*\.exe$"
+	Local Const $sDescriptionPattern = "(?i)^g3n-h@ckm@n$"
+	Local Const $sReg1 = "(?i)^cmd-command.*\.exe$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
 
 EndFunc   ;==>LoadCMDCommand
 

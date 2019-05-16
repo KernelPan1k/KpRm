@@ -1,23 +1,23 @@
 
 Func LoadLogonFix()
-	Local Const $ToolExistCpt = "LogonFix"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
+	Local Const $sToolExistCpt = "LogonFix"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = Null
-	Local Const $reg1 = "(?i)^logonfix.*\.exe$"
-	Local Const $reg2 = "(?i)^LogonFix.*\.txt$"
+	Local Const $sDescriptionPattern = Null
+	Local Const $sReg1 = "(?i)^logonfix.*\.exe$"
+	Local Const $sReg2 = "(?i)^LogonFix.*\.txt$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr3)
 
 EndFunc   ;==>LoadLogonFix
 

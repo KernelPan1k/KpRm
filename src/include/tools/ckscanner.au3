@@ -1,24 +1,24 @@
 
 
 Func LoadCKScanner()
-	Local Const $ToolExistCpt = "CKScanner"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
+	Local Const $sToolExistCpt = "CKScanner"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
 
-	Local Const $descriptionPattern = Null
-	Local Const $reg1 = "(?i)^CKScanner.*\.exe$"
-	Local Const $reg2 = "(?i)^CKfiles.*\.txt$"
+	Local Const $sDescriptionPattern = Null
+	Local Const $sReg1 = "(?i)^CKScanner.*\.exe$"
+	Local Const $sReg2 = "(?i)^CKfiles.*\.txt$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveDesktopList, $arr3)
-	_ArrayAdd($KPRemoveDownloadList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr3)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr3)
 
 EndFunc   ;==>LoadCKScanner
 

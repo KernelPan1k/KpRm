@@ -1,18 +1,18 @@
 
 Func RestoreSystemSettingsByDefault()
-	logMessage(@CRLF & "- Restore Default System Settings -" & @CRLF)
+	LogMessage(@CRLF & "- Restore Default System Settings -" & @CRLF)
 
-	Local $status = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
+	Local $iStatus = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Then
-		logMessage("  [X] Flush DNS")
+		LogMessage("  [X] Flush DNS")
 	Else
-		logMessage("  [OK] Flush DNS")
+		LogMessage("  [OK] Flush DNS")
 	EndIf
 
 ;~ #################
 
-	Local Const $commands[7] = [ _
+	Local Const $aCommands[7] = [ _
 			"netsh winsock reset", _
 			"netsh winhttp reset proxy", _
 			"netsh winhttp reset tracing", _
@@ -22,46 +22,46 @@ Func RestoreSystemSettingsByDefault()
 			"netsh int ipv6 reset catalog" _
 			]
 
-	$status = 0
+	$iStatus = 0
 
-	For $i = 0 To UBound($commands) -1
-		RunWait(@ComSpec & " /c " & $commands[$i], @TempDir, @SW_HIDE)
+	For $i = 0 To UBound($aCommands) -1
+		RunWait(@ComSpec & " /c " & $aCommands[$i], @TempDir, @SW_HIDE)
 
 		If @error <> 0 Then
-			$status += 1
+			$iStatus += 1
 		EndIf
 	Next
 
-	If $status = 0 Then
-		logMessage("  [OK] Reset WinSock")
+	If $iStatus = 0 Then
+		LogMessage("  [OK] Reset WinSock")
 	Else
-		logMessage("  [X] Reset WinSock")
+		LogMessage("  [X] Reset WinSock")
 	EndIf
 
-	Local $regvar = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+	Local $sRegvar = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
 
-	$status = RegWrite($regvar, "Hidden", "REG_DWORD", "2")
+	$iStatus = RegWrite($sRegvar, "Hidden", "REG_DWORD", "2")
 
-	If $status = 1 Then
-		logMessage("  [OK] Hide Hidden file.")
+	If $iStatus = 1 Then
+		LogMessage("  [OK] Hide Hidden file.")
 	Else
-		logMessage("  [X] Hide Hidden File")
+		LogMessage("  [X] Hide Hidden File")
 	EndIf
 
-	$status = RegWrite($regvar, "HideFileExt", "REG_DWORD", "0")
+	$iStatus = RegWrite($sRegvar, "HideFileExt", "REG_DWORD", "0")
 
-	If $status = 1 Then
-		logMessage("  [OK] Show Extensions for known file types")
+	If $iStatus = 1 Then
+		LogMessage("  [OK] Show Extensions for known file types")
 	Else
-		logMessage("  [X] Show Extensions for known file types")
+		LogMessage("  [X] Show Extensions for known file types")
 	EndIf
 
-	$status = RegWrite($regvar, "ShowSuperHidden", "REG_DWORD", "0")
+	$iStatus = RegWrite($sRegvar, "ShowSuperHidden", "REG_DWORD", "0")
 
-	If $status = 1 Then
-		logMessage("  [OK] Hide protected operating system files")
+	If $iStatus = 1 Then
+		LogMessage("  [OK] Hide protected operating system files")
 	Else
-		logMessage("  [X] Hide protected operating system files")
+		LogMessage("  [X] Hide protected operating system files")
 	EndIf
 
 	_Restart_Windows_Explorer()

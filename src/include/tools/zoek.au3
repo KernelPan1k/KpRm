@@ -2,32 +2,32 @@
 
 Func LoadZoek()
 
-	Local Const $ToolExistCpt = "Zoek"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
-	Dim $KPRemoveDesktopCommonList
-	Dim $KPRemoveSoftwareKeyList
+	Local Const $sToolExistCpt = "Zoek"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
+	Dim $aKPRemoveDesktopCommonList
+	Dim $aKPRemoveSoftwareKeyList
 
-	Local Const $descriptionPattern = Null
-	Local Const $reg1 = "(?i)^zoek.*\.exe$"
-	Local Const $reg2 = "(?i)^zoek.*\.log$"
-	Local Const $reg3 = "(?i)^zoek"
-	Local Const $reg4 = "(?i)^runcheck.*\.txt$"
+	Local Const $sDescriptionPattern = Null
+	Local Const $sReg1 = "(?i)^zoek.*\.exe$"
+	Local Const $sReg2 = "(?i)^zoek.*\.log$"
+	Local Const $sReg3 = "(?i)^zoek"
+	Local Const $sReg4 = "(?i)^runcheck.*\.txt$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
-	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', $descriptionPattern, $reg3, True]]
-	Local Const $arr5[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg4, False]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
+	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'folder', $sDescriptionPattern, $sReg3, True]]
+	Local Const $aArr5[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg4, False]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr5)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr3)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr4)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr5)
 
 EndFunc   ;==>LoadZoek
 

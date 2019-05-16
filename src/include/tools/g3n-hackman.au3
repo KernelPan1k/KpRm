@@ -1,14 +1,14 @@
 
 Func LoadGenHackman()
-	Local Const $ToolExistCpt = "g3n-h@ckm@n tools"
+	Local Const $sToolExistCpt = "g3n-h@ckm@n tools"
 
-	Dim $KPRemoveSoftwareKeyList
+	Dim $aKPRemoveSoftwareKeyList
 
-	Local Const $reg6 = "(?i)^g3n-h@ckm@n$"
+	Local Const $sReg6 = "(?i)^g3n-h@ckm@n$"
 
-	Local Const $arr6[1][2] = [[$ToolExistCpt, $reg6]]
+	Local Const $aArr6[1][2] = [[$sToolExistCpt, $sReg6]]
 
-	_ArrayAdd($KPRemoveSoftwareKeyList, $arr6)
+	_ArrayAdd($aKPRemoveSoftwareKeyList, $aArr6)
 
 EndFunc   ;==>LoadGenHackman
 

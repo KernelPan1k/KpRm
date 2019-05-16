@@ -1,28 +1,28 @@
 
 Func LoadPreScan()
 
-	Local Const $ToolExistCpt = "Pre_Scan"
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
+	Local Const $sToolExistCpt = "Pre_Scan"
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
 
-	Local Const $descriptionPattern = "(?i)^SosVirus"
-	Local Const $reg1 = "(?i)^Pre_Scan.*\.exe$"
-	Local Const $reg2 = "(?i)^Pre_Scan.*\.(exe|txt|lnk)$"
-	Local Const $reg3 = "(?i)^Pre_Scan.*\.txt$"
-	Local Const $reg4 = "(?i)^pre_scan$"
+	Local Const $sDescriptionPattern = "(?i)^SosVirus"
+	Local Const $sReg1 = "(?i)^Pre_Scan.*\.exe$"
+	Local Const $sReg2 = "(?i)^Pre_Scan.*\.(exe|txt|lnk)$"
+	Local Const $sReg3 = "(?i)^Pre_Scan.*\.txt$"
+	Local Const $sReg4 = "(?i)^pre_scan$"
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $descriptionPattern, $reg2, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'file', Null, $reg3, False]]
-	Local Const $arr4[1][5] = [[$ToolExistCpt, 'folder', Null, $reg4, True]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', Null, $sReg3, False]]
+	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg4, True]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr4)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr3)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr4)
 
 EndFunc   ;==>LoadPreScan
 

@@ -1,6 +1,6 @@
-Global $ToolsCpt = ObjCreate("Scripting.Dictionary")
+Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $allToolsList[64] = [ _
+Local Const $aAllToolsList[64] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -65,49 +65,49 @@ Local Const $allToolsList[64] = [ _
 		"ZHPLite", _
 		"Zoek"]
 
-For $ti = 0 To UBound($allToolsList) - 1
-	Local $toolsValue = ObjCreate("Scripting.Dictionary")
-	Local $toolsValueKey = ObjCreate("Scripting.Dictionary")
-	Local $toolsValueFile = ObjCreate("Scripting.Dictionary")
-	Local $toolsValueUninstall = ObjCreate("Scripting.Dictionary")
-	Local $toolsValueProcess = ObjCreate("Scripting.Dictionary")
+For $ti = 0 To UBound($aAllToolsList) - 1
+	Local $oToolsValue = ObjCreate("Scripting.Dictionary")
+	Local $oToolsValueKey = ObjCreate("Scripting.Dictionary")
+	Local $oToolsValueFile = ObjCreate("Scripting.Dictionary")
+	Local $oToolsValueUninstall = ObjCreate("Scripting.Dictionary")
+	Local $oToolsValueProcess = ObjCreate("Scripting.Dictionary")
 
-	$toolsValue.add("key", $toolsValueKey)
-	$toolsValue.add("element", $toolsValueFile)
-	$toolsValue.add("uninstall", $toolsValueUninstall)
-	$toolsValue.add("process", $toolsValueProcess)
+	$oToolsValue.add("key", $oToolsValueKey)
+	$oToolsValue.add("element", $oToolsValueFile)
+	$oToolsValue.add("uninstall", $oToolsValueUninstall)
+	$oToolsValue.add("process", $oToolsValueProcess)
 
-	$ToolsCpt.add($allToolsList[$ti], $toolsValue)
+	$oToolsCpt.add($aAllToolsList[$ti], $oToolsValue)
 Next
 
-Global $KPRemoveProcessList[1][3] = [[Null, Null, Null]]
+Global $aKPRemoveProcessList[1][3] = [[Null, Null, Null]]
 
-Global $KPRemoveDesktopList[1][5] = [[Null, Null, Null, Null, Null]]
-Global $KPRemoveDesktopCommonList[1][5] = [[Null, Null, Null, Null, Null]]
-Global $KPRemoveDownloadList[1][5] = [[Null, Null, Null, Null, Null]]
+Global $aKPRemoveDesktopList[1][5] = [[Null, Null, Null, Null, Null]]
+Global $aKPRemoveDesktopCommonList[1][5] = [[Null, Null, Null, Null, Null]]
+Global $aKPRemoveDownloadList[1][5] = [[Null, Null, Null, Null, Null]]
 
-Global $KPRemoveProgramFilesList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Program Files...
+Global $aKPRemoveProgramFilesList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Program Files...
 
-Global $KPRemoveHomeDriveList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\
+Global $aKPRemoveHomeDriveList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\
 
-Global $KPRemoveSoftwareKeyList[1][2] = [[Null, Null]]
+Global $aKPRemoveSoftwareKeyList[1][2] = [[Null, Null]]
 
-Global $KPRemoveScheduleTasksList[1][2] = [[Null, Null]]
-Global $KPRemoveSearchRegistryKeyStringsList[1][4] = [[Null, Null, Null, Null]]
+Global $aKPRemoveScheduleTasksList[1][2] = [[Null, Null]]
+Global $aKPRemoveSearchRegistryKeyStringsList[1][4] = [[Null, Null, Null, Null]]
 
-Global $KPRemoveAppDataCommonList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\ProgramData
-Global $KPRemoveAppDataList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Roaming
-Global $KPRemoveAppDataLocalList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Local
+Global $aKPRemoveAppDataCommonList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\ProgramData
+Global $aKPRemoveAppDataList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Roaming
+Global $aKPRemoveAppDataLocalList[1][5] = [[Null, Null, Null, Null, Null]] ; C:\Users\IEUser\AppData\Local
 
-Global $KPRemoveAppDataCommonStartMenuFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
+Global $aKPRemoveAppDataCommonStartMenuFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs\RogueKiller")
 
-Global $KPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(C:\Windows)
+Global $aKPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(C:\Windows)
 
-Global $KPUninstallNormalyList[1][3] = [[Null, Null, Null]]
+Global $aKPUninstallNormalyList[1][3] = [[Null, Null, Null]]
 
-Global $KPRemoveRegistryKeysList[1][3] = [[Null, Null, Null]]
+Global $aKPRemoveRegistryKeysList[1][3] = [[Null, Null, Null]]
 
-Global $KPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
+Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 
 #include-once
 #include "tools_remove.au3"
@@ -175,109 +175,109 @@ Global $KPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/symantec_kovter_removal_tool.au3"
 #include "tools/check-browsers-lnk.au3"
 
-Func RunRemoveTools($retry = False)
-	If $retry = True Then
-		logMessage(@CRLF & "- Search Tools -" & @CRLF)
+Func RunRemoveTools($bRetry = False)
+	If $bRetry = True Then
+		LogMessage(@CRLF & "- Search Tools -" & @CRLF)
 	EndIf
 
-	RemoveAllProcess($KPRemoveProcessList)
+	RemoveAllProcess($aKPRemoveProcessList)
 	ProgressBarUpdate()
 
-	UninstallNormaly($KPUninstallNormalyList)
+	UninstallNormaly($aKPUninstallNormalyList)
 	ProgressBarUpdate()
 
-	RemoveScheduleTask($KPRemoveScheduleTasksList)
+	RemoveScheduleTask($aKPRemoveScheduleTasksList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFromWithMaxDepth(@DesktopDir, $KPRemoveDesktopList)
+	RemoveAllFileFromWithMaxDepth(@DesktopDir, $aKPRemoveDesktopList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@DesktopCommonDir, $KPRemoveDesktopCommonList)
+	RemoveAllFileFrom(@DesktopCommonDir, $aKPRemoveDesktopCommonList)
 	ProgressBarUpdate()
 
 	If FileExists(@UserProfileDir & "\Downloads") Then
-		RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $KPRemoveDownloadList)
+		RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $aKPRemoveDownloadList)
 		ProgressBarUpdate()
 	Else
 		ProgressBarUpdate()
 	EndIf
 
-	RemoveAllProgramFilesDir($KPRemoveProgramFilesList)
+	RemoveAllProgramFilesDir($aKPRemoveProgramFilesList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@HomeDrive, $KPRemoveHomeDriveList)
+	RemoveAllFileFrom(@HomeDrive, $aKPRemoveHomeDriveList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@AppDataDir, $KPRemoveAppDataList)
+	RemoveAllFileFrom(@AppDataDir, $aKPRemoveAppDataList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@AppDataCommonDir, $KPRemoveAppDataCommonList)
+	RemoveAllFileFrom(@AppDataCommonDir, $aKPRemoveAppDataCommonList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@LocalAppDataDir, $KPRemoveAppDataLocalList)
+	RemoveAllFileFrom(@LocalAppDataDir, $aKPRemoveAppDataLocalList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@WindowsDir, $KPRemoveWindowsFolderList)
+	RemoveAllFileFrom(@WindowsDir, $aKPRemoveWindowsFolderList)
 	ProgressBarUpdate()
 
-	RemoveAllSoftwareKeyList($KPRemoveSoftwareKeyList)
+	RemoveAllSoftwareKeyList($aKPRemoveSoftwareKeyList)
 	ProgressBarUpdate()
 
-	RemoveAllRegistryKeys($KPRemoveRegistryKeysList)
+	RemoveAllRegistryKeys($aKPRemoveRegistryKeysList)
 	ProgressBarUpdate()
 
-	RemoveUninstallStringWithSearch($KPRemoveSearchRegistryKeyStringsList)
+	RemoveUninstallStringWithSearch($aKPRemoveSearchRegistryKeyStringsList)
 	ProgressBarUpdate()
 
-	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $KPRemoveAppDataCommonStartMenuFolderList)
+	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aKPRemoveAppDataCommonStartMenuFolderList)
 	ProgressBarUpdate()
 
-	CleanDirectoryContent($KPCleanDirectoryContentList)
+	CleanDirectoryContent($aKPCleanDirectoryContentList)
 	ProgressBarUpdate()
 
 
-	If $retry = True Then
-		Local $hasFoundTools = False
-		Local Const $ToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
-		Local Const $messageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
-		Local $ToolZhpQuantineDisplay = False
-		Local Const $ToolZhpQuantineExist = IsDir(@AppDataDir & "\ZHP")
+	If $bRetry = True Then
+		Local $bHasFoundTools = False
+		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
+		Local Const $sMessageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
+		Local $bToolZhpQuantineDisplay = False
+		Local Const $bToolZhpQuantineExist = IsDir(@AppDataDir & "\ZHP")
 
-		For $ToolsCptKey In $ToolsCpt
-			Local $toolCptTool = $ToolsCpt.Item($ToolsCptKey)
-			Local $ToolExistDisplayMessage = False
+		For $sToolsCptKey In $oToolsCpt
+			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
+			Local $bToolExistDisplayMessage = False
 
-			For $ToolCptSubKeyI = 0 To UBound($ToolCptSubKeys) - 1
-				Local $ToolCptSubKey = $ToolCptSubKeys[$ToolCptSubKeyI]
-				Local $ToolCptSubTool = $toolCptTool.Item($ToolCptSubKey)
-				Local $ToolCptSubToolKeys = $ToolCptSubTool.Keys
+			For $sToolCptSubKeyI = 0 To UBound($aToolCptSubKeys) - 1
+				Local $sToolCptSubKey = $aToolCptSubKeys[$sToolCptSubKeyI]
+				Local $oToolCptSubTool = $oToolCptTool.Item($sToolCptSubKey)
+				Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
 
-				If UBound($ToolCptSubToolKeys) > 0 Then
-					If $ToolExistDisplayMessage = False Then
-						$ToolExistDisplayMessage = True
-						$hasFoundTools = True
-						logMessage(@CRLF & "  ## " & $ToolsCptKey & " found")
+				If UBound($oToolCptSubToolKeys) > 0 Then
+					If $bToolExistDisplayMessage = False Then
+						$bToolExistDisplayMessage = True
+						$bHasFoundTools = True
+						LogMessage(@CRLF & "  ## " & $sToolsCptKey & " found")
 					EndIf
 
-					For $ToolCptSubToolKeyI = 0 To UBound($ToolCptSubToolKeys) - 1
-						Local $ToolCptSubToolKey = $ToolCptSubToolKeys[$ToolCptSubToolKeyI]
-						Local $ToolCptSubToolVal = $ToolCptSubTool.Item($ToolCptSubToolKey)
-						CheckIfExist($ToolCptSubKey, $ToolCptSubToolKey, $ToolCptSubToolVal)
+					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
+						Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
+						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
+						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
 					Next
 
-					If $ToolsCptKey = "ZHP Tools" And $ToolZhpQuantineExist = True And $ToolZhpQuantineDisplay = False Then
-						logMessage("     [!] " & $messageZHP)
-						$ToolZhpQuantineDisplay = True
+					If $sToolsCptKey = "ZHP Tools" And $bToolZhpQuantineExist = True And $bToolZhpQuantineDisplay = False Then
+						LogMessage("     [!] " & $sMessageZHP)
+						$bToolZhpQuantineDisplay = True
 					EndIf
 				EndIf
 			Next
 		Next
 
-		If $ToolZhpQuantineDisplay = False And $ToolZhpQuantineExist = True Then
-			logMessage(@CRLF & "  ## " & "ZHP Tools" & " found")
-			logMessage("     [!] " & $messageZHP)
-		ElseIf $hasFoundTools = False Then
-			logMessage("  [I] No tools found")
+		If $bToolZhpQuantineDisplay = False And $bToolZhpQuantineExist = True Then
+			LogMessage(@CRLF & "  ## " & "ZHP Tools" & " found")
+			LogMessage("     [!] " & $sMessageZHP)
+		ElseIf $bHasFoundTools = False Then
+			LogMessage("  [I] No tools found")
 		EndIf
 	EndIf
 

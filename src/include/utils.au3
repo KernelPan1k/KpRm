@@ -9,11 +9,11 @@ Func HttpGet($sURL, $sData = "")
 	Return SetError(0, 0, $oHTTP.ResponseText)
 EndFunc   ;==>HttpGet
 
-Func logMessage($message)
-	Dim $KPLogFile
+Func LogMessage($message)
+	Dim $sKPLogFile
 
-	FileWrite(@HomeDrive & "\KPRM" & "\" & $KPLogFile, $message & @CRLF)
-EndFunc   ;==>logMessage
+	FileWrite(@HomeDrive & "\KPRM" & "\" & $sKPLogFile, $message & @CRLF)
+EndFunc   ;==>LogMessage
 
 Func _Restart_Windows_Explorer()
 	Local $ifailure = 100, $zfailure = 100, $rPID = 0, $iExplorerPath = @WindowsDir & "\Explorer.exe"
@@ -60,22 +60,22 @@ Func TryResolveUserDesktop($User)
 	Return @HomeDrive & "\Users\" & $User & "\Desktop"
 EndFunc   ;==>TryResolveUserDesktop
 
-Func searchRegistryKeyStrings($path, $pattern, $key)
+Func SearchRegistryKeyStrings($sPath, $sPattern, $sKey)
 	Local $i = 0
 	While True
 		$i += 1
-		Local $entry = RegEnumKey($path, $i)
+		Local $sEntry = RegEnumKey($sPath, $i)
 		If @error <> 0 Then ExitLoop
-		Local $regPath = $path & "\" & $entry
-		Local $name = RegRead($regPath, $key)
+		Local $sRegPath = $sPath & "\" & $sEntry
+		Local $sName = RegRead($sRegPath, $sKey)
 
-		If StringRegExp($name, $pattern) Then
-			Return $regPath
+		If StringRegExp($sName, $sPattern) Then
+			Return $sRegPath
 		EndIf
 	WEnd
 
 	Return Null
-EndFunc   ;==>searchRegistryKeyStrings
+EndFunc   ;==>SearchRegistryKeyStrings
 
 Func TasksExist($task)
 	Local $out, $sresult
@@ -91,21 +91,21 @@ Func TasksExist($task)
 EndFunc   ;==>TasksExist
 
 Func GetProgramFilesList()
-	Local $ProgramFilesList = []
+	Local $aProgramFilesList = []
 
 	If FileExists(@HomeDrive & "\Program Files") Then
-		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files")
+		_ArrayAdd($aProgramFilesList, @HomeDrive & "\Program Files")
 	EndIf
 
 	If FileExists(@HomeDrive & "\Program Files (x86)") Then
-		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files (x86)")
+		_ArrayAdd($aProgramFilesList, @HomeDrive & "\Program Files (x86)")
 	EndIf
 
 	If FileExists(@HomeDrive & "\Program Files(x86)") Then
-		_ArrayAdd($ProgramFilesList, @HomeDrive & "\Program Files(x86)")
+		_ArrayAdd($aProgramFilesList, @HomeDrive & "\Program Files(x86)")
 	EndIf
 
-	Return $ProgramFilesList
+	Return $aProgramFilesList
 EndFunc   ;==>GetProgramFilesList
 
 Func IsFile($sFilePath)
@@ -117,19 +117,19 @@ Func IsDir($sFilePath)
 EndFunc   ;==>IsDir
 
 Func FileExistsAndGetType($sFilePath)
-	Local $fileType = Null
+	Local $sFileType = Null
 
 	If FileExists($sFilePath) Then
-		Local $val = StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1)
+		Local $sVal = StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1)
 
-		If $val = 0 Then
-			$fileType = 'file'
-		ElseIf $val > 0 Then
-			$fileType = 'folder'
+		If $sVal = 0 Then
+			$sFileType = 'file'
+		ElseIf $sVal > 0 Then
+			$sFileType = 'folder'
 		EndIf
 	EndIf
 
-	Return $fileType
+	Return $sFileType
 EndFunc   ;==>FileExistsAndGetType
 
 Func GetHumanVersion()
@@ -149,102 +149,102 @@ Func GetHumanVersion()
 	EndSwitch
 EndFunc   ;==>GetHumanVersion
 
-Func FormatForDisplayRegistryKey($key)
-	If StringRegExp($key, "^(HKLM|HKCU|HKU|HKCR|HKCC)64") Then
-		Local $sKey = StringReplace($key, "64", "", 1)
+Func FormatForDisplayRegistryKey($sPkey)
+	If StringRegExp($sPkey, "^(HKLM|HKCU|HKU|HKCR|HKCC)64") Then
+		Local $sKey = StringReplace($sPkey, "64", "", 1)
 		Return $sKey
 	EndIf
 
-	Return $key
+	Return $sPkey
 EndFunc   ;==>FormatForDisplayRegistryKey
 
-Func AddInDictionaryIfNotExistAndIncrement($dict, $key)
-	If $dict.Exists($key) Then
-		Local $val = $dict.Item($key) + 1
-		$dict.Item($key) = $val
+Func AddInDictionaryIfNotExistAndIncrement($oDict, $sKey)
+	If $oDict.Exists($sKey) Then
+		Local $sVal = $oDict.Item($sKey) + 1
+		$oDict.Item($sKey) = $sVal
 	Else
-		$dict.add($key, 1)
+		$oDict.add($sKey, 1)
 	EndIf
 
-	Return $dict
+	Return $oDict
 EndFunc   ;==>AddInDictionaryIfNotExistAndIncrement
 
-Func UpdateToolCpt($toolKey, $elementkey, $elementValue)
-	Dim $ToolsCpt
+Func UpdateToolCpt($sToolKey, $sElementkey, $sElementValue)
+	Dim $oToolsCpt
 
-	Local $toolsData = $ToolsCpt.Item($toolKey)
-	Local $toolsDict = AddInDictionaryIfNotExistAndIncrement($toolsData.Item($elementkey), $elementValue)
-	$toolsData.Item($elementkey) = $toolsDict
-	$ToolsCpt.Item($toolKey) = $toolsData
+	Local $oToolsData = $oToolsCpt.Item($sToolKey)
+	Local $oToolsDict = AddInDictionaryIfNotExistAndIncrement($oToolsData.Item($sElementkey), $sElementValue)
+	$oToolsData.Item($sElementkey) = $oToolsDict
+	$oToolsCpt.Item($sToolKey) = $oToolsData
 EndFunc   ;==>UpdateToolCpt
 
 
-Func UCheckIfProcessExist($process, $toolVal)
-	If $process = Null Or $process = "" Then Return
+Func UCheckIfProcessExist($sProcess, $sToolVal)
+	If $sProcess = Null Or $sProcess = "" Then Return
 
-	Local $status = ProcessExists($process)
+	Local $iStatus = ProcessExists($sProcess)
 
-	If $status <> 0 Then
-		logMessage("     [X] Process " & $process & " not killed, it is possible that the deletion is not complete (" & $toolVal & ")")
+	If $iStatus <> 0 Then
+		LogMessage("     [X] Process " & $sProcess & " not killed, it is possible that the deletion is not complete (" & $sToolVal & ")")
 	Else
-		logMessage("     [OK] Process " & $process & " killed (" & $toolVal & ")")
+		LogMessage("     [OK] Process " & $sProcess & " killed (" & $sToolVal & ")")
 	EndIf
 EndFunc   ;==>UCheckIfProcessExist
 
-Func UCheckIfRegistyKeyExist($toolElement, $toolVal)
-	If $toolElement = Null Or $toolElement = "" Then Return
+Func UCheckIfRegistyKeyExist($sToolElement, $sToolVal)
+	If $sToolElement = Null Or $sToolElement = "" Then Return
 
-	Local $symbol = "[X]"
-	RegEnumVal($toolElement, "1")
+	Local $sSymbol = "[X]"
+	RegEnumVal($sToolElement, "1")
 
 	If @error >= 0 Then
-		$symbol = "[OK]"
+		$sSymbol = "[OK]"
 	EndIf
 
-	logMessage("     " & $symbol & " " & FormatForDisplayRegistryKey($toolElement) & " deleted (" & $toolVal & ")")
+	LogMessage("     " & $sSymbol & " " & FormatForDisplayRegistryKey($sToolElement) & " deleted (" & $sToolVal & ")")
 EndFunc   ;==>UCheckIfRegistyKeyExist
 
-Func UCheckIfUninstallOk($toolElement, $toolVal)
-	If $toolElement = Null Or $toolElement = "" Then Return
+Func UCheckIfUninstallOk($sToolElement, $sToolVal)
+	If $sToolElement = Null Or $sToolElement = "" Then Return
 
 	Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
-	Local $aPathSplit = _PathSplit($toolElement, $sDrive, $sDir, $sFileName, $sExtension)
+	Local $aPathSplit = _PathSplit($sToolElement, $sDrive, $sDir, $sFileName, $sExtension)
 
 	If $sExtension = ".exe" Then
-		Local $folderPath = $aPathSplit[1] & $aPathSplit[2]
-		Local $symbol = "[OK]"
+		Local $sFolderPath = $aPathSplit[1] & $aPathSplit[2]
+		Local $sSymbol = "[OK]"
 
-		If FileExists($folderPath) Then
-			$symbol = "[X]"
+		If FileExists($sFolderPath) Then
+			$sSymbol = "[X]"
 		EndIf
 
-		logMessage("     " & $symbol & " Uninstaller run correctly (" & $toolVal & ")")
+		LogMessage("     " & $sSymbol & " Uninstaller run correctly (" & $sToolVal & ")")
 	EndIf
 EndFunc   ;==>UCheckIfUninstallOk
 
-Func UCheckIfElementExist($toolElement, $toolVal)
-	If $toolElement = Null Or $toolElement = "" Then Return
+Func UCheckIfElementExist($sToolElement, $sToolVal)
+	If $sToolElement = Null Or $sToolElement = "" Then Return
 
-	Local $symbol = "[OK]"
+	Local $sSymbol = "[OK]"
 
-	If FileExists($toolElement) Then
-		$symbol = "[X]"
+	If FileExists($sToolElement) Then
+		$sSymbol = "[X]"
 	EndIf
 
-	logMessage("     " & $symbol & " " & $toolElement & " deleted (" & $toolVal & ")")
+	LogMessage("     " & $sSymbol & " " & $sToolElement & " deleted (" & $sToolVal & ")")
 EndFunc   ;==>UCheckIfElementExist
 
-Func CheckIfExist($type, $toolElement, $toolVal)
-	Switch $type
+Func CheckIfExist($sType, $sToolElement, $sToolVal)
+	Switch $sType
 		Case "process"
-			UCheckIfProcessExist($toolElement, $toolVal)
+			UCheckIfProcessExist($sToolElement, $sToolVal)
 		Case "key"
-			UCheckIfRegistyKeyExist($toolElement, $toolVal)
+			UCheckIfRegistyKeyExist($sToolElement, $sToolVal)
 		Case "uninstall"
-			UCheckIfUninstallOk($toolElement, $toolVal)
+			UCheckIfUninstallOk($sToolElement, $sToolVal)
 		Case "element"
-			UCheckIfElementExist($toolElement, $toolVal)
+			UCheckIfElementExist($sToolElement, $sToolVal)
 		Case Else
-			logMessage("     [?] Unknown type " & $type)
+			LogMessage("     [?] Unknown type " & $sType)
 	EndSwitch
 EndFunc   ;==>CheckIfExist

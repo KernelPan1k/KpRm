@@ -1,23 +1,23 @@
 
 Func LoadAdwcleaner()
-	Local Const $ToolExistCpt = "AdwCleaner"
-	Local Const $descriptionPattern = "(?i)^AdwCleaner"
+	Local Const $sToolExistCpt = "AdwCleaner"
+	Local Const $sDescriptionPattern = "(?i)^AdwCleaner"
 	Local Const $companyPattern = "(?i)^Malwarebytes"
-	Local Const $reg1 = "(?i)^AdwCleaner.*\.exe$"
+	Local Const $sReg1 = "(?i)^AdwCleaner.*\.exe$"
 
-	Dim $KPRemoveProcessList
-	Dim $KPRemoveDesktopList
-	Dim $KPRemoveDownloadList
-	Dim $KPRemoveHomeDriveList
+	Dim $aKPRemoveProcessList
+	Dim $aKPRemoveDesktopList
+	Dim $aKPRemoveDownloadList
+	Dim $aKPRemoveHomeDriveList
 
-	Local Const $arr1[1][3] = [[$ToolExistCpt, $reg1, False]]
-	Local Const $arr2[1][5] = [[$ToolExistCpt, 'file', $companyPattern, $reg1, False]]
-	Local Const $arr3[1][5] = [[$ToolExistCpt, 'folder', Null, $descriptionPattern, True]]
+	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $companyPattern, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'folder', Null, $sDescriptionPattern, True]]
 
-	_ArrayAdd($KPRemoveProcessList, $arr1)
-	_ArrayAdd($KPRemoveDesktopList, $arr2)
-	_ArrayAdd($KPRemoveDownloadList, $arr2)
-	_ArrayAdd($KPRemoveHomeDriveList, $arr3)
+	_ArrayAdd($aKPRemoveProcessList, $aArr1)
+	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
+	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
+	_ArrayAdd($aKPRemoveHomeDriveList, $aArr3)
 
 EndFunc   ;==>LoadAdwcleaner
 
