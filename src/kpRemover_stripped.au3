@@ -1333,7 +1333,7 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.23"
+Local $7c = "0.0.24"
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2332,7 +2332,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c7[65] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "ClearLNK", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c7[69] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "Clean_DNS", "ClearLNK", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "McAfee Stinger", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "ProcessClose", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USB File Resc", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c8 = 0 To UBound($c7) - 1
 Local $c9 = ObjCreate("Scripting.Dictionary")
 Local $ca = ObjCreate("Scripting.Dictionary")
@@ -2456,7 +2456,7 @@ EndIf
 Next
 EndFunc
 Func _10l($at, $d6, $d9 = -2)
-Local $46 = _x2($at, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat", $t, $d9, $y, $10)
+Local $46 = _x2($at, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat;*.html", $t, $d9, $y, $10)
 If @error <> 0 Then
 Return Null
 EndIf
@@ -3878,7 +3878,92 @@ _vv($cf, $dx)
 _vv($ch, $dx)
 EndFunc
 _12o()
-Func _12p($bu = False)
+Func _12p()
+Local Const $dp = "ProcessClose"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $cz = "(?i)^SosVirus"
+Local Const $ds = "(?i)^processclose.*\.exe$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cz, $ds, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+EndFunc
+_12p()
+Func _12q()
+Local Const $dp = "RogueKiller"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^RogueKillerCMD.*\.exe$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $ds, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+EndFunc
+_12q()
+Func _12r()
+Local Const $dp = "USB File Resc"
+Dim $ce
+Dim $cf
+Dim $ch
+Dim $cj
+Local Const $d1 = "(?i)^Streuner"
+Local Const $ds = "(?i)^usb-file-resc.*\.exe$"
+Local Const $dt = "(?i)^USB File Resc$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $d1, $ds, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $dt, True]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+_vv($cj, $dy)
+EndFunc
+_12r()
+Func _12s()
+Local Const $dp = "McAfee Stinger"
+Dim $ce
+Dim $cf
+Dim $ch
+Dim $cj
+Dim $ci
+Local Const $cz = "(?i)^MCAfee"
+Local Const $ds = "(?i)^stinger.*\.exe$"
+Local Const $dt = "(?i)^stinger.*\.(exe|html)$"
+Local Const $du = "(?i)^Quarantine$"
+Local Const $dv = "(?i)^stinger$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cz, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, True]]
+Local Const $dz[1][5] = [[$dp, 'folder', Null, $dv, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+_vv($ci, $dz)
+If FileExists(@HomeDrive & "\Quarantine\Stinger") Then
+_vv($cj, $dy)
+EndIf
+EndFunc
+_12s()
+Func _12t()
+Local Const $dp = "Clean_DNS"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $cz = "(?i)^SosVirus"
+Local Const $ds = "(?i)^clean(-|_)dns.*\.exe$"
+Local Const $dt = "(?i)^clean(-|_)dns.*\.(exe|txt)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', $cz, $dt, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($ch, $dx)
+EndFunc
+_12t()
+Func _12u($bu = False)
 If $bu = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -3983,10 +4068,10 @@ Switch $f6
 Case $0
 Exit
 Case $f5
-_12s()
+_12x()
 EndSwitch
 WEnd
-Func _12q()
+Func _12v()
 Local Const $79 = @HomeDrive & "\KPRM"
 If Not FileExists($79) Then
 DirCreate($79)
@@ -3996,8 +4081,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12r()
-_12q()
+Func _12w()
+_12v()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -4007,16 +4092,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12s()
-_12r()
+Func _12x()
+_12w()
 _105()
 If GUICtrlRead($f1) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ey) = $1 Then
-_12p(False)
-_12p(True)
+_12u(False)
+_12u(True)
 Else
 _105(32)
 EndIf

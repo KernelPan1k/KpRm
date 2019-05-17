@@ -1,6 +1,6 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[65] = [ _
+Local Const $aAllToolsList[69] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -11,6 +11,7 @@ Local Const $aAllToolsList[65] = [ _
 		"BlitzBlank", _
 		"Check Browsers LNK", _
 		"CKScanner", _
+		"Clean_DNS", _
 		"ClearLNK", _
 		"CMD_Command", _
 		"Combofix", _
@@ -29,12 +30,14 @@ Local Const $aAllToolsList[65] = [ _
 		"ListCWall", _
 		"ListParts", _
 		"LogonFix", _
+		"McAfee Stinger", _
 		"Malwarebytes Anti-Rootkit", _
 		"MiniregTool", _
 		"Minitoolbox", _
 		"OTL", _
 		"OTM", _
 		"Pre_Scan", _
+		"ProcessClose", _
 		"QuickDiag", _
 		"Rakhni Decryptor", _
 		"Rannoh Decryptor", _
@@ -55,6 +58,7 @@ Local Const $aAllToolsList[65] = [ _
 		"TDSSKiller", _
 		"ToolsDiag", _
 		"UnHide", _
+		"USB File Resc", _
 		"USBFix", _
 		"UnZacMe", _
 		"WinCHK", _
@@ -176,6 +180,11 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/symantec_kovter_removal_tool.au3"
 #include "tools/check-browsers-lnk.au3"
 #include "tools/clearlnk.au3"
+#include "tools/processclose.au3"
+#include "tools/roguekiller_cmd.au3"
+#include "tools/usb-file-resc.au3"
+#include "tools/mcafee_stinger.au3"
+#include "tools/clean_dns.au3"
 
 Func RunRemoveTools($bRetry = False)
 	If $bRetry = True Then
@@ -236,7 +245,6 @@ Func RunRemoveTools($bRetry = False)
 
 	CleanDirectoryContent($aKPCleanDirectoryContentList)
 	ProgressBarUpdate()
-
 
 	If $bRetry = True Then
 		Local $bHasFoundTools = False
