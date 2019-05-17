@@ -1,6 +1,6 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[69] = [ _
+Local Const $aAllToolsList[68] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -30,7 +30,6 @@ Local Const $aAllToolsList[69] = [ _
 		"ListCWall", _
 		"ListParts", _
 		"LogonFix", _
-		"McAfee Stinger", _
 		"Malwarebytes Anti-Rootkit", _
 		"MiniregTool", _
 		"Minitoolbox", _
@@ -183,7 +182,6 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/processclose.au3"
 #include "tools/roguekiller_cmd.au3"
 #include "tools/usb-file-resc.au3"
-#include "tools/mcafee_stinger.au3"
 #include "tools/clean_dns.au3"
 
 Func RunRemoveTools($bRetry = False)
