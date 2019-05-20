@@ -1,6 +1,6 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[68] = [ _
+Local Const $aAllToolsList[72] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -15,6 +15,7 @@ Local Const $aAllToolsList[68] = [ _
 		"ClearLNK", _
 		"CMD_Command", _
 		"Combofix", _
+		"CryptoSearch", _
 		"DDS", _
 		"Decrypt CryptON", _
 		"Defogger", _
@@ -23,10 +24,12 @@ Local Const $aAllToolsList[68] = [ _
 		"FRST", _
 		"FSS", _
 		"g3n-h@ckm@n tools", _
+		"GhostCryptDecrypter", _
 		"Grantperms", _
 		"Hosts-perm", _
 		"JavaRa", _
 		"Junkware Removal Tool", _
+		"JigSawDecrypter", _
 		"ListCWall", _
 		"ListParts", _
 		"LogonFix", _
@@ -40,6 +43,7 @@ Local Const $aAllToolsList[68] = [ _
 		"QuickDiag", _
 		"Rakhni Decryptor", _
 		"Rannoh Decryptor", _
+		"RansomNoteCleaner", _
 		"RegtoolExport", _
 		"Remediate VBS Worm", _
 		"Report_CHKDSK", _
@@ -183,6 +187,10 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/roguekiller_cmd.au3"
 #include "tools/usb-file-resc.au3"
 #include "tools/clean_dns.au3"
+#include "tools/ransom_note_cleaner.au3"
+#include "tools/ghost_crypt_decrypter.au3"
+#include "tools/jigsaw_decrypter.au3"
+#include "tools/crypto_search.au3"
 
 Func RunRemoveTools($bRetry = False)
 	If $bRetry = True Then

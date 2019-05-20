@@ -1333,7 +1333,10 @@ $7a = $46[$15]
 Return $46
 EndFunc
 Global $7b = False
-Local $7c = "0.0.24"
+Local $7c = "0.0.25"
+If $7b = True Then
+AutoItSetOption("MustDeclareVars", 1)
+EndIf
 Local Const $7d[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
 If _we($7d, @MUILang) <> 1 Then
 Global $7e = "Supprimer les outils"
@@ -2332,7 +2335,7 @@ EndIf
 _zn()
 EndFunc
 Global $b6 = ObjCreate("Scripting.Dictionary")
-Local Const $c7[68] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "Clean_DNS", "ClearLNK", "CMD_Command", "Combofix", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "ProcessClose", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USB File Resc", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
+Local Const $c7[72] = [ "AdliceDiag", "AdsFix", "AdwCleaner", "AHK_NavScan", "AswMBR", "Avast Decryptor Cryptomix", "Avenger", "BlitzBlank", "Check Browsers LNK", "CKScanner", "Clean_DNS", "ClearLNK", "CMD_Command", "Combofix", "CryptoSearch", "DDS", "Decrypt CryptON", "Defogger", "ESET Online Scanner", "FixExec", "FRST", "FSS", "g3n-h@ckm@n tools", "GhostCryptDecrypter", "Grantperms", "Hosts-perm", "JavaRa", "Junkware Removal Tool", "JigSawDecrypter", "ListCWall", "ListParts", "LogonFix", "Malwarebytes Anti-Rootkit", "MiniregTool", "Minitoolbox", "OTL", "OTM", "Pre_Scan", "ProcessClose", "QuickDiag", "Rakhni Decryptor", "Rannoh Decryptor", "RansomNoteCleaner", "RegtoolExport", "Remediate VBS Worm", "Report_CHKDSK", "Rkill", "RogueKiller", "RstAssociations", "RstHosts", "ScanRapide", "SEAF", "SecurityCheck", "SFT", "Shortcut Cleaner", "Symantec Kovter Removal Tool", "Systemlook", "TDSSKiller", "ToolsDiag", "UnHide", "USB File Resc", "USBFix", "UnZacMe", "WinCHK", "WinUpdatefix", "ZHP Tools", "ZHPCleaner", "ZHPDiag", "ZHPFix", "ZHPLite", "Zoek"]
 For $c8 = 0 To UBound($c7) - 1
 Local $c9 = ObjCreate("Scripting.Dictionary")
 Local $ca = ObjCreate("Scripting.Dictionary")
@@ -2456,7 +2459,7 @@ EndIf
 Next
 EndFunc
 Func _10l($at, $d6, $d9 = -2)
-Local $46 = _x2($at, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat;*.html", $t, $d9, $y, $10)
+Local $46 = _x2($at, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat", $t, $d9, $y, $10)
 If @error <> 0 Then
 Return Null
 EndIf
@@ -3942,7 +3945,86 @@ _vv($ch, $dx)
 _vv($ck, $dy)
 EndFunc
 _12s()
-Func _12t($bu = False)
+Func _12t()
+Local Const $dp = "RansomNoteCleaner"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^RansomNoteCleaner.*\.exe$"
+Local Const $dt = "(?i)^RansomNoteCleaner.*\.(log|exe|zip)$"
+Local Const $du = "(?i)^RansomNoteCleaner$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($cf, $dy)
+_vv($ch, $dx)
+_vv($ch, $dy)
+EndFunc
+_12t()
+Func _12u()
+Local Const $dp = "GhostCryptDecrypter"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^GhostCryptDecrypter.*\.exe$"
+Local Const $dt = "(?i)^alphadecrypter\-log.*\.txt$"
+Local Const $du = "(?i)^GhostCryptDecrypter$"
+Local Const $dv = "(?i)^GhostCryptDecrypter.*\.(exe|zip)$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dv, False]]
+Local Const $dy[1][5] = [[$dp, 'file', Null, $dt, False]]
+Local Const $dz[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($cf, $dy)
+_vv($cf, $dz)
+_vv($ch, $dx)
+_vv($ch, $dy)
+_vv($ch, $dz)
+EndFunc
+_12u()
+Func _12v()
+Local Const $dp = "JigSawDecrypter"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^JigsawDecrypter.*\.exe$"
+Local Const $dt = "(?i)^JigsawDecrypter.*\.(exe|zip|txt)$"
+Local Const $du = "(?i)^JigsawDecrypter$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($cf, $dy)
+_vv($ch, $dx)
+_vv($ch, $dy)
+EndFunc
+_12v()
+Func _12w()
+Local Const $dp = "CryptoSearch"
+Dim $ce
+Dim $cf
+Dim $ch
+Local Const $ds = "(?i)^CryptoSearch.*\.exe$"
+Local Const $dt = "(?i)^CryptoSearch.*\.(exe|zip|txt)$"
+Local Const $du = "(?i)^CryptoSearch$"
+Local Const $dw[1][3] = [[$dp, $ds, False]]
+Local Const $dx[1][5] = [[$dp, 'file', Null, $dt, False]]
+Local Const $dy[1][5] = [[$dp, 'folder', Null, $du, False]]
+If FileExists(@DesktopDir & "\cryptosearch-definitions.bin") Then
+_10h(@DesktopDir & "\cryptosearch-definitions.bin", $dp, Null, False)
+EndIf
+_vv($ce, $dw)
+_vv($cf, $dx)
+_vv($cf, $dy)
+_vv($ch, $dx)
+_vv($ch, $dy)
+EndFunc
+_12w()
+Func _12x($bu = False)
 If $bu = True Then
 _zm(@CRLF & "- Search Tools -" & @CRLF)
 EndIf
@@ -4047,10 +4129,10 @@ Switch $f6
 Case $0
 Exit
 Case $f5
-_12w()
+_130()
 EndSwitch
 WEnd
-Func _12u()
+Func _12y()
 Local Const $79 = @HomeDrive & "\KPRM"
 If Not FileExists($79) Then
 DirCreate($79)
@@ -4060,8 +4142,8 @@ MsgBox(16, $7m, $7n)
 Exit
 EndIf
 EndFunc
-Func _12v()
-_12u()
+Func _12z()
+_12y()
 _zm("#################################################################################################################" & @CRLF)
 _zm("# Run at " & _3o())
 _zm("# KpRm (Kernel-panik) version " & $7c)
@@ -4071,16 +4153,16 @@ _zm("# Computer Name: " & @ComputerName)
 _zm("# OS: " & _zw() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
 _106()
 EndFunc
-Func _12w()
-_12v()
+Func _130()
+_12z()
 _105()
 If GUICtrlRead($f1) = $1 Then
 _10d()
 EndIf
 _105()
 If GUICtrlRead($ey) = $1 Then
-_12t(False)
-_12t(True)
+_12x(False)
+_12x(True)
 Else
 _105(32)
 EndIf
