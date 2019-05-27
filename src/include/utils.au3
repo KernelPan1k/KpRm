@@ -1,3 +1,22 @@
+Func GetLanguage()
+	Switch StringRight(@MUILang, 2)
+		Case "07"
+			Return "de"
+		Case "09"
+			Return "en"
+		Case "0a"
+			Return "es"
+		Case "0c"
+			Return "fr"
+		Case "10"
+			Return "it"
+		Case "16"
+			Return "pt"
+		Case Else
+			Return "en"
+	EndSwitch
+EndFunc   ;==>_GetLanguage
+
 Func HttpGet($sURL, $sData = "")
 	Local $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")
 	$oHTTP.Open("GET", $sURL & "?" & $sData, False)
