@@ -2,11 +2,11 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-0026.exe
+#AutoIt3Wrapper_Outfile=kpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.26
+#AutoIt3Wrapper_Res_Fileversion=1.0
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=0.0.26
+#AutoIt3Wrapper_Res_ProductVersion=1.0
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
@@ -27,14 +27,13 @@
 #include <File.au3>
 
 Global $bKpRmDev = False
-Local $sKprmVersion = "0.0.26"
+Local $sKprmVersion = "1.0"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
 EndIf
 
-Local Const $aLang = StringSplit(@MUILang, "-")
-Local Const $sLang = StringLower($aLang[1])
+Local Const $sLang = GetLanguage()
 
 If $sLang = "fr" Then
 	#include "locales\fr.au3"
