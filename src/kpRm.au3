@@ -33,10 +33,19 @@ If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
 EndIf
 
-Local Const $aCodeFR[6] = ["040C", "080C", "0C0C", "100C", "140C", "180C"]
+Local Const $aLang = StringSplit(@MUILang, "-")
+Local Const $sLang = StringLower($aLang[1])
 
-If _ArraySearch($aCodeFR, @MUILang) <> 1 Then
+If $sLang = "fr" Then
 	#include "locales\fr.au3"
+ElseIf $sLang = "de" Then
+	#include "locales\de.au3"
+ElseIf $sLang = "it" Then
+	#include "locales\it.au3"
+ElseIf $sLang = "es" Then
+	#include "locales\es.au3"
+ElseIf $sLang = "pt" Then
+	#include "locales\pt.au3"
 Else
 	#include "locales\en.au3"
 EndIf
