@@ -1,32 +1,43 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[72] = [ _
+Local Const $aAllToolsList[88] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
 		"AHK_NavScan", _
+		"AlphaDecrypter", _
 		"AswMBR", _
+		"AuroraDecrypter", _
 		"Avast Decryptor Cryptomix", _
 		"Avenger", _
 		"BlitzBlank", _
+		"BitKangarooDecrypter", _
+		"BitStakDecrypter", _
+		"BTCWareDecrypter", _
 		"Check Browsers LNK", _
 		"CKScanner", _
 		"Clean_DNS", _
 		"ClearLNK", _
 		"CMD_Command", _
 		"Combofix", _
+		"Crypt38Decrypter", _
 		"CryptoSearch", _
 		"DDS", _
+		"DCryDecrypter", _
 		"Decrypt CryptON", _
 		"Defogger", _
 		"ESET Online Scanner", _
+		"FilesLockerDecrypter", _
 		"FixExec", _
 		"FRST", _
 		"FSS", _
 		"g3n-h@ckm@n tools", _
 		"GhostCryptDecrypter", _
+		"GibonDecrypter", _
 		"Grantperms", _
+		"HiddenTearDecrypter", _
 		"Hosts-perm", _
+		"InsaneCryptDecrypter", _
 		"JavaRa", _
 		"Junkware Removal Tool", _
 		"JigSawDecrypter", _
@@ -36,8 +47,10 @@ Local Const $aAllToolsList[72] = [ _
 		"Malwarebytes Anti-Rootkit", _
 		"MiniregTool", _
 		"Minitoolbox", _
+		"MirCopDecrypter", _
 		"OTL", _
 		"OTM", _
+		"PowerLockyDecrypter", _
 		"Pre_Scan", _
 		"ProcessClose", _
 		"QuickDiag", _
@@ -56,6 +69,8 @@ Local Const $aAllToolsList[72] = [ _
 		"SecurityCheck", _
 		"SFT", _
 		"Shortcut Cleaner", _
+		"StrikedDecrypter", _
+		"StupidDecrypter", _
 		"Symantec Kovter Removal Tool", _
 		"Systemlook", _
 		"TDSSKiller", _
@@ -63,6 +78,7 @@ Local Const $aAllToolsList[72] = [ _
 		"UnHide", _
 		"USB File Resc", _
 		"USBFix", _
+		"Unlock92Decrypter", _
 		"UnZacMe", _
 		"WinCHK", _
 		"WinUpdatefix", _
@@ -84,7 +100,6 @@ For $ti = 0 To UBound($aAllToolsList) - 1
 	$oToolsValue.add("element", $oToolsValueFile)
 	$oToolsValue.add("uninstall", $oToolsValueUninstall)
 	$oToolsValue.add("process", $oToolsValueProcess)
-
 	$oToolsCpt.add($aAllToolsList[$ti], $oToolsValue)
 Next
 
@@ -191,6 +206,22 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/ghost_crypt_decrypter.au3"
 #include "tools/jigsaw_decrypter.au3"
 #include "tools/crypto_search.au3"
+#include "tools/crypt38_decrypter.au3"
+#include "tools/power_locky_decrypter.au3"
+#include "tools/insane_crypt_decrypter.au3"
+#include "tools/btc_ware_decrypter.au3"
+#include "tools/alpha_decrypter.au3"
+#include "tools/hidden_tear_decrypter.au3"
+#include "tools/stupid_decrypter.au3"
+#include "tools/gibon_decrypter.au3"
+#include "tools/aurora_decrypter.au3"
+#include "tools/files_locker_decrypter.au3"
+#include "tools/dcry_decrypter.au3"
+#include "tools/striked_decrypter.au3"
+#include "tools/unlock92_decrypter.au3"
+#include "tools/bit_stak_decrypter.au3"
+#include "tools/bit_kangaroo_decrypter.au3"
+#include "tools/mir_cop_decrypter.au3"
 
 Func RunRemoveTools($bRetry = False)
 	If $bRetry = True Then
