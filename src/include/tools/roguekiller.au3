@@ -11,8 +11,7 @@ Func LoadRogueKiller()
 	Dim $aKPRemoveAppDataCommonStartMenuFolderList
 	Dim $aKPRemoveDownloadList
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 
 	Local Const $patternDescription = "(?i)^Adlice"
 	Local Const $sReg1 = "(?i)^RogueKiller"

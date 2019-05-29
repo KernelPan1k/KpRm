@@ -18,8 +18,7 @@ Func LoadCombofix()
 	Local Const $sReg5 = "(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$"
 	Local Const $sReg6 = "(?i)^Swearware$"
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 
 	Local Const $aArr1[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]
 	Local Const $aArr2[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]

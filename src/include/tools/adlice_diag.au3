@@ -10,8 +10,7 @@ Func LoadAdliceDiag()
 	Dim $aKPRemoveDesktopCommonList
 	Dim $aKPRemoveAppDataCommonStartMenuFolderList
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 
 	Local Const $sProcessDescription = "(?i)^Adlice Diag"
 	Local Const $sReg1 = "(?i)^Diag version"

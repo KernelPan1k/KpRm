@@ -12,8 +12,7 @@ Func LoadEsetOnlineScanner()
 	Local Const $sReg1 = "(?i)^esetonlinescanner.*\.exe$"
 	Local Const $sReg2 = "(?i)^log.*\.txt$"
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 
 	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
 	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]

@@ -11,8 +11,7 @@ Func LoadAswMbr()
 	Local Const $sReg2 = "(?i)^MBR\.dat$"
 	Local Const $sReg3 = "(?i)^aswmbr.*\.exe$"
 
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 
 	Local Const $aArr1[1][3] = [[$sToolName, $sReg3, True]]
 	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]

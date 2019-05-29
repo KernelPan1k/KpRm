@@ -262,8 +262,7 @@ Func RemoveAllProgramFilesDir($aList)
 EndFunc   ;==>RemoveAllProgramFilesDir
 
 Func RemoveAllSoftwareKeyList($aList)
-	Local $s64Bit = ""
-	If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = GetSuffixKey()
 	Local $aKeys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
 
 	For $k = 0 To UBound($aKeys) - 1
