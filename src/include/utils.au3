@@ -55,30 +55,6 @@ Func _Restart_Windows_Explorer()
 	Return $rPID
 EndFunc   ;==>_Restart_Windows_Explorer
 
-;Retrieve Local Machine Users
-Func _GetLocalUsers($sHost = @ComputerName)
-	Local $sUsers = []
-	Local $oColUsers = ObjGet("WinNT://" & $sHost & "")
-	If Not IsObj($oColUsers) Then
-		Return 0
-	EndIf
-	Dim $aFilter[1] = ["user"]
-	$oColUsers.Filter = $aFilter
-
-	For $oUser In $oColUsers
-		_ArrayAdd($sUsers, $oUser.name)
-	Next
-
-	$oColUsers = 0
-	$aFilter = 0
-
-	Return $sUsers
-EndFunc   ;==>_GetLocalUsers
-
-Func TryResolveUserDesktop($User)
-	Return @HomeDrive & "\Users\" & $User & "\Desktop"
-EndFunc   ;==>TryResolveUserDesktop
-
 Func SearchRegistryKeyStrings($sPath, $sPattern, $sKey)
 	Local $i = 0
 	While True
