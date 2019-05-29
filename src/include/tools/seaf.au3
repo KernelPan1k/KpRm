@@ -5,7 +5,7 @@ Func LoadSeaf()
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
-	Dim $aKPUninstallNormalyList
+	Dim $aKPUninstallNormallyList
 	Dim $aKPRemoveRegistryKeysList
 	Dim $aKPRemoveHomeDriveList
 	Dim $aKPRemoveProgramFilesList
@@ -28,7 +28,7 @@ Func LoadSeaf()
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
 	_ArrayAdd($aKPRemoveDownloadList, $aArr2)
-	_ArrayAdd($aKPUninstallNormalyList, $aArr3)
+	_ArrayAdd($aKPUninstallNormallyList, $aArr3)
 	_ArrayAdd($aKPRemoveRegistryKeysList, $aArr4)
 	_ArrayAdd($aKPRemoveHomeDriveList, $aArr5)
 	_ArrayAdd($aKPRemoveProgramFilesList, $aArr6)

@@ -2,7 +2,7 @@
 Func LoadUSBFIX()
 	Local Const $sToolName = "USBFix"
 	Dim $aKPRemoveProcessList
-	Dim $aKPUninstallNormalyList
+	Dim $aKPUninstallNormallyList
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDesktopCommonList
 	Dim $aKPRemoveDownloadList
@@ -25,7 +25,7 @@ Func LoadUSBFIX()
 	Local Const $aArr5[1][5] = [[$sToolName, 'folder', Null, $sToolReg, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr0)
-	_ArrayAdd($aKPUninstallNormalyList, $aArr2)
+	_ArrayAdd($aKPUninstallNormallyList, $aArr2)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr3)
 	_ArrayAdd($aKPRemoveDesktopCommonList, $aArr3)
 	_ArrayAdd($aKPRemoveDownloadList, $aArr3)

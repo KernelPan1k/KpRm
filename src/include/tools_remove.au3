@@ -229,7 +229,7 @@ Func RemoveScheduleTask($aList)
 	Next
 EndFunc   ;==>RemoveScheduleTask
 
-Func UninstallNormaly($aList)
+Func UninstallNormally($aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
 	For $i = 1 To UBound($aProgramFilesList) - 1
@@ -251,7 +251,7 @@ Func UninstallNormaly($aList)
 			Next
 		Next
 	Next
-EndFunc   ;==>UninstallNormaly
+EndFunc   ;==>UninstallNormally
 
 Func RemoveAllProgramFilesDir($aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
