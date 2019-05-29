@@ -5,14 +5,14 @@ Func LoadJRT()
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
 
-	Local Const $sToolExistCpt = "Junkware Removal Tool"
-	Local Const $sDescriptionPattern = "(?i)^Malwarebytes"
+	Local Const $sToolName = "Junkware Removal Tool"
+	Local Const $sCompanyName = "(?i)^Malwarebytes"
 
 	Local Const $sReg1 = "(?i)^JRT.*\.exe"
 	Local Const $sReg2 = "(?i)^JRT.*\.(exe|txt)"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg2, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

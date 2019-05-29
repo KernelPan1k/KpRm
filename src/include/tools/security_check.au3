@@ -1,6 +1,6 @@
 
 Func LoadSecurityCheck()
-	Local Const $sToolExistCpt = "SecurityCheck"
+	Local Const $sToolName = "SecurityCheck"
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
 	Dim $KPRemoveDesktopFolderList
@@ -10,8 +10,8 @@ Func LoadSecurityCheck()
 
 	Local Const $sReg1 = "(?i)^SecurityCheck.*\.exe$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', Null, $sReg1, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', Null, $sReg1, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)
