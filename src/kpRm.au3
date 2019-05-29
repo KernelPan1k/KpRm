@@ -52,7 +52,6 @@ EndIf
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
 #include "lib\Permissions.au3"
-#include "include\check_before.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
 #include "include\restore_points.au3"
@@ -64,6 +63,13 @@ EndIf
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
 FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+
+CheckVersionOfKpRm()
+
+If Not IsAdmin() Then
+	MsgBox(16, $lFail, $lAdminRequired)
+	QuitKprm()
+EndIf
 
 Global $sProgramName = "KpRm"
 Global $sKPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
