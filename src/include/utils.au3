@@ -76,6 +76,13 @@ Func CheckVersionOfKpRm()
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
 
+Func GetSuffixKey()
+    Local $s64Bit = ""
+    If @OSArch = "X64" Then $s64Bit = "64"
+
+    Return $s64Bit
+EndFunc ;==>GetSuffixKey
+
 Func LogMessage($message)
 	Dim $sKPLogFile
 
