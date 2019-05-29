@@ -1,7 +1,7 @@
 
 Func LoadZHPFix()
-	Local Const $sDescriptionPattern = Null
-	Local Const $sZhpFixExistCpt = "ZHPFix"
+	Local Const $sCompanyName = Null
+	Local Const $sToolName = "ZHPFix"
 
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
@@ -10,8 +10,8 @@ Func LoadZHPFix()
 	Local Const $sReg1 = "(?i)^ZHPFix.*\.exe$"
 	Local Const $sReg2 = "(?i)^ZHPFix.*\.(exe|txt|lnk)$"
 
-	Local Const $aArr1[1][3] = [[$sZhpFixExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sZhpFixExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg2, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

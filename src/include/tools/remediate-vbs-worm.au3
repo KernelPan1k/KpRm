@@ -1,7 +1,7 @@
 
 
 Func LoadRemediateVbsWorm()
-	Local Const $sToolExistCpt = "Remediate VBS Worm"
+	Local Const $sToolName = "Remediate VBS Worm"
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
@@ -9,20 +9,20 @@ Func LoadRemediateVbsWorm()
 	Dim $aKPRemoveDesktopCommonList
 	Dim $aKPRemoveSoftwareKeyList
 
-	Local Const $sDescriptionPattern = "(?i).*VBS autorun worms.*"
-	Local Const $companyPattern = Null
+	Local Const $sToolReg = "(?i).*VBS autorun worms.*"
+	Local Const $sCompanyName = Null
 	Local Const $sReg1 = "(?i)^remediate.?vbs.?worm.*\.exe$"
 	Local Const $sReg2 = "(?i)^Rem-VBS.*\.log$"
 	Local Const $sReg3 = "(?i)^Rem-VBS"
 	Local Const $sReg4 = "(?i)^Rem-VBSworm.*\.exe$"
 
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $companyPattern, $sReg1, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', $companyPattern, $sReg2, False]]
-	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'folder', $sDescriptionPattern, $sReg3, True]]
-	Local Const $aArr5[1][2] = [[$sToolExistCpt, $sReg4]]
-	Local Const $aArr6[1][5] = [[$sToolExistCpt, 'file', $companyPattern, $sReg4, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg2, False]]
+	Local Const $aArr4[1][5] = [[$sToolName, 'folder', $sToolReg, $sReg3, True]]
+	Local Const $aArr5[1][2] = [[$sToolName, $sReg4]]
+	Local Const $aArr6[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg4, False]]
 
 
 

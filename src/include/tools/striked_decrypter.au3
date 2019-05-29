@@ -4,15 +4,15 @@ Func LoadStrikedDecrypter()
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
 
-	Local Const $sToolExistCpt = "StrikedDecrypter"
+	Local Const $sToolName = "StrikedDecrypter"
 
 	Local Const $sReg1 = "(?i)^StrikedDecrypter.*\.exe$"
 	Local Const $sReg2 = "(?i)^StrikedDecrypter.*\.(exe|zip|txt)$"
 	Local Const $sReg3 = "(?i)^StrikedDecrypter$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg3, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'folder', Null, $sReg3, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

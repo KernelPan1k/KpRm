@@ -1,7 +1,7 @@
 
 
 Func LoadBlitzBlank()
-	Local Const $sToolExistCpt = "BlitzBlank"
+	Local Const $sToolName = "BlitzBlank"
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
@@ -9,13 +9,13 @@ Func LoadBlitzBlank()
 	Dim $aKPRemoveDesktopCommonList
 	Dim $aKPRemoveSoftwareKeyList
 
-	Local Const $sDescriptionPattern = "(?i)^Emsi"
+	Local Const $sCompanyName = "(?i)^Emsi"
 	Local Const $sReg1 = "(?i)^BlitzBlank.*\.exe$"
 	Local Const $sReg2 = "(?i)^BlitzBlank.*\.log$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

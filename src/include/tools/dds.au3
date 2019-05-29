@@ -4,15 +4,15 @@ Func LoadDDS()
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
 
-	Local Const $sToolExistCpt = "DDS"
-	Local Const $sDescriptionPattern = "(?i)^Swearware"
+	Local Const $sToolName = "DDS"
+	Local Const $sCompanyName = "(?i)^Swearware"
 
 	Local Const $sReg1 = "(?i)^dds.*\.com$"
 	Local Const $sReg2 = "(?i)^(dds|attach).*\.txt$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

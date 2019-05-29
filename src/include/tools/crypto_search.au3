@@ -1,6 +1,6 @@
 
 Func LoadCryptoSearch()
-	Local Const $sToolExistCpt = "CryptoSearch"
+	Local Const $sToolName = "CryptoSearch"
 
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveDesktopList
@@ -10,12 +10,12 @@ Func LoadCryptoSearch()
 	Local Const $sReg2 = "(?i)^CryptoSearch.*\.(exe|zip|txt)$"
 	Local Const $sReg3 = "(?i)^CryptoSearch$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg3, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'folder', Null, $sReg3, False]]
 
 	If FileExists(@DesktopDir & "\cryptosearch-definitions.bin") Then
-		RemoveFile(@DesktopDir & "\cryptosearch-definitions.bin", $sToolExistCpt, Null, False)
+		RemoveFile(@DesktopDir & "\cryptosearch-definitions.bin", $sToolName, Null, False)
 	EndIf
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)

@@ -6,8 +6,8 @@ Func LoadEsetOnlineScanner()
 	Dim $aKPRemoveAppDataLocalList
 	Dim $aKPRemoveRegistryKeysList
 
-	Local Const $sToolExistCpt = "ESET Online Scanner"
-	Local Const $sDescriptionPattern = "(?i)^ESET"
+	Local Const $sToolName = "ESET Online Scanner"
+	Local Const $sCompanyName = "(?i)^ESET"
 
 	Local Const $sReg1 = "(?i)^esetonlinescanner.*\.exe$"
 	Local Const $sReg2 = "(?i)^log.*\.txt$"
@@ -15,11 +15,11 @@ Func LoadEsetOnlineScanner()
 	Local $s64Bit = ""
 	If @OSArch = "X64" Then $s64Bit = "64"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg1, False]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'file', Null, $sReg2, False]]
-	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'folder', Null, "(?i)^ESET$", True]]
-	Local Const $aArr5[1][3] = [[$sToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\ESET\ESET Online Scanner", False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg1, False]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'file', Null, $sReg2, False]]
+	Local Const $aArr4[1][5] = [[$sToolName, 'folder', Null, "(?i)^ESET$", True]]
+	Local Const $aArr5[1][3] = [[$sToolName, "HKLM" & $s64Bit & "\SOFTWARE\ESET\ESET Online Scanner", False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

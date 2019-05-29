@@ -4,14 +4,14 @@ Func LoadDefogger()
 	Dim $aKPRemoveDesktopList
 	Dim $aKPRemoveDownloadList
 
-	Local Const $sToolExistCpt = "Defogger"
-	Local Const $sDescriptionPattern = Null
+	Local Const $sToolName = "Defogger"
+	Local Const $sCompanyName = Null
 
 	Local Const $sReg1 = "(?i)^defogger.*\.exe$"
 	Local Const $sReg2 = "(?i)^defogger.*\.(log|exe)$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sReg1, False]]
-	Local Const $aArr2[1][5] = [[$sToolExistCpt, 'file', $sDescriptionPattern, $sReg2, False]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sReg1, False]]
+	Local Const $aArr2[1][5] = [[$sToolName, 'file', $sCompanyName, $sReg2, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveDesktopList, $aArr2)

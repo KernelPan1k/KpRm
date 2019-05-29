@@ -1,6 +1,6 @@
 
 Func LoadAdliceDiag()
-	Local Const $sToolExistCpt = "AdliceDiag"
+	Local Const $sToolName = "AdliceDiag"
 	Dim $aKPRemoveProcessList
 	Dim $aKPRemoveSearchRegistryKeyStringsList
 	Dim $aKPRemoveProgramFilesList
@@ -22,14 +22,14 @@ Func LoadAdliceDiag()
 	Local Const $sReg6 = "(?i)^Diag_setup\.exe$"
 	Local Const $sReg7 = "(?i)^Diag(32|64)?\.exe$"
 
-	Local Const $aArr1[1][3] = [[$sToolExistCpt, $sProcessDescription, False]]
-	Local Const $aArr2[1][4] = [[$sToolExistCpt, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $sReg1, "DisplayName"]]
-	Local Const $aArr3[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg2, True]]
-	Local Const $aArr4[1][5] = [[$sToolExistCpt, 'folder', Null, $sReg3, True]]
-	Local Const $aArr5[1][5] = [[$sToolExistCpt, 'file', Null, $sReg4, False]]
-	Local Const $aArr6[1][5] = [[$sToolExistCpt, 'file', Null, $sReg5, False]]
-	Local Const $aArr7[1][5] = [[$sToolExistCpt, 'file', Null, $sReg6, False]]
-	Local Const $aArr8[1][2] = [[$sToolExistCpt, $sReg7]]
+	Local Const $aArr1[1][3] = [[$sToolName, $sProcessDescription, False]]
+	Local Const $aArr2[1][4] = [[$sToolName, "HKLM" & $s64Bit & "\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", $sReg1, "DisplayName"]]
+	Local Const $aArr3[1][5] = [[$sToolName, 'folder', Null, $sReg2, True]]
+	Local Const $aArr4[1][5] = [[$sToolName, 'folder', Null, $sReg3, True]]
+	Local Const $aArr5[1][5] = [[$sToolName, 'file', Null, $sReg4, False]]
+	Local Const $aArr6[1][5] = [[$sToolName, 'file', Null, $sReg5, False]]
+	Local Const $aArr7[1][5] = [[$sToolName, 'file', Null, $sReg6, False]]
+	Local Const $aArr8[1][2] = [[$sToolName, $sReg7]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveProcessList, $aArr8)
