@@ -9,7 +9,5 @@ Global $lFinish = "Todas as operações estão concluídas"
 Global $lFail = "Falha"
 Global $lRegistryBackupError = "Incapaz de criar um backup do registro"
 Global $lAdminRequired = "Você deve executar o programa com direitos de administrador"
-Global $lKillMbar = "Você deve fechar MalwareBytes Anti-Rootkit antes de continuar"
 Global $lGetLastVersionTitle = "Atualizar"
 Global $lGetLastVersion = "Uma nova versão do KpRm existe, por favor faça o download."
-
