@@ -126,7 +126,7 @@ Global $aKPRemoveAppDataCommonStartMenuFolderList[1][5] = [[Null, Null, Null, Nu
 
 Global $aKPRemoveWindowsFolderList[1][5] = [[Null, Null, Null, Null, Null]] ; RemoveFolder(C:\Windows)
 
-Global $aKPUninstallNormalyList[1][3] = [[Null, Null, Null]]
+Global $aKPUninstallNormallyList[1][3] = [[Null, Null, Null]]
 
 Global $aKPRemoveRegistryKeysList[1][3] = [[Null, Null, Null]]
 
@@ -231,7 +231,7 @@ Func RunRemoveTools($bRetry = False)
 	RemoveAllProcess($aKPRemoveProcessList)
 	ProgressBarUpdate()
 
-	UninstallNormaly($aKPUninstallNormalyList)
+	UninstallNormally($aKPUninstallNormallyList)
 	ProgressBarUpdate()
 
 	RemoveScheduleTask($aKPRemoveScheduleTasksList)
