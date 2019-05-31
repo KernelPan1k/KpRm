@@ -1,6 +1,6 @@
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-Local Const $aAllToolsList[91] = [ _
+Local Const $aAllToolsList[92] = [ _
 		"AdliceDiag", _
 		"AdsFix", _
 		"AdwCleaner", _
@@ -37,6 +37,7 @@ Local Const $aAllToolsList[91] = [ _
 		"GetSystemInfo", _
 		"GhostCryptDecrypter", _
 		"GibonDecrypter", _
+		"GooredFix", _
 		"Grantperms", _
 		"HiddenTearDecrypter", _
 		"Hosts-perm", _
@@ -228,6 +229,7 @@ Global $aKPCleanDirectoryContentList[1][4] = [[Null, Null, Null, Null]]
 #include "tools/catchme.au3"
 #include "tools/fix_purge.au3"
 #include "tools/get_system_info.au3"
+#include "tools/goored_fix.au3"
 
 Func RunRemoveTools($bRetry = False)
 	If $bRetry = True Then
