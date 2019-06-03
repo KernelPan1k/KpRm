@@ -28,7 +28,7 @@ Func LoadAdliceDiag()
 	Local Const $aArr5[1][5] = [[$sToolName, 'file', Null, $sReg4, False]]
 	Local Const $aArr6[1][5] = [[$sToolName, 'file', Null, $sReg5, False]]
 	Local Const $aArr7[1][5] = [[$sToolName, 'file', Null, $sReg6, False]]
-	Local Const $aArr8[1][2] = [[$sToolName, $sReg7]]
+	Local Const $aArr8[1][2] = [[$sToolName, $sReg7, False]]
 
 	_ArrayAdd($aKPRemoveProcessList, $aArr1)
 	_ArrayAdd($aKPRemoveProcessList, $aArr8)
