@@ -2,7 +2,7 @@
 <tools>
    <tool name="GibonDecrypter">
       <process force="False" process="(?i)^GibonDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <appDataCommonStartMenuFolder companyName="Null" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
       <desktop companyName="Null" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
       <download companyName="Null" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
       <download companyName="Null" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
@@ -178,7 +178,7 @@
       <download companyName="Null" force="False" pattern="(?i)^CFScript\.txt$" type="file" />
       <homeDrive companyName="Null" force="True" pattern="(?i)^Qoobox$" type="folder" />
       <homeDrive companyName="Null" force="False" pattern="(?i)^Combofix.*\.txt$" type="file" />
-      <RemoveWindowsFolderList companyName="Null" force="True" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file" />
+      <windowsFolder companyName="Null" force="True" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file" />
       <softwareKey pattern="(?i)^Swearware$" />
       <process force="True" process="(?i)^Combofix.*\.exe$" />
       <registryKey force="False" key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe" />
@@ -634,4 +634,5 @@
       <appData companyName="Null" force="True" pattern="(?i)^ZHP$" type="folder" />
    </tool>
 </tools>
+
 
