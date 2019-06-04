@@ -1,4 +1,77 @@
+Global desktopList
+Global desktopCommonList
+Global downloadList
+Global homeDriveList
+Global programFilesList
+Global appDataList
+Global appDataCommonList
+Global appDataLocalList
+Global windowsFolderList
+Global appDataCommonStartMenuFolderList
+Global uninstalList
+Global taskList
+Global softwareKeyList
+Global registryKeyList
+Global searchRegistryKeyList
+Global cleanDirectoryList
+
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
+
+Local $aAllToolsList[0]
+Local $aActionsFile = ["desktop", "desktopCommon","download","homeDrive","programFiles","appData","appDataCommon","appDataLocal","windowsFolder","appDataCommonStartMenuFolder"]
+
+_XMLFileOpen("../config/tools.xml")
+Local $aNodes = _XMLSelectNodes("/tools/tool")
+
+Func GetSwapOrder($sT)
+	If _ArraySearch($aActionsFile, $sT) Then 
+		Return ["type", "companyName", "pattern", "force"]
+	ElseIf $sT == "uninstal" Then 
+		Return ["folder", "binary"]
+	ElseIf $sT == "task" Then 
+		Return ["name"]
+	ElseIf $sT == "softwareKey" Then 
+		Return ["pattern"]
+	ElseIf $sT == "registryKey" Then 
+		Return ["key", "force"]
+	ElseIf $sT == "searchRegistryKey" Then 
+		Return ["key", "pattern", "value"]
+	ElseIf $sT == "cleanDirectory" Then 
+		Return ["path", "companyName, "force"]
+	EndIf
+EndFunc
+
+Func SetAction($sT)
+	
+EndFunc
+
+Func Swap($sTn, $sT, $aK, $aV)
+	Local $ref = GetSwapOrder($sTn)
+	Local $result[1] = [$sTn]
+
+	For $i = 0 To UBound($ref) - 1
+		For $c = 0 To UBound($aK) - 1
+			If $ref[$i] = $aK[$c] Then
+				_ArrayAdd($result, $aV[$c], 0, "£")
+			EndIf
+		Next
+	Next
+EndFunc   ;==>Swap
+
+For $i = 1 To $aNodes[0]
+	Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
+
+	_ArrayAdd($aAllToolsList, $sToolName)
+
+	Local $aActions = _XMLSelectNodes("/tools/tool[" & $i & "]/*")
+
+	For $c = 1 To $aActions[0]
+		Local $type = $aActions[$c]
+		Local $aName[1], $aValue[1]
+		_XMLGetAllAttrib("/tools/tool[" & $i & "]/*[" & $c & "]", $aName, $aValue)
+		Swap($sToolName, $type, $aName, $aValue)
+	Next
+Next
 
 
 For $ti = 0 To UBound($aAllToolsList) - 1
