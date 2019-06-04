@@ -52,6 +52,7 @@ EndIf
 #include "lib\UAC.au3"
 #include "lib\SystemRestore.au3"
 #include "lib\Permissions.au3"
+#include "lib\_XMLDomWrapper.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
 #include "include\restore_points.au3"
