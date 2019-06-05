@@ -1,27 +1,9 @@
-Global desktopList
-Global desktopCommonList
-Global downloadList
-Global homeDriveList
-Global programFilesList
-Global appDataList
-Global appDataCommonList
-Global appDataLocalList
-Global windowsFolderList
-Global appDataCommonStartMenuFolderList
-Global uninstalList
-Global taskList
-Global softwareKeyList
-Global registryKeyList
-Global searchRegistryKeyList
-Global cleanDirectoryList
-
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 
 Local $aAllToolsList[0]
 Local $aActionsFile = ["desktop", "desktopCommon","download","homeDrive","programFiles","appData","appDataCommon","appDataLocal","windowsFolder","appDataCommonStartMenuFolder"]
 
 _XMLFileOpen("../config/tools.xml")
-Local $aNodes = _XMLSelectNodes("/tools/tool")
 
 Func GetSwapOrder($sT)
 	If _ArraySearch($aActionsFile, $sT) Then 
@@ -41,13 +23,8 @@ Func GetSwapOrder($sT)
 	EndIf
 EndFunc
 
-Func SetAction($sT)
-	
-EndFunc
-
-Func Swap($sTn, $sT, $aK, $aV)
-	Local $ref = GetSwapOrder($sTn)
-	Local $result[1] = [$sTn]
+Func Swap($sTn, $aK, $aV, $aOrder)
+	Local $aResult[1] = [$sTn]
 
 	For $i = 0 To UBound($ref) - 1
 		For $c = 0 To UBound($aK) - 1
@@ -56,25 +33,13 @@ Func Swap($sTn, $sT, $aK, $aV)
 			EndIf
 		Next
 	Next
+
+	Retrun $aResult
 EndFunc   ;==>Swap
 
 For $i = 1 To $aNodes[0]
 	Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
-
 	_ArrayAdd($aAllToolsList, $sToolName)
-
-	Local $aActions = _XMLSelectNodes("/tools/tool[" & $i & "]/*")
-
-	For $c = 1 To $aActions[0]
-		Local $type = $aActions[$c]
-		Local $aName[1], $aValue[1]
-		_XMLGetAllAttrib("/tools/tool[" & $i & "]/*[" & $c & "]", $aName, $aValue)
-		Swap($sToolName, $type, $aName, $aValue)
-	Next
-Next
-
-
-For $ti = 0 To UBound($aAllToolsList) - 1
 	Local $oToolsValue = ObjCreate("Scripting.Dictionary")
 	Local $oToolsValueKey = ObjCreate("Scripting.Dictionary")
 	Local $oToolsValueFile = ObjCreate("Scripting.Dictionary")
@@ -85,7 +50,12 @@ For $ti = 0 To UBound($aAllToolsList) - 1
 	$oToolsValue.add("element", $oToolsValueFile)
 	$oToolsValue.add("uninstall", $oToolsValueUninstall)
 	$oToolsValue.add("process", $oToolsValueProcess)
-	$oToolsCpt.add($aAllToolsList[$ti], $oTosValue)
+	$oToolsCpt.add($sToolName, $oTosValue)
+Next
+
+
+For $ti = 0 To UBound($aAllToolsList) - 1
+	
 Next
 
 Func RunRemoveTools($bRetry = False)
@@ -93,60 +63,85 @@ Func RunRemoveTools($bRetry = False)
 		LogMessage(@CRLF & "- Search Tools -" & @CRLF)
 	EndIf
 
-	RemoveAllProcess($aKPRemoveProcessList)
-	ProgressBarUpdate()
+	Local $aNodes = _XMLSelectNodes("/tools/tool")
+	
+	For $sAction In [_
+		"process", _
+		"uninstall", _
+		"task", _
+		"desktop", _
+		"desktopCommon", _
+		"download", _
+		"programFile", _
+		"homeDrive", _
+		"appData", _
+		"appDataCommon", _
+		"appDataLocal", _
+		"windowsFolder", _
+		"softwareKey", _
+		"registryKey", _
+		"searchRegistryKey", _
+		"appDataCommonStartMenuFolder", _
+		"cleanDirectory"]
+		
+		Local $aOrder = GetSwapOrder($sTn)
+		Local $aListTasks[1][Ubound($aOrder + 1)] = [[]]
 
-	UninstallNormally($aKPUninstallNormallyList)
-	ProgressBarUpdate()
+		For $i = 1 To $aNodes[0]
+			Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
 
-	RemoveScheduleTask($aKPRemoveScheduleTasksList)
-	ProgressBarUpdate()
+			_ArrayAdd($aAllToolsList, $sToolName)
 
-	RemoveAllFileFromWithMaxDepth(@DesktopDir, $aKPRemoveDesktopList)
-	ProgressBarUpdate()
+			Local $aActions = _XMLSelectNodes("/tools/tool[" & $i & "]/*")
 
-	RemoveAllFileFrom(@DesktopCommonDir, $aKPRemoveDesktopCommonList)
-	ProgressBarUpdate()
-
-	If FileExists(@UserProfileDir & "\Downloads") Then
-		RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $aKPRemoveDownloadList)
-		ProgressBarUpdate()
-	Else
-		ProgressBarUpdate()
-	EndIf
-
-	RemoveAllProgramFilesDir($aKPRemoveProgramFilesList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@HomeDrive, $aKPRemoveHomeDriveList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@AppDataDir, $aKPRemoveAppDataList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@AppDataCommonDir, $aKPRemoveAppDataCommonList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@LocalAppDataDir, $aKPRemoveAppDataLocalList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@WindowsDir, $aKPRemoveWindowsFolderList)
-	ProgressBarUpdate()
-
-	RemoveAllSoftwareKeyList($aKPRemoveSoftwareKeyList)
-	ProgressBarUpdate()
-
-	RemoveAllRegistryKeys($aKPRemoveRegistryKeysList)
-	ProgressBarUpdate()
-
-	RemoveUninstallStringWithSearch($aKPRemoveSearchRegistryKeyStringsList)
-	ProgressBarUpdate()
-
-	RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aKPRemoveAppDataCommonStartMenuFolderList)
-	ProgressBarUpdate()
-
-	CleanDirectoryContent($aKPCleanDirectoryContentList)
-	ProgressBarUpdate()
+			For $c = 1 To $aActions[0]
+				Local $type = $aActions[$c]
+				
+				If $type = $sAction Then
+					Local $aName[1], $aValue[1]
+					_XMLGetAllAttrib("/tools/tool[" & $i & "]/*[" & $c & "]", $aName, $aValue)
+					Local $aCurrentTask = Swap($sToolName, $aName, $aValue, $aOrder)
+					_ArrayAdd($aListTasks, $aCurrentTask)
+				EndIf
+			Next
+		Next
+		
+		Switch $sAction
+			Case "process"
+				RemoveAllProcess($aListTasks)
+			Case "uninstall"
+				UninstallNormally($aListTasks)
+			Case "task"
+				RemoveScheduleTask($aListTasks)
+			Case "desktop"
+				RemoveAllFileFromWithMaxDepth(@DesktopDir, $aListTasks)
+			Case "desktopCommon"
+				RemoveAllFileFrom(@DesktopCommonDir, $aListTasks)
+			Case "download"
+				RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $aListTasks)
+			Case "programFile"
+				RemoveAllProgramFilesDir($aListTasks)
+			Case "homeDrive"
+				RemoveAllFileFrom(@HomeDrive, $aListTasks)
+			Case "appDataCommon"
+				RemoveAllFileFrom(@AppDataCommonDir, $aListTasks)
+			Case "appDataLocal"
+				RemoveAllFileFrom(@LocalAppDataDir, $aListTasks)
+			Case "windowsFolder"
+				RemoveAllFileFrom(@WindowsDir, $aListTasks)
+			Case "softwareKey"
+				RemoveAllSoftwareKeyList($aListTasks)
+			Case "registryKey"
+				RemoveAllRegistryKeys($aListTasks)
+			Case "searchRegistryKey"
+				RemoveUninstallStringWithSearch($aListTasks)
+			Case "appDataCommonStartMenuFolder"
+				RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
+			Case "cleanDirectory"
+				CleanDirectoryContent($aListTasks)
+		EndSwitch
+			ProgressBarUpdate()
+	Next
 
 	If $bRetry = True Then
 		Local $bHasFoundTools = False
