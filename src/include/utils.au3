@@ -15,13 +15,14 @@ Func GetLanguage()
 		Case Else
 			Return "en"
 	EndSwitch
-EndFunc   ;==>_GetLanguage
+EndFunc   ;==>GetLanguage
 
 Func QuitKprm($bAutoDelete = False, $open = True)
 	Dim $bKpRmDev
 	Dim $sKPLogFile
 
 	FileDelete(@TempDir & "\kprm-logo.gif")
+	FileDelete(@TempDir & "\kprm-tools.xml")
 
 	If $bAutoDelete = True Then
 		If $open = True Then
@@ -77,11 +78,11 @@ Func CheckVersionOfKpRm()
 EndFunc   ;==>CheckVersionOfKpRm
 
 Func GetSuffixKey()
-    Local $s64Bit = ""
-    If @OSArch = "X64" Then $s64Bit = "64"
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
 
-    Return $s64Bit
-EndFunc ;==>GetSuffixKey
+	Return $s64Bit
+EndFunc   ;==>GetSuffixKey
 
 Func LogMessage($message)
 	Dim $sKPLogFile
