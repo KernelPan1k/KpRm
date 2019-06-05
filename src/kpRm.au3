@@ -9,11 +9,16 @@
 #AutoIt3Wrapper_Res_ProductVersion=1.0.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
-#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.ico
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif
+#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+
+FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
+If FileExists(@TempDir & "\kprm-tools.xml") Then FileDelete(@TempDir & "\kprm-tools.xml")
+FileInstall("C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml", @TempDir & "\kprm-tools.xml")
 
 #include <ButtonConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -26,7 +31,7 @@
 #include <Array.au3>
 #include <File.au3>
 
-Global $bKpRmDev = False
+Global $bKpRmDev = True
 Local $sKprmVersion = "1.0.1"
 
 If $bKpRmDev = True Then
@@ -62,8 +67,6 @@ EndIf
 #include "include\tools_import.au3"
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
-
-FileInstall("C:\Users\IEUser\Desktop\kpRemover\src\assets\bug.gif", @TempDir & "\kprm-logo.gif")
 
 CheckVersionOfKpRm()
 

@@ -184,6 +184,7 @@ Func _XMLFileOpen($strXMLFile, $strNameSpc = "", $iVer = -1, $bValOnParse = True
 	if $objDoc.parseError.errorCode >0 Then consoleWrite($objDoc.parseError.reason&@LF)
 	If $objDoc.parseError.errorCode <> 0 Then
 		_XMLError("Error opening specified file: " & $strXMLFile & @CRLF & $objDoc.parseError.reason)
+		ConsoleWrite("Error opening specified file: " & $strXMLFile & @CRLF & $objDoc.parseError.reason)
 		;Tom Hohmann 2008/02/29
 		SetError(1,$objDoc.parseError.errorCode,-1)
 		$objDoc = 0
@@ -399,7 +400,7 @@ Func _XMLGetField($strXPath)
 		If $objNodeList.hasChildNodes () Then
 			Local $count = $objNodeList.childNodes.length
 			For $x =1 to $count
-				$objChild = $objNodeList.childNodes($x)
+				Local $objChild = $objNodeList.childNodes($x)
 					_DebugWrite("ParentNode="&$objNodeList.parentNode.nodeType)
 					If $objNodeList.parentNode.nodeType =$NODE_DOCUMENT Then
 						$szNodePath="/"&$objNodeList.baseName &"/*["&$x&"]"
@@ -407,7 +408,7 @@ Func _XMLGetField($strXPath)
 						$szNodePath = $objNodeList.baseName &"/*["&$x&"]"
 					EndIf
 
-					$aRet = _XMLGetValue($szNodePath)
+					Local $aRet = _XMLGetValue($szNodePath)
 					If IsArray($aRet) Then
 						If UBound($aRet) > 1 Then
 							_XMLArrayAdd($arrResponse, $aRet[1])
@@ -593,6 +594,7 @@ EndFunc   ;==>_XMLDeleteAttrNode
 Func _XMLGetAttrib($strXPath, $strAttrib, $strQuery = "")
 	If not IsObj($objDoc) then
 		_XMLError("No object passed to function _XMLGetAttrib")
+		ConsoleWrite("No object passed to function _XMLGetAttrib")
 		Return SetError(2,0,-1)
 	EndIf
 	;Local $objNodeList, $arrResponse[1], $i, $xmlerr, $objAttr
@@ -609,6 +611,7 @@ Func _XMLGetAttrib($strXPath, $strAttrib, $strQuery = "")
 	EndIf
 	$xmlerr = "\nNo qualified items found"
 	_XMLError("Attribute " & $strAttrib & " not found for: " & $strXPath & $xmlerr)
+	ConsoleWrite("Attribute " & $strAttrib & " not found for: " & $strXPath & $xmlerr)
 	Return SetError(1,0,-1)
 EndFunc   ;==>_XMLGetAttrib
 ;===============================================================================
@@ -1271,7 +1274,7 @@ Func _XMLGetPath($strXPath)
 		For $objNode In $objNodeList
 			Local $objNode1 = $objNode
 			$nodepath = ""
-			$nodepathtag = ""
+			Local $nodepathtag = ""
 			If $objNode.nodeType <> $NODE_DOCUMENT Then
 				$ns = $objNode.namespaceURI ()
 				If $ns <> ""  Then
@@ -1281,7 +1284,7 @@ Func _XMLGetPath($strXPath)
 				$nodepath = "/" & $ns & $objNode.nodeName () & $nodepath
 			EndIf
 			Do
-				$objParent = $objNode1.parentNode ()
+				Local $objParent = $objNode1.parentNode ()
 				_DebugWrite("parent " & $objParent.nodeName () & @LF)
 				If $objParent.nodeType <> $NODE_DOCUMENT Then
 					$ns = $objParent.namespaceURI ()
@@ -1330,7 +1333,7 @@ Func _XMLGetPathInternal($objNode)
 			$objParent = $objNode.parentNode ()
 			_DebugWrite("parent" & $objParent.nodeName () & ">" & @LF)
 			If $objParent.nodeType <> $NODE_DOCUMENT Then
-				$ns = $objParent.namespaceURI ()
+				Local $ns = $objParent.namespaceURI ()
 				If $ns = 0 Then $ns = ""
 				If $ns <> "" Then
 					$ns = StringRight($ns, StringLen($ns) - StringInStr($ns, "/", 0, -1)) & ":"
@@ -1373,7 +1376,7 @@ Func _XMLReplaceChild($objOldNode, $objNewNode, $ns = "")
 	With $objDoc
 		;;.Load "c:\books.xml"
 		$nodeRoot = .documentElement
-		$oldNodes = $nodeRoot.selectNodes ($objOldNode)
+		Local $oldNodes = $nodeRoot.selectNodes ($objOldNode)
 		;'For each Node
 		For $nodeOld In $oldNodes
 			;Create a New element
@@ -1392,7 +1395,7 @@ Func _XMLReplaceChild($objOldNode, $objNewNode, $ns = "")
 				_XMLError("_XMLReplaceChild:" & @LF & "Error Replacing Child: " & _
 						$objDoc.parseError.errorCode & _
 						" " & $objDoc.parseError.reason)
-				$bSucess = False
+				Local $bSucess = False
 				ExitLoop
 			Else
 				$bSuccess = True
@@ -1668,7 +1671,7 @@ Func _AddFormat($objDoc, $objParent = "")
 		_XMLError("No object passed to function _XMLAddFormat")
 		Return SetError(1,30,-1)
 	EndIf
-	$objFormat = $objDoc.createTextNode (@CR)
+	Local $objFormat = $objDoc.createTextNode (@CR)
 	If IsObj($objParent) Then
 		$objParent.appendChild ($objFormat)
 	Else

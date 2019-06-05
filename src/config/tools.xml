@@ -285,7 +285,7 @@
       <desktop companyName="(?i)^Avast" force="False" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
       <download companyName="(?i)^Avast" force="False" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
    </tool>
-   <tool name="RogueKiller">
+   <tool name="RogueKillerCMD">
       <process force="False" process="(?i)^RogueKillerCMD.*\.exe$" />
       <desktop companyName="Null" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
       <download companyName="Null" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />

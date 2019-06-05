@@ -1,45 +1,53 @@
+#include "tools_remove.au3"
+
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
+Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "appDataCommonStartMenuFolder"]
 
-Local $aAllToolsList[0]
-Local $aActionsFile = ["desktop", "desktopCommon","download","homeDrive","programFiles","appData","appDataCommon","appDataLocal","windowsFolder","appDataCommonStartMenuFolder"]
-
-_XMLFileOpen("../config/tools.xml")
+Local $s = _XMLFileOpen(@TempDir & "\kprm-tools.xml")
 
 Func GetSwapOrder($sT)
-	If _ArraySearch($aActionsFile, $sT) Then 
-		Return ["type", "companyName", "pattern", "force"]
-	ElseIf $sT == "uninstal" Then 
-		Return ["folder", "binary"]
-	ElseIf $sT == "task" Then 
-		Return ["name"]
-	ElseIf $sT == "softwareKey" Then 
-		Return ["pattern"]
-	ElseIf $sT == "registryKey" Then 
-		Return ["key", "force"]
-	ElseIf $sT == "searchRegistryKey" Then 
-		Return ["key", "pattern", "value"]
-	ElseIf $sT == "cleanDirectory" Then 
-		Return ["path", "companyName, "force"]
+	If _ArraySearch($aActionsFile, $sT) Then
+		Local $aOrder[4] = ["type", "companyName", "pattern", "force"]
+		Return $aOrder
+	ElseIf $sT = "uninstal" Then
+		Local $aOrder[2] = ["folder", "binary"]
+		Return $aOrder
+	ElseIf $sT = "task" Then
+		Local $aOrder[1] = ["name"]
+		Return $aOrder
+	ElseIf $sT = "softwareKey" Then
+		Local $aOrder[1] = ["pattern"]
+		Return $aOrder
+	ElseIf $sT = "registryKey" Then
+		Local $aOrder[2] = ["key", "force"]
+		Return $aOrder
+	ElseIf $sT = "searchRegistryKey" Then
+		Local $aOrder[3] = ["key", "pattern", "value"]
+		Return $aOrder
+	ElseIf $sT = "cleanDirectory" Then
+		Local $aOrder[3] = ["path", "companyName", "force"]
+		Return $aOrder
 	EndIf
-EndFunc
+EndFunc   ;==>GetSwapOrder
 
 Func Swap($sTn, $aK, $aV, $aOrder)
 	Local $aResult[1] = [$sTn]
 
-	For $i = 0 To UBound($ref) - 1
+	For $i = 0 To UBound($aOrder) - 1
 		For $c = 0 To UBound($aK) - 1
-			If $ref[$i] = $aK[$c] Then
-				_ArrayAdd($result, $aV[$c], 0, "£")
+			If $aOrder[$i] = $aK[$c] Then
+				_ArrayAdd($aResult, $aV[$c], 0, "£")
 			EndIf
 		Next
 	Next
 
-	Retrun $aResult
+	Return $aResult
 EndFunc   ;==>Swap
+
+Local $aNodes = _XMLSelectNodes("/tools/tool")
 
 For $i = 1 To $aNodes[0]
 	Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
-	_ArrayAdd($aAllToolsList, $sToolName)
 	Local $oToolsValue = ObjCreate("Scripting.Dictionary")
 	Local $oToolsValueKey = ObjCreate("Scripting.Dictionary")
 	Local $oToolsValueFile = ObjCreate("Scripting.Dictionary")
@@ -50,12 +58,7 @@ For $i = 1 To $aNodes[0]
 	$oToolsValue.add("element", $oToolsValueFile)
 	$oToolsValue.add("uninstall", $oToolsValueUninstall)
 	$oToolsValue.add("process", $oToolsValueProcess)
-	$oToolsCpt.add($sToolName, $oTosValue)
-Next
-
-
-For $ti = 0 To UBound($aAllToolsList) - 1
-	
+	$oToolsCpt.add($sToolName, $oToolsValue)
 Next
 
 Func RunRemoveTools($bRetry = False)
@@ -63,41 +66,40 @@ Func RunRemoveTools($bRetry = False)
 		LogMessage(@CRLF & "- Search Tools -" & @CRLF)
 	EndIf
 
+	Local Const $aListActions = [ _
+			"process", _
+			"uninstall", _
+			"task", _
+			"desktop", _
+			"desktopCommon", _
+			"download", _
+			"programFile", _
+			"homeDrive", _
+			"appData", _
+			"appDataCommon", _
+			"appDataLocal", _
+			"windowsFolder", _
+			"softwareKey", _
+			"registryKey", _
+			"searchRegistryKey", _
+			"appDataCommonStartMenuFolder", _
+			"cleanDirectory"]
+
 	Local $aNodes = _XMLSelectNodes("/tools/tool")
-	
-	For $sAction In [_
-		"process", _
-		"uninstall", _
-		"task", _
-		"desktop", _
-		"desktopCommon", _
-		"download", _
-		"programFile", _
-		"homeDrive", _
-		"appData", _
-		"appDataCommon", _
-		"appDataLocal", _
-		"windowsFolder", _
-		"softwareKey", _
-		"registryKey", _
-		"searchRegistryKey", _
-		"appDataCommonStartMenuFolder", _
-		"cleanDirectory"]
-		
-		Local $aOrder = GetSwapOrder($sTn)
-		Local $aListTasks[1][Ubound($aOrder + 1)] = [[]]
+
+	For $n = 0 To UBound($aListActions) - 1
+		Local $sAction = $aListActions[$n]
+		Local $aOrder = GetSwapOrder($sAction)
+		Local $aListTasks[1][UBound($aOrder + 1)] = [[]]
 
 		For $i = 1 To $aNodes[0]
 			Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
-
-			_ArrayAdd($aAllToolsList, $sToolName)
-
 			Local $aActions = _XMLSelectNodes("/tools/tool[" & $i & "]/*")
 
 			For $c = 1 To $aActions[0]
-				Local $type = $aActions[$c]
-				
-				If $type = $sAction Then
+				Local $sType = $aActions[$c]
+
+				If $sType = $sAction Then
 					Local $aName[1], $aValue[1]
 					_XMLGetAllAttrib("/tools/tool[" & $i & "]/*[" & $c & "]", $aName, $aValue)
 					Local $aCurrentTask = Swap($sToolName, $aName, $aValue, $aOrder)
@@ -105,7 +107,7 @@ Func RunRemoveTools($bRetry = False)
 				EndIf
 			Next
 		Next
-		
+
 		Switch $sAction
 			Case "process"
 				RemoveAllProcess($aListTasks)
@@ -140,7 +142,7 @@ Func RunRemoveTools($bRetry = False)
 			Case "cleanDirectory"
 				CleanDirectoryContent($aListTasks)
 		EndSwitch
-			ProgressBarUpdate()
+		ProgressBarUpdate()
 	Next
 
 	If $bRetry = True Then
