@@ -78,7 +78,7 @@ Func RunRemoveTools($bRetry = False)
 			"desktop", _
 			"desktopCommon", _
 			"download", _
-			"programFile", _
+			"programFiles", _
 			"homeDrive", _
 			"appData", _
 			"appDataCommon", _
@@ -126,7 +126,7 @@ Func RunRemoveTools($bRetry = False)
 				RemoveAllFileFrom(@DesktopCommonDir, $aListTasks)
 			Case "download"
 				RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $aListTasks)
-			Case "programFile"
+			Case "programFiles"
 				RemoveAllProgramFilesDir($aListTasks)
 			Case "homeDrive"
 				RemoveAllFileFrom(@HomeDrive, $aListTasks)
