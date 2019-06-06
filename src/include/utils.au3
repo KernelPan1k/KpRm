@@ -142,7 +142,7 @@ Func TasksExist($task)
 EndFunc   ;==>TasksExist
 
 Func GetProgramFilesList()
-	Local $aProgramFilesList = []
+	Local $aProgramFilesList[0]
 
 	If FileExists(@HomeDrive & "\Program Files") Then
 		_ArrayAdd($aProgramFilesList, @HomeDrive & "\Program Files")

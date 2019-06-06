@@ -6,10 +6,10 @@ Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "pro
 Local $s = _XMLFileOpen(@TempDir & "\kprm-tools.xml")
 
 Func GetSwapOrder($sT)
-	If _ArraySearch($aActionsFile, $sT) Then
+	If _ArraySearch($aActionsFile, $sT) <> -1 Then
 		Local $aOrder[4] = ["type", "companyName", "pattern", "force"]
 		Return $aOrder
-	ElseIf $sT = "uninstal" Then
+	ElseIf $sT = "uninstall" Then
 		Local $aOrder[2] = ["folder", "binary"]
 		Return $aOrder
 	ElseIf $sT = "task" Then
@@ -17,6 +17,9 @@ Func GetSwapOrder($sT)
 		Return $aOrder
 	ElseIf $sT = "softwareKey" Then
 		Local $aOrder[1] = ["pattern"]
+		Return $aOrder
+	ElseIf $sT = "process" Then
+		Local $aOrder[2] = ["process", "force"]
 		Return $aOrder
 	ElseIf $sT = "registryKey" Then
 		Local $aOrder[2] = ["key", "force"]
@@ -31,17 +34,19 @@ Func GetSwapOrder($sT)
 EndFunc   ;==>GetSwapOrder
 
 Func Swap($sTn, $aK, $aV, $aOrder)
-	Local $aResult[1] = [$sTn]
+	Local $sData = $sTn & "~~"
 
 	For $i = 0 To UBound($aOrder) - 1
 		For $c = 0 To UBound($aK) - 1
 			If $aOrder[$i] = $aK[$c] Then
-				_ArrayAdd($aResult, $aV[$c], 0, "£")
+				$sData &= $aV[$c] & "~~"
 			EndIf
 		Next
 	Next
 
-	Return $aResult
+	$sData = StringTrimRight($sData, 2)
+
+	Return $sData
 EndFunc   ;==>Swap
 
 Local $aNodes = _XMLSelectNodes("/tools/tool")
@@ -90,7 +95,7 @@ Func RunRemoveTools($bRetry = False)
 	For $n = 0 To UBound($aListActions) - 1
 		Local $sAction = $aListActions[$n]
 		Local $aOrder = GetSwapOrder($sAction)
-		Local $aListTasks[1][UBound($aOrder + 1)] = [[]]
+		Local $aListTasks[0][UBound($aOrder) + 1]
 
 		For $i = 1 To $aNodes[0]
 			Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
@@ -102,8 +107,8 @@ Func RunRemoveTools($bRetry = False)
 				If $sType = $sAction Then
 					Local $aName[1], $aValue[1]
 					_XMLGetAllAttrib("/tools/tool[" & $i & "]/*[" & $c & "]", $aName, $aValue)
-					Local $aCurrentTask = Swap($sToolName, $aName, $aValue, $aOrder)
-					_ArrayAdd($aListTasks, $aCurrentTask)
+					Local $sCurrentTask = Swap($sToolName, $aName, $aValue, $aOrder)
+					_ArrayAdd($aListTasks, $sCurrentTask, 0, "~~")
 				EndIf
 			Next
 		Next
