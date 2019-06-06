@@ -112,7 +112,7 @@ Func RemoveFileHandler($sPathOfFile, $aElements)
 	Local $aPathSplit = _PathSplit($sPathOfFile, $sDrive, $sDir, $sFileName, $sExtension)
 	Local $sFile = $sFileName & $sExtension
 
-	For $e = 1 To UBound($aElements) - 1
+	For $e = 0 To UBound($aElements) - 1
 		If $aElements[$e][3] And $sTypeOfFile = $aElements[$e][1] And StringRegExp($sFile, $aElements[$e][3]) Then
 			Local $iStatus = 0
 			Local $bForce = False
@@ -214,7 +214,7 @@ Func RemoveAllProcess($aList)
 		Local $sProcessName = $aProcessList[$i][0]
 		Local $iPid = $aProcessList[$i][1]
 
-		For $iCpt = 1 To UBound($aList) - 1
+		For $iCpt = 0 To UBound($aList) - 1
 			If StringRegExp($sProcessName, $aList[$iCpt][1]) Then
 				CloseProcessAndWait($iPid, $aList[$iCpt][2])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
@@ -224,7 +224,7 @@ Func RemoveAllProcess($aList)
 EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($aList)
-	For $i = 1 To UBound($aList) - 1
+	For $i = 0 To UBound($aList) - 1
 		RunWait('schtasks.exe /delete /tn "' & $aList[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
@@ -232,8 +232,8 @@ EndFunc   ;==>RemoveScheduleTask
 Func UninstallNormally($aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
-	For $i = 1 To UBound($aProgramFilesList) - 1
-		For $c = 1 To UBound($aList) - 1
+	For $i = 0 To UBound($aProgramFilesList) - 1
+		For $c = 0 To UBound($aList) - 1
 			Local $sFolderReg = $aList[$c][1]
 			Local $sFileReg = $aList[$c][2]
 
@@ -256,7 +256,7 @@ EndFunc   ;==>UninstallNormally
 Func RemoveAllProgramFilesDir($aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
-	For $i = 1 To UBound($aProgramFilesList) - 1
+	For $i = 0 To UBound($aProgramFilesList) - 1
 		RemoveAllFileFrom($aProgramFilesList[$i], $aList)
 	Next
 EndFunc   ;==>RemoveAllProgramFilesDir
@@ -274,7 +274,7 @@ Func RemoveAllSoftwareKeyList($aList)
 
 			If @error <> 0 Then ExitLoop
 
-			For $c = 1 To UBound($aList) - 1
+			For $c = 0 To UBound($aList) - 1
 				If $sEntry And $aList[$c][1] Then
 					If StringRegExp($sEntry, $aList[$c][1]) Then
 						Local $sKeyFound = $aKeys[$k] & "\" & $sEntry
@@ -297,13 +297,13 @@ Func RemoveUninstallStringWithSearch($aList)
 EndFunc   ;==>RemoveUninstallStringWithSearch
 
 Func RemoveAllRegistryKeys($aList)
-	For $i = 1 To UBound($aList) - 1
+	For $i = 0 To UBound($aList) - 1
 		RemoveRegistryKey($aList[$i][1], $aList[$i][0], $aList[$i][2])
 	Next
 EndFunc   ;==>RemoveAllRegistryKeys
 
 Func CleanDirectoryContent($aList)
-	For $i = 1 To UBound($aList) - 1
+	For $i = 0 To UBound($aList) - 1
 		If FileExists($aList[$i][1]) Then
 			Local $aFileList = _FileListToArray($aList[$i][1])
 
