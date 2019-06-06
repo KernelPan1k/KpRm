@@ -333,7 +333,7 @@
       <process force="False" process="(?i)^Adlice Diag" />
       <process force="False" process="(?i)^Diag(32|64)?\.exe$" />
       <searchRegistryKey key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Diag version" value="DisplayName" />
-      <programFile companyName="Null" force="True" pattern="(?i)^Diag$" type="folder" />
+      <programFiles companyName="Null" force="True" pattern="(?i)^Diag$" type="folder" />
       <appDataCommon companyName="Null" force="True" pattern="(?i)^ADiag$" type="folder" />
       <desktop companyName="Null" force="False" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
       <desktop companyName="Null" force="False" pattern="(?i)^Diag\.lnk$" type="file" />
@@ -427,7 +427,7 @@
       <softwareKey pattern="(?i)^UsbFix" />
       <homeDrive companyName="Null" force="True" pattern="(?i)^UsbFixQuarantine$" type="folder" />
       <homeDrive companyName="Null" force="False" pattern="(?i)^UsbFix" type="folder" />
-      <programFile companyName="Null" force="False" pattern="(?i)^UsbFix" type="folder" />
+      <programFiles companyName="Null" force="False" pattern="(?i)^UsbFix" type="folder" />
    </tool>
    <tool name="Pre_Scan">
       <process force="False" process="(?i)^Pre_Scan.*\.exe$" />
@@ -568,7 +568,7 @@
       <uninstall binary="(?i)^Un-SEAF\.exe$" folder="$folderPattern" />
       <registryKey force="False" key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF" />
       <homeDrive companyName="Null" force="False" pattern="(?i)^SeafLog.*\.txt$" type="file" />
-      <programFile companyName="Null" force="True" pattern="$folderPattern" type="folder" />
+      <programFiles companyName="Null" force="True" pattern="$folderPattern" type="folder" />
    </tool>
    <tool name="GooredFix">
       <process force="False" process="(?i)^GooredFix.*\.exe$" />
@@ -589,7 +589,7 @@
       <process force="False" process="(?i)^RogueKiller.*\.exe$" />
       <task name="RogueKiller Anti-Malware" />
       <searchRegistryKey key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^RogueKiller" value="DisplayName" />
-      <programFile companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <programFiles companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
       <appDataCommon companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
       <desktop companyName="Null" force="False" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
       <desktop companyName="$patternDescription" force="False" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
