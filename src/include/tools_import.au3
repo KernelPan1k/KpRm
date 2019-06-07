@@ -1,7 +1,7 @@
 #include "tools_remove.au3"
 
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
-Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "appDataCommonStartMenuFolder"]
+Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "startMenu"]
 
 Local $s = _XMLFileOpen(@TempDir & "\kprm-tools.xml")
 
@@ -87,7 +87,7 @@ Func RunRemoveTools($bRetry = False)
 			"softwareKey", _
 			"registryKey", _
 			"searchRegistryKey", _
-			"appDataCommonStartMenuFolder", _
+			"startMenu", _
 			"cleanDirectory"]
 
 	Local $aNodes = _XMLSelectNodes("/tools/tool")
@@ -142,7 +142,7 @@ Func RunRemoveTools($bRetry = False)
 				RemoveAllRegistryKeys($aListTasks)
 			Case "searchRegistryKey"
 				RemoveUninstallStringWithSearch($aListTasks)
-			Case "appDataCommonStartMenuFolder"
+			Case "startMenu"
 				RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
 			Case "cleanDirectory"
 				CleanDirectoryContent($aListTasks)
