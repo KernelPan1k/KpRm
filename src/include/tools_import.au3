@@ -10,7 +10,7 @@ Func GetSwapOrder($sT)
 		Local $aOrder[4] = ["type", "companyName", "pattern", "force"]
 		Return $aOrder
 	ElseIf $sT = "uninstall" Then
-		Local $aOrder[2] = ["folder", "binary"]
+		Local $aOrder[2] = ["folder", "uninstaller"]
 		Return $aOrder
 	ElseIf $sT = "task" Then
 		Local $aOrder[1] = ["name"]

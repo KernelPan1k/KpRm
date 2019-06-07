@@ -117,10 +117,6 @@ Func RemoveFileHandler($sPathOfFile, $aElements)
 			Local $iStatus = 0
 			Local $bForce = False
 
-			If $aElements[$e][4] = True Then
-				$bForce = True
-			EndIf
-
 			If $sTypeOfFile = 'file' Then
 				$iStatus = RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2], $bForce)
 			ElseIf $sTypeOfFile = 'folder' Then
@@ -288,7 +284,8 @@ EndFunc   ;==>RemoveAllSoftwareKeyList
 
 Func RemoveUninstallStringWithSearch($aList)
 	For $i = 1 To UBound($aList) - 1
-		Local $sKeyFound = SearchRegistryKeyStrings($aList[$i][1], $aList[$i][2], $aList[$i][3])
+		Local $sKey = FormatForUseRegistryKey($aList[$i][1])
+		Local $sKeyFound = SearchRegistryKeyStrings($sKey, $aList[$i][2], $aList[$i][3])
 
 		If $sKeyFound And $sKeyFound <> "" Then
 			RemoveRegistryKey($sKeyFound, $aList[$i][0])
@@ -298,18 +295,21 @@ EndFunc   ;==>RemoveUninstallStringWithSearch
 
 Func RemoveAllRegistryKeys($aList)
 	For $i = 0 To UBound($aList) - 1
-		RemoveRegistryKey($aList[$i][1], $aList[$i][0], $aList[$i][2])
+		Local $sKey = FormatForUseRegistryKey($aList[$i][1])
+		RemoveRegistryKey($sKey, $aList[$i][0], $aList[$i][2])
 	Next
 EndFunc   ;==>RemoveAllRegistryKeys
 
 Func CleanDirectoryContent($aList)
 	For $i = 0 To UBound($aList) - 1
-		If FileExists($aList[$i][1]) Then
-			Local $aFileList = _FileListToArray($aList[$i][1])
+		Local $sPath = FormatPathWithMacro($aList[$i][1])
+
+		If FileExists($sPath) Then
+			Local $aFileList = _FileListToArray($sPath)
 
 			If @error = 0 Then
 				For $f = 1 To $aFileList[0]
-					RemoveFile($aList[$i][1] & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
+					RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
 				Next
 			EndIf
 		EndIf
