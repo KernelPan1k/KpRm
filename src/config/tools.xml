@@ -2,38 +2,38 @@
 <tools>
    <tool name="GibonDecrypter">
       <process force="False" process="(?i)^GibonDecrypter.*\.exe$" />
-      <appDataCommonStartMenuFolder companyName="Null" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
+      <appDataCommonStartMenuFolder companyName="" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^GibonDecrypter$" type="folder" />
    </tool>
    <tool name="FRST">
       <process force="False" process="(?i)^FRST.*\.exe$" />
       <desktop companyName="(?i)^Farbar" force="False" pattern="(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^FRST-OlderVersion$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^FRST-OlderVersion$" type="folder" />
       <download companyName="(?i)^Farbar" force="False" pattern="(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^FRST-OlderVersion$" type="folder" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^FRST" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^FRST-OlderVersion$" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^FRST" type="folder" />
    </tool>
    <tool name="Check Browsers LNK">
       <process force="False" process="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file" />
    </tool>
    <tool name="BlitzBlank">
       <process force="False" process="(?i)^BlitzBlank.*\.exe$" />
       <desktop companyName="(?i)^Emsi" force="False" pattern="(?i)^BlitzBlank.*\.exe$" type="file" />
       <download companyName="(?i)^Emsi" force="False" pattern="(?i)^BlitzBlank.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^BlitzBlank.*\.log$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^BlitzBlank.*\.log$" type="file" />
    </tool>
    <tool name="TDSSKiller">
       <process force="True" process="(?i)^tdsskiller.*\.exe$" />
       <desktop companyName="(?i)^.*Kaspersky" force="False" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^TDSSKiller" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^TDSSKiller" type="folder" />
       <download companyName="(?i)^.*Kaspersky" force="False" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^TDSSKiller" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^TDSSKiller" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^TDSSKiller" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^TDSSKiller" type="folder" />
    </tool>
    <tool name="Malwarebytes Anti-Rootkit">
       <process force="True" process="(?i)^mbar.*\.exe$" />
@@ -42,7 +42,7 @@
       <download companyName="(?i)^Malwarebytes" force="False" pattern="(?i)^mbar.*\.exe$" type="file" />
       <download companyName="(?i)^Malwarebytes Anti-Rootkit$" force="False" pattern="(?i)^mbar" type="folder" />
       <softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$" />
-      <cleanDirectory companyName="Null" force="True" path="@AppDataCommonDir &amp; \Malwarebytes\Malwarebytes Anti-Malware\Quarantine" />
+      <cleanDirectory companyName="" force="True" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine" />
    </tool>
    <tool name="ProcessClose">
       <process force="False" process="(?i)^processclose.*\.exe$" />
@@ -51,91 +51,91 @@
    </tool>
    <tool name="ZHPCleaner">
       <process force="False" process="(?i)^ZHPCleaner.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file" />
    </tool>
    <tool name="BitStakDecrypter">
       <process force="False" process="(?i)^BitStakDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BitStakDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^BitStakDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^BitStakDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^BitStakDecrypter$" type="folder" />
    </tool>
    <tool name="ZHPDiag">
       <process force="False" process="(?i)^ZHPDiag.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
-      <desktopCommon companyName="Null" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^PhysicalDisk[0-9]_MBR\.bin$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
+      <desktopCommon companyName="" force="False" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^PhysicalDisk[0-9]_MBR\.bin$" type="file" />
    </tool>
    <tool name="InsaneCryptDecrypter">
       <process force="False" process="(?i)^InsaneCryptDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^InsaneCryptDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^InsaneCryptDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^InsaneCryptDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^InsaneCryptDecrypter$" type="folder" />
    </tool>
    <tool name="WinUpdatefix">
       <process force="False" process="(?i)^winupdatefix.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^winupdatefix.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^winupdatefix.*\.txt$" type="file" />
    </tool>
    <tool name="StrikedDecrypter">
       <process force="False" process="(?i)^StrikedDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^StrikedDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^StrikedDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^StrikedDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^StrikedDecrypter$" type="folder" />
    </tool>
    <tool name="Catchme">
       <process force="False" process="(?i)^catchme.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file" />
    </tool>
    <tool name="FixPurge">
       <process force="False" process="(?i)^Fix\-Purge.*\.exe$" />
       <desktop companyName="(?i)^Hacker Tool" force="False" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file" />
       <desktopCommon companyName="(?i)^Hacker Tool" force="False" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file" />
       <download companyName="(?i)^Hacker Tool" force="False" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^Fix\-Purge$" type="folder" />
-      <searchRegistryKey key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName" />
-      <startMenu companyName="Null" force="True" pattern="(?i)^Fix\-Purge$" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^Fix\-Purge$" type="folder" />
+      <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName" />
+      <startMenu companyName="" force="True" pattern="(?i)^Fix\-Purge$" type="folder" />
    </tool>
    <tool name="Crypt38Decrypter">
       <process force="False" process="(?i)^Crypt38Decrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder" />
    </tool>
    <tool name="Systemlook">
       <process force="False" process="(?i)^SystemLook.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file" />
    </tool>
    <tool name="MiniregTool">
       <process force="False" process="(?i)^MiniRegTool.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Result\.txt$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MiniRegTool" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Result\.txt$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^MiniRegTool" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Result\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^MiniRegTool" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Result\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^MiniRegTool" type="folder" />
    </tool>
    <tool name="JigSawDecrypter">
       <process force="False" process="(?i)^JigsawDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^JigsawDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^JigsawDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^JigsawDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^JigsawDecrypter$" type="folder" />
    </tool>
    <tool name="StupidDecrypter">
       <process force="False" process="(?i)^StupidDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^StupidDecrypter.*$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^StupidDecrypter.*$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^StupidDecrypter.*$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^StupidDecrypter.*$" type="folder" />
    </tool>
    <tool name="Decrypt CryptON">
       <process force="False" process="(?i)^decrypt_CryptON.*\.exe" />
@@ -145,26 +145,26 @@
    <tool name="AswMBR">
       <process force="True" process="(?i)^aswmbr.*\.exe$" />
       <desktop companyName="(?i)^avast" force="False" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MBR\.dat$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^MBR\.dat$" type="file" />
       <download companyName="(?i)^avast" force="False" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^MBR\.dat$" type="file" />
-      <registryKey force="True" key="HKLM &amp; $s64Bit &amp; \SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR" />
+      <download companyName="" force="False" pattern="(?i)^MBR\.dat$" type="file" />
+      <registryKey force="True" key="HKLM\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR" />
    </tool>
    <tool name="Avenger">
       <process force="False" process="(?i)^avenger.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^avenger.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^avenger" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^avenger.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^avenger" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^avenger" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^avenger.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^avenger.*\.(exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^avenger" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^avenger.*\.(exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^avenger" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^avenger" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^avenger.*\.txt$" type="file" />
    </tool>
    <tool name="PowerLockyDecrypter">
       <process force="False" process="(?i)^PowerLockyDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^PowerLockyDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^PowerLockyDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^PowerLockyDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^PowerLockyDecrypter$" type="folder" />
    </tool>
    <tool name="FSS">
       <process force="False" process="(?i)^FSS.*\.exe$" />
@@ -173,37 +173,37 @@
    </tool>
    <tool name="Combofix">
       <desktop companyName="(?i)^Swearware" force="False" pattern="(?i)^Combofix.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^CFScript\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^CFScript\.txt$" type="file" />
       <download companyName="(?i)^Swearware" force="False" pattern="(?i)^Combofix.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^CFScript\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^Qoobox$" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^Combofix.*\.txt$" type="file" />
-      <windowsFolder companyName="Null" force="True" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^CFScript\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^Qoobox$" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^Combofix.*\.txt$" type="file" />
+      <windowsFolder companyName="" force="True" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file" />
       <softwareKey pattern="(?i)^Swearware$" />
       <process force="True" process="(?i)^Combofix.*\.exe$" />
-      <registryKey force="False" key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe" />
+      <registryKey force="False" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe" />
    </tool>
    <tool name="RstHosts">
       <process force="False" process="(?i)^rsthosts.*\.exe$" />
-      <desktop companyName="Null" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
-      <download companyName="Null" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="Null" pattern="(?i)^RstHosts.*\.txt$" type="file" />
+      <desktop companyName="" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
+      <download companyName="" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
+      <homeDrive companyName="" force="Null" pattern="(?i)^RstHosts.*\.txt$" type="file" />
    </tool>
    <tool name="Grantperms">
       <process force="False" process="(?i)^GrantPerms.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Perms\.txt$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GrantPerms" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Perms\.txt$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^GrantPerms" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Perms\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^GrantPerms" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Perms\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^GrantPerms" type="folder" />
    </tool>
    <tool name="BitKangarooDecrypter">
       <process force="False" process="(?i)^BitKangarooDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BitKangarooDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^BitKangarooDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^BitKangarooDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^BitKangarooDecrypter$" type="folder" />
    </tool>
    <tool name="FixExec">
       <process force="False" process="(?i)^FixExec.*\.(exe|com)$" />
@@ -213,60 +213,60 @@
    <tool name="JavaRa">
       <process force="False" process="(?i)^Javara.*\.exe$" />
       <desktop companyName="(?i)^The RaProducts Team" force="False" pattern="(?i)^Javara.*\.(zip|exe)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Javara" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^Javara" type="folder" />
       <download companyName="(?i)^The RaProducts Team" force="False" pattern="(?i)^Javara.*\.(zip|exe)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Javara" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^Javara.*\.log$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Javara" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^Javara.*\.log$" type="file" />
    </tool>
    <tool name="RansomNoteCleaner">
       <process force="False" process="(?i)^RansomNoteCleaner.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RansomNoteCleaner$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^RansomNoteCleaner$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^RansomNoteCleaner$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^RansomNoteCleaner$" type="folder" />
    </tool>
    <tool name="ToolsDiag">
       <process force="False" process="(?i)^toolsdiag.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^ToolsDiag$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^ToolsDiag$" type="folder" />
    </tool>
    <tool name="AlphaDecrypter">
       <process force="False" process="(?i)^AlphaDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^AlphaDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^AlphaDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^AlphaDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^AlphaDecrypter$" type="folder" />
    </tool>
    <tool name="Rannoh Decryptor">
       <process force="False" process="(?i)^RannohDecryptor.*\.exe" />
       <desktop companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
       <download companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
       <homeDrive companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^RannohDecryptor" type="folder" />
    </tool>
    <tool name="ZHPFix">
       <process force="False" process="(?i)^ZHPFix.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file" />
    </tool>
    <tool name="FilesLockerDecrypter">
       <process force="False" process="(?i)^FilesLockerDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^FilesLockerDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^FilesLockerDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^FilesLockerDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^FilesLockerDecrypter$" type="folder" />
    </tool>
    <tool name="QuickDiag">
       <process force="False" process="(?i)^QuickDiag.*\.exe$" />
       <desktop companyName="(?i)^SosVirus" force="True" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file" />
-      <desktop companyName="Null" force="True" pattern="(?i)^QuickScript.*\.txt$" type="file" />
+      <desktop companyName="" force="True" pattern="(?i)^QuickScript.*\.txt$" type="file" />
       <download companyName="(?i)^SosVirus" force="True" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file" />
-      <download companyName="Null" force="True" pattern="(?i)^QuickScript.*\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^QuickDiag.*\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^QuickDiag" type="folder" />
+      <download companyName="" force="True" pattern="(?i)^QuickScript.*\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^QuickDiag.*\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^QuickDiag" type="folder" />
    </tool>
    <tool name="UnHide">
       <process force="False" process="(?i)^unhide.*\.exe$" />
@@ -275,10 +275,10 @@
    </tool>
    <tool name="DCryDecrypter">
       <process force="False" process="(?i)^DCryDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^DCryDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^DCryDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^DCryDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^DCryDecrypter$" type="folder" />
    </tool>
    <tool name="Avast Decryptor Cryptomix">
       <process force="False" process="(?i)^avast_decryptor_cryptomix.*\.exe$" />
@@ -287,15 +287,15 @@
    </tool>
    <tool name="RogueKillerCMD">
       <process force="False" process="(?i)^RogueKillerCMD.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
    </tool>
    <tool name="BTCWareDecrypter">
       <process force="False" process="(?i)^BTCWareDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^BTCWareDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^BTCWareDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^BTCWareDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^BTCWareDecrypter$" type="folder" />
    </tool>
    <tool name="Symantec Kovter Removal Tool">
       <process force="False" process="(?i)^FixTool.*\.exe$" />
@@ -306,72 +306,73 @@
       <process force="False" process="(?i)^AdwCleaner.*\.exe$" />
       <desktop companyName="(?i)^Malwarebytes" force="False" pattern="(?i)^AdwCleaner.*\.exe$" type="file" />
       <download companyName="(?i)^Malwarebytes" force="False" pattern="(?i)^AdwCleaner.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^AdwCleaner" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^AdwCleaner" type="folder" />
    </tool>
    <tool name="CKScanner">
       <process force="False" process="(?i)^CKScanner.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^CKScanner.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^CKfiles.*\.txt$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^CKScanner.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^CKfiles.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^CKScanner.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^CKfiles.*\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^CKScanner.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^CKfiles.*\.txt$" type="file" />
    </tool>
    <tool name="ESET Online Scanner">
       <process force="False" process="(?i)^esetonlinescanner.*\.exe$" />
       <desktop companyName="(?i)^ESET" force="False" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^log.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^log.*\.txt$" type="file" />
       <download companyName="(?i)^ESET" force="False" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^log.*\.txt$" type="file" />
-      <appData companyName="Null" force="True" pattern="(?i)^ESET$" type="folder" />
-      <registryKey force="False" key="HKLM &amp; $s64Bit &amp; \SOFTWARE\ESET\ESET Online Scanner" />
+      <download companyName="" force="False" pattern="(?i)^log.*\.txt$" type="file" />
+      <appDataLocal companyName="" force="True" pattern="(?i)^ESET$" type="folder" />
+      <registryKey force="False" key="HKLM\SOFTWARE\ESET\ESET Online Scanner" />
    </tool>
    <tool name="AHK_NavScan">
       <process force="False" process="(?i)^AHK_NavScan.*\.exe" />
-      <desktop companyName="Null" force="False" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file" />
+      <download companyName="" force="False" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file" />
    </tool>
    <tool name="AdliceDiag">
       <process force="False" process="(?i)^Adlice Diag" />
       <process force="False" process="(?i)^Diag(32|64)?\.exe$" />
-      <searchRegistryKey key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Diag version" value="DisplayName" />
-      <programFiles companyName="Null" force="True" pattern="(?i)^Diag$" type="folder" />
-      <appDataCommon companyName="Null" force="True" pattern="(?i)^ADiag$" type="folder" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Diag\.lnk$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Diag_setup\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Diag_setup\.exe$" type="file" />
-      <desktopCommon companyName="Null" force="False" pattern="(?i)^Diag\.lnk$" type="file" />
-      <startMenu companyName="Null" force="True" pattern="(?i)^Diag$" type="folder" />
+      <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Diag version" value="DisplayName" />
+      <programFiles companyName="" force="True" pattern="(?i)^Diag$" type="folder" />
+      <appDataCommon companyName="" force="True" pattern="(?i)^ADiag$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Diag\.lnk$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Diag_setup\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Diag_setup\.exe$" type="file" />
+      <desktopCommon companyName="" force="False" pattern="(?i)^Diag\.lnk$" type="file" />
+      <startMenu companyName="" force="True" pattern="(?i)^Diag$" type="folder" />
+      <appDataCommonStartMenuFolder companyName="" force="True" pattern="(?i)^Diag$" type="folder" />
    </tool>
    <tool name="Defogger">
       <process force="False" process="(?i)^defogger.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^defogger.*\.(log|exe)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^defogger.*\.(log|exe)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^defogger.*\.(log|exe)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^defogger.*\.(log|exe)$" type="file" />
    </tool>
    <tool name="AuroraDecrypter">
       <process force="False" process="(?i)^AuroraDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^AuroraDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^AuroraDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^AuroraDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^AuroraDecrypter$" type="folder" />
    </tool>
    <tool name="UnZacMe">
       <process force="False" process="(?i)^UnZacMe.*\.exe$" />
       <desktop companyName="(?i)^SosVirus" force="False" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file" />
       <download companyName="(?i)^SosVirus" force="False" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^UnZacMe.*\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^UnZacMe$" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^UnZacMe.*\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^UnZacMe$" type="folder" />
    </tool>
    <tool name="SFT">
       <process force="False" process="(?i)^SFT.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
    </tool>
    <tool name="RstAssociations">
       <process force="False" process="(?i)^rstassociations.*\.(exe|scr)$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^RstAssociations.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^RstAssociations.*\.txt$" type="file" />
    </tool>
    <tool name="Clean_DNS">
       <process force="False" process="(?i)^clean(-|_)dns.*\.exe$" />
@@ -381,28 +382,28 @@
    </tool>
    <tool name="Unlock92Decrypter">
       <process force="False" process="(?i)^Unlock92Decrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Unlock92Decrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Unlock92Decrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Unlock92Decrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Unlock92Decrypter$" type="folder" />
    </tool>
    <tool name="AdsFix">
       <process force="False" process="(?i)^AdsFix.*\.exe$" />
       <desktop companyName="(?i)^SosVirus" force="False" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file" />
       <desktopCommon companyName="(?i)^SosVirus" force="False" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file" />
       <download companyName="(?i)^SosVirus" force="False" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^AdsFix.*\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^AdsFix" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^AdsFix.*\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^AdsFix" type="folder" />
       <softwareKey pattern="(?i)^AdsFix" />
    </tool>
    <tool name="Rakhni Decryptor">
       <process force="False" process="(?i)^RakhniDecryptor.*\.exe" />
       <desktop companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
       <download companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
       <homeDrive companyName="(?i)^Kaspersky" force="False" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^RakhniDecryptor" type="folder" />
    </tool>
    <tool name="Junkware Removal Tool">
       <process force="False" process="(?i)^JRT.*\.exe" />
@@ -411,99 +412,99 @@
    </tool>
    <tool name="GhostCryptDecrypter">
       <process force="False" process="(?i)^GhostCryptDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GhostCryptDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^GhostCryptDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^GhostCryptDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^GhostCryptDecrypter$" type="folder" />
    </tool>
    <tool name="USBFix">
       <process force="False" process="(?i)^UsbFix.*\.exe$" />
-      <uninstall binary="(?i)^Un-UsbFix\.exe$" folder="(?i)^UsbFix" />
+      <uninstall uninstaller="(?i)^Un-UsbFix\.exe$" folder="(?i)^UsbFix" />
       <desktop companyName="(?i)^SosVirus" force="False" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file" />
       <desktopCommon companyName="(?i)^SosVirus" force="False" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file" />
       <download companyName="(?i)^SosVirus" force="False" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file" />
       <softwareKey pattern="(?i)^UsbFix" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^UsbFixQuarantine$" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^UsbFix" type="folder" />
-      <programFiles companyName="Null" force="False" pattern="(?i)^UsbFix" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^UsbFixQuarantine$" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^UsbFix" type="folder" />
+      <programFiles companyName="" force="False" pattern="(?i)^UsbFix" type="folder" />
    </tool>
    <tool name="Pre_Scan">
       <process force="False" process="(?i)^Pre_Scan.*\.exe$" />
       <desktop companyName="(?i)^SosVirus" force="False" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk)$" type="file" />
       <download companyName="(?i)^SosVirus" force="False" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk)$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^Pre_Scan.*\.txt$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^pre_scan$" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^Pre_Scan.*\.txt$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^pre_scan$" type="folder" />
    </tool>
    <tool name="Minitoolbox">
       <process force="False" process="(?i)^MiniToolBox.*\.exe$" />
       <desktop companyName="(?i)^Farbar" force="False" pattern="(?i)^MiniToolBox.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MTB\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^MTB\.txt$" type="file" />
       <download companyName="(?i)^Farbar" force="False" pattern="(?i)^MiniToolBox.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^MTB\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^MTB\.txt$" type="file" />
    </tool>
    <tool name="MirCopDecrypter">
       <process force="False" process="(?i)^MirCopDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^MirCopDecrypter$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^MirCopDecrypter$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^MirCopDecrypter$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^MirCopDecrypter$" type="folder" />
    </tool>
    <tool name="Remediate VBS Worm">
       <process force="False" process="(?i)^remediate.?vbs.?worm.*\.exe$" />
       <process force="False" process="(?i)^Rem-VBSworm.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^Rem-VBS.*\.log$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^Rem-VBS.*\.log$" type="file" />
       <homeDrive companyName="(?i).*VBS autorun worms.*" force="True" pattern="(?i)^Rem-VBS" type="folder" />
    </tool>
    <tool name="RegtoolExport">
       <process force="False" process="(?i)^regtoolexport.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^regtoolexport.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Export.*\.reg$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^regtoolexport.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Export.*\.reg$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^regtoolexport.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Export.*\.reg$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^regtoolexport.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Export.*\.reg$" type="file" />
    </tool>
    <tool name="DDS">
       <process force="False" process="(?i)^dds.*\.com$" />
       <desktop companyName="(?i)^Swearware" force="False" pattern="(?i)^dds.*\.com$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^(dds|attach).*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^(dds|attach).*\.txt$" type="file" />
       <download companyName="(?i)^Swearware" force="False" pattern="(?i)^dds.*\.com$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^(dds|attach).*\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^(dds|attach).*\.txt$" type="file" />
    </tool>
    <tool name="ClearLNK">
       <process force="False" process="(?i)^clearlnk.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file" />
    </tool>
    <tool name="GetSystemInfo">
       <process force="False" process="(?i)^GetSystemInfo.*\.exe$" />
       <desktop companyName="(?i)^.*Kaspersky" force="False" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GetSystemInfo.*$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^GetSystemInfo.*$" type="folder" />
       <download companyName="(?i)^.*Kaspersky" force="False" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^GetSystemInfo.*$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^GetSystemInfo.*$" type="folder" />
    </tool>
    <tool name="CryptoSearch">
       <process force="False" process="(?i)^CryptoSearch.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
    </tool>
    <tool name="ZHPLite">
       <process force="False" process="(?i)^ZHPLite.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file" />
    </tool>
    <tool name="Rkill">
       <process force="False" process="(?i)^(rkill|iExplore)\.exe$" />
       <desktop companyName="(?i)^Bleeping Computer" force="True" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^rkill$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^rkill$" type="folder" />
       <download companyName="(?i)^Bleeping Computer" force="True" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^rkill$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^rkill$" type="folder" />
    </tool>
    <tool name="Shortcut Cleaner">
       <process force="False" process="(?i)^sc-cleaner.*\.exe$" />
@@ -517,44 +518,44 @@
       <process force="False" process="(?i)^usb-file-resc.*\.exe$" />
       <desktop companyName="(?i)^Streuner" force="False" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
       <download companyName="(?i)^Streuner" force="False" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^USB File Resc$" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^USB File Resc$" type="folder" />
    </tool>
    <tool name="LogonFix">
       <process force="False" process="(?i)^logonfix.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^logonfix.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^logonfix.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^LogonFix.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^logonfix.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^logonfix.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^LogonFix.*\.txt$" type="file" />
    </tool>
    <tool name="WinCHK">
       <process force="False" process="(?i)^winchk.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^winchk.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^winchk.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^WinChk.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^winchk.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^winchk.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^WinChk.*\.txt$" type="file" />
    </tool>
    <tool name="OTM">
       <process force="False" process="(?i)^OTM.*\.exe$" />
       <desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTM.*\.exe$" type="file" />
       <download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTM.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^_OTM$" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^_OTM$" type="folder" />
    </tool>
    <tool name="Zoek">
       <process force="False" process="(?i)^zoek.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^zoek.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^zoek.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^zoek.*\.log$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^zoek" type="folder" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^runcheck.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^zoek.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^zoek.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^zoek.*\.log$" type="file" />
+      <homeDrive companyName="" force="True" pattern="(?i)^zoek" type="folder" />
+      <homeDrive companyName="" force="False" pattern="(?i)^runcheck.*\.txt$" type="file" />
    </tool>
    <tool name="Report_CHKDSK">
       <process force="False" process="(?i)^Report_CHKDSK.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RapportCHK.*\.txt$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^RapportCHK.*\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^RapportCHK.*\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^RapportCHK.*\.txt$" type="file" />
    </tool>
    <tool name="Hosts-perm">
-      <desktop companyName="Null" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
    </tool>
    <tool name="CMD_Command">
       <process force="False" process="(?i)^cmd-command.*\.exe$" />
@@ -565,52 +566,53 @@
       <process force="False" process="(?i)^seaf.*\.exe$" />
       <desktop companyName="(?i)^C_XX$" force="False" pattern="(?i)^seaf.*\.exe$" type="file" />
       <download companyName="(?i)^C_XX$" force="False" pattern="(?i)^seaf.*\.exe$" type="file" />
-      <uninstall binary="(?i)^Un-SEAF\.exe$" folder="$folderPattern" />
-      <registryKey force="False" key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^SeafLog.*\.txt$" type="file" />
-      <programFiles companyName="Null" force="True" pattern="$folderPattern" type="folder" />
+      <uninstall uninstaller="(?i)^Un-SEAF\.exe$" folder="$folderPattern" />
+      <registryKey force="False" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF" />
+      <homeDrive companyName="" force="False" pattern="(?i)^SeafLog.*\.txt$" type="file" />
+      <programFiles companyName="" force="True" pattern="$folderPattern" type="folder" />
    </tool>
    <tool name="GooredFix">
       <process force="False" process="(?i)^GooredFix.*\.exe$" />
       <desktop companyName="(?i)^jpshortstuff$" force="False" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^GooredFix.*" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^GooredFix.*" type="folder" />
       <download companyName="(?i)^jpshortstuff$" force="False" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^GooredFix.*" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^GooredFix.*" type="folder" />
    </tool>
    <tool name="OTL">
       <process force="False" process="(?i)^OTL.*\.exe$" />
       <desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTL.*\.(exe|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Extras\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Extras\.txt$" type="file" />
       <download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTL.*\.(exe|txt)$" type="file" />
-      <homeDrive companyName="Null" force="True" pattern="(?i)^_OTL$" type="folder" />
+      <homeDrive companyName="" force="True" pattern="(?i)^_OTL$" type="folder" />
       <softwareKey pattern="(?i)^OldTimer Tools$" />
    </tool>
    <tool name="RogueKiller">
       <process force="False" process="(?i)^RogueKiller.*\.exe$" />
       <task name="RogueKiller Anti-Malware" />
-      <searchRegistryKey key="HKLM &amp; $s64Bit &amp; \SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^RogueKiller" value="DisplayName" />
-      <programFiles companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
-      <appDataCommon companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
-      <desktop companyName="Null" force="False" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
+      <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^RogueKiller" value="DisplayName" />
+      <programFiles companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <appDataCommon companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <appDataCommonStartMenuFolder companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
       <desktop companyName="$patternDescription" force="False" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
-      <desktop companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
+      <desktop companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
       <download companyName="$patternDescription" force="False" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
-      <download companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <download companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
       <desktopCommon companyName="$patternDescription" force="False" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
-      <startMenu companyName="Null" force="True" pattern="(?i)^RogueKiller" type="folder" />
+      <startMenu companyName="" force="True" pattern="(?i)^RogueKiller" type="folder" />
    </tool>
    <tool name="ListParts">
       <process force="False" process="(?i)^listParts.*\.exe$" />
       <desktop companyName="(?i)^Farbar" force="False" pattern="(?i)^listParts.*\.exe$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^Results\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^Results\.txt$" type="file" />
       <download companyName="(?i)^Farbar" force="False" pattern="(?i)^listParts.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^Results\.txt$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^Results\.txt$" type="file" />
    </tool>
    <tool name="ScanRapide">
-      <desktop companyName="Null" force="False" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
-      <homeDrive companyName="Null" force="False" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
+      <homeDrive companyName="" force="False" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file" />
    </tool>
    <tool name="ListCWall">
       <process force="False" process="(?i)^ListCWall.*\.exe$" />
@@ -619,19 +621,19 @@
    </tool>
    <tool name="HiddenTearDecrypter">
       <process force="False" process="(?i)^HiddenTearDecrypter.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <desktop companyName="Null" force="False" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
-      <download companyName="Null" force="False" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
+      <desktop companyName="" force="False" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
+      <download companyName="" force="False" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
    </tool>
    <tool name="SecurityCheck">
       <process force="False" process="(?i)^SecurityCheck.*\.exe$" />
-      <desktop companyName="Null" force="False" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
-      <download companyName="Null" force="False" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
+      <desktop companyName="" force="False" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
+      <download companyName="" force="False" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
    </tool>
    <tool name="ZHP Tools">
       <softwareKey pattern="(?i)^ZHP$" />
-      <appData companyName="Null" force="True" pattern="(?i)^ZHP$" type="folder" />
+      <appDataLocal companyName="" force="True" pattern="(?i)^ZHP$" type="folder" />
    </tool>
 </tools>
 

@@ -201,13 +201,31 @@ Func GetHumanVersion()
 EndFunc   ;==>GetHumanVersion
 
 Func FormatForDisplayRegistryKey($sPkey)
-	If StringRegExp($sPkey, "^(HKLM|HKCU|HKU|HKCR|HKCC)64") Then
+	If StringRegExp($sPkey, "(?i)^(HKLM|HKCU|HKU|HKCR|HKCC)64") Then
 		Local $sKey = StringReplace($sPkey, "64", "", 1)
 		Return $sKey
 	EndIf
 
 	Return $sPkey
 EndFunc   ;==>FormatForDisplayRegistryKey
+
+Func FormatForUseRegistryKey($sPkey)
+	If StringRegExp($sPkey, "(?i)^(HKLM|HKCU|HKU|HKCR|HKCC)") And @OSArch = "X64" Then
+		Local $aSplit = StringSplit($sPkey, "\", $STR_NOCOUNT)
+		$aSplit[0] = $aSplit[0] & "64"
+		$sPkey = _ArrayToString($aSplit, "\")
+	EndIf
+
+	Return $sPkey
+EndFunc   ;==>FormatForUseRegistryKey
+
+Func FormatPathWithMacro($sPath)
+	If StringRegExp($sPath, "(?i)^@AppDataCommonDir") Then
+		$sPath = @AppDataCommonDir & StringReplace($sPath, "@AppDataCommonDir", "")
+	EndIf
+
+	Return $sPath
+EndFunc   ;==>FormatPathWithMacro
 
 Func AddInDictionaryIfNotExistAndIncrement($oDict, $sKey)
 	If $oDict.Exists($sKey) Then

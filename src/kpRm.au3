@@ -20,9 +20,11 @@ FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", @TempDir & "\kprm
 If FileExists(@TempDir & "\kprm-tools.xml") Then FileDelete(@TempDir & "\kprm-tools.xml")
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml", @TempDir & "\kprm-tools.xml")
 
+#include-once
 #include <ButtonConstants.au3>
 #include <GUIConstantsEx.au3>
 #include <StaticConstants.au3>
+#include <StringConstants.au3>
 #include <WindowsConstants.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
