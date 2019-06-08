@@ -31,28 +31,16 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $bForce = False)
 		If $sDescriptionPattern And StringRegExp($sFile, "(?i)\.(exe|com)$") Then
 			Local Const $sCompanyName = FileGetVersion($sFile, "CompanyName")
 
-			If @error Then
-				Return 0
-			ElseIf Not StringRegExp($sCompanyName, $sDescriptionPattern) Then
-				Return 0
+			If @error Or Not StringRegExp($sCompanyName, $sDescriptionPattern) Then
+				Return False
 			EndIf
 		EndIf
 
 		UpdateToolCpt($sToolKey, 'element', $sFile)
 		prepareRemove($sFile, 0, $bForce)
 
-		Local $iDelete = FileDelete($sFile)
-
-		If $iDelete Then
-			Return 1
-		EndIf
-
-		Return 2
-
+		FileDelete($sFile)
 	EndIf
-
-	Return 0
-
 EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($sPath, $sToolKey, $bForce = False)
@@ -62,22 +50,11 @@ Func RemoveFolder($sPath, $sToolKey, $bForce = False)
 		UpdateToolCpt($sToolKey, 'element', $sPath)
 		prepareRemove($sPath, 1, $bForce)
 
-		Local Const $iDelete = DirRemove($sPath, $DIR_REMOVE)
-
-		If $iDelete Then
-
-			Return 1
-		EndIf
-
-		Return 2
-
+		DirRemove($sPath, $DIR_REMOVE)
 	EndIf
-
-	Return 0
-
 EndFunc   ;==>RemoveFolder
 
-Func FindGlob($sPath, $sFile, $sReg)
+Func FindInPath($sPath, $sFile, $sReg)
 	Local Const $sFilePathGlob = $sPath & "\" & $sFile
 	Local Const $hSearch = FileFindFirstFile($sFilePathGlob)
 	Local $aReturn = []
@@ -99,7 +76,7 @@ Func FindGlob($sPath, $sFile, $sReg)
 	FileClose($hSearch)
 
 	Return $aReturn
-EndFunc   ;==>FindGlob
+EndFunc   ;==>FindInPath
 
 Func RemoveFileHandler($sPathOfFile, $aElements)
 	Local $sTypeOfFile = FileExistsAndGetType($sPathOfFile)
@@ -175,14 +152,13 @@ EndFunc   ;==>RemoveRegistryKey
 
 Func CloseProcessAndWait($sProcess, $bForce)
 	Local $iCpt = 50
-	Local $iStatus = Null
 
-	If 0 = ProcessExists($sProcess) Then Return 0
+	If 0 = ProcessExists($sProcess) Then Return False
 
 	If $bForce = True Then
 		_Permissions_KillProcess($sProcess)
 
-		If 0 = ProcessExists($sProcess) Then Return 0
+		If 0 = ProcessExists($sProcess) Then Return True
 	EndIf
 
 	ProcessClose($sProcess)
@@ -191,14 +167,6 @@ Func CloseProcessAndWait($sProcess, $bForce)
 		$iCpt -= 1
 		Sleep(250)
 	Until ($iCpt = 0 Or 0 = ProcessExists($sProcess))
-
-	$iStatus = ProcessExists($sProcess)
-
-	If 0 = $iStatus Then
-		Return 1
-	EndIf
-
-	Return 0
 EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess($aList)
@@ -233,10 +201,10 @@ Func UninstallNormally($aList)
 			Local $sFolderReg = $aList[$c][1]
 			Local $sFileReg = $aList[$c][2]
 
-			Local $aGlobFolder = FindGlob($aProgramFilesList[$i], "*", $sFolderReg)
+			Local $aGlobFolder = FindInPath($aProgramFilesList[$i], "*", $sFolderReg)
 
 			For $f = 1 To UBound($aGlobFolder) - 1
-				Local $aUninstallFiles = FindGlob($aGlobFolder[$f], "*", $sFileReg)
+				Local $aUninstallFiles = FindInPath($aGlobFolder[$f], "*", $sFileReg)
 
 				For $u = 1 To UBound($aUninstallFiles) - 1
 					If isFile($aUninstallFiles[$u]) Then
@@ -315,4 +283,3 @@ Func CleanDirectoryContent($aList)
 		EndIf
 	Next
 EndFunc   ;==>CleanDirectoryContent
-

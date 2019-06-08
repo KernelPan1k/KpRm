@@ -272,6 +272,13 @@
 		<download companyName="" force="False" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
 		<process force="False" process="(?i)^HiddenTearDecrypter.*\.exe$" />
 	</tool>
+	<tool name="HostsXpert">
+		<desktop companyName="(?i)^funkytoad" force="False" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="False" pattern="(?i)^HostsXpert.*" type="folder" />
+		<download companyName="(?i)^funkytoad" force="False" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="False" pattern="(?i)^HostsXpert.*" type="folder" />
+		<process force="False" process="(?i)^HostsXpert.*\.exe$" />
+	</tool>
 	<tool name="Hosts-perm">
 		<desktop companyName="" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
 		<download companyName="" force="False" pattern="(?i)^hosts\-perm.*\.bat$" type="file" />
