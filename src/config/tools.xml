@@ -337,6 +337,16 @@
 		<process force="True" process="(?i)^mbar.*\.exe$" />
 		<softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$" />
 	</tool>
+	<tool name="Mbr.exe">
+		<desktop companyName="" force="False" pattern="(?i)^mbr.*\.(exe|log)$" type="file" />
+		<download companyName="" force="False" pattern="(?i)^mbr.*\.(exe|log)$" type="file" />
+		<process force="False" process="(?i)^mbr.*\.exe$" />
+	</tool>
+	<tool name="MBRCheck">
+		<desktop companyName="" force="False" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file" />
+		<download companyName="" force="False" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file" />
+		<process force="False" process="(?i)^MBRCheck.*\.exe$" />
+	</tool>
 	<tool name="MiniregTool">
 		<desktop companyName="" force="False" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
 		<desktop companyName="" force="False" pattern="(?i)^Result\.txt$" type="file" />
@@ -359,6 +369,11 @@
 		<download companyName="" force="False" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<download companyName="" force="False" pattern="(?i)^MirCopDecrypter$" type="folder" />
 		<process force="False" process="(?i)^MirCopDecrypter.*\.exe$" />
+	</tool>
+	<tool name="MKV">
+		<desktop companyName="" force="False" pattern="(?i)^MKV.*\.exe$" type="file" />
+		<download companyName="" force="False" pattern="(?i)^MKV.*\.exe$" type="file" />
+		<process force="False" process="(?i)^MKV\.exe$" />
 	</tool>
 	<tool name="OTL">
 		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTL.*\.(exe|txt)$" type="file" />
