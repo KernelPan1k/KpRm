@@ -375,19 +375,43 @@
 		<download companyName="" force="False" pattern="(?i)^MKV.*\.exe$" type="file" />
 		<process force="False" process="(?i)^MKV\.exe$" />
 	</tool>
+	<tool name="OldTimer Tools">
+		<softwareKey pattern="(?i)^OldTimer Tools$" />
+	</tool>
+	<tool name="OTA">
+		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTA.*\.exe$" type="file" />
+		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTA.*\.exe$" type="file" />
+		<homeDrive companyName="" force="True" pattern="(?i)^_OTA$" type="folder" />
+		<process force="False" process="(?i)^OTA.*\.exe$" />
+	</tool>
+	<tool name="OTC">
+		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTC.*\.exe$" type="file" />
+		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTC.*\.exe$" type="file" />
+		<process force="False" process="(?i)^OTC.*\.exe$" />
+	</tool>
+	<tool name="OTH">
+		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTH.*\.exe$" type="file" />
+		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTH.*\.exe$" type="file" />
+		<process force="False" process="(?i)^OTH.*\.exe$" />
+	</tool>
 	<tool name="OTL">
 		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTL.*\.(exe|txt)$" type="file" />
 		<desktop companyName="" force="False" pattern="(?i)^Extras\.txt$" type="file" />
 		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTL.*\.(exe|txt)$" type="file" />
 		<homeDrive companyName="" force="True" pattern="(?i)^_OTL$" type="folder" />
 		<process force="False" process="(?i)^OTL.*\.exe$" />
-		<softwareKey pattern="(?i)^OldTimer Tools$" />
 	</tool>
 	<tool name="OTM">
 		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTM.*\.exe$" type="file" />
 		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTM.*\.exe$" type="file" />
 		<homeDrive companyName="" force="True" pattern="(?i)^_OTM$" type="folder" />
 		<process force="False" process="(?i)^OTM.*\.exe$" />
+	</tool>
+	<tool name="OTS">
+		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTS.*\.(exe|txt)$" type="file" />
+		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^OTS.*\.(exe|txt)$" type="file" />
+		<homeDrive companyName="" force="True" pattern="(?i)^_OTS$" type="folder" />
+		<process force="False" process="(?i)^OTS.*\.exe$" />
 	</tool>
 	<tool name="PowerLockyDecrypter">
 		<desktop companyName="" force="False" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
