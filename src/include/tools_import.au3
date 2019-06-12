@@ -30,6 +30,12 @@ Func GetSwapOrder($sT)
 	ElseIf $sT = "cleanDirectory" Then
 		Local $aOrder[3] = ["path", "companyName", "force"]
 		Return $aOrder
+	ElseIf $sT = "file" Then
+		Local $aOrder[3] = ["path", "companyName", "force"]
+		Return $aOrder
+	ElseIf $sT = "folder" Then
+		Local $aOrder[3] = ["path", "force"]
+		Return $aOrder
 	EndIf
 EndFunc   ;==>GetSwapOrder
 
@@ -88,7 +94,9 @@ Func RunRemoveTools($bRetry = False)
 			"registryKey", _
 			"searchRegistryKey", _
 			"startMenu", _
-			"cleanDirectory"]
+			"cleanDirectory", _
+			"file", _
+			"folder"]
 
 	Local $aNodes = _XMLSelectNodes("/tools/tool")
 
@@ -146,6 +154,10 @@ Func RunRemoveTools($bRetry = False)
 				RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
 			Case "cleanDirectory"
 				CleanDirectoryContent($aListTasks)
+			Case "file"
+				RemoveFileCustomPath($aListTasks)
+			Case "folder"
+				RemoveFolderCustomPath($aListTasks)
 		EndSwitch
 		ProgressBarUpdate()
 	Next

@@ -283,3 +283,17 @@ Func CleanDirectoryContent($aList)
 		EndIf
 	Next
 EndFunc   ;==>CleanDirectoryContent
+
+Func RemoveFileCustomPath($aList)
+	For $i = 0 To UBound($aList) - 1
+		Local $sPath = FormatPathWithMacro($aList[$i][1])
+		RemoveFile($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
+	Next
+EndFunc   ;==>RemoveFileCustomPath
+
+Func RemoveFolderCustomPath($aList)
+	For $i = 0 To UBound($aList) - 1
+		Local $sPath = FormatPathWithMacro($aList[$i][1])
+		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2])
+	Next
+EndFunc   ;==>RemoveFolderCustomPath

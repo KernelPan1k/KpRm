@@ -153,6 +153,7 @@
 		<desktop companyName="" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
 		<download companyName="" force="False" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file" />
 		<download companyName="" force="False" pattern="(?i)^CryptoSearch$" type="folder" />
+		<file path="@DesktopDir\cryptosearch-definitions.bin" companyName="" force="False" />
 		<process force="False" process="(?i)^CryptoSearch.*\.exe$" />
 	</tool>
 	<tool name="DCryDecrypter">
@@ -466,6 +467,11 @@
 		<download companyName="" force="False" pattern="(?i)^RansomNoteCleaner$" type="folder" />
 		<process force="False" process="(?i)^RansomNoteCleaner.*\.exe$" />
 	</tool>
+	<tool name="RAV">
+		<desktop companyName="" force="False" pattern="(?i)^RAV\.exe$" type="file" />
+		<download companyName="" force="False" pattern="(?i)^RAV\.exe$" type="file" />
+		<process force="False" process="(?i)^RAV\.exe$" />
+	</tool>
 	<tool name="RegtoolExport">
 		<desktop companyName="" force="False" pattern="(?i)^regtoolexport.*\.exe$" type="file" />
 		<desktop companyName="" force="False" pattern="(?i)^Export.*\.reg$" type="file" />
@@ -590,6 +596,11 @@
 		<homeDrive companyName="" force="False" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file" />
 		<homeDrive companyName="" force="False" pattern="(?i)^TDSSKiller" type="folder" />
 		<process force="True" process="(?i)^tdsskiller.*\.exe$" />
+	</tool>
+	<tool name="TFC">
+		<desktop companyName="(?i)^OldTimer" force="False" pattern="(?i)^TFC.*\.exe$" type="file" />
+		<download companyName="(?i)^OldTimer" force="False" pattern="(?i)^TFC.*\.exe$" type="file" />
+		<process force="False" process="(?i)^TFC.*\.exe$" />
 	</tool>
 	<tool name="ToolsDiag">
 		<desktop companyName="" force="False" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
