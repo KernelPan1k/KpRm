@@ -220,8 +220,10 @@ Func FormatForUseRegistryKey($sPkey)
 EndFunc   ;==>FormatForUseRegistryKey
 
 Func FormatPathWithMacro($sPath)
-	If StringRegExp($sPath, "(?i)^@AppDataCommonDir") Then
+	If StringRegExp($sPath, "^@AppDataCommonDir") Then
 		$sPath = @AppDataCommonDir & StringReplace($sPath, "@AppDataCommonDir", "")
+	ElseIf StringRegExp($sPath, "^@DesktopDir") Then
+		$sPath = @DesktopDir & StringReplace($sPath, "@DesktopDir", "")
 	EndIf
 
 	Return $sPath
