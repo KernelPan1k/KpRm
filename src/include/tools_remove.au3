@@ -1,6 +1,6 @@
 
-Func prepareRemove($sPath, $bRecursive = 0, $bForce = False)
-	If $bForce Then
+Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
+	If Number($sForce) Then
 		_ClearObjectDacl($sPath)
 		_GrantAllAccess($sPath)
 	EndIf
@@ -22,9 +22,9 @@ Func prepareRemove($sPath, $bRecursive = 0, $bForce = False)
 	If StringInStr($sAttrib, "A") Then
 		FileSetAttrib($sPath, "-A", $bRecursive)
 	EndIf
-EndFunc   ;==>prepareRemove
+EndFunc   ;==>PrepareRemove
 
-Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $bForce = False)
+Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	Local Const $iFileExists = isFile($sFile)
 
 	If $iFileExists Then
@@ -37,18 +37,18 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $bForce = False)
 		EndIf
 
 		UpdateToolCpt($sToolKey, 'element', $sFile)
-		prepareRemove($sFile, 0, $bForce)
+		PrepareRemove($sFile, 0, $sForce)
 
 		FileDelete($sFile)
 	EndIf
 EndFunc   ;==>RemoveFile
 
-Func RemoveFolder($sPath, $sToolKey, $bForce = False)
+Func RemoveFolder($sPath, $sToolKey, $sForce = "0")
 	Local $iFileExists = IsDir($sPath)
 
 	If $iFileExists Then
 		UpdateToolCpt($sToolKey, 'element', $sPath)
-		prepareRemove($sPath, 1, $bForce)
+		PrepareRemove($sPath, 1, $sForce)
 
 		DirRemove($sPath, $DIR_REMOVE)
 	EndIf
@@ -91,13 +91,10 @@ Func RemoveFileHandler($sPathOfFile, $aElements)
 
 	For $e = 0 To UBound($aElements) - 1
 		If $aElements[$e][3] And $sTypeOfFile = $aElements[$e][1] And StringRegExp($sFile, $aElements[$e][3]) Then
-			Local $iStatus = 0
-			Local $bForce = False
-
 			If $sTypeOfFile = 'file' Then
-				$iStatus = RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2], $bForce)
+				RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2], $aElements[$e][4])
 			ElseIf $sTypeOfFile = 'folder' Then
-				$iStatus = RemoveFolder($sPathOfFile, $aElements[$e][0], $bForce)
+				RemoveFolder($sPathOfFile, $aElements[$e][0], $aElements[$e][4])
 			EndIf
 		EndIf
 	Next
@@ -135,8 +132,8 @@ Func RemoveAllFileFrom($sPath, $aElements)
 
 EndFunc   ;==>RemoveAllFileFrom
 
-Func RemoveRegistryKey($key, $sToolKey, $bForce = False)
-	If $bForce = True Then
+Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
+	If Number($sForce) Then
 		_ClearObjectDacl($key)
 		_GrantAllAccess($key, $SE_REGISTRY_KEY)
 	EndIf
@@ -146,16 +143,14 @@ Func RemoveRegistryKey($key, $sToolKey, $bForce = False)
 	If $iStatus <> 0 Then
 		UpdateToolCpt($sToolKey, "key", $key)
 	EndIf
-
-	Return $iStatus
 EndFunc   ;==>RemoveRegistryKey
 
-Func CloseProcessAndWait($sProcess, $bForce)
+Func CloseProcessAndWait($sProcess, $sForce = "0")
 	Local $iCpt = 50
 
 	If 0 = ProcessExists($sProcess) Then Return False
 
-	If $bForce = True Then
+	If Number($sForce) Then
 		_Permissions_KillProcess($sProcess)
 
 		If 0 = ProcessExists($sProcess) Then Return True

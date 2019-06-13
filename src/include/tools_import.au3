@@ -1,5 +1,3 @@
-#include "tools_remove.au3"
-
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "startMenu"]
 
@@ -7,48 +5,71 @@ Local $s = _XMLFileOpen(@TempDir & "\kprm-tools.xml")
 
 Func GetSwapOrder($sT)
 	If _ArraySearch($aActionsFile, $sT) <> -1 Then
-		Local $aOrder[4] = ["type", "companyName", "pattern", "force"]
+		Local $aOrder[4][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "uninstall" Then
-		Local $aOrder[2] = ["folder", "uninstaller"]
+		Local $aOrder[2][2] = [["folder", "__REQUIRED__"], ["uninstaller", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "task" Then
-		Local $aOrder[1] = ["name"]
+		Local $aOrder[1][2] = [["name", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "softwareKey" Then
-		Local $aOrder[1] = ["pattern"]
+		Local $aOrder[1][2] = [["pattern", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "process" Then
-		Local $aOrder[2] = ["process", "force"]
+		Local $aOrder[2][2] = [["process", "__REQUIRED__"], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "registryKey" Then
-		Local $aOrder[2] = ["key", "force"]
+		Local $aOrder[2][2] = [["key", "__REQUIRED__"], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "searchRegistryKey" Then
-		Local $aOrder[3] = ["key", "pattern", "value"]
+		Local $aOrder[3][2] = [["key", "__REQUIRED__"], ["pattern", "__REQUIRED__"], ["value", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "cleanDirectory" Then
-		Local $aOrder[3] = ["path", "companyName", "force"]
+		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "file" Then
-		Local $aOrder[3] = ["path", "companyName", "force"]
+		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "folder" Then
-		Local $aOrder[3] = ["path", "force"]
+		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["force", "0"]]
 		Return $aOrder
 	EndIf
 EndFunc   ;==>GetSwapOrder
 
 Func Swap($sTn, $aK, $aV, $aOrder)
 	Local $sData = $sTn & "~~"
+	Local $iLength = 0
+	Local $iCountOrder = UBound($aOrder)
 
-	For $i = 0 To UBound($aOrder) - 1
+	For $i = 0 To $iCountOrder - 1
+		Local $bFound = False
+
 		For $c = 0 To UBound($aK) - 1
-			If $aOrder[$i] = $aK[$c] Then
+			If $aOrder[$i][0] = $aK[$c] Then
 				$sData &= $aV[$c] & "~~"
+				$bFound = True
+				$iLength += 1
 			EndIf
 		Next
+
+		If $bFound = False Then
+			Local $sDefaultValue = $aOrder[$i][1]
+
+			If $sDefaultValue = "__REQUIRED__" Then
+				MsgBox(16, "Fail", "Attribute " & $aOrder[$i][0] & " for tool " & $sTn & " is required")
+				Exit
+			EndIf
+
+			$sData &= $sDefaultValue & "~~"
+			$iLength += 1
+		EndIf
 	Next
+
+	If $iLength <> $iCountOrder Then
+		MsgBox(16, "Fail", "Values for tool " & $sTn & " are invalid ! Number of expected values " & $iLength & " and number of values received " & $iCountOrder)
+		Exit
+	EndIf
 
 	$sData = StringTrimRight($sData, 2)
 
