@@ -2,7 +2,7 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=kpRm-dev.exe
+#AutoIt3Wrapper_Outfile=kpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=28
 #AutoIt3Wrapper_Res_ProductName=KpRm
@@ -33,7 +33,7 @@ FileInstall("C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml", @TempDir & "\kp
 #include <Array.au3>
 #include <File.au3>
 
-Global $bKpRmDev = True
+Global $bKpRmDev = False
 Local $sKprmVersion = "1.0.1"
 
 If $bKpRmDev = True Then
@@ -66,7 +66,7 @@ EndIf
 #include "include\registry_backup.au3"
 #include "include\restore_uac.au3"
 #include "include\restore_system_settings.au3"
-#include "tools_remove.au3"
+#include "include\tools_remove.au3"
 #include "include\tools_import.au3"
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
