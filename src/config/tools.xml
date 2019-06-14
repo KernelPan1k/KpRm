@@ -244,6 +244,7 @@
 		<process force="0" process="(?i)^GhostCryptDecrypter.*\.exe$" />
 	</tool>
 	<tool name="GibonDecrypter">
+		<desktop companyName="" force="0" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^GibonDecrypter$" type="folder" />
 		<download companyName="" force="0" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^GibonDecrypter$" type="folder" />
@@ -501,16 +502,16 @@
 		<desktop companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
 		<download companyName="(?i)^Bleeping Computer" force="1" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
-		<process force="0" process="(?i)^(rkill|iExplore)\.exe$" />
+		<process force="1" process="(?i)^(rkill|iExplore)\.exe$" />
 	</tool>
 	<tool name="RogueKiller">
 		<appDataCommon companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
 		<desktop companyName="" force="0" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
-		<desktop companyName="$patternDescription" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
+		<desktop companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
 		<desktop companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<desktopCommon companyName="$patternDescription" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
+		<desktopCommon companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
-		<download companyName="$patternDescription" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
+		<download companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
 		<download companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
 		<process force="0" process="(?i)^RogueKiller.*\.exe$" />
 		<programFiles companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
@@ -540,9 +541,9 @@
 		<download companyName="(?i)^C_XX$" force="0" pattern="(?i)^seaf.*\.exe$" type="file" />
 		<homeDrive companyName="" force="0" pattern="(?i)^SeafLog.*\.txt$" type="file" />
 		<process force="0" process="(?i)^seaf.*\.exe$" />
-		<programFiles companyName="" force="1" pattern="$folderPattern" type="folder" />
+		<programFiles companyName="" force="1" pattern="(?i)^SEAF$" type="folder" />
 		<registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF" />
-		<uninstall folder="$folderPattern" uninstaller="(?i)^Un-SEAF\.exe$" />
+		<uninstall folder="(?i)^SEAF$" uninstaller="(?i)^Un-SEAF\.exe$" />
 	</tool>
 	<tool name="SFT">
 		<desktop companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
