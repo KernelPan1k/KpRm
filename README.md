@@ -5,7 +5,7 @@
 
  - AdliceDiag (Tigzy)
  - AdsFix (Gen-Hackman)
- - AdwCleaner (Xplode)
+ - AdwCleaner (Malwarebytes)
  - AHK_NavScan (Batch_Man)
  - AlphaDecrypter (Michael Gillespie)
  - Aswmbr (Avast!Software)
