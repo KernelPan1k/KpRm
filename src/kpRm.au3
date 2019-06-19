@@ -6,7 +6,7 @@
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=28
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.0.1
+#AutoIt3Wrapper_Res_ProductVersion=1.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
@@ -26,15 +26,19 @@ FileInstall("C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml", @TempDir & "\kp
 #include <StaticConstants.au3>
 #include <StringConstants.au3>
 #include <WindowsConstants.au3>
+#include <InetConstants.au3>
+#include <MsgBoxConstants.au3>
+#include <AutoItConstants.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
 #include <WinAPIShellEx.au3>
+#include <WinAPIFiles.au3>
 #include <SendMessage.au3>
 #include <Array.au3>
 #include <File.au3>
 
 Global $bKpRmDev = False
-Local $sKprmVersion = "1.0.1"
+Global $sKprmVersion = "1.1"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -60,6 +64,8 @@ EndIf
 #include "lib\SystemRestore.au3"
 #include "lib\Permissions.au3"
 #include "lib\_XMLDomWrapper.au3"
+#include "lib\HTTP.au3"
+#include "lib\_SelfUpdate.au3"
 #include "include\utils.au3"
 #include "include\progress_bar.au3"
 #include "include\restore_points.au3"
@@ -71,11 +77,13 @@ EndIf
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
-CheckVersionOfKpRm()
-
 If Not IsAdmin() Then
 	MsgBox(16, $lFail, $lAdminRequired)
 	QuitKprm()
+EndIf
+
+If $bKpRmDev = False Then
+	CheckVersionOfKpRm()
 EndIf
 
 Global $sProgramName = "KpRm"
@@ -109,10 +117,8 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
-
 		Case $oRunKp
 			KpRemover()
-
 	EndSwitch
 WEnd
 

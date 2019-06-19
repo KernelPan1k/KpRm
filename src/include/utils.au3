@@ -45,37 +45,77 @@ Func _IsInternetConnected()
 	Return $aReturn[0] = 0
 EndFunc   ;==>_IsInternetConnected
 
-Func HttpGet($sURL, $sData = "")
-	Local $oHTTP = ObjCreate("WinHttp.WinHttpRequest.5.1")
-	$oHTTP.Open("GET", $sURL & "?" & $sData, False)
-	$oHTTP.SetTimeouts(50, 50, 50, 50)
-	If (@error) Then Return SetError(1, 0, 0)
-	$oHTTP.Send()
-	If (@error) Then Return SetError(2, 0, 0)
-	If ($oHTTP.Status <> 200) Then Return SetError(3, 0, 0)
-	Return SetError(0, 0, $oHTTP.ResponseText)
-EndFunc   ;==>HttpGet
-
 Func CheckVersionOfKpRm()
 	Dim $sKprmVersion
-	Dim $bKpRmDev
 
-	If $bKpRmDev = True Then Return
+	If _IsInternetConnected() = False Then Return
 
-	Local Const $bHasInternet = _IsInternetConnected()
+	Local $aCurrentVersion = StringSplit($sKprmVersion, ".")
+	Local $sVersion = _HTTP_Get("https://toolslib.net/api/softwares/951/version")
+	Local $aVersion = StringSplit($sVersion, ".")
+	Local $bNeedsUpdate = False
 
-	If $bHasInternet = False Then
-		Return Null
-	EndIf
+	For $i = 0 To UBound($aCurrentVersion) - 1
+		If $aCurrentVersion[$i] < $aVersion[$i] Then
+			$bNeedsUpdate = True
+			ExitLoop
+		EndIf
+	Next
 
-	Local Const $sGet = HttpGet("https://kernel-panik.me/_api/v1/kprm/version")
+	If $bNeedsUpdate Then
+		Local $sDownloadedFilePath = DownloadLatest()
+		_SelfUpdate($sDownloadedFilePath, True, 5, False, False)
 
-	If $sGet <> Null And $sGet <> "" And $sGet <> $sKprmVersion Then
-		MsgBox(64, $lGetLastVersionTitle, $lGetLastVersion)
-		ShellExecute("https://kernel-panik.me/tool/kprm/")
-		QuitKprm(True, False)
+		If @error Then
+			MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "The script must be a compiled exe to work correctly or the update file must exist.")
+		EndIf
+
+		Sleep(5000)
+	Else
+		MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "No updates found.")
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
+
+Func DownloadLatest()
+	ProgressOn("KpRm - Updater", "Downloading..", "0%")
+	; Download from the following URL.
+	Local $sURL = "https://download.toolslib.net/download/direct/951/latest"
+	; Save the downloaded file to the temporary folder.
+	Local $sFilePath = _WinAPI_GetTempFileName(@TempDir)
+	; Remote file size
+	Local $iRemoteFileSize = InetGetSize($sURL)
+	; Download the file in the background with the selected option of 'force a reload from the remote site.'
+	Local $hDownload = InetGet($sURL, $sFilePath, $INET_FORCERELOAD, $INET_DOWNLOADBACKGROUND)
+
+	; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
+	Do
+		Sleep(250)
+
+		; Get bytes received
+		Local $iBytesReceived = InetGetInfo($hDownload, $INET_LOCALCACHE)
+		; Calculate percentage
+		Local $iPercentage = Int($iBytesReceived / $iRemoteFileSize * 100)
+		; Set progress bar
+		ProgressSet($iPercentage, $iPercentage & "%")
+	Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE)
+
+	; Retrieve the number of total bytes received and the filesize.
+	Local $iBytesSize = InetGetInfo($hDownload, $INET_DOWNLOADREAD)
+	Local $iFileSize = FileGetSize($sFilePath)
+
+	; Close the handle returned by InetGet.
+	InetClose($hDownload)
+
+	; We are done.
+	ProgressOff()
+
+	; Display details about the total number of bytes read and the filesize.
+;~     MsgBox($MB_SYSTEMMODAL, "", "The total download size: " & $iBytesSize & @CRLF & _
+;~             "The total filesize: " & $iFileSize)
+
+	Return $sFilePath
+
+EndFunc   ;==>DownloadLatest
 
 Func GetSuffixKey()
 	Local $s64Bit = ""
