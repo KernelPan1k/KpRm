@@ -80,12 +80,15 @@ Func _SelfUpdate($sUpdatePath, $fRestart = Default, $iDelay = 5, $fUsePID = Defa
 			 & 'DEL "' & $sTempFileName & '"'
 
 	Local Const $hFileOpen = FileOpen($sTempFileName, $FO_OVERWRITE)
+
 	If $hFileOpen = -1 Then
 		Return SetError(2, 0, 0)
 	EndIf
+
 	FileWrite($hFileOpen, $sData)
 	FileClose($hFileOpen)
 
-	Run(@ComSpec & ' /c timeout 3 && ' & $sTempFileName, @TempDir, @SW_HIDE)
+	Run(@ComSpec & ' /c timeout 5 && ' & $sTempFileName, @TempDir, @SW_HIDE)
 	Exit
 EndFunc   ;==>_SelfUpdate
+
