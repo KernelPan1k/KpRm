@@ -68,11 +68,8 @@ Func CheckVersionOfKpRm()
 
 		If @error Then
 			MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "The script must be a compiled exe to work correctly or the update file must exist.")
+			QuitKprm(True)
 		EndIf
-
-		Sleep(5000)
-	Else
-		MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "No updates found.")
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
 
