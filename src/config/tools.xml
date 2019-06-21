@@ -609,6 +609,11 @@
 		<homeDrive companyName="" force="0" pattern="(?i)^ToolsDiag$" type="folder" />
 		<process force="0" process="(?i)^toolsdiag.*\.exe$" />
 	</tool>
+	<tool name="UAC Manager">
+		<desktop companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file" />
+		<process force="0" process="(?i)^uac-manager.*\.exe$" />
+	</tool>
 	<tool name="USB File Resc">
 		<desktop companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
 		<download companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
@@ -650,6 +655,12 @@
 		<download companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
 		<homeDrive companyName="" force="0" pattern="(?i)^WinChk.*\.txt$" type="file" />
 		<process force="0" process="(?i)^winchk.*\.exe$" />
+	</tool>
+	<tool name="WinsockAnalyzer">
+		<desktop companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file" />
+		<homeDrive companyName="" force="0" pattern="(?i)^WinsockAnalyzer.*\.txt$" type="file" />
+		<process force="0" process="(?i)^winsockanalyzer.*\.exe$" />
 	</tool>
 	<tool name="WinUpdatefix">
 		<desktop companyName="" force="0" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
