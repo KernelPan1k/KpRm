@@ -55,6 +55,13 @@
 		<download companyName="" force="0" pattern="(?i)^AuroraDecrypter$" type="folder" />
 		<process force="0" process="(?i)^AuroraDecrypter.*\.exe$" />
 	</tool>
+	<tool name="AutorunsVTChecker">
+		<desktop companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder" />
+		<download companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder" />
+		<process force="1" process="(?i)^autorunsvtchecker.*\.exe$" />
+	</tool>
 	<tool name="Avast Decryptor Cryptomix">
 		<desktop companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
 		<download companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
@@ -267,6 +274,13 @@
 		<download companyName="" force="0" pattern="(?i)^GrantPerms" type="folder" />
 		<process force="0" process="(?i)^GrantPerms.*\.exe$" />
 	</tool>
+	<tool name="HiddenTear Bruteforcer">
+		<desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder" />
+		<download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder" />
+		<process force="0" process="(?i)^Hidden.*Tear.*Bruteforcer.*\.exe$" />
+	</tool>
 	<tool name="HiddenTearDecrypter">
 		<desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
@@ -376,6 +390,13 @@
 		<desktop companyName="" force="0" pattern="(?i)^MKV.*\.exe$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^MKV.*\.exe$" type="file" />
 		<process force="0" process="(?i)^MKV\.exe$" />
+	</tool>
+	<tool name="Mole02Decryptor">
+		<desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder" />
+		<download companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder" />
+		<process force="0" process="(?i)^Mole02Decryptor.*\.exe$" />
 	</tool>
 	<tool name="OldTimer Tools">
 		<softwareKey pattern="(?i)^OldTimer Tools$" />
@@ -608,6 +629,11 @@
 		<download companyName="" force="0" pattern="(?i)^toolsdiag.*\.exe$" type="file" />
 		<homeDrive companyName="" force="0" pattern="(?i)^ToolsDiag$" type="folder" />
 		<process force="0" process="(?i)^toolsdiag.*\.exe$" />
+	</tool>
+	<tool name="UAC-Level">
+		<desktop companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file" />
+		<process force="0" process="(?i)^uac-level.*\.exe$" />
 	</tool>
 	<tool name="UAC Manager">
 		<desktop companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file" />
