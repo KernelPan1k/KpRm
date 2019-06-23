@@ -55,6 +55,13 @@
 		<download companyName="" force="0" pattern="(?i)^AuroraDecrypter$" type="folder" />
 		<process force="0" process="(?i)^AuroraDecrypter.*\.exe$" />
 	</tool>
+	<tool name="AutorunsVTChecker">
+		<desktop companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder" />
+		<download companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder" />
+		<process force="1" process="(?i)^autorunsvtchecker.*\.exe$" />
+	</tool>
 	<tool name="Avast Decryptor Cryptomix">
 		<desktop companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
 		<download companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
@@ -267,6 +274,13 @@
 		<download companyName="" force="0" pattern="(?i)^GrantPerms" type="folder" />
 		<process force="0" process="(?i)^GrantPerms.*\.exe$" />
 	</tool>
+	<tool name="HiddenTear Bruteforcer">
+		<desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder" />
+		<download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder" />
+		<process force="0" process="(?i)^Hidden.*Tear.*Bruteforcer.*\.exe$" />
+	</tool>
 	<tool name="HiddenTearDecrypter">
 		<desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*$" type="folder" />
@@ -377,8 +391,20 @@
 		<download companyName="" force="0" pattern="(?i)^MKV.*\.exe$" type="file" />
 		<process force="0" process="(?i)^MKV\.exe$" />
 	</tool>
+	<tool name="Mole02Decryptor">
+		<desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder" />
+		<download companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder" />
+		<process force="0" process="(?i)^Mole02Decryptor.*\.exe$" />
+	</tool>
 	<tool name="OldTimer Tools">
 		<softwareKey pattern="(?i)^OldTimer Tools$" />
+	</tool>
+	<tool name="OneClick2RP">
+		<desktop companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file" />
+		<process force="0" process="(?i)^OneClick2RP.*\.exe$" />
 	</tool>
 	<tool name="OTA">
 		<desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file" />
@@ -489,6 +515,11 @@
 		<homeDrive companyName="(?i).*VBS autorun worms.*" force="1" pattern="(?i)^Rem-VBS" type="folder" />
 		<process force="0" process="(?i)^remediate.?vbs.?worm.*\.exe$" />
 		<process force="0" process="(?i)^Rem-VBSworm.*\.exe$" />
+	</tool>
+	<tool name="Report_Antivir">
+		<desktop companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file" />
+		<process force="0" process="(?i)^Report_Antivir.*\.exe$" />
 	</tool>
 	<tool name="Report_CHKDSK">
 		<desktop companyName="" force="0" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
@@ -609,6 +640,16 @@
 		<homeDrive companyName="" force="0" pattern="(?i)^ToolsDiag$" type="folder" />
 		<process force="0" process="(?i)^toolsdiag.*\.exe$" />
 	</tool>
+	<tool name="UAC-Level">
+		<desktop companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file" />
+		<process force="0" process="(?i)^uac-level.*\.exe$" />
+	</tool>
+	<tool name="UAC Manager">
+		<desktop companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file" />
+		<process force="0" process="(?i)^uac-manager.*\.exe$" />
+	</tool>
 	<tool name="USB File Resc">
 		<desktop companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
 		<download companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file" />
@@ -645,11 +686,23 @@
 		<download companyName="" force="0" pattern="(?i)^Unlock92Decrypter$" type="folder" />
 		<process force="0" process="(?i)^Unlock92Decrypter.*\.exe$" />
 	</tool>
+	<tool name="Webroot DE-BUG">
+		<desktop companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file" />
+		<download companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file" />
+		<homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder" />
+		<process force="0" process="(?i)^webrootdebug.*\.exe$" />
+	</tool>
 	<tool name="WinCHK">
 		<desktop companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
 		<homeDrive companyName="" force="0" pattern="(?i)^WinChk.*\.txt$" type="file" />
 		<process force="0" process="(?i)^winchk.*\.exe$" />
+	</tool>
+	<tool name="WinsockAnalyzer">
+		<desktop companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file" />
+		<homeDrive companyName="" force="0" pattern="(?i)^WinsockAnalyzer.*\.txt$" type="file" />
+		<process force="0" process="(?i)^winsockanalyzer.*\.exe$" />
 	</tool>
 	<tool name="WinUpdatefix">
 		<desktop companyName="" force="0" pattern="(?i)^winupdatefix.*\.exe$" type="file" />
@@ -692,3 +745,4 @@
 		<process force="0" process="(?i)^zoek.*\.exe$" />
 	</tool>
 </tools>
+
