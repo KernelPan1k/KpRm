@@ -125,6 +125,7 @@ Func LogMessage($message)
 	Dim $sKPLogFile
 
 	FileWrite(@HomeDrive & "\KPRM" & "\" & $sKPLogFile, $message & @CRLF)
+	FileWrite(@DesktopDir & "\" & $sKPLogFile, $message & @CRLF)
 EndFunc   ;==>LogMessage
 
 Func _Restart_Windows_Explorer()
