@@ -101,6 +101,7 @@
  - Usb File Resc (Streuner Corporation)
  - UsbFix (El desaparecido & C_XX)
  - UnZacMe (Gen-Hackman)
+ - Webroot DE-BUG (Webroot)
  - WinChk (Xplode)
  - WinsockAnalyzer (Xplode)
  - WinUpdatefix (Xplode)

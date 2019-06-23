@@ -686,6 +686,12 @@
 		<download companyName="" force="0" pattern="(?i)^Unlock92Decrypter$" type="folder" />
 		<process force="0" process="(?i)^Unlock92Decrypter.*\.exe$" />
 	</tool>
+	<tool name="Webroot DE-BUG">
+		<desktop companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file" />
+		<download companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file" />
+		<homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder" />
+		<process force="0" process="(?i)^webrootdebug.*\.exe$" />
+	</tool>
 	<tool name="WinCHK">
 		<desktop companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
