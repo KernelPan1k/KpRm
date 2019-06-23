@@ -133,17 +133,6 @@ Func CreateKPRMDir()
 		MsgBox(16, $lFail, $lRegistryBackupError)
 		Exit
 	EndIf
-
-	Local Const $sKpRmBackupDir = @HomeDrive & "\KPRM\backup"
-
-	If Not FileExists($sKpRmBackupDir) Then
-		DirCreate($sKpRmBackupDir)
-	EndIf
-
-	If Not FileExists($sKpRmBackupDir) Then
-		MsgBox(16, $lFail, $lRegistryBackupError)
-		Exit
-	EndIf
 EndFunc   ;==>CreateKPRMDir
 
 Func Init()
