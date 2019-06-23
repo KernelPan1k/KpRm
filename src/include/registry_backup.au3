@@ -2,7 +2,7 @@
 Func CreateBackupRegistry()
 	LogMessage(@CRLF & "- Create Registry Backup -" & @CRLF)
 
-	Local Const $sBackUpPath = @HomeDrive & "\KPRM"
+	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup"
 
 	Local Const $sBackupLocation = $sBackUpPath & "\regedit-backup-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".reg"
 
