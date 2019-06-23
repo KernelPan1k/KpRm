@@ -401,6 +401,11 @@
 	<tool name="OldTimer Tools">
 		<softwareKey pattern="(?i)^OldTimer Tools$" />
 	</tool>
+	<tool name="OneClick2RP">
+		<desktop companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file" />
+		<process force="0" process="(?i)^OneClick2RP.*\.exe$" />
+	</tool>
 	<tool name="OTA">
 		<desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file" />
 		<download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file" />
@@ -510,6 +515,11 @@
 		<homeDrive companyName="(?i).*VBS autorun worms.*" force="1" pattern="(?i)^Rem-VBS" type="folder" />
 		<process force="0" process="(?i)^remediate.?vbs.?worm.*\.exe$" />
 		<process force="0" process="(?i)^Rem-VBSworm.*\.exe$" />
+	</tool>
+	<tool name="Report_Antivir">
+		<desktop companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file" />
+		<process force="0" process="(?i)^Report_Antivir.*\.exe$" />
 	</tool>
 	<tool name="Report_CHKDSK">
 		<desktop companyName="" force="0" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file" />
@@ -729,3 +739,4 @@
 		<process force="0" process="(?i)^zoek.*\.exe$" />
 	</tool>
 </tools>
+
