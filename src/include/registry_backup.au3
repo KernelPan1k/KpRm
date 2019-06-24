@@ -48,7 +48,6 @@ Func CreateBackupRegistry()
 	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
 
 	If Not FileExists($sBackUpPath & "\SOFTWARE") Or _
-			Not FileExists($sBackUpPath & "\SOFTWARE") Or _
 			Not FileExists($sBackUpPath & "\SAM") Or _
 			Not FileExists($sBackUpPath & "\SECURITY") Or _
 			Not FileExists($sBackUpPath & "\SYSTEM") Or _
