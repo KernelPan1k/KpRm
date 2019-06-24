@@ -20,9 +20,9 @@ EndFunc   ;==>GetLanguage
 Func QuitKprm($bAutoDelete = False, $open = True)
 	Dim $bKpRmDev
 	Dim $sKPLogFile
+	Dim $sTmpDir
 
-	FileDelete(@TempDir & "\kprm-logo.gif")
-	FileDelete(@TempDir & "\kprm-tools.xml")
+	DirRemove($sTmpDir, $DIR_REMOVE)
 
 	If $bAutoDelete = True Then
 		If $open = True Then

@@ -2,7 +2,20 @@
 Func CreateBackupRegistry()
 	LogMessage(@CRLF & "- Create Registry Backup -" & @CRLF)
 
-	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup"
+	Dim $sTmpDir
+
+	Local Const $sRegistryTmp = $sTmpDir & "\registry"
+	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & @YEAR & @MON & @MDAY & @HOUR & @MIN
+
+	DirCreate($sRegistryTmp)
+
+	FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
+
+	If @OSArch = "X64" Then
+		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
+	Else
+		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
+	EndIf
 
 	If Not FileExists($sBackUpPath) Then
 		DirCreate($sBackUpPath)
@@ -13,19 +26,39 @@ Func CreateBackupRegistry()
 		Exit
 	EndIf
 
-	Local Const $sBackupLocation = $sBackUpPath & "\regedit-backup-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".reg"
+	Local $sScript = "@echo off" & @CRLF
+	$sScript &= "" & @CRLF
+	$sScript &= 'set HomeDrive="' & @HomeDrive & '"' & @CRLF
+	$sScript &= 'set SNAPDOS=B:' & @CRLF
+	$sScript &= "set SYSTEM_HIVES=%SNAPDOS%\Windows\System32\config" & @CRLF
+	$sScript &= "set USER_HIVES=" & StringReplace(@UserProfileDir, @HomeDrive, "B:") & @CRLF
+	$sScript &= "set BACKUP=" & $sBackUpPath & @CRLF
+	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
+	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SOFTWARE' & @CRLF
+	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SAM' & @CRLF
+	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SECURITY' & @CRLF
+	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SYSTEM' & @CRLF
+	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" DEFAULT' & @CRLF
+	$sScript &= 'robocopy "%USER_HIVES%" "%BACKUP%" NTUSER.DAT' & @CRLF
+	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
+	$sScript &= 'attrib -H -S ' & $sBackUpPath & "\NTUSER.DAT" & @CRLF
 
-	If FileExists($sBackupLocation) Then
-		FileMove($sBackupLocation, $sBackupLocation & ".old")
-	EndIf
+	FileWrite($sRegistryTmp & "\backup.bat", $sScript)
 
-	Local Const $status = RunWait("Regedit /e " & $sBackupLocation)
+	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
 
-	If Not FileExists($sBackupLocation) Or @error <> 0 Then
-		LogMessage("  [X] Failed to create registry backup")
+	If Not FileExists($sBackUpPath & "\SOFTWARE") Or _
+			Not FileExists($sBackUpPath & "\SOFTWARE") Or _
+			Not FileExists($sBackUpPath & "\SAM") Or _
+			Not FileExists($sBackUpPath & "\SECURITY") Or _
+			Not FileExists($sBackUpPath & "\SYSTEM") Or _
+			Not FileExists($sBackUpPath & "\DEFAULT") Or _
+			Not FileExists($sBackUpPath & "\NTUSER.DAT") Or _
+			@error <> 0 Then
+		LogMessage("  [X] Failed to create completly registry backup")
 		MsgBox(16, $lFail, $lRegistryBackupError)
 		QuitKprm()
 	Else
-		LogMessage("  [OK] Registry Backup: " & $sBackupLocation)
+		LogMessage("  [OK] Registry Backup: " & $sBackUpPath)
 	EndIf
 EndFunc   ;==>CreateBackupRegistry
