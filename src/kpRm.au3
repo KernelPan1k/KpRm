@@ -4,7 +4,7 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=kpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=29
+#AutoIt3Wrapper_Res_Fileversion=30
 #AutoIt3Wrapper_Res_ProductName=KpRm
 #AutoIt3Wrapper_Res_ProductVersion=1.3
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
@@ -46,7 +46,7 @@ DirCreate($sTmpDir)
 
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
-Global $bKpRmDev = True
+Global $bKpRmDev = False
 Global $sKprmVersion = "1.3"
 
 If $bKpRmDev = True Then
@@ -98,7 +98,7 @@ EndIf
 Global $sProgramName = "KpRm"
 Global $sKPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 
-Local Const $oMainWindow = GUICreate($sProgramName, 500, 195, 202, 112)
+Local Const $oMainWindow = GUICreate($sProgramName & " " & $sKprmVersion , 500, 195, 202, 112)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
