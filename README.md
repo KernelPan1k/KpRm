@@ -119,9 +119,6 @@ however a line in the report indicates its presence.
 
 ### - Save the registry
 
-I try to be careful that this tool only deletes what it is supposed to delete, but since KpRm is still "young" we
-should always make a backup of the registry.
-
 
 ### - Delete recovery points
 
