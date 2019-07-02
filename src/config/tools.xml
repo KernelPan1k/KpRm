@@ -189,7 +189,7 @@
 	</tool>
 	<tool name="ESET Online Scanner">
 		<appData companyName="" force="1" pattern="(?i)^ESET$" type="folder" />
-		<appDataLocal companyName="" force="1" pattern="(?i)^ESET$" type="folder" />
+		<folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner" />
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^log.*\.txt$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
