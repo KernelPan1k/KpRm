@@ -262,6 +262,8 @@ Func FormatPathWithMacro($sPath)
 		$sPath = @AppDataCommonDir & StringReplace($sPath, "@AppDataCommonDir", "")
 	ElseIf StringRegExp($sPath, "^@DesktopDir") Then
 		$sPath = @DesktopDir & StringReplace($sPath, "@DesktopDir", "")
+	ElseIf StringRegExp($sPath, "^@LocalAppDataDir") Then
+		$sPath = @LocalAppDataDir & StringReplace($sPath, "@LocalAppDataDir", "")
 	EndIf
 
 	Return $sPath
