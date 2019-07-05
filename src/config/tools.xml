@@ -567,6 +567,11 @@
 		<homeDrive companyName="" force="Null" pattern="(?i)^RstHosts.*\.txt$" type="file" />
 		<process force="0" process="(?i)^rsthosts.*\.exe$" />
 	</tool>
+	<tool name="ScanRapide">
+		<desktop companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
+		<homeDrive companyName="" force="0" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file" />
+	</tool>
 	<tool name="SEAF">
 		<desktop companyName="(?i)^C_XX$" force="0" pattern="(?i)^seaf.*\.exe$" type="file" />
 		<download companyName="(?i)^C_XX$" force="0" pattern="(?i)^seaf.*\.exe$" type="file" />
@@ -576,20 +581,23 @@
 		<registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF" />
 		<uninstall folder="(?i)^SEAF$" uninstaller="(?i)^Un-SEAF\.exe$" />
 	</tool>
+	<tool name="SecurityCheck">
+		<desktop companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
+		<process force="0" process="(?i)^SecurityCheck.*\.exe$" />
+	</tool>
 	<tool name="SFT">
 		<desktop companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
 		<process force="0" process="(?i)^SFT.*\.exe$" />
 	</tool>
-	<tool name="ScanRapide">
-		<desktop companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file" />
-		<homeDrive companyName="" force="0" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file" />
-	</tool>
-	<tool name="SecurityCheck">
-		<desktop companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
-		<process force="0" process="(?i)^SecurityCheck.*\.exe$" />
+	<tool name="ShadeDecryptor">
+		<desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^ShadeDecryptor" type="folder" />
+		<download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^ShadeDecryptor" type="folder" />
+		<homeDrive companyName="" force="0" pattern="(?i)^ShadeDecryptor.*\.txt$" type="file" />
+		<process force="0" process="(?i)^ShadeDecryptor.*\.exe$" />
 	</tool>
 	<tool name="Shortcut Cleaner">
 		<desktop companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file" />
@@ -745,4 +753,5 @@
 		<process force="0" process="(?i)^zoek.*\.exe$" />
 	</tool>
 </tools>
+
 
