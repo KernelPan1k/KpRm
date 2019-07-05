@@ -6,7 +6,7 @@ Func CreateBackupRegistry()
 
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
 	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & @YEAR & @MON & @MDAY & @HOUR & @MIN
-	Local Const $sBackUpUserPath = @HomeDrive & "\KPRM\backup\" & @YEAR & @MON & @MDAY & @HOUR & @MIN & "\" & @UserName
+	Local Const $sBackUpUserPath = $sBackUpPath & "\" & @UserName
 
 	DirCreate($sBackUpUserPath)
 	DirCreate($sRegistryTmp)
@@ -64,3 +64,4 @@ Func CreateBackupRegistry()
 		LogMessage("  [OK] Registry Backup: " & $sBackUpPath)
 	EndIf
 EndFunc   ;==>CreateBackupRegistry
+
