@@ -136,6 +136,14 @@
 		<download companyName="" force="0" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file" />
 		<process force="0" process="(?i)^clearlnk.*\.exe$" />
 	</tool>
+	<tool name="CoinVaultDecryptor">
+		<desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^CoinVaultDecryptor" type="folder" />
+		<download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^CoinVaultDecryptor" type="folder" />
+		<homeDrive companyName="" force="0" pattern="(?i)^CoinVaultDecryptor.*\.txt$" type="file" />
+		<process force="0" process="(?i)^CoinVaultDecryptor.*\.exe$" />
+	</tool>
 	<tool name="Combofix">
 		<desktop companyName="(?i)^Swearware" force="0" pattern="(?i)^Combofix.*\.exe$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^CFScript\.txt$" type="file" />
