@@ -27,6 +27,11 @@
 		<process force="0" process="(?i)^AdsFix.*\.exe$" />
 		<softwareKey pattern="(?i)^AdsFix" />
 	</tool>
+	<!-- Please keep me after AdsFix -->
+	<tool name="Ads">
+		<desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file" />
+		<download companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file" />
+	</tool>
 	<tool name="AdwCleaner">
 		<desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file" />
 		<download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file" />
@@ -541,7 +546,6 @@
 		<desktop companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
 		<download companyName="(?i)^Bleeping Computer" force="1" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
-		<process force="1" process="(?i)^(rkill|iExplore)\.exe$" />
 	</tool>
 	<tool name="RogueKiller">
 		<appDataCommon companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
@@ -777,5 +781,6 @@
 		<process force="0" process="(?i)^zoek.*\.exe$" />
 	</tool>
 </tools>
+
 
 
