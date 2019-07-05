@@ -708,6 +708,14 @@
 		<homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder" />
 		<process force="0" process="(?i)^webrootdebug.*\.exe$" />
 	</tool>
+	<tool name="WildfireDecryptor">
+		<desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^WildfireDecryptor" type="folder" />
+		<download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^WildfireDecryptor" type="folder" />
+		<homeDrive companyName="" force="0" pattern="(?i)^WildfireDecryptor.*\.txt$" type="file" />
+		<process force="0" process="(?i)^WildfireDecryptor.*\.exe$" />
+	</tool>
 	<tool name="WinCHK">
 		<desktop companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file" />
