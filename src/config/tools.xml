@@ -5,18 +5,13 @@
 		<process force="0" process="(?i)^AHK_NavScan.*\.exe" />
 	</tool>
 	<tool name="AdliceDiag">
-		<appDataCommon companyName="" force="1" pattern="(?i)^ADiag$" type="folder" />
-		<desktop companyName="" force="0" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
-		<desktop companyName="" force="0" pattern="(?i)^Diag\.lnk$" type="file" />
-		<desktop companyName="" force="0" pattern="(?i)^Diag_setup\.exe$" type="file" />
-		<desktopCommon companyName="" force="0" pattern="(?i)^Diag\.lnk$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^Diag_portable(32|64)\.exe$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^Diag_setup\.exe$" type="file" />
+		<cleanDirectory companyName="" force="1" path="@AppDataCommonDir\ADiag\quarantine" />
+		<desktop companyName="" force="0" pattern="(?i)^Diag_portable.*\.exe$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Diag_setup.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Diag_portable.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Diag_setup.*\.exe$" type="file" />
 		<process force="0" process="(?i)^Adlice Diag" />
 		<process force="0" process="(?i)^Diag(32|64)?\.exe$" />
-		<programFiles companyName="" force="1" pattern="(?i)^Diag$" type="folder" />
-		<searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Diag version" value="DisplayName" />
-		<startMenu companyName="" force="1" pattern="(?i)^Diag$" type="folder" />
 	</tool>
 	<tool name="AdsFix">
 		<desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file" />
@@ -71,6 +66,11 @@
 		<desktop companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
 		<download companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file" />
 		<process force="0" process="(?i)^avast_decryptor_cryptomix.*\.exe$" />
+	</tool>
+	<tool name="AVCertClean">
+		<desktop companyName="" force="0" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file" />
+		<process force="0" process="(?i)^avcertclean.*\.exe$" />
 	</tool>
 	<tool name="Avenger">
 		<desktop companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file" />
@@ -378,10 +378,8 @@
 	</tool>
 	<tool name="MiniregTool">
 		<desktop companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
-		<desktop companyName="" force="0" pattern="(?i)^Result\.txt$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^MiniRegTool" type="folder" />
 		<download companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^Result\.txt$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^MiniRegTool" type="folder" />
 		<process force="0" process="(?i)^MiniRegTool.*\.exe$" />
 	</tool>
@@ -541,6 +539,11 @@
 		<download companyName="" force="0" pattern="(?i)^RapportCHK.*\.txt$" type="file" />
 		<process force="0" process="(?i)^Report_CHKDSK.*\.exe$" />
 	</tool>
+	<tool name="ResetNavigator">
+		<desktop companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file" />
+		<download companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file" />
+		<process force="0" process="(?i)^resetnavigator.*\.exe$" />
+	</tool>
 	<tool name="Rkill">
 		<desktop companyName="(?i)^Bleeping Computer" force="1" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
@@ -548,19 +551,14 @@
 		<download companyName="" force="0" pattern="(?i)^rkill$" type="folder" />
 	</tool>
 	<tool name="RogueKiller">
-		<appDataCommon companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<desktop companyName="" force="0" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
-		<desktop companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
+		<cleanDirectory companyName="" force="1" path="@AppDataCommonDir\RogueKiller\quarantine" />
+		<desktop companyName="" force="0" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file" />
+		<desktop companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file" />
 		<desktop companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<desktopCommon companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^RogueKiller_portable(32|64)\.exe$" type="file" />
-		<download companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|lnk|txt)$" type="file" />
+		<desktopCommon companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file" />
+		<download companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file" />
 		<download companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<process force="0" process="(?i)^RogueKiller.*\.exe$" />
-		<programFiles companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^RogueKiller" value="DisplayName" />
-		<startMenu companyName="" force="1" pattern="(?i)^RogueKiller" type="folder" />
-		<task name="RogueKiller Anti-Malware" />
 	</tool>
 	<tool name="RogueKillerCMD">
 		<desktop companyName="" force="0" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
@@ -615,6 +613,11 @@
 		<desktop companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file" />
 		<download companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file" />
 		<process force="0" process="(?i)^sc-cleaner.*\.exe$" />
+	</tool>
+	<tool name="SMBCheck">
+		<desktop companyName="(?i).*Webroot Inc.*" force="0" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file" />
+		<download companyName="(?i).*Webroot Inc.*" force="0" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file" />
+		<process force="0" process="(?i)^smbcheck.*\.exe$" />
 	</tool>
 	<tool name="StrikedDecrypter">
 		<desktop companyName="" force="0" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file" />

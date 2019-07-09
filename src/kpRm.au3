@@ -6,7 +6,7 @@
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=30
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.4
+#AutoIt3Wrapper_Res_ProductVersion=1.5
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
@@ -48,7 +48,7 @@ DirCreate($sTmpDir)
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.4"
+Global $sKprmVersion = "1.5"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
