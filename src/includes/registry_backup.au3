@@ -11,12 +11,12 @@ Func CreateBackupRegistry()
 	DirCreate($sBackUpUserPath)
 	DirCreate($sRegistryTmp)
 
-	FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
+	FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
 
 	If @OSArch = "X64" Then
-		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
 	Else
-		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
 	EndIf
 
 	If Not FileExists($sBackUpPath) Then

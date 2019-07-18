@@ -4,17 +4,17 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=30
+#AutoIt3Wrapper_Res_Fileversion=31
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.5
+#AutoIt3Wrapper_Res_ProductVersion=1.6
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif
 #AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binary\dosdev.exe
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc32.exe
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binary\vscsc64.exe
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\dosdev.exe
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc32.exe
+#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc64.exe
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
@@ -48,7 +48,7 @@ DirCreate($sTmpDir)
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.5"
+Global $sKprmVersion = "1.6"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -70,20 +70,20 @@ Else
 	#include "locales\en.au3"
 EndIf
 
-#include "lib\UAC.au3"
-#include "lib\SystemRestore.au3"
-#include "lib\Permissions.au3"
-#include "lib\_XMLDomWrapper.au3"
-#include "lib\HTTP.au3"
-#include "lib\_SelfUpdate.au3"
-#include "include\utils.au3"
-#include "include\progress_bar.au3"
-#include "include\restore_points.au3"
-#include "include\registry_backup.au3"
-#include "include\restore_uac.au3"
-#include "include\restore_system_settings.au3"
-#include "include\tools_remove.au3"
-#include "include\tools_import.au3"
+#include "libs\UAC.au3"
+#include "libs\SystemRestore.au3"
+#include "libs\Permissions.au3"
+#include "libs\_XMLDomWrapper.au3"
+#include "libs\HTTP.au3"
+#include "libs\_SelfUpdate.au3"
+#include "includes\utils.au3"
+#include "includes\progress_bar.au3"
+#include "includes\restore_points.au3"
+#include "includes\registry_backup.au3"
+#include "includes\restore_uac.au3"
+#include "includes\restore_system_settings.au3"
+#include "includes\tools_remove.au3"
+#include "includes\tools_import.au3"
 
 #Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
 
