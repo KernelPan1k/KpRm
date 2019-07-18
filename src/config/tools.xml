@@ -366,6 +366,14 @@
 		<process force="1" process="(?i)^mbar.*\.exe$" />
 		<softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$" />
 	</tool>
+	<tool name="MbrScan">
+		<desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file" />
+		<download companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file" />
+		<process force="0" process="(?i)^MbrScan.*\.exe$" />
+	</tool>
+	<!-- Please keep MbrScan before Mbr.exe -->
 	<tool name="Mbr.exe">
 		<desktop companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file" />
@@ -565,6 +573,12 @@
 		<download companyName="" force="0" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file" />
 		<process force="0" process="(?i)^RogueKillerCMD.*\.exe$" />
 	</tool>
+	<tool name="Rooter">
+		<desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file" />
+		<download companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file" />
+		<homeDrive companyName="" force="0" pattern="(?i)^Rooter\$$" type="folder" />
+		<process force="0" process="(?i)^Rooter.*\.exe$" />
+	</tool>
 	<tool name="RstAssociations">
 		<desktop companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
@@ -572,9 +586,9 @@
 		<process force="0" process="(?i)^rstassociations.*\.(exe|scr)$" />
 	</tool>
 	<tool name="RstHosts">
-		<desktop companyName="" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
-		<download companyName="" force="Null" pattern="(?i)^rsthosts.*\.exe$" type="file" />
-		<homeDrive companyName="" force="Null" pattern="(?i)^RstHosts.*\.txt$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^rsthosts.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^rsthosts.*\.exe$" type="file" />
+		<homeDrive companyName="" force="0" pattern="(?i)^RstHosts.*\.txt$" type="file" />
 		<process force="0" process="(?i)^rsthosts.*\.exe$" />
 	</tool>
 	<tool name="ScanRapide">
@@ -595,6 +609,11 @@
 		<desktop companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file" />
 		<process force="0" process="(?i)^SecurityCheck.*\.exe$" />
+	</tool>
+	<tool name="ServicesRepair">
+		<desktop companyName="" force="0" pattern="(?i)^ServicesRepair.*\.exe$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^ServicesRepair.*\.exe$" type="file" />
+		<process force="0" process="(?i)^ServicesRepair.*\.exe$" />
 	</tool>
 	<tool name="SFT">
 		<desktop companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file" />
