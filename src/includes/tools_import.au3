@@ -207,7 +207,7 @@ Func RunRemoveTools($bRetry = False)
 					If $bToolExistDisplayMessage = False Then
 						$bToolExistDisplayMessage = True
 						$bHasFoundTools = True
-						LogMessage(@CRLF & "  ## " & $sToolsCptKey & " found")
+						LogMessage(@CRLF & "  ## " & $sToolsCptKey)
 					EndIf
 
 					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
@@ -225,7 +225,7 @@ Func RunRemoveTools($bRetry = False)
 		Next
 
 		If $bToolZhpQuantineDisplay = False And $bToolZhpQuantineExist = True Then
-			LogMessage(@CRLF & "  ## " & "ZHP Tools" & " found")
+			LogMessage(@CRLF & "  ## " & "ZHP Tools")
 			LogMessage("     [!] " & $sMessageZHP)
 		ElseIf $bHasFoundTools = False Then
 			LogMessage("  [I] No tools found")
