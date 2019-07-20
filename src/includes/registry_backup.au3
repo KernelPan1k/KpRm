@@ -1,15 +1,37 @@
 
+Func DosPathNameToPathName($sPath)
+	Local $sName, $aDrive = DriveGetDrive('ALL')
+
+	If Not IsArray($aDrive) Then
+		Return SetError(1, 0, $sPath)
+	EndIf
+
+	For $i = 1 To $aDrive[0]
+		$sName = _WinAPI_QueryDosDevice($aDrive[$i])
+		If StringInStr($sPath, $sName) = 1 Then
+			Return StringReplace($sPath, $sName, StringUpper($aDrive[$i]), 1)
+		EndIf
+	Next
+	Return SetError(2, 0, $sPath)
+EndFunc   ;==>DosPathNameToPathName
+
+
 Func CreateBackupRegistry()
 	LogMessage(@CRLF & "- Create Registry Backup -" & @CRLF)
 
 	Dim $sTmpDir
+	Dim $lFail
+	Dim $lRegistryBackupError
 
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
 	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & @YEAR & @MON & @MDAY & @HOUR & @MIN
-	Local Const $sBackUpUserPath = $sBackUpPath & "\" & @UserName
+	Local Const $sSuffixKey = GetSuffixKey()
+	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
+	Local $aCheckPath[0]
+	Local $i = 1
 
-	DirCreate($sBackUpUserPath)
 	DirCreate($sRegistryTmp)
+	DirCreate($sBackUpPath)
 
 	FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
 
@@ -30,38 +52,56 @@ Func CreateBackupRegistry()
 
 	Local $sScript = "@echo off" & @CRLF
 	$sScript &= "" & @CRLF
-	$sScript &= 'set HomeDrive="' & @HomeDrive & '"' & @CRLF
 	$sScript &= 'set SNAPDOS=B:' & @CRLF
-	$sScript &= "set SYSTEM_HIVES=%SNAPDOS%\Windows\System32\config" & @CRLF
-	$sScript &= "set USER_HIVES=" & StringReplace(@UserProfileDir, @HomeDrive, "B:") & @CRLF
-	$sScript &= "set BACKUP=" & $sBackUpPath & @CRLF
-	$sScript &= "set BACKUP_USER=" & $sBackUpUserPath & @CRLF
 	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
-	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SOFTWARE' & @CRLF
-	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SAM' & @CRLF
-	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SECURITY' & @CRLF
-	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" SYSTEM' & @CRLF
-	$sScript &= 'robocopy "%SYSTEM_HIVES%" "%BACKUP%" DEFAULT' & @CRLF
-	$sScript &= 'robocopy "%USER_HIVES%" "%BACKUP_USER%" NTUSER.DAT' & @CRLF
-	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
-	$sScript &= 'attrib -H -S ' & $sBackUpUserPath & "\NTUSER.DAT" & @CRLF
 
+	While True
+		Local $sEntry = RegEnumVal($sHiveList, $i)
+		If @error <> 0 Then ExitLoop
+
+		$i = $i + 1
+		Local $sName = RegRead($sHiveList, $sEntry)
+
+		If $sName Then
+			Local $sPathName = DosPathNameToPathName($sName)
+
+			If FileExists($sPathName) Then
+				Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
+				Local $aPathSplit = _PathSplit($sPathName, $sDrive, $sDir, $sFileName, $sExtension)
+				$sDir = StringRegExpReplace($sDir, "\\$", "")
+				Local $sHiveName = $sFileName & $sExtension
+				Local $sHivePath = "B:" & $sDir
+				Local $sScriptBackUpPath = $sBackUpPath & $sDir
+
+				If Not FileExists($sScriptBackUpPath) Then
+					DirCreate($sScriptBackUpPath)
+				EndIf
+
+				$sScript &= 'robocopy "' & $sHivePath & '" "' & $sScriptBackUpPath & '" ' & $sHiveName & @CRLF
+				$sScript &= 'attrib -H -S ' & $sScriptBackUpPath & "\" & $sHiveName & @CRLF
+
+				_ArrayAdd($aCheckPath, $sScriptBackUpPath & "\" & $sHiveName)
+			EndIf
+		EndIf
+	WEnd
+
+	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
+
+	FileWrite(@DesktopDir & "\backup.bat", $sScript)
 	FileWrite($sRegistryTmp & "\backup.bat", $sScript)
 
 	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
 
-	If Not FileExists($sBackUpPath & "\SOFTWARE") Or _
-			Not FileExists($sBackUpPath & "\SAM") Or _
-			Not FileExists($sBackUpPath & "\SECURITY") Or _
-			Not FileExists($sBackUpPath & "\SYSTEM") Or _
-			Not FileExists($sBackUpPath & "\DEFAULT") Or _
-			Not FileExists($sBackUpUserPath & "\NTUSER.DAT") Or _
-			@error <> 0 Then
-		LogMessage("  [X] Failed to create completly registry backup")
-		MsgBox(16, $lFail, $lRegistryBackupError)
-		QuitKprm()
-	Else
-		LogMessage("  [OK] Registry Backup: " & $sBackUpPath)
-	EndIf
+	Local $bComplete = True
+
+	For $i = 0 To UBound($aCheckPath) -1
+		If Not FileExists($aCheckPath[$i]) Then
+			LogMessage("  [X] Failed to create completly registry backup")
+			MsgBox(16, $lFail, $lRegistryBackupError)
+			QuitKprm()
+		EndIf
+	Next
+
+	LogMessage("  [OK] Registry Backup: " & $sBackUpPath)
 EndFunc   ;==>CreateBackupRegistry
 
