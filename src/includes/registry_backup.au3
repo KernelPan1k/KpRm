@@ -87,7 +87,6 @@ Func CreateBackupRegistry()
 
 	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
 
-	FileWrite(@DesktopDir & "\backup.bat", $sScript)
 	FileWrite($sRegistryTmp & "\backup.bat", $sScript)
 
 	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
