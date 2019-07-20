@@ -33,6 +33,7 @@
 #include <WinAPI.au3>
 #include <WinAPIShellEx.au3>
 #include <WinAPIFiles.au3>
+#include <WinAPIEx.au3>
 #include <SendMessage.au3>
 #include <Array.au3>
 #include <File.au3>
