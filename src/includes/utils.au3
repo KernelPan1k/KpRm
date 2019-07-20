@@ -54,6 +54,11 @@ Func CheckVersionOfKpRm()
 
 	Local $aCurrentVersion = StringSplit($sKprmVersion, ".")
 	Local $sVersion = _HTTP_Get("https://toolslib.net/api/softwares/951/version")
+
+	If @error <> 0 Or StringInStr($sVersion, "Not found") Then
+		Return
+	EndIf
+
 	Local $aVersion = StringSplit($sVersion, ".")
 	Local $bNeedsUpdate = False
 
