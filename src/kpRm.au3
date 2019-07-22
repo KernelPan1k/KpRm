@@ -4,9 +4,9 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=31
+#AutoIt3Wrapper_Res_Fileversion=32
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.6
+#AutoIt3Wrapper_Res_ProductVersion=1.7
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
@@ -29,6 +29,7 @@
 #include <InetConstants.au3>
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
+#include <FileConstants.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
 #include <WinAPIShellEx.au3>
@@ -49,7 +50,7 @@ DirCreate($sTmpDir)
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.6"
+Global $sKprmVersion = "1.7"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -76,7 +77,6 @@ EndIf
 #include "libs\Permissions.au3"
 #include "libs\_XMLDomWrapper.au3"
 #include "libs\HTTP.au3"
-#include "libs\_SelfUpdate.au3"
 #include "includes\utils.au3"
 #include "includes\progress_bar.au3"
 #include "includes\restore_points.au3"
