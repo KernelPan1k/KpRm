@@ -33,6 +33,7 @@
  - CryptON Ransomware Decryptor (Emsisoft)
  - Defogger (jpshortstuff)
  - DCryDecrypter (Michael Gillespie)
+ - EasyRestorePoint (kernel-panik)
  - Eset Online Scanner (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
