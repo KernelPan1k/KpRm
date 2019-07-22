@@ -23,8 +23,9 @@ Func CreateBackupRegistry()
 	Dim $lFail
 	Dim $lRegistryBackupError
 
+	Local $sDirBackup = @YEAR & @MON & @MDAY & @HOUR & @MIN
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
-	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & @YEAR & @MON & @MDAY & @HOUR & @MIN
+	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sDirBackup
 	Local Const $sSuffixKey = GetSuffixKey()
 	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
 	Local $aCheckPath[0]
@@ -33,12 +34,12 @@ Func CreateBackupRegistry()
 	DirCreate($sRegistryTmp)
 	DirCreate($sBackUpPath)
 
-	FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
+	FileInstall(".\binaries\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
 
 	If @OSArch = "X64" Then
-		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall(".\binaries\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
 	Else
-		FileInstall("C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall(".\binaries\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
 	EndIf
 
 	If Not FileExists($sBackUpPath) Then
@@ -50,8 +51,12 @@ Func CreateBackupRegistry()
 		Exit
 	EndIf
 
+	Local $sRestoreScript = "@echo off" & @CRLF
+	$sRestoreScript &= "chcp 28591 > nul" & @CRLF
+	$sRestoreScript &= "xcopy .\" & $sDirBackup & "\* ..\..\ /O /X /E /H /K /Y" & @CRLF
+
 	Local $sScript = "@echo off" & @CRLF
-	$sScript &= "" & @CRLF
+	$sScript &= "chcp 28591 > nul" & @CRLF
 	$sScript &= 'set SNAPDOS=B:' & @CRLF
 	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
 
@@ -80,6 +85,10 @@ Func CreateBackupRegistry()
 				$sScript &= 'robocopy "' & $sHivePath & '" "' & $sScriptBackUpPath & '" ' & $sHiveName & @CRLF
 				$sScript &= 'attrib -H -S ' & $sScriptBackUpPath & "\" & $sHiveName & @CRLF
 
+				If StringRegExp($sHiveName, "(?i)^(UsrClass|NTUSER)\.dat$") Then
+					$sRestoreScript &= "attrib +H +S " & $sPathName & @CRLF
+				EndIf
+
 				_ArrayAdd($aCheckPath, $sScriptBackUpPath & "\" & $sHiveName)
 			EndIf
 		EndIf
@@ -87,13 +96,33 @@ Func CreateBackupRegistry()
 
 	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
 
-	FileWrite($sRegistryTmp & "\backup.bat", $sScript)
+	Local $hFileOpen = FileOpen($sRegistryTmp & "\backup.bat", 258)
+
+	If $hFileOpen = -1 Then
+		LogMessage("  [X] Failed to create completly registry backup")
+		MsgBox(16, $lFail, $lRegistryBackupError)
+		QuitKprm()
+	EndIf
+
+	FileWrite($hFileOpen, $sScript)
+	FileClose($hFileOpen)
+
+	$hFileOpen = FileOpen(@HomeDrive & "\KPRM\backup\restore-" & $sDirBackup & ".bat", 258)
+
+	If $hFileOpen = -1 Then
+		LogMessage("  [X] Failed to create completly registry backup")
+		MsgBox(16, $lFail, $lRegistryBackupError)
+		QuitKprm()
+	EndIf
+
+	FileWrite($hFileOpen, $sRestoreScript)
+	FileClose($hFileOpen)
 
 	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
 
 	Local $bComplete = True
 
-	For $i = 0 To UBound($aCheckPath) -1
+	For $i = 0 To UBound($aCheckPath) - 1
 		If Not FileExists($aCheckPath[$i]) Then
 			LogMessage("  [X] Failed to create completly registry backup")
 			MsgBox(16, $lFail, $lRegistryBackupError)
