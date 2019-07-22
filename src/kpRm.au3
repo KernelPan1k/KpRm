@@ -6,7 +6,7 @@
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=32
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.7
+#AutoIt3Wrapper_Res_ProductVersion=1.7.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
@@ -50,7 +50,7 @@ DirCreate($sTmpDir)
 FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.7"
+Global $sKprmVersion = "1.7.1"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -113,6 +113,7 @@ Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlSetState($oRemoveTools, 1)
+GUICtrlSetState($oBackupRegistry, 1)
 
 Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 16, 76, 76)
 Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)

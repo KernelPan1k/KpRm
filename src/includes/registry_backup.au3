@@ -52,11 +52,13 @@ Func CreateBackupRegistry()
 	EndIf
 
 	Local $sRestoreScript = "@echo off" & @CRLF
-	$sRestoreScript &= "chcp 28591 > nul" & @CRLF
+	$sRestoreScript &= 'for /f "tokens=2 delims=:." %%x in (''chcp'') do set cp=%%x' & @CRLF
+	$sRestoreScript &= 'chcp 1252>nul' & @CRLF
 	$sRestoreScript &= "xcopy .\" & $sDirBackup & "\* ..\..\ /O /X /E /H /K /Y" & @CRLF
 
 	Local $sScript = "@echo off" & @CRLF
-	$sScript &= "chcp 28591 > nul" & @CRLF
+	Local $sScript = 'for /f "tokens=2 delims=:." %%x in (''chcp'') do set cp=%%x' & @CRLF
+	$sScript &= 'chcp 1252>nul' & @CRLF
 	$sScript &= 'set SNAPDOS=B:' & @CRLF
 	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
 
@@ -95,8 +97,10 @@ Func CreateBackupRegistry()
 	WEnd
 
 	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
+	$sScript &= 'chcp %cp%>nul' & @CRLF
+	$sRestoreScript &= 'chcp %cp%>nul' & @CRLF
 
-	Local $hFileOpen = FileOpen($sRegistryTmp & "\backup.bat", 258)
+	Local $hFileOpen = FileOpen($sRegistryTmp & "\backup.bat", 514)
 
 	If $hFileOpen = -1 Then
 		LogMessage("  [X] Failed to create completly registry backup")
@@ -107,7 +111,7 @@ Func CreateBackupRegistry()
 	FileWrite($hFileOpen, $sScript)
 	FileClose($hFileOpen)
 
-	$hFileOpen = FileOpen(@HomeDrive & "\KPRM\backup\restore-" & $sDirBackup & ".bat", 258)
+	$hFileOpen = FileOpen(@HomeDrive & "\KPRM\backup\restore-" & $sDirBackup & ".bat", 514)
 
 	If $hFileOpen = -1 Then
 		LogMessage("  [X] Failed to create completly registry backup")
