@@ -29,7 +29,7 @@ Func QuitKprm($bAutoDelete = False, $open = True)
 			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $sKPLogFile)
 		EndIf
 
-		If $bKpRmDev = False Then
+		If $bKpRmDev = False And @Compiled Then
 			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @ScriptFullPath & '"', @TempDir, @SW_HIDE)
 			FileDelete(@ScriptFullPath)
 		EndIf
@@ -71,55 +71,81 @@ Func CheckVersionOfKpRm()
 
 	If $bNeedsUpdate Then
 		Local $sDownloadedFilePath = DownloadLatest()
-		_SelfUpdate($sDownloadedFilePath, True, 5, False, False)
+		SelfUpdate($sDownloadedFilePath)
 
 		If @error Then
 			MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "The script must be a compiled exe to work correctly or the update file must exist.")
-			QuitKprm(True)
+			QuitKprm(True, False)
 		EndIf
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
 
 Func DownloadLatest()
 	ProgressOn("KpRm - Updater", "Downloading..", "0%")
-	; Download from the following URL.
 	Local $sURL = "https://download.toolslib.net/download/direct/951/latest"
-	; Save the downloaded file to the temporary folder.
 	Local $sFilePath = _WinAPI_GetTempFileName(@TempDir)
-	; Remote file size
 	Local $iRemoteFileSize = InetGetSize($sURL)
-	; Download the file in the background with the selected option of 'force a reload from the remote site.'
 	Local $hDownload = InetGet($sURL, $sFilePath, $INET_FORCERELOAD, $INET_DOWNLOADBACKGROUND)
 
-	; Wait for the download to complete by monitoring when the 2nd index value of InetGetInfo returns True.
 	Do
 		Sleep(250)
-
-		; Get bytes received
 		Local $iBytesReceived = InetGetInfo($hDownload, $INET_LOCALCACHE)
-		; Calculate percentage
 		Local $iPercentage = Int($iBytesReceived / $iRemoteFileSize * 100)
-		; Set progress bar
 		ProgressSet($iPercentage, $iPercentage & "%")
 	Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE)
 
-	; Retrieve the number of total bytes received and the filesize.
 	Local $iBytesSize = InetGetInfo($hDownload, $INET_DOWNLOADREAD)
 	Local $iFileSize = FileGetSize($sFilePath)
 
-	; Close the handle returned by InetGet.
 	InetClose($hDownload)
 
-	; We are done.
 	ProgressOff()
-
-	; Display details about the total number of bytes read and the filesize.
-;~     MsgBox($MB_SYSTEMMODAL, "", "The total download size: " & $iBytesSize & @CRLF & _
-;~             "The total filesize: " & $iFileSize)
 
 	Return $sFilePath
 
 EndFunc   ;==>DownloadLatest
+
+Func SelfUpdate($sUpdatePath)
+	If @Compiled = 0 Or FileExists($sUpdatePath) = 0 Then
+		Return SetError(1, 0, 0)
+	EndIf
+
+	Local $sTempFileName = @ScriptName
+	Local $sProcessName = @ScriptName
+
+	$sTempFileName = StringLeft($sTempFileName, StringInStr($sTempFileName, '.', $STR_NOCASESENSEBASIC, -1) - 1)
+	$sProcessName = StringLeft($sProcessName, StringInStr($sProcessName, '.', $STR_NOCASESENSEBASIC, -1) - 1)
+
+	Local Const $sScriptPath = @ScriptFullPath
+
+	While FileExists(@TempDir & '\' & $sTempFileName & '.ps1')
+		$sTempFileName &= Chr(Random(65, 122, 1))
+	WEnd
+
+	$sTempFileName = @TempDir & '\' & $sTempFileName & '.ps1'
+
+	Local Const $sData = '$process = Get-Process "' & $sProcessName & '" -ErrorAction SilentlyContinue' & @CRLF _
+			 & 'if ($process) {' & @CRLF _
+			 & '$process | Stop-Process -Force' & @CRLF _
+			 & '}' & @CRLF _
+			 & 'sleep 2' & @CRLF _
+			 & 'Move-Item -Path "' & $sUpdatePath & '" -Destination "' & $sScriptPath & '" -Force' & @CRLF _
+			 & 'sleep 2' & @CRLF _
+			 & '& "' & $sScriptPath & '"' & @CRLF _
+			 & 'Remove-Item -Path "' & $sTempFileName & '" -Force'
+
+	Local Const $hFileOpen = FileOpen($sTempFileName, 130)
+
+	If $hFileOpen = -1 Then
+		Return SetError(2, 0, 0)
+	EndIf
+
+	FileWrite($hFileOpen, $sData)
+	FileClose($hFileOpen)
+
+	Run(@ComSpec & ' /c timeout 5 && powershell -executionpolicy bypass -File ' & $sTempFileName, @TempDir, @SW_HIDE)
+	Exit
+EndFunc   ;==>SelfUpdate
 
 Func GetSuffixKey()
 	Local $s64Bit = ""
