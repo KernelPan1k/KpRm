@@ -465,6 +465,11 @@
 		<homeDrive companyName="" force="1" pattern="(?i)^_OTS$" type="folder" />
 		<process force="0" process="(?i)^OTS.*\.exe$" />
 	</tool>
+	<tool name="PCHunter">
+		<desktop companyName="" force="0" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file" />
+		<process force="0" process="(?i)^PCHunter.*\.exe$" />
+	</tool>
 	<tool name="PowerLockyDecrypter">
 		<desktop companyName="" force="0" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^PowerLockyDecrypter$" type="folder" />

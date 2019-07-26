@@ -72,6 +72,7 @@
  - OTL (Old_Timer)
  - OTM (Old_Timer)
  - OTS (Old_Timer)
+ - PCHunter (epoolsoft)
  - Pre_Scan (Gen-Hackman)
  - PowerLockyDecrypter (Michael Gillespie)
  - ProcessClose (Gen-Hackman)
