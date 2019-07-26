@@ -113,7 +113,6 @@ Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlSetState($oRemoveTools, 1)
-GUICtrlSetState($oBackupRegistry, 1)
 
 Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 16, 76, 76)
 Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
