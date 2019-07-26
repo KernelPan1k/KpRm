@@ -24,10 +24,24 @@ Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 	EndIf
 EndFunc   ;==>PrepareRemove
 
+Func IsFileInWhiteList($sFile)
+    Local Const $aWhiteList[2] = ["(?i)^mkvextract.exe$", "(?i)^mkvmerge.exe$"]
+    Local $bInWhiteList = False
+
+    For $i = 0 To Ubound($aWhiteList) - 1
+        If StringRegExp($sFile, $aWhiteList[$i]) Then
+            $bInWhiteList = True
+            ExitLoop
+        EndIf
+    Next
+
+    Return $bInWhiteList
+EndFunc
+
 Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	Local Const $iFileExists = isFile($sFile)
 
-	If $iFileExists Then
+	If $iFileExists And IsFileInWhiteList($sFile) = False Then
 		If $sDescriptionPattern And StringRegExp($sFile, "(?i)\.(exe|com)$") Then
 			Local Const $sCompanyName = FileGetVersion($sFile, "CompanyName")
 
