@@ -23,7 +23,7 @@ Func CreateBackupRegistry()
 	Dim $lFail
 	Dim $lRegistryBackupError
 
-	Local $sDirBackup = @YEAR & @MON & @MDAY & @HOUR & @MIN
+	Local $sDirBackup = @YEAR & '-' & '@MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
 	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sDirBackup
 	Local Const $sSuffixKey = GetSuffixKey()
