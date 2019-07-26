@@ -17,7 +17,7 @@ Func ClearRestorePoint()
 		$iRet += $iStatus
 
 		If $iStatus = 1 Then
-			LogMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")			
+			LogMessage("    ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		Else
 			Local $aError[1][3] = [[$aRP[$i][0], $aRP[$i][1], $aRP[$i][2]]]
 			_ArrayAdd($aErrors, $aError)
@@ -32,9 +32,9 @@ Func ClearRestorePoint()
 			$iRet += $iStatus
 
 			If $iStatus = 1 Then
-				LogMessage("    => [OK] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+				LogMessage("    ~ [OK] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			Else
-				LogMessage("    => [X] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+				LogMessage("    ~ [X] RP named " & $aErrors[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 			EndIf
 		Next
 
@@ -46,7 +46,7 @@ Func ClearRestorePoint()
 		LogMessage(@CRLF & "  [X] Failure when deleting all restore points")
 	EndIf
 
-EndFunc   ;==>ClearRestorePoint
+EndFunc   ;=~ClearRestorePoint
 
 Func convertDate($sDtmDate)
 	Local $sY = StringLeft($sDtmDate, 4)
@@ -55,7 +55,7 @@ Func convertDate($sDtmDate)
 	Local $sT = StringRight($sDtmDate, 8)
 
 	Return $sM & "/" & $sD & "/" & $sY & " " & $sT
-EndFunc   ;==>convertDate
+EndFunc   ;=~convertDate
 
 Func ClearDayRestorePoint($bRetry = False)
 	Local Const $aRP = _SR_EnumRestorePoints()
@@ -82,11 +82,11 @@ Func ClearDayRestorePoint($bRetry = False)
 			Local $iStatus = _SR_RemoveRestorePoint($aRP[$i][0])
 
 			If $iStatus = 1 Then
-				LogMessage("    => [OK] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
+				LogMessage("    ~ [OK] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
 			ElseIf $bRetry = False Then
 				$bRelaunch = True
 			Else
-				LogMessage("    => [X] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
+				LogMessage("    ~ [X] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
 			EndIf
 		EndIf
 	Next
@@ -103,7 +103,7 @@ Func ClearDayRestorePoint($bRetry = False)
 
 	Sleep(3000)
 
-EndFunc   ;==>ClearDayRestorePoint
+EndFunc   ;=~ClearDayRestorePoint
 
 Func ShowCurrentRestorePoint()
 	Sleep(3000)
@@ -118,17 +118,17 @@ Func ShowCurrentRestorePoint()
 	EndIf
 
 	For $i = 1 To $aRP[0][0]
-		LogMessage("    => [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
+		LogMessage("    ~ [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
 	Next
 
-EndFunc   ;==>ShowCurrentRestorePoint
+EndFunc   ;=~ShowCurrentRestorePoint
 
 Func CreateSystemRestorePoint()
 	#RequireAdmin
 	RunWait(@ComSpec & ' /c ' & 'wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "KpRm", 100, 7', "", @SW_HIDE)
 
 	Return @error
-EndFunc   ;==>CreateSystemRestorePoint
+EndFunc   ;=~CreateSystemRestorePoint
 
 
 Func CreateRestorePoint($bRetry = False)
@@ -174,4 +174,4 @@ Func CreateRestorePoint($bRetry = False)
 		ShowCurrentRestorePoint()
 	EndIf
 
-EndFunc   ;==>CreateRestorePoint
+EndFunc   ;=~CreateRestorePoint
