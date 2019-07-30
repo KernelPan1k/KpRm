@@ -38,6 +38,20 @@ Func IsFileInWhiteList($sFile)
     Return $bInWhiteList
 EndFunc
 
+Func IsProcessInWhiteList($sProcess)
+    Local Const $aWhiteList[2] = ["(?i)^sftvsa.exe$", "(?i)^sftlist.exe$"]
+    Local $bInWhiteList = False
+
+    For $i = 0 To Ubound($aWhiteList) - 1
+        If StringRegExp($sProcess, $aWhiteList[$i]) Then
+            $bInWhiteList = True
+            ExitLoop
+        EndIf
+    Next
+
+    Return $bInWhiteList
+EndFunc
+
 Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	Local Const $iFileExists = isFile($sFile)
 
@@ -188,7 +202,7 @@ Func RemoveAllProcess($aList)
 		Local $iPid = $aProcessList[$i][1]
 
 		For $iCpt = 0 To UBound($aList) - 1
-			If StringRegExp($sProcessName, $aList[$iCpt][1]) Then
+			If IsProcessInWhiteList($sProcessName) = False And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
 				CloseProcessAndWait($iPid, $aList[$iCpt][2])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
 			EndIf
