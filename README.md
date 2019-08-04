@@ -1,4 +1,7 @@
-## KpRm
+# KpRm
+
+
+![Google logo](./src/assets/bug.gif "google logo")
 
 
 ### KpRm is a tool to use to finalize a disinfection, it removes the following software:
@@ -169,6 +172,19 @@ running on Windows 10.
 
 Project website: https://kernel-panik.me/tool/kprm/
 
+
+## Donation
+
+If you think KpRm has helped you, you can make a donation:
+
+### Bitcoin address:
+
+1L7YjRfxaci9Zwz5Hv84wfRYSmcbQSTNAo
+
+
+### Stellar Lumens address:
+
+GCLLHFLOZFYIV5IR2BWBIU7Q55E4EYWHWAOPYMLN3NHXTBQQCAIWJ6FC
 
 
 ## Contributors
