@@ -389,6 +389,11 @@
 		<download companyName="" force="0" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file" />
 		<process force="0" process="(?i)^MBRCheck.*\.exe$" />
 	</tool>
+	<tool name="McAfee Labs RootkitRemover">
+		<desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file" />
+		<download companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file" />
+		<process force="0" process="(?i)^RootkitRemover.*\.exe$" />
+	</tool>
 	<tool name="MiniregTool">
 		<desktop companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^MiniRegTool" type="folder" />
