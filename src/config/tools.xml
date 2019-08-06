@@ -594,6 +594,13 @@
 		<homeDrive companyName="" force="0" pattern="(?i)^Rooter\$$" type="folder" />
 		<process force="0" process="(?i)^Rooter.*\.exe$" />
 	</tool>
+	<tool name="RootkitRevealer">
+		<desktop companyName="(?i)^Sysinternals" force="0" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^RootkitRevealer" type="folder" />
+		<download companyName="(?i)^Sysinternals" force="0" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^RootkitRevealer" type="folder" />
+		<process force="0" process="(?i)^RootkitRevealer.*\.exe$" />
+	</tool>
 	<tool name="RstAssociations">
 		<desktop companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
 		<download companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file" />
