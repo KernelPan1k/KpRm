@@ -8,10 +8,12 @@ Func DosPathNameToPathName($sPath)
 
 	For $i = 1 To $aDrive[0]
 		$sName = _WinAPI_QueryDosDevice($aDrive[$i])
+
 		If StringInStr($sPath, $sName) = 1 Then
 			Return StringReplace($sPath, $sName, StringUpper($aDrive[$i]), 1)
 		EndIf
 	Next
+
 	Return SetError(2, 0, $sPath)
 EndFunc   ;==>DosPathNameToPathName
 
@@ -29,7 +31,7 @@ Func CreateBackupRegistry()
 	Local Const $sSuffixKey = GetSuffixKey()
 	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
 	Local $aCheckPath[0]
-	Local $i = 1
+	Local $i = 0
 
 	DirCreate($sRegistryTmp)
 	DirCreate($sBackUpPath)
@@ -58,16 +60,16 @@ Func CreateBackupRegistry()
 	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
 
 	While True
+		$i += 1
 		Local $sEntry = RegEnumVal($sHiveList, $i)
 		If @error <> 0 Then ExitLoop
 
-		$i = $i + 1
 		Local $sName = RegRead($sHiveList, $sEntry)
 
 		If $sName Then
 			Local $sPathName = DosPathNameToPathName($sName)
 
-			If FileExists($sPathName) Then
+			If StringRegExp($sPathName, '(?i)^[A-Z]\:\\') Then
 				Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
 				Local $aPathSplit = _PathSplit($sPathName, $sDrive, $sDir, $sFileName, $sExtension)
 				$sDir = StringRegExpReplace($sDir, "\\$", "")
