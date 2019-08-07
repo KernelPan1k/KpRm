@@ -1,6 +1,6 @@
 Dim $sTmpDir
 
-FileInstall("C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml", $sTmpDir & "\kprm-tools.xml")
+FileInstall(".\config\tools.xml", $sTmpDir & "\kprm-tools.xml")
 
 Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
 Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "startMenu"]

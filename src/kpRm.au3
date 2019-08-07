@@ -9,12 +9,12 @@
 #AutoIt3Wrapper_Res_ProductVersion=1.8
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
-#AutoIt3Wrapper_Res_Icon_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.ico
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\config\tools.xml
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\dosdev.exe
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc32.exe
-#AutoIt3Wrapper_Res_File_Add=C:\Users\IEUser\Desktop\KpRm\src\binaries\vscsc64.exe
+#AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
+#AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
+#AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
+#AutoIt3Wrapper_Res_File_Add=.\binaries\dosdev.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\vscsc32.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\vscsc64.exe
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
@@ -47,7 +47,7 @@ EndIf
 
 DirCreate($sTmpDir)
 
-FileInstall("C:\Users\IEUser\Desktop\KpRm\src\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
+FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
 Global $sKprmVersion = "1.8"
@@ -108,6 +108,7 @@ Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 19
 Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
 Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
 Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
+Local Const $mFilemenu = GUICtrlCreateMenu("File")
 Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
