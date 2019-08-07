@@ -100,7 +100,7 @@ EndIf
 Global $sProgramName = "KpRm"
 Global $sKPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik" , 500, 195, 202, 112)
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 195, 202, 112)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
@@ -108,7 +108,10 @@ Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 19
 Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
 Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
 Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
-Local Const $mFilemenu = GUICtrlCreateMenu("File")
+Local Const $mHelpMenu = GUICtrlCreateMenu("?")
+Local Const $idContribute = GUICtrlCreateMenuItem("Contribute", $mHelpMenu)
+Local Const $idDonation = GUICtrlCreateMenuItem("Donation", $mHelpMenu)
+
 Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -129,6 +132,10 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
+		Case $idContribute
+			ShellExecute("https://github.com/KernelPan1k/KpRm")
+		Case $idDonation
+			ShellExecute("https://github.com/KernelPan1k/KpRm#donation")
 		Case $oRunKp
 			KpRemover()
 	EndSwitch
