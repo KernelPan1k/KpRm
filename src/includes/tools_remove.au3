@@ -39,7 +39,7 @@ Func IsFileInWhiteList($sFile)
 EndFunc
 
 Func IsProcessInWhiteList($sProcess)
-    Local Const $aWhiteList[2] = ["(?i)^sftvsa.exe$", "(?i)^sftlist.exe$"]
+    Local Const $aWhiteList[3] = ["(?i)^sftvsa.exe$", "(?i)^sftlist.exe$", "(?i)^SftService.exe$"]
     Local $bInWhiteList = False
 
     For $i = 0 To Ubound($aWhiteList) - 1
