@@ -137,6 +137,8 @@ however a line in the report indicates its presence.
 
 ### - Save the registry
 
+To restore hives easily, it is possible to use KPLive: https://github.com/KernelPan1k/KpLive
+
 
 ### - Delete recovery points
 
