@@ -40,7 +40,7 @@ EndFunc   ;==>QuitKprm
 Func _IsInternetConnected()
 	Local $aReturn = DllCall('connect.dll', 'long', 'IsInternetConnected')
 
-	If @error Then
+	If @error <> 0 Then
 		Return False
 	EndIf
 
@@ -61,15 +61,25 @@ Func CheckVersionOfKpRm()
 	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
 
 	If $bNeedsUpdate Then
+
+		;~ Check if powershell is available
+		Local $iPid = Run("powershell.exe",  @TempDir, @SW_HIDE)
+
+		If @error <> 0 Or Not $iPid Then
+			Return
+		EndIf
+
+		ProcessClose($iPid)
+
 		Local $sDownloadedFilePath = DownloadLatest()
 
-		If Not FileExists($sDownloadedFilePath) Or @error <> 0 Then
+		If @error <> 0 Or FileExists($sDownloadedFilePath) = False Then
 			Return
 		EndIf
 
 		SelfUpdate($sDownloadedFilePath)
 
-		If @error Then
+		If @error <> 0 Then
 			MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "The script must be a compiled exe to work correctly or the update file must exist.")
 			QuitKprm(True, False)
 		EndIf
@@ -133,13 +143,18 @@ Func SelfUpdate($sUpdatePath)
 	Local Const $hFileOpen = FileOpen($sTempFileName, 130)
 
 	If $hFileOpen = -1 Then
-		Return SetError(2, 0, 0)
+		Return False
 	EndIf
 
 	FileWrite($hFileOpen, $sData)
 	FileClose($hFileOpen)
 
-	Run(@ComSpec & ' /c timeout 5 && powershell -executionpolicy bypass -File ' & $sTempFileName, @TempDir, @SW_HIDE)
+	If Not FileExists($sTempFileName) Then
+		Return False
+	EndIf
+
+	Run(@ComSpec & ' /c timeout 10 && powershell.exe -File ' & $sTempFileName, @TempDir, @SW_HIDE)
+
 	Exit
 EndFunc   ;==>SelfUpdate
 
