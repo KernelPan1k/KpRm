@@ -52,25 +52,21 @@ Func CheckVersionOfKpRm()
 
 	If _IsInternetConnected() = False Then Return
 
-	Local $aCurrentVersion = StringSplit($sKprmVersion, ".")
 	Local $sVersion = _HTTP_Get("https://toolslib.net/api/softwares/951/version")
 
 	If @error <> 0 Or StringInStr($sVersion, "Not found") Then
 		Return
 	EndIf
 
-	Local $aVersion = StringSplit($sVersion, ".")
-	Local $bNeedsUpdate = False
-
-	For $i = 0 To UBound($aCurrentVersion) - 1
-		If $aCurrentVersion[$i] < $aVersion[$i] Then
-			$bNeedsUpdate = True
-			ExitLoop
-		EndIf
-	Next
+	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
 
 	If $bNeedsUpdate Then
 		Local $sDownloadedFilePath = DownloadLatest()
+
+		If Not FileExists($sDownloadedFilePath) Or @error <> 0 Then
+			Return
+		EndIf
+
 		SelfUpdate($sDownloadedFilePath)
 
 		If @error Then
