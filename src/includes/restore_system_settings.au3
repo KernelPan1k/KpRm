@@ -2,6 +2,8 @@
 Func RestoreSystemSettingsByDefault()
 	LogMessage(@CRLF & "- Restore Default System Settings -" & @CRLF)
 
+	UpdateStatuBar("Restore system settings")
+
 	Local $iStatus = RunWait(@ComSpec & " /c " & "ipconfig /flushdns", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Then

@@ -1,5 +1,7 @@
 
 Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
+	UpdateStatuBar("Prepare to remove " & $sPath)
+
 	If Number($sForce) Then
 		_ClearObjectDacl($sPath)
 		_GrantAllAccess($sPath)
@@ -25,32 +27,32 @@ Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 EndFunc   ;==>PrepareRemove
 
 Func IsFileInWhiteList($sFile)
-    Local Const $aWhiteList[3] = ["(?i)mkvextract.exe$", "(?i)mkvmerge.exe$", "(?i)mkvtoolnix.*\.exe$"]
-    Local $bInWhiteList = False
+	Local Const $aWhiteList[3] = ["(?i)mkvextract.exe$", "(?i)mkvmerge.exe$", "(?i)mkvtoolnix.*\.exe$"]
+	Local $bInWhiteList = False
 
-    For $i = 0 To Ubound($aWhiteList) - 1
-        If StringRegExp($sFile, $aWhiteList[$i]) Then
-            $bInWhiteList = True
-            ExitLoop
-        EndIf
-    Next
+	For $i = 0 To UBound($aWhiteList) - 1
+		If StringRegExp($sFile, $aWhiteList[$i]) Then
+			$bInWhiteList = True
+			ExitLoop
+		EndIf
+	Next
 
-    Return $bInWhiteList
-EndFunc
+	Return $bInWhiteList
+EndFunc   ;==>IsFileInWhiteList
 
 Func IsProcessInWhiteList($sProcess)
-    Local Const $aWhiteList[3] = ["(?i)^sftvsa.exe$", "(?i)^sftlist.exe$", "(?i)^SftService.exe$"]
-    Local $bInWhiteList = False
+	Local Const $aWhiteList[3] = ["(?i)^sftvsa.exe$", "(?i)^sftlist.exe$", "(?i)^SftService.exe$"]
+	Local $bInWhiteList = False
 
-    For $i = 0 To Ubound($aWhiteList) - 1
-        If StringRegExp($sProcess, $aWhiteList[$i]) Then
-            $bInWhiteList = True
-            ExitLoop
-        EndIf
-    Next
+	For $i = 0 To UBound($aWhiteList) - 1
+		If StringRegExp($sProcess, $aWhiteList[$i]) Then
+			$bInWhiteList = True
+			ExitLoop
+		EndIf
+	Next
 
-    Return $bInWhiteList
-EndFunc
+	Return $bInWhiteList
+EndFunc   ;==>IsProcessInWhiteList
 
 Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	Local Const $iFileExists = isFile($sFile)
@@ -67,6 +69,8 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 		UpdateToolCpt($sToolKey, 'element', $sFile)
 		PrepareRemove($sFile, 0, $sForce)
 
+		UpdateStatuBar("Remove file " & $sFile)
+
 		FileDelete($sFile)
 	EndIf
 EndFunc   ;==>RemoveFile
@@ -77,6 +81,8 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0")
 	If $iFileExists Then
 		UpdateToolCpt($sToolKey, 'element', $sPath)
 		PrepareRemove($sPath, 1, $sForce)
+
+		UpdateStatuBar("Remove folder " & $sPath)
 
 		DirRemove($sPath, $DIR_REMOVE)
 	EndIf
@@ -166,6 +172,8 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 		_GrantAllAccess($key, $SE_REGISTRY_KEY)
 	EndIf
 
+	UpdateStatuBar("Remove registry key " & $key)
+
 	Local Const $iStatus = RegDelete($key)
 
 	If $iStatus <> 0 Then
@@ -183,6 +191,8 @@ Func CloseProcessAndWait($sProcess, $sForce = "0")
 
 		If 0 = ProcessExists($sProcess) Then Return True
 	EndIf
+
+	UpdateStatuBar("Close process " & $sProcess)
 
 	ProcessClose($sProcess)
 
@@ -212,6 +222,7 @@ EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($aList)
 	For $i = 0 To UBound($aList) - 1
+		UpdateStatuBar("Remove schedule task " &  $aList[$i][1])
 		RunWait('schtasks.exe /delete /tn "' & $aList[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
@@ -231,6 +242,8 @@ Func UninstallNormally($aList)
 
 				For $u = 1 To UBound($aUninstallFiles) - 1
 					If isFile($aUninstallFiles[$u]) Then
+						UpdateStatuBar("Uninstall " & $aUninstallFiles[$u])
+
 						RunWait($aUninstallFiles[$u])
 						UpdateToolCpt($aList[$c][0], "uninstall", $aUninstallFiles[$u])
 					EndIf

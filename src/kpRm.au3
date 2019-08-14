@@ -4,17 +4,20 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=37
+#AutoIt3Wrapper_Res_Fileversion=38
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.8.2
+#AutoIt3Wrapper_Res_ProductVersion=1.8.3
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
 #AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
-#AutoIt3Wrapper_Res_File_Add=.\binaries\dosdev.exe
-#AutoIt3Wrapper_Res_File_Add=.\binaries\vscsc32.exe
-#AutoIt3Wrapper_Res_File_Add=.\binaries\vscsc64.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\HoboCopy.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcp100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcr100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\HoboCopy.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcp100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcr100.dll
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
@@ -30,6 +33,7 @@
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
+#include <GuiStatusBar.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
 #include <WinAPIShellEx.au3>
@@ -50,7 +54,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.8.2"
+Global $sKprmVersion = "1.8.3"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -100,7 +104,7 @@ EndIf
 Global $sProgramName = "KpRm"
 Global $sKPLogFile = "kprm-" & @YEAR & @MON & @MDAY & @HOUR & @MIN & ".txt"
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 215, 202, 112)
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 235, 202, 112)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
@@ -111,7 +115,7 @@ Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 2
 Local Const $mHelpMenu = GUICtrlCreateMenu("?")
 Local Const $idContribute = GUICtrlCreateMenuItem("Contribute", $mHelpMenu)
 Local Const $idDonation = GUICtrlCreateMenuItem("Donation", $mHelpMenu)
-
+Global $oHStatus = _GUICtrlStatusBar_Create($oMainWindow)
 Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -166,6 +170,10 @@ Func Init()
 	ProgressBarInit()
 EndFunc   ;==>Init
 
+Func UpdateStatuBar($sText)
+	_GUICtrlStatusBar_SetText($oHStatus, $sText)
+EndFunc   ;==>UpdateStatuBar
+
 Func KpRemover()
 	Dim $sTmpDir
 
@@ -211,6 +219,8 @@ Func KpRemover()
 	EndIf
 
 	GUICtrlSetData($oProgressBar, 100)
+	UpdateStatuBar("Finish")
+
 	MsgBox(64, "OK", $lFinish)
 
 	QuitKprm(True)

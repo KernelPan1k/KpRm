@@ -13,6 +13,8 @@ Func ClearRestorePoint()
 	Local $aErrors[1][3] = [[Null, Null, Null]]
 
 	For $i = 1 To $aRP[0][0]
+		UpdateStatuBar("Remove restore point " & $aRP[$i][1])
+
 		Local $iStatus = _SR_RemoveRestorePoint($aRP[$i][0])
 		$iRet += $iStatus
 
@@ -28,6 +30,8 @@ Func ClearRestorePoint()
 		Sleep(3000)
 
 		For $i = 1 To UBound($aErrors) - 1
+			UpdateStatuBar("Remove restore point " & $aRP[$i][1])
+
 			Local $iStatus = _SR_RemoveRestorePoint($aErrors[$i][0])
 			$iRet += $iStatus
 
@@ -79,6 +83,8 @@ Func ClearDayRestorePoint($bRetry = False)
 				LogMessage(@CRLF & "  [I] Recent System Restore Point Deletion before create new:" & @CRLF)
 			EndIf
 
+			UpdateStatuBar("Remove restore point " & $aRP[$i][1])
+
 			Local $iStatus = _SR_RemoveRestorePoint($aRP[$i][0])
 
 			If $iStatus = 1 Then
@@ -125,6 +131,9 @@ EndFunc   ;=~ShowCurrentRestorePoint
 
 Func CreateSystemRestorePoint()
 	#RequireAdmin
+
+	UpdateStatuBar("Create new restore point")
+
 	RunWait(@ComSpec & ' /c ' & 'wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "KpRm", 100, 7', "", @SW_HIDE)
 
 	Return @error
