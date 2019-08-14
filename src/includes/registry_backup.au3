@@ -63,7 +63,7 @@ Func CreateBackupRegistry()
 	While True
 		$i += 1
 		Local $sEntry = RegEnumVal($sHiveList, $i)
-		If @error <> 0 Then ExitLoop
+		If @error <> 0 Or $i > 100 Then ExitLoop
 
 		Local $sName = RegRead($sHiveList, $sEntry)
 
