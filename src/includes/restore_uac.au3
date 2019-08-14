@@ -2,6 +2,8 @@
 Func RestaureUACByDefault()
 	LogMessage(@CRLF & "- Restore UAC Default Value -" & @CRLF)
 
+	UpdateStatuBar("Restore UAC")
+
 	Local $iStatus = _UAC_SetConsentPromptBehaviorAdmin()
 
 	If $iStatus = 1 Then

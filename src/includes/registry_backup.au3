@@ -4,6 +4,7 @@ Func DosPathNameToPathName($sPath)
 
 	If Not IsArray($aDrive) Then
 		Return SetError(1, 0, $sPath)
+		Return SetError(1, 0, $sPath)
 	EndIf
 
 	For $i = 1 To $aDrive[0]
@@ -30,34 +31,34 @@ Func CreateBackupRegistry()
 	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sDirBackup
 	Local Const $sSuffixKey = GetSuffixKey()
 	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
-	Local $aCheckPath[0]
 	Local $i = 0
 
 	DirCreate($sRegistryTmp)
 	DirCreate($sBackUpPath)
 
-	FileInstall(".\binaries\dosdev.exe", $sRegistryTmp & "\dosdev.exe")
-
 	If @OSArch = "X64" Then
-		FileInstall(".\binaries\vscsc64.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall(".\binaries\hobocopy64\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe")
+		FileInstall(".\binaries\hobocopy64\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll")
+		FileInstall(".\binaries\hobocopy64\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll")
 	Else
-		FileInstall(".\binaries\vscsc32.exe", $sRegistryTmp & "\vscsc.exe")
+		FileInstall(".\binaries\hobocopy32\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe")
+		FileInstall(".\binaries\hobocopy32\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll")
+		FileInstall(".\binaries\hobocopy32\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll")
 	EndIf
 
 	If Not FileExists($sBackUpPath) Then
 		DirCreate($sBackUpPath)
 	EndIf
 
-	If Not FileExists($sBackUpPath) Then
+	If Not FileExists($sBackUpPath) _
+			Or Not FileExists($sRegistryTmp & "\HoboCopy.exe") _
+			Or Not FileExists($sRegistryTmp & "\msvcp100.dll") _
+			Or Not FileExists($sRegistryTmp & "\msvcr100.dll") Then
 		MsgBox(16, $lFail, $lRegistryBackupError)
-		Exit
+		QuitKprm(False, False)
 	EndIf
 
-	Local $sScript = "@echo off" & @CRLF
-	Local $sScript = 'for /f "tokens=2 delims=:." %%x in (''chcp'') do set cp=%%x' & @CRLF
-	$sScript &= 'chcp 1252>nul' & @CRLF
-	$sScript &= 'set SNAPDOS=B:' & @CRLF
-	$sScript &= "dosdev %SNAPDOS% %1%" & @CRLF
+	Local $oHives = ObjCreate("Scripting.Dictionary")
 
 	While True
 		$i += 1
@@ -74,47 +75,75 @@ Func CreateBackupRegistry()
 				Local $aPathSplit = _PathSplit($sPathName, $sDrive, $sDir, $sFileName, $sExtension)
 				$sDir = StringRegExpReplace($sDir, "\\$", "")
 				Local $sHiveName = $sFileName & $sExtension
-				Local $sHivePath = "B:" & $sDir
+				Local $sHivePath = $sDrive & $sDir
 				Local $sScriptBackUpPath = $sBackUpPath & $sDir
 
-				If Not FileExists($sScriptBackUpPath) Then
-					DirCreate($sScriptBackUpPath)
+				If $sHiveName And $sHivePath And $sScriptBackUpPath Then
+					If $oHives.Exists($sHivePath) Then
+						Local $oDataHive = $oHives.Item($sHivePath)
+						Local $sFiles = $oDataHive.Item("files")
+						$sFiles &= "||" & $sHiveName
+						$oDataHive.Item("files") = $sFiles
+						$oHives.Item($sHivePath) = $oDataHive
+					Else
+						Local $oDataHive = ObjCreate("Scripting.Dictionary")
+						$oDataHive.add("files", $sHiveName)
+						$oDataHive.add("backup", $sScriptBackUpPath)
+						$oHives.add($sHivePath, $oDataHive)
+					EndIf
 				EndIf
-
-				$sScript &= 'robocopy "' & $sHivePath & '" "' & $sScriptBackUpPath & '" ' & $sHiveName & @CRLF
-				$sScript &= 'attrib -H -S ' & $sScriptBackUpPath & "\" & $sHiveName & @CRLF
-
-				_ArrayAdd($aCheckPath, $sScriptBackUpPath & "\" & $sHiveName)
 			EndIf
 		EndIf
 	WEnd
 
-	$sScript &= 'dosdev /D %SNAPDOS%' & @CRLF
-	$sScript &= 'chcp %cp%>nul' & @CRLF
+	For $sHivePath In $oHives
+		Local $oDataHive = $oHives.Item($sHivePath)
+		Local $sScriptBackUpPath = $oDataHive.Item("backup")
+		Local $sFiles = $oDataHive.Item("files")
 
-	Local $hFileOpen = FileOpen($sRegistryTmp & "\backup.bat", 514)
-
-	If $hFileOpen = -1 Then
-		LogMessage("  [X] Failed to create completly registry backup")
-		MsgBox(16, $lFail, $lRegistryBackupError)
-		QuitKprm()
-	EndIf
-
-	FileWrite($hFileOpen, $sScript)
-	FileClose($hFileOpen)
-
-	Local Const $status = RunWait(@ComSpec & ' /c vscsc.exe -exec=backup.bat ' & @HomeDrive, $sRegistryTmp, @SW_HIDE)
-
-	Local $bComplete = True
-
-	For $i = 0 To UBound($aCheckPath) - 1
-		If Not FileExists($aCheckPath[$i]) Then
-			LogMessage("  [X] Failed to create completly registry backup")
-			MsgBox(16, $lFail, $lRegistryBackupError)
-			QuitKprm()
+		If Not FileExists($sScriptBackUpPath) Then
+			DirCreate($sScriptBackUpPath)
 		EndIf
+
+		Local $sAllFiles = StringReplace($sFiles, "||", " ")
+
+		UpdateStatuBar("Backup registry  " & $sAllFiles & " in " & $sHivePath)
+
+		RunWait(@ComSpec & ' /c HoboCopy.exe "' & $sHivePath & '" "' & $sScriptBackUpPath & '" ' & $sAllFiles, $sRegistryTmp, @SW_HIDE)
+
+		Local $aHivesFiles = StringSplit($sFiles, '||', $STR_ENTIRESPLIT)
+
+		For $i = 1 To $aHivesFiles[0]
+			Local $sCurrentHiveInBackup = $sScriptBackUpPath & "\" & $aHivesFiles[$i]
+			Local $sCurrentHiveInSystem = $sHivePath & "\" & $aHivesFiles[$i]
+
+			If Not FileExists($sCurrentHiveInBackup) Then
+				MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & $sCurrentHiveInSystem)
+				LogMessage("  [X] Failed Registry Backup: " & $sCurrentHiveInSystem)
+				QuitKprm(False)
+			Else
+				Local $sAttrib = FileGetAttrib($sCurrentHiveInBackup)
+
+				If StringInStr($sAttrib, "R") Then
+					FileSetAttrib($sCurrentHiveInBackup, "-R")
+				EndIf
+
+				If StringInStr($sAttrib, "S") Then
+					FileSetAttrib($sCurrentHiveInBackup, "-S")
+				EndIf
+
+				If StringInStr($sAttrib, "H") Then
+					FileSetAttrib($sCurrentHiveInBackup, "-H")
+				EndIf
+
+				If StringInStr($sAttrib, "A") Then
+					FileSetAttrib($sCurrentHiveInBackup, "-A")
+				EndIf
+			EndIf
+		Next
 	Next
 
 	LogMessage("  [OK] Registry Backup: " & $sBackUpPath)
 EndFunc   ;==>CreateBackupRegistry
+
 
