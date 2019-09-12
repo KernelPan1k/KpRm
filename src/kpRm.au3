@@ -115,6 +115,7 @@ Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 2
 Local Const $mHelpMenu = GUICtrlCreateMenu("?")
 Local Const $idContribute = GUICtrlCreateMenuItem("Contribute", $mHelpMenu)
 Local Const $idDonation = GUICtrlCreateMenuItem("Donation", $mHelpMenu)
+Local Const $idRestoreHives = GUICtrlCreateMenuItem("Restore hives", $mHelpMenu)
 Global $oHStatus = _GUICtrlStatusBar_Create($oMainWindow)
 Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
 
@@ -140,6 +141,8 @@ While 1
 			ShellExecute("https://github.com/KernelPan1k/KpRm")
 		Case $idDonation
 			ShellExecute("https://github.com/KernelPan1k/KpRm#donation")
+		Case $idRestoreHives
+			ShellExecute("https://toolslib.net/downloads/viewdownload/1004-kplive/")
 		Case $oRunKp
 			KpRemover()
 	EndSwitch
