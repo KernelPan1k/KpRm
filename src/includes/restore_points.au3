@@ -61,7 +61,7 @@ Func convertDate($sDtmDate)
 	Return $sM & "/" & $sD & "/" & $sY & " " & $sT
 EndFunc   ;=~convertDate
 
-Func ClearDayRestorePoint()
+Func ClearDailyRestorePoint()
 	Local Const $aRP = _SR_EnumRestorePoints()
 
 	If $aRP[0][0] = 0 Then
@@ -97,7 +97,7 @@ Func ClearDayRestorePoint()
 	EndIf
 
 	Sleep(1000)
-EndFunc   ;=~ClearDayRestorePoint
+EndFunc   ;=~ClearDailyRestorePoint
 
 Func ShowCurrentRestorePoint()
 	Sleep(3000)
@@ -164,7 +164,7 @@ Func CreateRestorePoint()
 	Local $bExist = CheckIsRestorePointExist()
 
 	If $bExist = False Then
-	     ClearDayRestorePoint()
+	     ClearDailyRestorePoint()
          $iCreatePointStatus = CreateSystemRestorePoint()
          $bExist = CheckIsRestorePointExist()
 	EndIf
