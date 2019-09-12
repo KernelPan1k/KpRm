@@ -203,7 +203,7 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then
-		RestaureUACByDefault()
+		RestoreUAC()
 	EndIf
 
 	ProgressBarUpdate()
