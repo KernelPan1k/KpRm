@@ -170,9 +170,9 @@ Func Init()
 	ProgressBarInit()
 EndFunc   ;==>Init
 
-Func UpdateStatuBar($sText)
+Func UpdateStatusBar($sText)
 	_GUICtrlStatusBar_SetText($oHStatus, $sText)
-EndFunc   ;==>UpdateStatuBar
+EndFunc   ;==>UpdateStatusBar
 
 Func KpRemover()
 	Dim $sTmpDir
@@ -219,7 +219,7 @@ Func KpRemover()
 	EndIf
 
 	GUICtrlSetData($oProgressBar, 100)
-	UpdateStatuBar("Finish")
+	UpdateStatusBar("Finish")
 
 	MsgBox(64, "OK", $lFinish)
 

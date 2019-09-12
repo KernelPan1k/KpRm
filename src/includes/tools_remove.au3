@@ -1,6 +1,6 @@
 
 Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
-	UpdateStatuBar("Prepare to remove " & $sPath)
+	UpdateStatusBar("Prepare to remove " & $sPath)
 
 	If Number($sForce) Then
 		_ClearObjectDacl($sPath)
@@ -69,7 +69,7 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 		UpdateToolCpt($sToolKey, 'element', $sFile)
 		PrepareRemove($sFile, 0, $sForce)
 
-		UpdateStatuBar("Remove file " & $sFile)
+		UpdateStatusBar("Remove file " & $sFile)
 
 		FileDelete($sFile)
 	EndIf
@@ -82,7 +82,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0")
 		UpdateToolCpt($sToolKey, 'element', $sPath)
 		PrepareRemove($sPath, 1, $sForce)
 
-		UpdateStatuBar("Remove folder " & $sPath)
+		UpdateStatusBar("Remove folder " & $sPath)
 
 		DirRemove($sPath, $DIR_REMOVE)
 	EndIf
@@ -172,7 +172,7 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 		_GrantAllAccess($key, $SE_REGISTRY_KEY)
 	EndIf
 
-	UpdateStatuBar("Remove registry key " & $key)
+	UpdateStatusBar("Remove registry key " & $key)
 
 	Local Const $iStatus = RegDelete($key)
 
@@ -192,7 +192,7 @@ Func CloseProcessAndWait($sProcess, $sForce = "0")
 		If 0 = ProcessExists($sProcess) Then Return True
 	EndIf
 
-	UpdateStatuBar("Close process " & $sProcess)
+	UpdateStatusBar("Close process " & $sProcess)
 
 	ProcessClose($sProcess)
 
@@ -222,7 +222,7 @@ EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($aList)
 	For $i = 0 To UBound($aList) - 1
-		UpdateStatuBar("Remove schedule task " &  $aList[$i][1])
+		UpdateStatusBar("Remove schedule task " &  $aList[$i][1])
 		RunWait('schtasks.exe /delete /tn "' & $aList[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
@@ -242,7 +242,7 @@ Func UninstallNormally($aList)
 
 				For $u = 1 To UBound($aUninstallFiles) - 1
 					If isFile($aUninstallFiles[$u]) Then
-						UpdateStatuBar("Uninstall " & $aUninstallFiles[$u])
+						UpdateStatusBar("Uninstall " & $aUninstallFiles[$u])
 
 						RunWait($aUninstallFiles[$u])
 						UpdateToolCpt($aList[$c][0], "uninstall", $aUninstallFiles[$u])

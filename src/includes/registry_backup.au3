@@ -107,7 +107,7 @@ Func CreateBackupRegistry()
 
 		Local $sAllFiles = StringReplace($sFiles, "||", " ")
 
-		UpdateStatuBar("Backup registry  " & $sAllFiles & " in " & $sHivePath)
+		UpdateStatusBar("Backup registry  " & $sAllFiles & " in " & $sHivePath)
 
 		RunWait(@ComSpec & ' /c HoboCopy.exe "' & $sHivePath & '" "' & $sScriptBackUpPath & '" ' & $sAllFiles, $sRegistryTmp, @SW_HIDE)
 
