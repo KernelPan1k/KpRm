@@ -1,5 +1,5 @@
 
-Func RestaureUACByDefault()
+Func RestoreUAC()
 	LogMessage(@CRLF & "- Restore UAC Default Value -" & @CRLF)
 
 	UpdateStatusBar("Restore UAC")
@@ -102,4 +102,4 @@ Func RestaureUACByDefault()
 		LogMessage("  [X] Set ValidateAdminCodeSignatures with default value")
 	EndIf
 
-EndFunc   ;==>RestaureUACByDefault
+EndFunc   ;==>RestoreUAC
