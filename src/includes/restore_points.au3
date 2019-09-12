@@ -18,7 +18,7 @@ Func ClearRestorePoint()
 		If $iStatus = 0 And @error <> 0 Then
 			LogMessage("    ~ [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		Else
-		    $iRet += 1
+			$iRet += 1
 			LogMessage("    ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		EndIf
 
@@ -31,7 +31,7 @@ Func ClearRestorePoint()
 		LogMessage(@CRLF & "  [X] Failure when deleting all restore points")
 	EndIf
 
-EndFunc   ;=~ClearRestorePoint
+EndFunc   ;==>ClearRestorePoint
 
 Func convertDate($sDtmDate)
 	Local $sY = StringLeft($sDtmDate, 4)
@@ -40,7 +40,7 @@ Func convertDate($sDtmDate)
 	Local $sT = StringRight($sDtmDate, 8)
 
 	Return $sM & "/" & $sD & "/" & $sY & " " & $sT
-EndFunc   ;=~convertDate
+EndFunc   ;==>convertDate
 
 Func ClearDailyRestorePoint()
 	Local Const $aRP = _SR_EnumRestorePoints()
@@ -79,7 +79,7 @@ Func ClearDailyRestorePoint()
 		LogMessage(@CRLF)
 	EndIf
 
-EndFunc   ;=~ClearDailyRestorePoint
+EndFunc   ;==>ClearDailyRestorePoint
 
 Func ShowCurrentRestorePoint()
 	LogMessage(@CRLF & "- Display All System Restore Point -" & @CRLF)
@@ -95,7 +95,7 @@ Func ShowCurrentRestorePoint()
 		LogMessage("    ~ [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
 	Next
 
-EndFunc   ;=~ShowCurrentRestorePoint
+EndFunc   ;==>ShowCurrentRestorePoint
 
 Func CreateSystemRestorePoint()
 	#RequireAdmin
@@ -105,23 +105,23 @@ Func CreateSystemRestorePoint()
 	RunWait(@ComSpec & ' /c ' & 'wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "KpRm", 100, 7', "", @SW_HIDE)
 
 	Return @error
-EndFunc   ;=~CreateSystemRestorePoint
+EndFunc   ;==>CreateSystemRestorePoint
 
 
 Func CheckIsRestorePointExist()
-    UpdateStatusBar("Verify if restore point exist")
+	UpdateStatusBar("Verify if restore point exist")
 
-    Sleep(200)
+	Sleep(200)
 
-    Local Const $aRP = _SR_EnumRestorePoints()
-    Local Const $iNbr = $aRP[0][0]
+	Local Const $aRP = _SR_EnumRestorePoints()
+	Local Const $iNbr = $aRP[0][0]
 
-    If $iNbr = 0 Then
-        Return False
-    EndIf
+	If $iNbr = 0 Then
+		Return False
+	EndIf
 
-    Return $aRP[$iNbr][1] = 'KpRm'
-EndFunc
+	Return $aRP[$iNbr][1] = 'KpRm'
+EndFunc   ;==>CheckIsRestorePointExist
 
 
 Func CreateRestorePoint()
@@ -142,21 +142,21 @@ Func CreateRestorePoint()
 		LogMessage("  [OK] Enable System Restore")
 	EndIf
 
-	Local $iCreatePointStatus = CreateSystemRestorePoint()
+	CreateSystemRestorePoint()
 	Local $bExist = CheckIsRestorePointExist()
 
 	If $bExist = False Then
-	     ClearDailyRestorePoint()
-         $iCreatePointStatus = CreateSystemRestorePoint()
-         $bExist = CheckIsRestorePointExist()
+		ClearDailyRestorePoint()
+		CreateSystemRestorePoint()
+		$bExist = CheckIsRestorePointExist()
 	EndIf
 
 	If $bExist = False Then
-	    LogMessage("  [X] System Restore Point created")
+		LogMessage("  [X] System Restore Point created")
 	Else
-	    LogMessage("  [OK] System Restore Point created")
+		LogMessage("  [OK] System Restore Point created")
 	EndIf
 
 	ShowCurrentRestorePoint()
 
-EndFunc   ;=~CreateRestorePoint
+EndFunc   ;==>CreateRestorePoint
