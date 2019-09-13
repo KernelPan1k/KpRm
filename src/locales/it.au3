@@ -11,5 +11,5 @@ Global $lRegistryBackupError = "Impossibile creare un backup del registro di sis
 Global $lAdminRequired = "È necessario eseguire il programma con i diritti di amministratore"
 Global $lGetLastVersionTitle = "Aggiorna"
 Global $lGetLastVersion = "Esiste una versione più recente di KpRm, scaricatela, per favore"
-
+Global $lRestart = "È necessario riavviare il computer per completare determinate azioni"
 

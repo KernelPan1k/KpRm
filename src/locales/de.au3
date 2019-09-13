@@ -11,3 +11,4 @@ Global $lRegistryBackupError = "Es ist nicht möglich, ein Registrierungs-Backup
 Global $lAdminRequired = "Sie müssen das Programm mit Administratorrechten ausführen"
 Global $lGetLastVersionTitle = "Update"
 Global $lGetLastVersion = "Es gibt eine neuere Version von KpRm, bitte laden Sie sie herunter."
+Global $lRestart = "Sie müssen Ihren Computer neu starten, um bestimmte Aktionen durchzuführen."

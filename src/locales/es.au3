@@ -11,3 +11,4 @@ Global $lRegistryBackupError = "Incapaz de crear una copia de seguridad del regi
 Global $lAdminRequired = "Debe ejecutar el programa con derechos de administrador"
 Global $lGetLastVersionTitle = "Actualización"
 Global $lGetLastVersion = "Existe una nueva versión de KpRm, por favor descárguela."
+Global $lRestart = "Debe reiniciar el equipo para completar ciertas acciones"
