@@ -47,6 +47,18 @@ Func _IsInternetConnected()
 	Return $aReturn[0] = 0
 EndFunc   ;==>_IsInternetConnected
 
+Func PowershellIsAvailable()
+	Local $iPid = Run("powershell.exe", @TempDir, @SW_HIDE)
+
+	If @error <> 0 Or Not $iPid Then
+		Return False
+	EndIf
+
+	ProcessClose($iPid)
+
+	Return True
+EndFunc   ;==>PowershellIsAvailable
+
 Func CheckVersionOfKpRm()
 	Dim $sKprmVersion
 
@@ -60,17 +72,7 @@ Func CheckVersionOfKpRm()
 
 	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
 
-	If $bNeedsUpdate Then
-
-		;~ Check if powershell is available
-		Local $iPid = Run("powershell.exe",  @TempDir, @SW_HIDE)
-
-		If @error <> 0 Or Not $iPid Then
-			Return
-		EndIf
-
-		ProcessClose($iPid)
-
+	If $bNeedsUpdate And PowershellIsAvailable() = True Then
 		Local $sDownloadedFilePath = DownloadLatest()
 
 		If @error <> 0 Or FileExists($sDownloadedFilePath) = False Then
@@ -333,7 +335,6 @@ Func UpdateToolCpt($sToolKey, $sElementkey, $sElementValue)
 	$oToolsCpt.Item($sToolKey) = $oToolsData
 EndFunc   ;==>UpdateToolCpt
 
-
 Func UCheckIfProcessExist($sProcess, $sToolVal)
 	If $sProcess = Null Or $sProcess = "" Then Return
 
@@ -354,6 +355,8 @@ Func UCheckIfRegistyKeyExist($sToolElement, $sToolVal)
 
 	If @error >= 0 Then
 		$sSymbol = "[OK]"
+	Else
+		AddRemoveAtRestart('key', $sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & FormatForDisplayRegistryKey($sToolElement) & " deleted (" & $sToolVal & ")")
@@ -381,9 +384,11 @@ Func UCheckIfElementExist($sToolElement, $sToolVal)
 	If $sToolElement = Null Or $sToolElement = "" Then Return
 
 	Local $sSymbol = "[OK]"
+	Local $sType = FileExistsAndGetType($sToolElement)
 
-	If FileExists($sToolElement) Then
+	If Null <> $sType Then
 		$sSymbol = "[X]"
+		AddRemoveAtRestart($sType, $sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & $sToolElement & " deleted (" & $sToolVal & ")")

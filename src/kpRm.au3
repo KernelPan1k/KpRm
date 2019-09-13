@@ -4,9 +4,9 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=38
+#AutoIt3Wrapper_Res_Fileversion=39
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.8.3
+#AutoIt3Wrapper_Res_ProductVersion=1.9
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
@@ -54,7 +54,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.8.3"
+Global $sKprmVersion = "1.9"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -81,6 +81,7 @@ EndIf
 #include "libs\Permissions.au3"
 #include "libs\_XMLDomWrapper.au3"
 #include "libs\HTTP.au3"
+#include "includes\actions_restart.au3"
 #include "includes\utils.au3"
 #include "includes\progress_bar.au3"
 #include "includes\restore_points.au3"
@@ -222,6 +223,9 @@ Func KpRemover()
 	EndIf
 
 	GUICtrlSetData($oProgressBar, 100)
+
+	RestartIfNeeded()
+
 	UpdateStatusBar("Finish")
 
 	MsgBox(64, "OK", $lFinish)
