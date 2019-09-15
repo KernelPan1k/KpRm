@@ -15,6 +15,7 @@ Func RestartIfNeeded()
 	Dim $sKPLogFile
 	Dim $oRemoveRestart
 	Dim $bNeedRestart
+	Dim $sCurrentTime
 
 	If $bNeedRestart = True And PowershellIsAvailable() = True Then
 		Local $aKeys = $oRemoveRestart.Keys
@@ -58,8 +59,8 @@ Func RestartIfNeeded()
 		$sScript &= 'notepad.exe "' & $sDesktopLog & '"' & @CRLF
 
 		Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks"
-		Local Const $sTasksPath = $sTasksFolder & "\task-" & @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & ".ps1"
-		Local Const $sTasksLauncher = $sTasksFolder & "\task-" & @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & ".bat"
+		Local Const $sTasksPath = $sTasksFolder & "\task-" & $sCurrentTime & ".ps1"
+		Local Const $sTasksLauncher = $sTasksFolder & "\task-" & $sCurrentTime & ".bat"
 
 		If FileExists($sTasksFolder) = False Then
 			DirCreate($sTasksFolder)
