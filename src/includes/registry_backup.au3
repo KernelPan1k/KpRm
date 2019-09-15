@@ -25,10 +25,10 @@ Func CreateBackupRegistry()
 	Dim $sTmpDir
 	Dim $lFail
 	Dim $lRegistryBackupError
+	Dim $sCurrentHumanTime
 
-	Local $sDirBackup = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
-	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sDirBackup
+	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sCurrentHumanTime
 	Local Const $sSuffixKey = GetSuffixKey()
 	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
 	Local $i = 0
