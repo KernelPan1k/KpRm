@@ -191,8 +191,8 @@ Func RunRemoveTools($bRetry = False)
 		Local $bHasFoundTools = False
 		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
 		Local Const $sMessageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
-		Local $bToolZhpQuantineDisplay = False
-		Local Const $bToolZhpQuantineExist = IsDir(@AppDataDir & "\ZHP")
+		Local $bToolZhpQuarantineDisplay = False
+		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
 
 		For $sToolsCptKey In $oToolsCpt
 			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
@@ -216,15 +216,15 @@ Func RunRemoveTools($bRetry = False)
 						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
 					Next
 
-					If $sToolsCptKey = "ZHP Tools" And $bToolZhpQuantineExist = True And $bToolZhpQuantineDisplay = False Then
+					If $sToolsCptKey = "ZHP Tools" And $bToolZhpQuarantineExist = True And $bToolZhpQuarantineDisplay = False Then
 						LogMessage("     [!] " & $sMessageZHP)
-						$bToolZhpQuantineDisplay = True
+						$bToolZhpQuarantineDisplay = True
 					EndIf
 				EndIf
 			Next
 		Next
 
-		If $bToolZhpQuantineDisplay = False And $bToolZhpQuantineExist = True Then
+		If $bToolZhpQuarantineDisplay = False And $bToolZhpQuarantineExist = True Then
 			LogMessage(@CRLF & "  ## " & "ZHP Tools")
 			LogMessage("     [!] " & $sMessageZHP)
 		ElseIf $bHasFoundTools = False Then
