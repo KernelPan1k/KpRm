@@ -97,8 +97,10 @@ For $i = 1 To $aNodes[0]
 	$oToolsCpt.add($sToolName, $oToolsValue)
 Next
 
-Func RunRemoveTools($bRetry = False)
-	If $bRetry = True Then
+Func RunRemoveTools()
+    Dim $bRemoveToolLastPass
+
+	If $bRemoveToolLastPass = True Then
 		LogMessage(@CRLF & "- Search Tools -" & @CRLF)
 	EndIf
 
@@ -187,7 +189,7 @@ Func RunRemoveTools($bRetry = False)
 		ProgressBarUpdate()
 	Next
 
-	If $bRetry = True Then
+	If $bRemoveToolLastPass = True Then
 		Local $bHasFoundTools = False
 		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
 		Local Const $sMessageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "

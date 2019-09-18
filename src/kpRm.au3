@@ -106,6 +106,7 @@ Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN
 Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN
 Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
+Global $bRemoveToolLastPass = False
 
 Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 235, 202, 112)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
@@ -182,6 +183,7 @@ EndFunc   ;==>UpdateStatusBar
 
 Func KpRemover()
 	Dim $sTmpDir
+	Dim $bRemoveToolLastPass
 
 	Init()
 
@@ -194,8 +196,9 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
-		RunRemoveTools(False)
-		RunRemoveTools(True)
+		RunRemoveTools()
+		$bRemoveToolLastPass = True
+		RunRemoveTools()
 	Else
 		ProgressBarUpdate(32)
 	EndIf
