@@ -343,6 +343,11 @@
 		<download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)" type="file" />
 		<process force="0" process="(?i)^JRT.*\.exe" />
 	</tool>
+	<tool name="KPLive">
+		<desktop companyName="" force="0" pattern="(?i)^KPLive.*\.iso" type="file" />
+		<download companyName="" force="0" pattern="(?i)^KPLive.*\.iso" type="file" />
+        <homeDrive companyName="" force="0" pattern="(?i)^kprm_restore.*\.txt" type="file" />
+    </tool>
 	<tool name="ListCWall">
 		<desktop companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file" />
 		<download companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file" />

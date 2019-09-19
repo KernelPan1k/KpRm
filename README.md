@@ -56,6 +56,7 @@
  - JavaRa (Fred de Vries et Paul McLain)
  - Jigsaw Decrypter (Michael Gillespie)
  - Junkware Removal Tool (Malwarebytes corporation)
+ - KPLive (kernel-panik)
  - ListCWall (BleepingComputer)
  - ListParts (Farbar)
  - LogOnFix (Xplode)
