@@ -225,6 +225,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)" type="file" />
         <process force="0" process="(?i)^ESETBubnixCleaner.*\.exe$" />
     </tool>
+    <tool name="ESET CodplatAA Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)" type="file" />
+        <process force="0" process="(?i)^ESETCodplatAACleaner.*\.exe$" />
+    </tool>
     <tool name="ESET Conficker Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />

@@ -40,6 +40,7 @@
  - ESET AES-NI Decryptor (Eset)
  - ESET Bedep Cleaner (Eset)
  - ESET Bubnix Cleaner (Eset)
+ - ESET CodplatAA Cleaner (Eset)
  - ESET Conficker Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
