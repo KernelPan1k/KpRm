@@ -215,6 +215,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
         <process force="0" process="(?i)^esetconfickercleaner.*\.exe$" />
     </tool>
+    <tool name="ESET Medre Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
+        <process force="0" process="(?i)^esetacadmedrecleaner.*\.exe$" />
+    </tool>
 	<tool name="ESET Online Scanner">
 		<appData companyName="" force="1" pattern="(?i)^ESET$" type="folder" />
 		<folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner" />
