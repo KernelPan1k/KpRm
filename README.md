@@ -39,7 +39,7 @@
  - EasyRestorePoint (kernel-panik)
  - ESET Conficker Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
- - Eset Online Scanner (Eset)
+ - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
  - ESET SysRescue (Eset)
