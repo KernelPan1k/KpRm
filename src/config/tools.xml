@@ -210,6 +210,11 @@
 		<download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^easyrestorepoint.*\.(txt|exe)$" type="file" />
 		<process force="0" process="(?i)^defogger.*\.exe$" />
 	</tool>
+    <tool name="ESET AES-NI Decryptor">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)" type="file" />
+        <process force="0" process="(?i)^esetaesnidecryptor.*\.exe$" />
+    </tool>
     <tool name="ESET Conficker Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
