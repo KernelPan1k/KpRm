@@ -37,6 +37,7 @@
  - Defogger (jpshortstuff)
  - DCryDecrypter (Michael Gillespie)
  - EasyRestorePoint (kernel-panik)
+ - ESET Conficker Cleaner (Eset)
  - Eset Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
