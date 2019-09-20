@@ -245,6 +245,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)" type="file" />
         <process force="0" process="(?i)^esetcrysisdecryptor.*\.exe$" />
     </tool>
+    <tool name="ESET Daonol Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)" type="file" />
+        <process force="0" process="(?i)^esetdaonolcleaner.*\.exe$" />
+    </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
