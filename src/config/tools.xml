@@ -219,6 +219,11 @@
 		<process force="0" process="(?i)^esetonlinescanner.*\.exe$" />
 		<registryKey force="0" key="HKLM\SOFTWARE\ESET\ESET Online Scanner" />
 	</tool>
+	<tool name="ESET Sirefef Cleaner">
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)" type="file" />
+        <process force="0" process="(?i)^esetsirefefcleaner.*\.exe$" />
+    </tool>
 	<tool name="ESET SysRescue">
 		<desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso" type="file" />
 		<download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso" type="file" />
