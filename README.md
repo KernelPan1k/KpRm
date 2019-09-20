@@ -38,6 +38,7 @@
  - DCryDecrypter (Michael Gillespie)
  - EasyRestorePoint (kernel-panik)
  - ESET AES-NI Decryptor (Eset)
+ - ESET Bedep Cleaner (Eset)
  - ESET Conficker Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)

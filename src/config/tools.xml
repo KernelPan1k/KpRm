@@ -215,6 +215,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)" type="file" />
         <process force="0" process="(?i)^esetaesnidecryptor.*\.exe$" />
     </tool>
+    <tool name="ESET Bedep Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)" type="file" />
+        <process force="0" process="(?i)^ESETBedepCleaner.*\.exe$" />
+    </tool>
     <tool name="ESET Conficker Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
