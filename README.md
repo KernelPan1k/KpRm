@@ -48,6 +48,7 @@
  - ESET Dorkbot Cleaner (Eset)
  - ESET ELEX Cleaner (Eset)
  - ESET Eternal Blue Checker (Eset)
+ - ESET Filecoder.AA Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)

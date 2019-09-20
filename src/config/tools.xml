@@ -265,6 +265,14 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe" type="file" />
         <process force="0" process="(?i)^ESETEternalBlueChecker.*\.exe$" />
     </tool>
+    <tool name="ESET Filecoder.AA Cleaner">
+        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip" type="file" />
+        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe" type="file" />
+        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip" type="file" />
+        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe" type="file" />
+    </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
