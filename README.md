@@ -38,6 +38,7 @@
  - DCryDecrypter (Michael Gillespie)
  - EasyRestorePoint (kernel-panik)
  - Eset Online Scanner (Eset)
+ - ESET Poweliks Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
  - ESET SysRescue (Eset)
  - ESET TeslaCrypt Decryptor (Eset)
