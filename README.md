@@ -46,6 +46,7 @@
  - ESET Crysis Decryptor (Eset)
  - ESET Daonol Cleaner (Eset)
  - ESET Dorkbot Cleaner (Eset)
+ - ESET ELEX Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
