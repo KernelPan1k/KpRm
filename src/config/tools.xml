@@ -211,76 +211,76 @@
 		<process force="0" process="(?i)^defogger.*\.exe$" />
 	</tool>
     <tool name="ESET AES-NI Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetaesnidecryptor.*\.exe$" />
     </tool>
     <tool name="ESET Bedep Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^ESETBedepCleaner.*\.exe$" />
     </tool>
     <tool name="ESET Bubnix Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^ESETBubnixCleaner.*\.exe$" />
     </tool>
     <tool name="ESET CodplatAA Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^ESETCodplatAACleaner.*\.exe$" />
     </tool>
     <tool name="ESET Conficker Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetconfickercleaner.*\.exe$" />
     </tool>
     <tool name="ESET Crypt888 Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetcrypt888decryptor.*\.exe$" />
     </tool>
     <tool name="ESET Crysis Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetcrysisdecryptor.*\.exe$" />
     </tool>
     <tool name="ESET Daonol Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetdaonolcleaner.*\.exe$" />
     </tool>
     <tool name="ESET Dorkbot Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetdorkbotcleaner.*\.exe$" />
     </tool>
     <tool name="ESET ELEX Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetelexcleaner.*\.exe$" />
     </tool>
     <tool name="ESET Eternal Blue Checker">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file" />
         <process force="0" process="(?i)^ESETEternalBlueChecker.*\.exe$" />
     </tool>
     <tool name="ESET Filecoder.AA Cleaner">
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip" type="file" />
+        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file" />
         <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder" />
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe" type="file" />
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe$" type="file" />
+        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file" />
         <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe$" type="file" />
     </tool>
     <tool name="ESET Medre Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)" type="file" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetacadmedrecleaner.*\.exe$" />
     </tool>
 	<tool name="ESET Online Scanner">
 		<appData companyName="" force="1" pattern="(?i)^ESET$" type="folder" />
-		<folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner" />
+		<folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner$" />
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^ESET Online Scanner\.lnk$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
@@ -288,27 +288,27 @@
 		<registryKey force="0" key="HKLM\SOFTWARE\ESET\ESET Online Scanner" />
 	</tool>
 	<tool name="ESET Poweliks Cleaner">
-		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)" type="file" />
-		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)" type="file" />
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetpowelikscleaner.*\.exe$" />
     </tool>
 	<tool name="ESET Sirefef Cleaner">
-		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)" type="file" />
-		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)" type="file" />
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetsirefefcleaner.*\.exe$" />
     </tool>
 	<tool name="ESET Superfish Cleaner">
-		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)" type="file" />
-		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)" type="file" />
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetsuperfishcleaner.*\.exe$" />
     </tool>
 	<tool name="ESET SysRescue">
-		<desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso" type="file" />
-		<download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso" type="file" />
+		<desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
 	</tool>
 	<tool name="ESET TeslaCrypt Decryptor">
-		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)" type="file" />
-		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)" type="file" />
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetteslacryptdecryptor.*\.exe$" />
 	</tool>
 	<tool name="FRST">
