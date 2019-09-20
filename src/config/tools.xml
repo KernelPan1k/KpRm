@@ -200,6 +200,11 @@
 		<download companyName="" force="0" pattern="(?i)^defogger.*\.(log|exe)$" type="file" />
 		<process force="0" process="(?i)^defogger.*\.exe$" />
 	</tool>
+	<tool name="Dr.Web LiveDisk">
+		<desktop companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file" />
+		<download companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file" />
+        <homeDrive companyName="" force="1" pattern="(?i)^DrWeb Quarantine$" type="folder" />
+    </tool>
 	<tool name="EasyRestorePoint">
 		<desktop companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^easyrestorepoint.*\.(txt|exe)$" type="file" />
 		<download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^easyrestorepoint.*\.(txt|exe)$" type="file" />
