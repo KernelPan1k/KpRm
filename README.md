@@ -38,6 +38,7 @@
  - DCryDecrypter (Michael Gillespie)
  - EasyRestorePoint (kernel-panik)
  - Eset Online Scanner (Eset)
+ - ESET Sirefef Cleaner (Eset)
  - ESET SysRescue (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
