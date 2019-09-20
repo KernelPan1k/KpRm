@@ -40,6 +40,7 @@
  - Eset Online Scanner (Eset)
  - ESET Sirefef Cleaner (Eset)
  - ESET SysRescue (Eset)
+ - ESET TeslaCrypt Decryptor (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
  - FixPurge (McVivien2)
