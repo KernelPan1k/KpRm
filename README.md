@@ -42,6 +42,7 @@
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
+ - ESET Superfish Cleaner (Eset)
  - ESET SysRescue (Eset)
  - ESET TeslaCrypt Decryptor (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
