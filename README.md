@@ -42,6 +42,7 @@
  - ESET Bubnix Cleaner (Eset)
  - ESET CodplatAA Cleaner (Eset)
  - ESET Conficker Cleaner (Eset)
+ - ESET Crypt888 Decryptor (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
