@@ -40,7 +40,8 @@ Func RestoreSystemSettingsByDefault()
 		LogMessage("  [X] Reset WinSock")
 	EndIf
 
-	Local $sRegvar = "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
+    Local $s64Bit = GetSuffixKey()
+	Local $sRegvar = "HKCU" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced"
 
 	$iStatus = RegWrite($sRegvar, "Hidden", "REG_DWORD", "2")
 
