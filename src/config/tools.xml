@@ -398,6 +398,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^ESETSpyTuscasCleaner.*\.exe$" />
     </tool>
+    <tool name="ESET SpyEye Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^ESETSpyEyeCleaner.*\.exe$" />
+    </tool>
     <tool name="ESET Spy.Zbot.ZR Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
