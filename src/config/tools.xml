@@ -292,8 +292,8 @@
         <process force="0" process="(?i)^esetfilecodernaccleaner.*\.exe$" />
     </tool>
     <tool name="ESET Filecoder.R Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file" />
+        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetfilecoderrcleaner.*\.exe$" />
     </tool>
     <tool name="ESET GandCrab Decryptor">
