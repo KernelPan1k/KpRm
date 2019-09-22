@@ -321,15 +321,15 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetmebrootcleaner.*\.exe$" />
     </tool>
-    <tool name="ESET Necurs.A Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
-        <process force="0" process="(?i)^esetnecurscleaner.*\.exe$" />
-    </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetacadmedrecleaner.*\.exe$" />
+    </tool>
+    <tool name="ESET Necurs.A Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^esetnecurscleaner.*\.exe$" />
     </tool>
     <tool name="ESET Olmarik Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$" type="file" />
@@ -379,15 +379,30 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetsirefefcleaner.*\.exe$" />
     </tool>
-	<tool name="ESET Superfish Cleaner">
-		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
-		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
+    <tool name="ESET SpyEye Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^ESETSpyEyeCleaner.*\.exe$" />
+    </tool>
+    <tool name="ESET Spy.Tuscas Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^ESETSpyTuscasCleaner.*\.exe$" />
+    </tool>
+    <tool name="ESET Spy.Zbot.ZR Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^ESETZBotZRCleaner.*\.exe$" />
+    </tool>
+    <tool name="ESET Superfish Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetsuperfishcleaner.*\.exe$" />
     </tool>
-	<tool name="ESET SysRescue">
-		<desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
-		<download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
-	</tool>
+    <tool name="ESET SysRescue">
+        <desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
+        <download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file" />
+    </tool>
 	<tool name="ESET TeslaCrypt Decryptor">
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file" />
@@ -398,21 +413,6 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esettrustezebadecoder.*\.exe$" />
 	</tool>
-    <tool name="ESET Spy.Tuscas Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
-        <process force="0" process="(?i)^ESETSpyTuscasCleaner.*\.exe$" />
-    </tool>
-    <tool name="ESET SpyEye Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file" />
-        <process force="0" process="(?i)^ESETSpyEyeCleaner.*\.exe$" />
-    </tool>
-    <tool name="ESET Spy.Zbot.ZR Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file" />
-        <process force="0" process="(?i)^ESETZBotZRCleaner.*\.exe$" />
-    </tool>
     <tool name="ESET VB.NAX Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file" />
