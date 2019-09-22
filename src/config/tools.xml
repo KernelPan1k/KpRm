@@ -306,6 +306,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetgoblincleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetgoblincleaner.*\.exe$" />
     </tool>
+    <tool name="ESET JS/Bondat Fixer">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^esetjsbondatfixer.*\.exe$" />
+    </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />

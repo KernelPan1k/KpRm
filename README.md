@@ -55,6 +55,7 @@
  - ESET Filecoder.R Cleaner (Eset)
  - ESET GandCrab Decoder (Eset)
  - ESET Goblin Cleaner (Eset)
+ - ESET JS/Bondat Fixer (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
