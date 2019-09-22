@@ -78,6 +78,7 @@
  - ESET VB.NAX Cleaner (Eset)
  - ESET VB.OGJ Cleaner (Eset)
  - ESET Virlock Cleaner (Eset)
+ - ESET Zimuse Cleaner (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
  - FixPurge (McVivien2)
