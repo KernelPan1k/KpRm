@@ -71,6 +71,7 @@
  - ESET Superfish Cleaner (Eset)
  - ESET SysRescue (Eset)
  - ESET TeslaCrypt Decryptor (Eset)
+ - ESET Spy.Tuscas Cleaner (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
  - FixPurge (McVivien2)
