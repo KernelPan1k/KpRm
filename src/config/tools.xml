@@ -354,6 +354,11 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetquervarcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetquervarcleaner.*\.exe$" />
     </tool>
+	<tool name="ESET Retefe Detector">
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file" />
+        <process force="0" process="(?i)^esetretefedetector.*\.exe$" />
+    </tool>
 	<tool name="ESET Sirefef Cleaner">
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
