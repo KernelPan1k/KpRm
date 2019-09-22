@@ -52,6 +52,7 @@
  - ESET Filecoder.AE Cleaner (Eset)
  - ESET Filecoder.AR Cleaner (Eset)
  - ESET Filecoder.NAC Cleaner (Eset)
+ - ESET Filecoder.R Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
