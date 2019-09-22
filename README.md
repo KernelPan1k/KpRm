@@ -36,7 +36,7 @@
  - DDS (sUBs)
  - Defogger (jpshortstuff)
  - DCryDecrypter (Michael Gillespie)
- - Docteur Web LiveCD
+ - Dr Web LiveCD
  - EasyRestorePoint (kernel-panik)
  - ESET AES-NI Decryptor (Eset)
  - ESET Bedep Cleaner (Eset)
