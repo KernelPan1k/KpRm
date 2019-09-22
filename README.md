@@ -32,10 +32,11 @@
  - Combofix (sUBs)
  - Crypt38Decrypter (Michael Gillespie)
  - CryptoSearch (Michael Gillespie)
- - DDS (sUBs)
  - CryptON Ransomware Decryptor (Emsisoft)
+ - DDS (sUBs)
  - Defogger (jpshortstuff)
  - DCryDecrypter (Michael Gillespie)
+ - Docteur Web LiveCD
  - EasyRestorePoint (kernel-panik)
  - ESET AES-NI Decryptor (Eset)
  - ESET Bedep Cleaner (Eset)
