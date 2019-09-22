@@ -393,6 +393,11 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetteslacryptdecryptor.*\.exe$" />
 	</tool>
+	<tool name="ESET Trustezeb.A Decoder">
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file" />
+        <process force="0" process="(?i)^esettrustezebadecoder.*\.exe$" />
+	</tool>
     <tool name="ESET Spy.Tuscas Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file" />

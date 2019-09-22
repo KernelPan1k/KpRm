@@ -71,6 +71,7 @@
  - ESET Superfish Cleaner (Eset)
  - ESET SysRescue (Eset)
  - ESET TeslaCrypt Decryptor (Eset)
+ - ESET Trustezeb.A Decoder (Eset)
  - ESET Spy.Tuscas Cleaner (Eset)
  - ESET SpyEye Cleaner (Eset)
  - ESET Spy.Zbot.ZR Cleaner (Eset)
