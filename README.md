@@ -49,6 +49,8 @@
  - ESET ELEX Cleaner (Eset)
  - ESET Eternal Blue Checker (Eset)
  - ESET Filecoder.AA Cleaner (Eset)
+ - ESET Filecoder.AE Cleaner (Eset)
+ - ESET Filecoder.AR Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
