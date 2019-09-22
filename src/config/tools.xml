@@ -296,7 +296,7 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetfilecoderrcleaner.*\.exe$" />
     </tool>
-    <tool name="ESET GandCrab Decoder">
+    <tool name="ESET GandCrab Decryptor">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file" />
         <process force="0" process="(?i)^esetgandcrabdecryptor.*\.exe$" />
@@ -310,6 +310,11 @@
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetjsbondatfixer.*\.exe$" />
+    </tool>
+    <tool name="ESET Mabezat Decryptor">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file" />
+        <process force="0" process="(?i)^esetmabezatadecryptor.*\.exe$" />
     </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
