@@ -331,6 +331,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetacadmedrecleaner.*\.exe$" />
     </tool>
+    <tool name="ESET Olmarik Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^esetolmarikolmascocleaner.*\.exe$" />
+    </tool>
 	<tool name="ESET Online Scanner">
 		<folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner$" />
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file" />
