@@ -72,6 +72,7 @@
  - ESET SysRescue (Eset)
  - ESET TeslaCrypt Decryptor (Eset)
  - ESET Spy.Tuscas Cleaner (Eset)
+ - ESET SpyEye Cleaner (Eset)
  - ESET Spy.Zbot.ZR Cleaner (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
