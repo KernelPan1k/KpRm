@@ -65,6 +65,7 @@
  - ESET Poweliks Cleaner (Eset)
  - ESET Quervar.C Cleaner (Eset)
  - ESET Retefe Detector (Eset)
+ - ESET Retacino Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
  - ESET Superfish Cleaner (Eset)
  - ESET SysRescue (Eset)
