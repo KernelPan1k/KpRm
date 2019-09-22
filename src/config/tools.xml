@@ -364,6 +364,11 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetrovnixcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetrovnixcleaner.*\.exe$" />
     </tool>
+	<tool name="ESET Retacino Cleaner">
+		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file" />
+		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^esetretacinocleaner.*\.exe$" />
+    </tool>
 	<tool name="ESET Sirefef Cleaner">
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file" />
