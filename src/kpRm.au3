@@ -196,6 +196,7 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
+	    $bRemoveToolLastPass = False
 		RunRemoveTools()
 		$bRemoveToolLastPass = True
 		RunRemoveTools()
