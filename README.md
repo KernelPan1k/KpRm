@@ -76,6 +76,7 @@
  - ESET SpyEye Cleaner (Eset)
  - ESET Spy.Zbot.ZR Cleaner (Eset)
  - ESET VB.NAX Cleaner (Eset)
+ - ESET VB.OGJ Cleaner (Eset)
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
  - FixPurge (McVivien2)
