@@ -418,6 +418,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^ESETVBNAXCleaner.*\.exe$" />
     </tool>
+    <tool name="ESET VB.OGJ Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^ESETVbOgjCleaner.*\.exe$" />
+    </tool>
 	<tool name="FRST">
 		<desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file" />
 		<desktop companyName="" force="0" pattern="(?i)^FRST-OlderVersion$" type="folder" />
