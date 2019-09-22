@@ -58,6 +58,7 @@
  - ESET JS/Bondat Fixer (Eset)
  - ESET Mabezat Decryptor (Eset)
  - ESET Mebroot Cleaner (Eset)
+ - ESET Necurs.A Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)

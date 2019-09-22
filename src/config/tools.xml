@@ -321,6 +321,11 @@
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetmebrootcleaner.*\.exe$" />
     </tool>
+    <tool name="ESET Necurs.A Cleaner">
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file" />
+        <process force="0" process="(?i)^esetnecurscleaner.*\.exe$" />
+    </tool>
     <tool name="ESET Medre Cleaner">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file" />
