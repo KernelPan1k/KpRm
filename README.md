@@ -60,6 +60,7 @@
  - ESET Mebroot Cleaner (Eset)
  - ESET Necurs.A Cleaner (Eset)
  - ESET Medre Cleaner (Eset)
+ - ESET Olmarik Cleaner (Eset)
  - ESET Online Scanner (Eset)
  - ESET Poweliks Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
