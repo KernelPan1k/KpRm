@@ -101,7 +101,7 @@ Func RunRemoveTools()
     Dim $bRemoveToolLastPass
 
 	If $bRemoveToolLastPass = True Then
-		LogMessage(@CRLF & "- Search Tools -" & @CRLF)
+		LogMessage(@CRLF & "- Remove Tools -" & @CRLF)
 	EndIf
 
 	Local Const $aListActions = [ _

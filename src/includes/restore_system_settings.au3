@@ -1,6 +1,6 @@
 
 Func RestoreSystemSettingsByDefault()
-	LogMessage(@CRLF & "- Restore Default System Settings -" & @CRLF)
+	LogMessage(@CRLF & "- Restore System Settings -" & @CRLF)
 
 	UpdateStatusBar("Restore system settings")
 

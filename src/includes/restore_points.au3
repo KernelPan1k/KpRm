@@ -1,6 +1,6 @@
 
 Func ClearRestorePoint()
-	LogMessage(@CRLF & "- Clear All System Restore Points -" & @CRLF)
+	LogMessage(@CRLF & "- Clear Restore Points -" & @CRLF)
 
 	Local Const $aRP = _SR_EnumRestorePoints()
 	Local $iRet = 0
@@ -82,7 +82,7 @@ Func ClearDailyRestorePoint()
 EndFunc   ;==>ClearDailyRestorePoint
 
 Func ShowCurrentRestorePoint()
-	LogMessage(@CRLF & "- Display All System Restore Point -" & @CRLF)
+	LogMessage(@CRLF & "- Display System Restore Point -" & @CRLF)
 
 	Local Const $aRP = _SR_EnumRestorePoints()
 
@@ -125,7 +125,7 @@ EndFunc   ;==>CheckIsRestorePointExist
 
 
 Func CreateRestorePoint()
-	LogMessage(@CRLF & "- Create New System Restore Point -" & @CRLF)
+	LogMessage(@CRLF & "- Create Restore Point -" & @CRLF)
 
 	Local $iSR_Enabled = _SR_Enable()
 

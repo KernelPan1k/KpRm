@@ -408,3 +408,8 @@ Func CheckIfExist($sType, $sToolElement, $sToolVal)
 			LogMessage("     [?] Unknown type " & $sType)
 	EndSwitch
 EndFunc   ;==>CheckIfExist
+
+Func TimerWriteReport($hTimer, $sSection)
+	Local $sDiff = StringFormat("%.2f", TimerDiff($hTimer) / 1000)
+	LogMessage(@CRLF & "-- " & $sSection & " finished in " & $sDiff & "s --" & @CRLF)
+EndFunc   ;==>TimerWriteReport

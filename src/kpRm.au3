@@ -6,7 +6,7 @@
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Fileversion=40
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.10
+#AutoIt3Wrapper_Res_ProductVersion=1.10.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
@@ -54,7 +54,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.10"
+Global $sKprmVersion = "1.10.1"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -184,22 +184,26 @@ EndFunc   ;==>UpdateStatusBar
 Func KpRemover()
 	Dim $sTmpDir
 	Dim $bRemoveToolLastPass
+	Local $hGlobalTimer = TimerInit()
 
 	Init()
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
+		Local $hTimer = TimerInit()
 		CreateBackupRegistry()
+		TimerWriteReport($hTimer, "Backup Registry")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
-	    $bRemoveToolLastPass = False
+		Local $hTimer = TimerInit()
 		RunRemoveTools()
 		$bRemoveToolLastPass = True
 		RunRemoveTools()
+		TimerWriteReport($hTimer, "Remove tools")
 	Else
 		ProgressBarUpdate(32)
 	EndIf
@@ -207,26 +211,36 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then
+		Local $hTimer = TimerInit()
 		RestoreSystemSettingsByDefault()
+		TimerWriteReport($hTimer, "Restore System Settings")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then
+		Local $hTimer = TimerInit()
 		RestoreUAC()
+		TimerWriteReport($hTimer, "Restore UAC")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then
+		Local $hTimer = TimerInit()
 		ClearRestorePoint()
+		TimerWriteReport($hTimer, "Clear Restore Points")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then
+		Local $hTimer = TimerInit()
 		CreateRestorePoint()
+		TimerWriteReport($hTimer, "Create Restore Point")
 	EndIf
+
+	TimerWriteReport($hGlobalTimer, "KPRM")
 
 	GUICtrlSetData($oProgressBar, 100)
 

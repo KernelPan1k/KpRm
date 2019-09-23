@@ -1,6 +1,6 @@
 
 Func RestoreUAC()
-	LogMessage(@CRLF & "- Restore UAC Default Value -" & @CRLF)
+	LogMessage(@CRLF & "- Restore UAC -" & @CRLF)
 
 	UpdateStatusBar("Restore UAC")
 
