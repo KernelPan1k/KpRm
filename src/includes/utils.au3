@@ -355,8 +355,6 @@ Func UCheckIfRegistyKeyExist($sToolElement, $sToolVal)
 
 	If @error >= 0 Then
 		$sSymbol = "[OK]"
-	Else
-		AddRemoveAtRestart('key', $sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & FormatForDisplayRegistryKey($sToolElement) & " deleted (" & $sToolVal & ")")
@@ -388,7 +386,7 @@ Func UCheckIfElementExist($sToolElement, $sToolVal)
 
 	If Null <> $sType Then
 		$sSymbol = "[X]"
-		AddRemoveAtRestart($sType, $sToolElement)
+		AddRemoveAtRestart($sToolElement, $sType)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & $sToolElement & " deleted (" & $sToolVal & ")")
