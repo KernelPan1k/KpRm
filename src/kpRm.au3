@@ -4,20 +4,14 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=40
+#AutoIt3Wrapper_Res_Fileversion=41
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.10.1
+#AutoIt3Wrapper_Res_ProductVersion=1.11
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
 #AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\HoboCopy.exe
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcp100.dll
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcr100.dll
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\HoboCopy.exe
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcp100.dll
-#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcr100.dll
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
@@ -54,7 +48,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.10.1"
+Global $sKprmVersion = "1.11"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
