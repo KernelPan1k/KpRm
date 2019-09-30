@@ -231,6 +231,8 @@ Func FileCopyVSS(ByRef Const $oHives)
 				If StringInStr($sAttrib, "A") Then
 					FileSetAttrib($sBackupFile, "-A")
 				EndIf
+
+				LogMessage("    ~ [OK] Hive " & $sHiveItem & " backed up")
 			EndIf
 		Next
 
@@ -239,7 +241,7 @@ Func FileCopyVSS(ByRef Const $oHives)
 		Local $Retval_Canc_VSS = _DeleteShadowCopy($ShadowID)
 
 		If $Retval_Canc_VSS <> 0 Then
-			Return -6 ;Error Delete Shadow Copy
+			LogMessage("  [!] Error Delete Shadow Copy")
 		EndIf
 	Next
 
@@ -307,11 +309,11 @@ Func CreateBackupRegistry()
 
 	If $iBackupStatus <> 0 Then
 		MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & "code: " & $iBackupStatus)
-		LogMessage("  [X] Failed Registry Backup (code: " & $iBackupStatus & ')')
+		LogMessage(@CRLF & "  [X] Failed Registry Backup (code: " & $iBackupStatus & ')')
 		QuitKprm(False)
 	EndIf
 
-	LogMessage("  [OK] Registry Backup: " & $sBackupPath)
+	LogMessage(@CRLF & "  [OK] Registry Backup: " & $sBackupPath)
 EndFunc   ;==>CreateBackupRegistry
 
 
