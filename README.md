@@ -67,6 +67,7 @@
  - ESET Quervar.C Cleaner (Eset)
  - ESET Retefe Detector (Eset)
  - ESET Retacino Cleaner (Eset)
+ - ESET Rogue Applications Remover (Eset)
  - ESET Simda Cleaner (Eset)
  - ESET Sirefef Cleaner (Eset)
  - ESET Spy.Tuscas Cleaner (Eset)
