@@ -369,6 +369,12 @@
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file" />
         <process force="0" process="(?i)^esetretacinocleaner.*\.exe$" />
     </tool>
+    <tool name="ESET Rogue Applications Remover">
+        <folder force="1" path="@AppDataCommonDir\ESET\ESET Rogue Applications Remover" />
+        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file" />
+        <download companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file" />
+        <process force="0" process="(?i)^eraremover.*\.exe$" />
+    </tool>
 	<tool name="ESET Simda Cleaner">
 		<desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file" />
 		<download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file" />
