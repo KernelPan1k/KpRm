@@ -184,6 +184,15 @@ Func KpRemover()
 
 	ProgressBarUpdate()
 
+	LogMessage(@CRLF & "- Checked options -" & @CRLF)
+
+	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then LogMessage("    ~ Registry Backup")
+	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then LogMessage("    ~ Delete Tools")
+	If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then LogMessage("    ~ Restore System Settings")
+	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then LogMessage("    ~ UAC Restore")
+	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then LogMessage("    ~ Delete Restore Points")
+	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then LogMessage("    ~ Create Restore Point")
+
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
 		Local $hTimer = TimerInit()
 		CreateBackupRegistry()
