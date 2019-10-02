@@ -48,15 +48,23 @@ Func _IsInternetConnected()
 EndFunc   ;==>_IsInternetConnected
 
 Func PowershellIsAvailable()
+    Dim $bPowerShellAvailable
+
+    If IsBool($bPowerShellAvailable) Then Return $bPowerShellAvailable
+
 	Local $iPid = Run("powershell.exe", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Or Not $iPid Then
-		Return False
+	    $bPowerShellAvailable = False
+	    
+		Return $bPowerShellAvailable
 	EndIf
 
 	ProcessClose($iPid)
 
-	Return True
+    $bPowerShellAvailable = True
+
+	Return $bPowerShellAvailable
 EndFunc   ;==>PowershellIsAvailable
 
 Func CheckVersionOfKpRm()
