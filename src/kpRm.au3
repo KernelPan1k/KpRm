@@ -102,6 +102,7 @@ Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN
 Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN
 Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 Global $bRemoveToolLastPass = False
+Global $bPowerShellAvailable = Null
 
 Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 235, 202, 112)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
