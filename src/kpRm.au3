@@ -196,19 +196,15 @@ Func KpRemover()
 	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then LogMessage("    ~ Create Restore Point")
 
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		CreateBackupRegistry()
-		TimerWriteReport($hTimer, "Backup Registry")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		RunRemoveTools()
 		$bRemoveToolLastPass = True
 		RunRemoveTools()
-		TimerWriteReport($hTimer, "Remove tools")
 	Else
 		ProgressBarUpdate(32)
 	EndIf
@@ -216,33 +212,25 @@ Func KpRemover()
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		RestoreSystemSettingsByDefault()
-		TimerWriteReport($hTimer, "Restore System Settings")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		RestoreUAC()
-		TimerWriteReport($hTimer, "Restore UAC")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		ClearRestorePoint()
-		TimerWriteReport($hTimer, "Clear Restore Points")
 	EndIf
 
 	ProgressBarUpdate()
 
 	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then
-		Local $hTimer = TimerInit()
 		CreateRestorePoint()
-		TimerWriteReport($hTimer, "Create Restore Point")
 	EndIf
 
 	TimerWriteReport($hGlobalTimer, "KPRM")
