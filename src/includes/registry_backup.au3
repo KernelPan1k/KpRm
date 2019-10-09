@@ -265,6 +265,8 @@ Func CreateBackupRegistry()
 		_ArrayAdd($aAllHives, $sHive, 0, '|||')
 	Next
 
+	If @AutoItX64 = 0 Then _WinAPI_Wow64EnableWow64FsRedirection(False)
+
 	Local Const $iBackupStatus = FileCopyVSS($aAllHives)
 
 	If $iBackupStatus <> 0 Then
