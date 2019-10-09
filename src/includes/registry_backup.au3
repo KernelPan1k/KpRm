@@ -173,77 +173,68 @@ Func _DeleteShadowCopy($ShadowID_Func)
 	Return RunWait(@ComSpec & " /c " & $CommandLine, @ScriptDir, @SW_HIDE)
 EndFunc   ;==>_DeleteShadowCopy
 
-Func FileCopyVSS(ByRef Const $oHives)
+Func FileCopyVSS(ByRef Const $aAllHives)
 	Local $ShadowCopyDrive = ""
 	Local $ShadowID = ""
 
-	For $sSourceDrive In $oHives
-		If DriveStatus($sSourceDrive & "\") <> "READY" Then
-			Return -7 ;Source Drive not ready
+	If DriveStatus(@HomeDrive & "\") <> "READY" Then
+		Return -7     ;Source Drive not ready
+	EndIf
+
+	Local $Retval_CreateVSS = _CreateVSS_ShadowCopy_Drive(@HomeDrive, $ShadowCopyDrive, $ShadowID)
+
+	If $Retval_CreateVSS < 0 Then
+		Return $Retval_CreateVSS
+	EndIf
+
+	If $ShadowCopyDrive = "" Then
+		Return -4     ; Cannot create shadow copy
+	EndIf
+
+	For $i = 0 To UBound($aAllHives) - 1
+		Local $sHive = $aAllHives[$i][0]
+		Local $sBackupPath = $aAllHives[$i][1]
+		Local $Path_Source_Strip = StringMid($sHive, 3)
+
+		UpdateStatusBar("Backup hive  " & $sHive)
+
+		Local $Retval_Copy = FileCopy($ShadowCopyDrive & $Path_Source_Strip, $sBackupPath)
+
+		If $Retval_Copy = 0 Then
+			Return -5     ; Autoit Copy Error
 		EndIf
 
-		Local $Retval_CreateVSS = _CreateVSS_ShadowCopy_Drive($sSourceDrive, $ShadowCopyDrive, $ShadowID) ; -1/-2/-3
+		Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
+		Local $aPathSplit = _PathSplit($sHive, $sDrive, $sDir, $sFileName, $sExtension)
+		Local $sBackupFile = $sBackupPath & '\' & $sFileName & $sExtension
 
-		If $Retval_CreateVSS < 0 Then
-			Return $Retval_CreateVSS
-		EndIf
+		If Not FileExists($sBackupFile) Then
+			Return -9
+		Else
+			Local $sAttrib = FileGetAttrib($sBackupFile)
 
-		If $ShadowCopyDrive = "" Then
-			Return -4 ; Cannot create shadow copy
-		EndIf
-
-		Local $oDriveHives = $oHives.Item($sSourceDrive)
-
-		For $sHiveItem In $oDriveHives
-			Local $sBackupPath = $oDriveHives.Item($sHiveItem)
-
-			Local $Path_Source_Strip = StringMid($sHiveItem, 3)
-
-			UpdateStatusBar("Backup hive  " & $sSourceDrive & $Path_Source_Strip)
-
-			Local $Retval_Copy = FileCopy($ShadowCopyDrive & $Path_Source_Strip, $sBackupPath)
-
-			If $Retval_Copy = 0 Then
-				Return -5 ; Autoit Copy Error
+			If StringInStr($sAttrib, "R") Then
+				FileSetAttrib($sBackupFile, "-R")
 			EndIf
 
-			Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
-			Local $aPathSplit = _PathSplit($sHiveItem, $sDrive, $sDir, $sFileName, $sExtension)
-			Local $sBackupFile = $sBackupPath & '\' & $sFileName & $sExtension
-
-			If Not FileExists($sBackupFile) Then
-				Return -9
-			Else
-				Local $sAttrib = FileGetAttrib($sBackupFile)
-
-				If StringInStr($sAttrib, "R") Then
-					FileSetAttrib($sBackupFile, "-R")
-				EndIf
-
-				If StringInStr($sAttrib, "S") Then
-					FileSetAttrib($sBackupFile, "-S")
-				EndIf
-
-				If StringInStr($sAttrib, "H") Then
-					FileSetAttrib($sBackupFile, "-H")
-				EndIf
-
-				If StringInStr($sAttrib, "A") Then
-					FileSetAttrib($sBackupFile, "-A")
-				EndIf
-
-				LogMessage("    ~ [OK] Hive " & $sHiveItem & " backed up")
+			If StringInStr($sAttrib, "S") Then
+				FileSetAttrib($sBackupFile, "-S")
 			EndIf
-		Next
 
-		_RemoveVSSLetter($ShadowCopyDrive)
+			If StringInStr($sAttrib, "H") Then
+				FileSetAttrib($sBackupFile, "-H")
+			EndIf
 
-		Local $Retval_Canc_VSS = _DeleteShadowCopy($ShadowID)
+			If StringInStr($sAttrib, "A") Then
+				FileSetAttrib($sBackupFile, "-A")
+			EndIf
 
-		If $Retval_Canc_VSS <> 0 Then
-			LogMessage("  [!] Error Delete Shadow Copy")
+			LogMessage("    ~ [OK] Hive " & $sHive & " backed up")
 		EndIf
 	Next
+
+	_RemoveVSSLetter($ShadowCopyDrive)
+	_DeleteShadowCopy($ShadowID)
 
 	Return 0
 EndFunc   ;==>FileCopyVSS
@@ -255,57 +246,26 @@ Func CreateBackupRegistry()
 	Dim $lRegistryBackupError
 	Dim $sCurrentHumanTime
 	Local Const $sBackupPath = @HomeDrive & "\KPRM\backup\" & $sCurrentHumanTime
-	Local Const $sSuffixKey = GetSuffixKey()
-	Local $sHiveList = "HKLM" & $sSuffixKey & "\System\CurrentControlSet\Control\hivelist"
-	Local $i = 0
+	Local $aHives[2] = [@WindowsDir  & "\System32\config\SOFTWARE", @UserProfileDir & "\NTUSER.dat"]
+	Local $aAllHives[0][2]
 
-	If Not FileExists($sBackupPath) Then
-		DirCreate($sBackupPath)
-	EndIf
+	For $i = 0 To UBound($aHives) - 1
+		Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
+		Local $aPathSplit = _PathSplit($aHives[$i], $sDrive, $sDir, $sFileName, $sExtension)
 
-	Local $oHives = ObjCreate("Scripting.Dictionary")
+		$sDir = StringRegExpReplace($sDir, "\\$", "")
 
-	While True
-		$i += 1
-		Local $sEntry = RegEnumVal($sHiveList, $i)
-		If @error <> 0 Or $i > 100 Then ExitLoop
+		Local $sScriptBackUpPath = $sBackupPath & $sDir
+		Local $sHive = $aHives[$i] & '|||' & $sScriptBackUpPath
 
-		Local $sName = RegRead($sHiveList, $sEntry)
-
-		If $sName Then
-			Local $sPathName = DosPathNameToPathName($sName)
-
-			If StringRegExp($sPathName, '(?i)^[A-Z]\:\\') Then
-				Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
-				Local $aPathSplit = _PathSplit($sPathName, $sDrive, $sDir, $sFileName, $sExtension)
-
-				$sDrive = StringUpper($sDrive)
-				$sDir = StringRegExpReplace($sDir, "\\$", "")
-
-				Local $sScriptBackUpPath = $sBackupPath & $sDir
-
-				If $sDrive And $sPathName And $sScriptBackUpPath Then
-					If Not FileExists($sScriptBackUpPath) Then
-						DirCreate($sScriptBackUpPath)
-					EndIf
-
-					If $oHives.Exists($sDrive) Then
-						Local $oDriveHives = $oHives.Item($sDrive)
-						$oDriveHives.add($sPathName, $sScriptBackUpPath)
-						$oHives.Item($sDrive) = $oDriveHives
-					Else
-						Local $oDriveHives = ObjCreate("Scripting.Dictionary")
-						$oDriveHives.add($sPathName, $sScriptBackUpPath)
-						$oHives.Item($sDrive) = $oDriveHives
-					EndIf
-				EndIf
-			EndIf
+		If Not FileExists($sScriptBackUpPath) Then
+			DirCreate($sScriptBackUpPath)
 		EndIf
-	WEnd
 
-	If @AutoItX64 = 0 Then _WinAPI_Wow64EnableWow64FsRedirection(False)
+		_ArrayAdd($aAllHives, $sHive, 0, '|||')
+	Next
 
-	Local Const $iBackupStatus = FileCopyVSS($oHives)
+	Local Const $iBackupStatus = FileCopyVSS($aAllHives)
 
 	If $iBackupStatus <> 0 Then
 		MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & "code: " & $iBackupStatus)

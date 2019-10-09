@@ -56,7 +56,7 @@ Func PowershellIsAvailable()
 
 	If @error <> 0 Or Not $iPid Then
 	    $bPowerShellAvailable = False
-	    
+
 		Return $bPowerShellAvailable
 	EndIf
 
