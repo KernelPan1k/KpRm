@@ -5,14 +5,20 @@
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=KpRm is a tool to delete all removal tools used during a disinfection
-#AutoIt3Wrapper_Res_Fileversion=44
+#AutoIt3Wrapper_Res_Fileversion=45
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.12.1
+#AutoIt3Wrapper_Res_ProductVersion=1.13
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
 #AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\HoboCopy.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcp100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcr100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\HoboCopy.exe
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcp100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcr100.dll
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
@@ -49,7 +55,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.12.1"
+Global $sKprmVersion = "1.13"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -72,7 +78,6 @@ Else
 EndIf
 
 #include "libs\UAC.au3"
-#include "libs\SystemRestore.au3"
 #include "libs\Permissions.au3"
 #include "libs\_XMLDomWrapper.au3"
 #include "libs\HTTP.au3"
@@ -80,7 +85,8 @@ EndIf
 #include "includes\utils.au3"
 #include "includes\progress_bar.au3"
 #include "includes\restore_points.au3"
-#include "includes\registry_backup.au3"
+#include "includes\registry_slow.au3"
+#include "includes\registry.au3"
 #include "includes\restore_uac.au3"
 #include "includes\restore_system_settings.au3"
 #include "includes\tools_remove.au3"
