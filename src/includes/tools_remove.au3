@@ -1,29 +1,15 @@
 
 Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
+	Dim $bRemoveToolLastPass
+
 	UpdateStatusBar("Prepare to remove " & $sPath)
 
-	If Number($sForce) Then
+	If $bRemoveToolLastPass = True Or Number($sForce) Then
 		_ClearObjectDacl($sPath)
 		_GrantAllAccess($sPath)
 	EndIf
 
-	Local Const $sAttrib = FileGetAttrib($sPath)
-
-	If StringInStr($sAttrib, "R") Then
-		FileSetAttrib($sPath, "-R", $bRecursive)
-	EndIf
-
-	If StringInStr($sAttrib, "S") Then
-		FileSetAttrib($sPath, "-S", $bRecursive)
-	EndIf
-
-	If StringInStr($sAttrib, "H") Then
-		FileSetAttrib($sPath, "-H", $bRecursive)
-	EndIf
-
-	If StringInStr($sAttrib, "A") Then
-		FileSetAttrib($sPath, "-A", $bRecursive)
-	EndIf
+	ClearAttributes($sPath)
 EndFunc   ;==>PrepareRemove
 
 Func IsFileInWhiteList($sFile)
@@ -167,7 +153,9 @@ Func RemoveAllFileFrom($sPath, $aElements)
 EndFunc   ;==>RemoveAllFileFrom
 
 Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
-	If Number($sForce) Then
+	Dim $bRemoveToolLastPass
+
+	If $bRemoveToolLastPass = True Or Number($sForce) Then
 		_ClearObjectDacl($key)
 		_GrantAllAccess($key, $SE_REGISTRY_KEY)
 	EndIf
@@ -182,11 +170,13 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 EndFunc   ;==>RemoveRegistryKey
 
 Func CloseProcessAndWait($sProcess, $sForce = "0")
+	Dim $bRemoveToolLastPass
+
 	Local $iCpt = 50
 
 	If 0 = ProcessExists($sProcess) Then Return False
 
-	If Number($sForce) Then
+	If $bRemoveToolLastPass = True Or Number($sForce) Then
 		_Permissions_KillProcess($sProcess)
 
 		If 0 = ProcessExists($sProcess) Then Return True
