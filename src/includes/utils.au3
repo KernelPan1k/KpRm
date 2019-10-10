@@ -17,6 +17,26 @@ Func GetLanguage()
 	EndSwitch
 EndFunc   ;==>GetLanguage
 
+Func ClearAttributes($sPath)
+	Local $sAttrib = FileGetAttrib($sPath)
+
+	If StringInStr($sAttrib, "R") Then
+		FileSetAttrib($sPath, "-R")
+	EndIf
+
+	If StringInStr($sAttrib, "S") Then
+		FileSetAttrib($sPath, "-S")
+	EndIf
+
+	If StringInStr($sAttrib, "H") Then
+		FileSetAttrib($sPath, "-H")
+	EndIf
+
+	If StringInStr($sAttrib, "A") Then
+		FileSetAttrib($sPath, "-A")
+	EndIf
+EndFunc   ;==>ClearAttributes
+
 Func QuitKprm($bAutoDelete = False, $open = True)
 	Dim $bKpRmDev
 	Dim $sKPLogFile
@@ -48,21 +68,21 @@ Func _IsInternetConnected()
 EndFunc   ;==>_IsInternetConnected
 
 Func PowershellIsAvailable()
-    Dim $bPowerShellAvailable
+	Dim $bPowerShellAvailable
 
-    If IsBool($bPowerShellAvailable) Then Return $bPowerShellAvailable
+	If IsBool($bPowerShellAvailable) Then Return $bPowerShellAvailable
 
 	Local $iPid = Run("powershell.exe", @TempDir, @SW_HIDE)
 
 	If @error <> 0 Or Not $iPid Then
-	    $bPowerShellAvailable = False
+		$bPowerShellAvailable = False
 
 		Return $bPowerShellAvailable
 	EndIf
 
 	ProcessClose($iPid)
 
-    $bPowerShellAvailable = True
+	$bPowerShellAvailable = True
 
 	Return $bPowerShellAvailable
 EndFunc   ;==>PowershellIsAvailable
