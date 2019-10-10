@@ -173,6 +173,16 @@ Func _DeleteShadowCopy($ShadowID_Func)
 	Return RunWait(@ComSpec & " /c " & $CommandLine, @ScriptDir, @SW_HIDE)
 EndFunc   ;==>_DeleteShadowCopy
 
+Func RemoveShadow($ShadowCopyDrive, $ShadowID)
+	If $ShadowCopyDrive Then
+		_RemoveVSSLetter($ShadowCopyDrive)
+	EndIf
+
+	If $ShadowID Then
+		_DeleteShadowCopy($ShadowID)
+	EndIf
+EndFunc   ;==>RemoveShadow
+
 Func FileCopyVSS(ByRef Const $aAllHives)
 	Local $ShadowCopyDrive = ""
 	Local $ShadowID = ""
@@ -184,10 +194,14 @@ Func FileCopyVSS(ByRef Const $aAllHives)
 	Local $Retval_CreateVSS = _CreateVSS_ShadowCopy_Drive(@HomeDrive, $ShadowCopyDrive, $ShadowID)
 
 	If $Retval_CreateVSS < 0 Then
+		RemoveShadow($ShadowCopyDrive, $ShadowID)
+
 		Return $Retval_CreateVSS
 	EndIf
 
 	If $ShadowCopyDrive = "" Then
+		RemoveShadow($ShadowCopyDrive, $ShadowID)
+
 		Return -4     ; Cannot create shadow copy
 	EndIf
 
@@ -201,6 +215,8 @@ Func FileCopyVSS(ByRef Const $aAllHives)
 		Local $Retval_Copy = FileCopy($ShadowCopyDrive & $Path_Source_Strip, $sBackupPath)
 
 		If $Retval_Copy = 0 Then
+			RemoveShadow($ShadowCopyDrive, $ShadowID)
+
 			Return -5     ; Autoit Copy Error
 		EndIf
 
@@ -209,32 +225,16 @@ Func FileCopyVSS(ByRef Const $aAllHives)
 		Local $sBackupFile = $sBackupPath & '\' & $sFileName & $sExtension
 
 		If Not FileExists($sBackupFile) Then
+			RemoveShadow($ShadowCopyDrive, $ShadowID)
+
 			Return -9
 		Else
-			Local $sAttrib = FileGetAttrib($sBackupFile)
-
-			If StringInStr($sAttrib, "R") Then
-				FileSetAttrib($sBackupFile, "-R")
-			EndIf
-
-			If StringInStr($sAttrib, "S") Then
-				FileSetAttrib($sBackupFile, "-S")
-			EndIf
-
-			If StringInStr($sAttrib, "H") Then
-				FileSetAttrib($sBackupFile, "-H")
-			EndIf
-
-			If StringInStr($sAttrib, "A") Then
-				FileSetAttrib($sBackupFile, "-A")
-			EndIf
-
+			ClearAttributes($sBackupFile)
 			LogMessage("    ~ [OK] Hive " & $sHive & " backed up")
 		EndIf
 	Next
 
-	_RemoveVSSLetter($ShadowCopyDrive)
-	_DeleteShadowCopy($ShadowID)
+	RemoveShadow($ShadowCopyDrive, $ShadowID)
 
 	Return 0
 EndFunc   ;==>FileCopyVSS
@@ -246,8 +246,12 @@ Func CreateBackupRegistry()
 	Dim $lRegistryBackupError
 	Dim $sCurrentHumanTime
 	Local Const $sBackupPath = @HomeDrive & "\KPRM\backup\" & $sCurrentHumanTime
-	Local $aHives[2] = [@WindowsDir  & "\System32\config\SOFTWARE", @UserProfileDir & "\NTUSER.dat"]
+	Local $aHives[2] = [@WindowsDir & "\System32\config\SOFTWARE", @UserProfileDir & "\NTUSER.dat"]
 	Local $aAllHives[0][2]
+
+	If Not FileExists($sBackupPath) Then
+		DirCreate($sBackupPath)
+	EndIf
 
 	For $i = 0 To UBound($aHives) - 1
 		Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
@@ -270,12 +274,10 @@ Func CreateBackupRegistry()
 	Local Const $iBackupStatus = FileCopyVSS($aAllHives)
 
 	If $iBackupStatus <> 0 Then
-		MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & "code: " & $iBackupStatus)
-		LogMessage(@CRLF & "  [X] Failed Registry Backup (code: " & $iBackupStatus & ')')
-		QuitKprm(False)
+		CreateBackupRegistryHobocopy($aAllHives)
+		Return
 	EndIf
 
 	LogMessage(@CRLF & "  [OK] Registry Backup: " & $sBackupPath)
+
 EndFunc   ;==>CreateBackupRegistry
-
-
