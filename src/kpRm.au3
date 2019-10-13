@@ -5,9 +5,9 @@
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=KpRm is a tool to delete all removal tools used during a disinfection
-#AutoIt3Wrapper_Res_Fileversion=45
+#AutoIt3Wrapper_Res_Fileversion=46
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.13
+#AutoIt3Wrapper_Res_ProductVersion=1.13.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
@@ -55,7 +55,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.13"
+Global $sKprmVersion = "1.13.1"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -104,8 +104,8 @@ If $bKpRmDev = False Then
 EndIf
 
 Global $sProgramName = "KpRm"
-Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN
-Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN
+Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
+Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & '-' & @SEC
 Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
@@ -167,6 +167,16 @@ Func CreateKPRMDir()
 	EndIf
 EndFunc   ;==>CreateKPRMDir
 
+Func CountKpRmPass()
+    Local Const $sDir = @HomeDrive & "\KPRM"
+
+    Local $aFileList = _FileListToArray($sDir, "kprm-*.txt", $FLTA_FILES)
+
+	If @error <> 0 Then Return 1
+
+	Return $aFileList[0]
+EndFunc
+
 Func Init()
 	CreateKPRMDir()
 	LogMessage("# Run at " & _Now())
@@ -175,6 +185,7 @@ Func Init()
 	LogMessage("# Run by " & @UserName & " from " & @WorkingDir)
 	LogMessage("# Computer Name: " & @ComputerName)
 	LogMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
+	LogMessage("# Number of passes: " & CountKpRmPass())
 
 	ProgressBarInit()
 EndFunc   ;==>Init
