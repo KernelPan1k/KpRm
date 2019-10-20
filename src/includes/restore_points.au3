@@ -75,6 +75,8 @@ Func SR_EnumRestorePointsPowershell()
 EndFunc   ;==>SR_EnumRestorePointsPowershell
 
 Func SR_EnumRestorePoints()
+    Dim $__g_oSR_WMI
+
 	Local $aRestorePoints[1][3], $iCounter = 0
 	$aRestorePoints[0][0] = $iCounter
 
@@ -106,6 +108,8 @@ Func SR_EnumRestorePoints()
 EndFunc   ;==>SR_EnumRestorePoints
 
 Func SR_Enable($DriveL)
+    Dim $__g_oSR
+
 	If Not IsObj($__g_oSR) Then
 		$__g_oSR = ObjGet("winmgmts:{impersonationLevel=impersonate}!root/default:SystemRestore")
 	EndIf
