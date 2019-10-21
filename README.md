@@ -38,6 +38,7 @@
  - DCryDecrypter (Michael Gillespie)
  - Dr Web LiveCD
  - EasyRestorePoint (kernel-panik)
+ - Emsisoft Emergency Kit (Emsisoft)
  - ESET AES-NI Decryptor (Eset)
  - ESET Bedep Cleaner (Eset)
  - ESET Bubnix Cleaner (Eset)
@@ -99,6 +100,7 @@
  - JavaRa (Fred de Vries et Paul McLain)
  - Jigsaw Decrypter (Michael Gillespie)
  - Junkware Removal Tool (Malwarebytes corporation)
+ - Kaspersky Virus Removal Tool (Kaspersky Labs)
  - KPLive (kernel-panik)
  - ListCWall (BleepingComputer)
  - ListParts (Farbar)
