@@ -206,11 +206,16 @@
         <download companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^DrWeb Quarantine$" type="folder"/>
     </tool>
-    <tool name="EasyRestorePoint">
-        <desktop companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^easyrestorepoint.*\.(txt|exe)$" type="file"/>
-        <download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^easyrestorepoint.*\.(txt|exe)$"
-                  type="file"/>
-        <process force="0" process="(?i)^defogger.*\.exe$"/>
+    <tool name="Easy Restore Point">
+        <desktop companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <process force="0" process="(?i)^(easy-restore-point|easyrestorepoint).*\.exe$"/>
+    </tool>
+    <tool name="Emsisoft Emergency Kit">
+        <desktop companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^EEK$" type="folder"/>
+        <process force="1" process="(?i)^(EmsisoftEmergencyKit|Start Commandline Scanner|Start Emergency Kit Scanner).*\.exe$"/>
     </tool>
     <tool name="ESET AES-NI Decryptor">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
@@ -574,14 +579,20 @@
         <process force="0" process="(?i)^JigsawDecrypter.*\.exe$"/>
     </tool>
     <tool name="Junkware Removal Tool">
-        <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)" type="file"/>
-        <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)" type="file"/>
-        <process force="0" process="(?i)^JRT.*\.exe"/>
+        <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
+        <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
+        <process force="0" process="(?i)^JRT.*\.exe$"/>
+    </tool>
+    <tool name="Kaspersky Virus Removal Tool">
+        <desktop companyName="(?i).*Kaspersky.*" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
+        <download companyName="(?i).*Kaspersky.*" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^KVRT_Data$" type="folder"/>
+        <process force="0" process="(?i)^KVRT.*\.exe$"/>
     </tool>
     <tool name="KPLive">
-        <desktop companyName="" force="0" pattern="(?i)^KPLive.*\.iso" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^KPLive.*\.iso" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^kprm_restore.*\.txt" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^KPLive.*\.iso$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^KPLive.*\.iso$" type="file"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^kprm_restore.*\.txt$" type="file"/>
     </tool>
     <tool name="ListCWall">
         <desktop companyName="(?i)^Bleeping Computer" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
@@ -1067,5 +1078,4 @@
         <process force="0" process="(?i)^zoek.*\.exe$"/>
     </tool>
 </tools>
-
 
