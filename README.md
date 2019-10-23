@@ -8,6 +8,7 @@
 
  - AdliceDiag (Tigzy)
  - Ads (Gen-Hackman)
+ - AdminRun (Gen-Hackman)
  - AdsFix (Gen-Hackman)
  - AdwCleaner (Malwarebytes)
  - AHK_NavScan (Batch_Man)
@@ -105,6 +106,7 @@
  - ListCWall (BleepingComputer)
  - ListParts (Farbar)
  - LogOnFix (Xplode)
+ - Look_my_hardware (Gen-Hackman)
  - MBAR (Malwarebytes corporation)
  - MBRCheck (a_d_13)
  - MbrScan (Eric_71)
