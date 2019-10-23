@@ -13,6 +13,11 @@
         <process force="0" process="(?i)^Adlice Diag"/>
         <process force="0" process="(?i)^Diag(32|64)?\.exe$"/>
     </tool>
+	<tool name="AdminRun">
+        <desktop companyName="" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <process force="0" process="(?i)^AdminRun.*\.exe$"/>
+    </tool>
     <tool name="AdsFix">
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
         <desktopCommon companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
@@ -211,11 +216,11 @@
         <download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
         <process force="0" process="(?i)^(easy-restore-point|easyrestorepoint).*\.exe$"/>
     </tool>
-    <tool name="Emsisoft Emergency Kit">
+    <tool name="Emisoft Emergency Kit">
         <desktop companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^EEK$" type="folder"/>
-        <process force="1" process="(?i)^(EmsisoftEmergencyKit|Start Commandline Scanner|Start Emergency Kit Scanner).*\.exe$"/>
+        <process force="1" process="(?i)^(a2emergencykit|a2cmd).*\.exe$"/>
     </tool>
     <tool name="ESET AES-NI Decryptor">
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
@@ -611,6 +616,12 @@
         <download companyName="" force="0" pattern="(?i)^logonfix.*\.exe$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^LogonFix.*\.txt$" type="file"/>
         <process force="0" process="(?i)^logonfix.*\.exe$"/>
+    </tool>
+    <tool name="Look_my_hardware">
+        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
+        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^Look_my_hardware$" type="folder"/>
+        <process force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe"/>
     </tool>
     <tool name="Malwarebytes Anti-Rootkit">
         <cleanDirectory companyName="" force="1"
