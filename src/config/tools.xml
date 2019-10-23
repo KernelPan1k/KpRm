@@ -30,6 +30,7 @@
     <!-- Please keep me after AdsFix -->
     <tool name="Ads">
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^Services_List\.txt$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file"/>
     </tool>
     <tool name="AdwCleaner">
