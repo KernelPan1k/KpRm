@@ -14,8 +14,8 @@
         <process force="0" process="(?i)^Diag(32|64)?\.exe$"/>
     </tool>
 	<tool name="AdminRun">
-        <desktop companyName="" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
         <process force="0" process="(?i)^AdminRun.*\.exe$"/>
     </tool>
     <tool name="AdsFix">
