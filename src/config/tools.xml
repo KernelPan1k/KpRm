@@ -621,7 +621,7 @@
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^Look_my_hardware$" type="folder"/>
-        <process force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe"/>
+        <process force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe$"/>
     </tool>
     <tool name="Malwarebytes Anti-Rootkit">
         <cleanDirectory companyName="" force="1"
