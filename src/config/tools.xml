@@ -640,16 +640,17 @@
         <download companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
         <process force="0" process="(?i)^MbrScan.*\.exe$"/>
     </tool>
-    <!-- Please keep MbrScan before Mbr.exe -->
-    <tool name="Mbr.exe">
-        <desktop companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
-        <process force="0" process="(?i)^mbr.*\.exe$"/>
-    </tool>
+    <!-- Please keep MbrScan before MBRCheck -->
     <tool name="MBRCheck">
         <desktop companyName="" force="0" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
         <process force="0" process="(?i)^MBRCheck.*\.exe$"/>
+    </tool>
+    <!-- Please keep MBRCheck before Mbr.exe -->
+    <tool name="Mbr.exe">
+        <desktop companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
+        <process force="0" process="(?i)^mbr.*\.exe$"/>
     </tool>
     <tool name="McAfee Labs RootkitRemover">
         <desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
