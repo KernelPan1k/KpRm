@@ -753,7 +753,12 @@
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^winlogon.*\.exe$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^Pre_Scan.*\.txt$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^pre_scan$" type="folder"/>
-        <process force="0" process="(?i)^Pre_Scan.*\.exe$"/>
+        <process force="0" process="(?i)^Pre_Scan.*\.(com|pif|scr|exe)"/>
+    </tool>
+    <tool name="Process Analyzer">
+        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
+        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
+        <process force="0" process="(?i)^Process_Analyzer.*\.exe$"/>
     </tool>
     <tool name="ProcessClose">
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^processclose.*\.exe$" type="file"/>
