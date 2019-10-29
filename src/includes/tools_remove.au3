@@ -290,7 +290,12 @@ EndFunc   ;==>RemoveUninstallStringWithSearch
 Func RemoveAllRegistryKeys($aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sKey = FormatForUseRegistryKey($aList[$i][1])
-		RemoveRegistryKey($sKey, $aList[$i][0], $aList[$i][2])
+
+		RegEnumVal($sKey, "1")
+
+		If @error = 0 Then
+			RemoveRegistryKey($sKey, $aList[$i][0], $aList[$i][2])
+		EndIf
 	Next
 EndFunc   ;==>RemoveAllRegistryKeys
 
