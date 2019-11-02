@@ -632,6 +632,10 @@
 		<process force="1" process="(?i)^mbar.*\.exe$"/>
 		<softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$"/>
 	</tool>
+	<tool name="Malwarebytes (log)">
+		<desktop companyName="" force="0" pattern="(?i)^mbam.*\.txt" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^mbam.*\.txt" type="file"/>
+	</tool>
 	<tool name="MbrScan">
 		<desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
 		<desktop companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
