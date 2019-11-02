@@ -173,6 +173,7 @@
  - Webroot DE-BUG (Webroot)
  - WildfireDecryptor (Kaspersky Labs)
  - WinChk (Xplode)
+ - Windows Repair All In One (portable) (Tweaking.com)
  - WinsockAnalyzer (Xplode)
  - WinUpdatefix (Xplode)
  - XoristDecryptor (Kaspersky Labs)
