@@ -118,6 +118,7 @@
  - Minitoolbox (Farbar)
  - MKV (El Desaparecido & C_XX)
  - Mole02Decryptor (M AV)
+ - NetAdapter Repair All In One (Conner Bernhard)
  - OneClick2RP (Laddy)
  - OTA (Old_Timer)
  - OTC (Old_Timer)
