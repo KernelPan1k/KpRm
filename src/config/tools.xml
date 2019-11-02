@@ -165,8 +165,7 @@
 		<process force="1" process="(?i)^Combofix.*\.exe$"/>
 		<registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"/>
 		<softwareKey pattern="(?i)^Swearware$"/>
-		<windowsFolder companyName="" force="1" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$"
-                       type="file"/>
+		<windowsFolder companyName="" force="1" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file"/>
 	</tool>
 	<tool name="Crypt38Decrypter">
 		<desktop companyName="" force="0" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file"/>
@@ -625,8 +624,7 @@
 		<process force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe$"/>
 	</tool>
 	<tool name="Malwarebytes Anti-Rootkit">
-		<cleanDirectory companyName="" force="1"
-                        path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine"/>
+		<cleanDirectory companyName="" force="1" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine"/>
 		<desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
 		<desktop companyName="(?i)^Malwarebytes Anti-Rootkit$" force="0" pattern="(?i)^mbar" type="folder"/>
 		<download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
