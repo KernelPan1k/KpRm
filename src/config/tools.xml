@@ -689,6 +689,13 @@
 		<download companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder"/>
 		<process force="0" process="(?i)^Mole02Decryptor.*\.exe$"/>
 	</tool>
+	<tool name="NetAdapter Repair All In One">
+		<desktop companyName="(?i)^Conner Bernhard$" force="0" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
+		<desktop companyName="" force="0" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
+		<download companyName="(?i)^Conner Bernhard$" force="0" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
+		<process force="0" process="(?i)^NetAdapter.*\.exe$"/>
+	</tool>
 	<tool name="OldTimer Tools">
 		<softwareKey pattern="(?i)^OldTimer Tools$"/>
 	</tool>
