@@ -1057,6 +1057,13 @@
 		<homeDrive companyName="" force="0" pattern="(?i)^WinChk.*\.txt$" type="file"/>
 		<process force="0" process="(?i)^winchk.*\.exe$"/>
 	</tool>
+	<tool name="Windows Repair All In One (portable)">
+		<desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio.*\.zip" type="file"/>
+		<desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio" type="folder"/>
+		<download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio.*\.zip" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio" type="folder"/>
+		<process force="0" process="(?i)^Repair_Windows.*\.exe$"/>
+	</tool>
 	<tool name="WinsockAnalyzer">
 		<desktop companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
 		<download companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
