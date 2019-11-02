@@ -961,6 +961,11 @@
 		<download companyName="" force="0" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
 		<process force="0" process="(?i)^SystemLook.*\.exe$"/>
 	</tool>
+	<tool name="TaskCreate">
+		<desktop companyName="(?i)^g3n-h@ckm@n$" force="0" pattern="(?i)^TaskCreate.*\.exe$" type="file"/>
+		<download companyName="(?i)^g3n-h@ckm@n$" force="0" pattern="(?i)^TaskCreate.*\.exe$" type="file"/>
+		<process force="1" process="(?i)^TaskCreate.*\.exe$"/>
+	</tool>
 	<tool name="TDSSKiller">
 		<desktop companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
 		<desktop companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder"/>
