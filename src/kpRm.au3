@@ -4,10 +4,10 @@
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Comment=KpRm is a tool to delete all removal tools used during a disinfection
-#AutoIt3Wrapper_Res_Fileversion=52
+#AutoIt3Wrapper_Res_Comment=Delete all removal tools
+#AutoIt3Wrapper_Res_Fileversion=53
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.18
+#AutoIt3Wrapper_Res_ProductVersion=1.19
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
@@ -55,7 +55,7 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
 Global $bKpRmDev = False
-Global $sKprmVersion = "1.18"
+Global $sKprmVersion = "1.19"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
