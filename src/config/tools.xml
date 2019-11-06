@@ -633,8 +633,8 @@
 		<softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$"/>
 	</tool>
 	<tool name="Malwarebytes (log)">
-		<desktop companyName="" force="0" pattern="(?i)^mbam.*\.txt" type="file"/>
-		<download companyName="" force="0" pattern="(?i)^mbam.*\.txt" type="file"/>
+		<desktop companyName="" force="0" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
 	</tool>
 	<tool name="MbrScan">
 		<desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
@@ -655,10 +655,31 @@
 		<download companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
 		<process force="0" process="(?i)^mbr.*\.exe$"/>
 	</tool>
-	<tool name="McAfee Labs RootkitRemover">
+	<tool name="McAfee Pinkslipbot">
+		<desktop companyName="" force="0" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
+		<process force="0" process="(?i)^amipinkc2.*\.exe$"/>
+	</tool>
+	<tool name="McAfee RootkitRemover">
 		<desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
 		<download companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
 		<process force="0" process="(?i)^RootkitRemover.*\.exe$"/>
+	</tool>
+	<tool name="McAfee Stinger">
+		<desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^stinger.*\.exe$" type="file"/>
+		<desktop companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
+		<desktop companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
+		<download companyName="(?i)^McAfee" force="0" pattern="(?i)^stinger.*\.exe$" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
+		<folder force="1" path="@HomeDrive\Quarantine\Stinger"/>
+		<process force="0" process="(?i)^stinger.*\.exe$"/>
+		<programFiles companyName="" force="0" pattern="(?i)^stinger$" type="folder"/>
+	</tool>
+	<tool name="McAfee Tesladecrypt">
+		<desktop companyName="" force="0" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
+		<download companyName="" force="0" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
+		<process force="0" process="(?i)^tesladecrypt.*\.exe$"/>
 	</tool>
 	<tool name="MiniregTool">
 		<desktop companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
