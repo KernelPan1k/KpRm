@@ -66,7 +66,7 @@ Func RestartIfNeeded()
 			DirCreate($sTasksFolder)
 		EndIf
 
-		If Not FileWrite($sTasksLauncher, "powershell.exe -File " & $sTasksPath) Then
+		If Not FileWrite($sTasksLauncher, "powershell.exe -ExecutionPolicy Bypass -File " & $sTasksPath) Then
 			Return False
 		EndIf
 
