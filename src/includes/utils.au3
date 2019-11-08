@@ -340,6 +340,8 @@ Func FormatPathWithMacro($sPath)
 		$sPath = @LocalAppDataDir & StringReplace($sPath, "@LocalAppDataDir", "")
 	ElseIf StringRegExp($sPath, "^@HomeDrive") Then
 		$sPath =  @HomeDrive & StringReplace($sPath, "@HomeDrive", "")
+	ElseIf StringRegExp($sPath, "^@TempDir") Then
+		$sPath =  @TempDir & StringReplace($sPath, "@TempDir", "")
 	EndIf
 
 	Return $sPath
