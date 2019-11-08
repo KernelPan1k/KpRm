@@ -21,7 +21,7 @@ Func GetSwapOrder($sT)
 		Local $aOrder[1][2] = [["pattern", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "process" Then
-		Local $aOrder[2][2] = [["process", "__REQUIRED__"], ["force", "0"]]
+		Local $aOrder[3][2] = [["process", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "registryKey" Then
 		Local $aOrder[2][2] = [["key", "__REQUIRED__"], ["force", "0"]]

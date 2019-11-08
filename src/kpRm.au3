@@ -37,6 +37,7 @@
 #include <GuiStatusBar.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
+#include <WinAPIProc.au3>
 #include <WinAPIShellEx.au3>
 #include <WinAPIFiles.au3>
 #include <WinAPIEx.au3>

@@ -193,8 +193,6 @@ Func CloseProcessAndWait($sProcess, $sForce = "0")
 EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess($aList)
-	Dim $iCpt
-
 	Local $aProcessList = ProcessList()
 
 	For $i = 1 To $aProcessList[0][0]
@@ -203,7 +201,21 @@ Func RemoveAllProcess($aList)
 
 		For $iCpt = 0 To UBound($aList) - 1
 			If IsProcessInWhiteList($sProcessName) = False And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
-				CloseProcessAndWait($iPid, $aList[$iCpt][2])
+			    If $aList[$iCpt][2] <> "" Then
+			        Local $sCompanyNamePattern = $aList[$iCpt][2]
+			        Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
+
+			        If @error <> 0 Then ContinueLoop
+			        If Not isFile($sProcessPath) Then ContinueLoop
+
+			        Local $sCompanyName = FileGetVersion($sProcessPath, "CompanyName")
+
+                    If @error Or Not StringRegExp($sCompanyName, $sCompanyNamePattern) Then
+                        ContinueLoop
+                    EndIf
+			    EndIf
+
+				CloseProcessAndWait($iPid, $aList[$iCpt][3])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
 			EndIf
 		Next
