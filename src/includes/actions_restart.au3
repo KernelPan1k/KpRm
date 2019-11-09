@@ -66,7 +66,7 @@ Func ExecuteScriptFile($sReportTime)
 	FileOpen($sTasksFile, 0)
 
 	For $i = 1 To _FileCountLines($sTasksFile)
-		$sLine = FileReadLine($sTasksFile, $i)
+		Local $sLine = FileReadLine($sTasksFile, $i)
 		$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 
 		If $sLine = "" Then ContinueLoop
