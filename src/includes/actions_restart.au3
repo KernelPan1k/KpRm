@@ -1,87 +1,42 @@
-Global $oRemoveRestart = ObjCreate("Scripting.Dictionary")
+Global $oRemoveRestart = []
 Global $bNeedRestart = False
 
-Func AddRemoveAtRestart($sElement, $sType)
+Func AddRemoveAtRestart($sElement)
 	Dim $oRemoveRestart
 	Dim $bNeedRestart
 
-	If Not $oRemoveRestart.Exists($sElement) Then
-		$bNeedRestart = True
-		$oRemoveRestart.Add($sElement, $sType)
-	EndIf
+	$bNeedRestart = True
+	_ArrayAdd($oRemoveRestart, $sElement)
 EndFunc   ;==>AddRemoveAtRestart
 
 Func RestartIfNeeded()
-	Dim $sKPLogFile
 	Dim $oRemoveRestart
 	Dim $bNeedRestart
 	Dim $sCurrentTime
 
-	If $bNeedRestart = True And PowershellIsAvailable() = True Then
-		Local $aKeys = $oRemoveRestart.Keys
-		Local $sHomeLog = @HomeDrive & "\KPRM" & "\" & $sKPLogFile
-		Local $sDesktopLog = @DesktopDir & "\" & $sKPLogFile
-		Local $sScript = ''
-
-		$sScript &= 'Add-Content "' & $sHomeLog & '" "" -Force' & @CRLF
-		$sScript &= 'Add-Content "' & $sDesktopLog & '" "" -Force' & @CRLF
-		$sScript &= 'Add-Content "' & $sHomeLog & '" "- Remove After Restart -" -Force' & @CRLF
-		$sScript &= 'Add-Content "' & $sDesktopLog & '" "- Remove After Restart -" -Force' & @CRLF
-		$sScript &= 'Add-Content "' & $sHomeLog & '" "" -Force' & @CRLF
-		$sScript &= 'Add-Content "' & $sDesktopLog & '" "" -Force' & @CRLF
-
-		For $iCpt = 0 To UBound($aKeys) - 1
-			Local $sPath = $aKeys[$iCpt]
-			Local $sType = $oRemoveRestart.Item($sPath)
-
-			If $sPath And $sType Then
-				If $sType = 'file' Then
-					$sScript &= 'attrib -h -r -a -s "' & $sPath & '"' & @CRLF
-					$sScript &= 'Remove-Item -Path "' & $sPath & '" -Force' & @CRLF
-				ElseIf $sType = 'folder' Then
-					$sPath = StringRegExpReplace($sPath, "\\$", "")
-					$sScript &= 'attrib -h -r -a -s "' & $sPath & '\"' & @CRLF
-					$sScript &= 'attrib -h -r -a -s "' & $sPath & '\*.*" /s' & @CRLF
-					$sScript &= 'Remove-Item -Path "' & $sPath & '" -Force –Recurse' & @CRLF
-				EndIf
-
-				If $sType = 'file' Or $sType = 'folder' Then
-					$sScript &= '$PathExists = Test-Path "' & $sPath & '"' & @CRLF
-					$sScript &= '$Symbol = "[OK]"' & @CRLF
-					$sScript &= 'If ($PathExists -eq $True) {$Symbol = "[X]"}' & @CRLF
-					$sScript &= 'Add-Content "' & $sHomeLog & '" "     $Symbol ' & $sPath & ' deleted (restart)" -Force' & @CRLF
-					$sScript &= 'Add-Content "' & $sDesktopLog & '" "     $Symbol ' & $sPath & ' deleted (restart)" -Force' & @CRLF
-				EndIf
-			EndIf
-		Next
-
-		$sScript &= 'Remove-Item -Path "' & @ScriptFullPath & '" -Force' & @CRLF
-		$sScript &= 'notepad.exe "' & $sDesktopLog & '"' & @CRLF
-
+	If $bNeedRestart = True And UBound($oRemoveRestart) > 1 Then
 		Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks"
-		Local Const $sTasksPath = $sTasksFolder & "\task-" & $sCurrentTime & ".ps1"
-		Local Const $sTasksLauncher = $sTasksFolder & "\task-" & $sCurrentTime & ".bat"
+		Local Const $sTasksPath = $sTasksFolder & "\task-" & $sCurrentTime & ".txt"
 
 		If FileExists($sTasksFolder) = False Then
 			DirCreate($sTasksFolder)
 		EndIf
 
-		If Not FileWrite($sTasksLauncher, "powershell.exe -ExecutionPolicy Bypass -File " & $sTasksPath) Then
-			Return False
-		EndIf
-
-		Local Const $hFileOpen = FileOpen($sTasksPath, 130)
+		Local $hFileOpen = FileOpen($sTasksPath, $FO_APPEND)
 
 		If $hFileOpen = -1 Then
 			Return False
 		EndIf
 
-		FileWrite($hFileOpen, $sScript)
+		For $i = 1 To UBound($oRemoveRestart) - 1
+			FileWriteLine($hFileOpen, $oRemoveRestart[$i])
+		Next
+
 		FileClose($hFileOpen)
 
 		Local $sSuffix = GetSuffixKey()
 
-		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", $sTasksLauncher) Then
+		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", @ScriptFullPath & " " & $sCurrentTime) Then
 			Return False
 		EndIf
 
@@ -91,4 +46,60 @@ Func RestartIfNeeded()
 	EndIf
 EndFunc   ;==>RestartIfNeeded
 
+Func ExecuteScriptFile($sReportTime)
+	Dim $bKpRmDev
+
+	Local Const $sKPReportFile = "kprm-" & $sReportTime & ".txt"
+	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
+	Local Const $sDesktopReport = @DesktopDir & "\KPRM" & "\" & $sKPReportFile
+	Local Const $sTasksFile = @HomeDrive & "\KPRM\tasks\task-" & $sReportTime & ".txt"
+
+	If Not FileExists($sTasksFile) Then Exit
+	If Not FileExists($sHomeReport) Then Exit
+	If Not FileExists($sDesktopReport) Then Exit
+
+	FileWrite($sHomeReport, @CRLF)
+	FileWrite($sHomeReport, @CRLF)
+	FileWrite($sDesktopReport, @CRLF)
+	FileWrite($sDesktopReport, @CRLF)
+
+	FileOpen($sTasksFile, 0)
+
+	For $i = 1 To _FileCountLines($sTasksFile)
+		$sLine = FileReadLine($sTasksFile, $i)
+		$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
+
+		If $sLine = "" Then ContinueLoop
+
+		If IsFile($sLine) Then
+			PrepareRemove($sLine, 0, "1")
+			FileDelete($sLine)
+		ElseIf IsDir($sLine) Then
+			PrepareRemove($sLine, 1, "1")
+			DirRemove($sLine, $DIR_REMOVE)
+		EndIf
+
+		Local $sSymbol = "[OK]"
+		Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (restart)"
+		Local $bExist = FileExists($sLine)
+
+		If $bExist = True Then
+			$sSymbol = "[X]"
+		EndIf
+
+		FileWrite($sHomeReport, $sMessage & @CRLF)
+		FileWrite($sDesktopReport, $sMessage & @CRLF)
+	Next
+
+	FileClose($sTasksFile)
+
+	Run("notepad.exe " & $sHomeReport)
+
+	If $bKpRmDev = False And @Compiled Then
+		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @ScriptFullPath & '"', @ScriptDir, @SW_HIDE)
+		FileDelete(@ScriptFullPath)
+	EndIf
+
+	Exit
+EndFunc   ;==>ExecuteScriptFile
 
