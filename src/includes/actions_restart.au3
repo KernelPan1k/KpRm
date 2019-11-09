@@ -36,7 +36,7 @@ Func RestartIfNeeded()
 
 		Local $sSuffix = GetSuffixKey()
 
-		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", @ScriptFullPath & " " & $sCurrentTime) Then
+		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & @ScriptFullPath & '"' & " " & $sCurrentTime) Then
 			Return False
 		EndIf
 
@@ -51,17 +51,15 @@ Func ExecuteScriptFile($sReportTime)
 
 	Local Const $sKPReportFile = "kprm-" & $sReportTime & ".txt"
 	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
-	Local Const $sDesktopReport = @DesktopDir & "\KPRM" & "\" & $sKPReportFile
+	Local Const $sDesktopReport = @DesktopDir & "\" & $sKPReportFile
 	Local Const $sTasksFile = @HomeDrive & "\KPRM\tasks\task-" & $sReportTime & ".txt"
 
 	If Not FileExists($sTasksFile) Then Exit
 	If Not FileExists($sHomeReport) Then Exit
 	If Not FileExists($sDesktopReport) Then Exit
 
-	FileWrite($sHomeReport, @CRLF)
-	FileWrite($sHomeReport, @CRLF)
-	FileWrite($sDesktopReport, @CRLF)
-	FileWrite($sDesktopReport, @CRLF)
+	FileWrite($sHomeReport, @CRLF & @CRLF & "- Remove After Restart -" &@CRLF)
+	FileWrite($sDesktopReport, @CRLF & @CRLF & "- Remove After Restart -" &@CRLF)
 
 	FileOpen($sTasksFile, 0)
 
