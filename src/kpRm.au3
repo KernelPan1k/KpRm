@@ -93,7 +93,10 @@ EndIf
 #include "includes\tools_remove.au3"
 #include "includes\tools_import.au3"
 
-#Region ### START Koda GUI section ### Form=C:\Users\IEUser\Desktop\kpRemover\gui\Form1.kxf
+If 1 = UBound($CmdLine) - 1 Then
+	ExecuteScriptFile($CmdLine[1])
+	Exit
+EndIf
 
 If Not IsAdmin() Then
 	MsgBox(16, $lFail, $lAdminRequired)
@@ -169,14 +172,14 @@ Func CreateKPRMDir()
 EndFunc   ;==>CreateKPRMDir
 
 Func CountKpRmPass()
-    Local Const $sDir = @HomeDrive & "\KPRM"
+	Local Const $sDir = @HomeDrive & "\KPRM"
 
-    Local $aFileList = _FileListToArray($sDir, "kprm-*.txt", $FLTA_FILES)
+	Local $aFileList = _FileListToArray($sDir, "kprm-*.txt", $FLTA_FILES)
 
 	If @error <> 0 Then Return 1
 
 	Return $aFileList[0]
-EndFunc
+EndFunc   ;==>CountKpRmPass
 
 Func Init()
 	CreateKPRMDir()
