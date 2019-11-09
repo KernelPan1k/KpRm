@@ -183,7 +183,7 @@ Func SelfUpdate($sUpdatePath)
 		Return False
 	EndIf
 
-	Run(@ComSpec & ' /c timeout 10 && powershell.exe -File ' & $sTempFileName, @TempDir, @SW_HIDE)
+	Run(@ComSpec & ' /c timeout 10 && powershell.exe -ExecutionPolicy Bypass -File ' & $sTempFileName, @TempDir, @SW_HIDE)
 
 	Exit
 EndFunc   ;==>SelfUpdate
@@ -414,11 +414,11 @@ Func UCheckIfElementExist($sToolElement, $sToolVal)
 	If $sToolElement = Null Or $sToolElement = "" Then Return
 
 	Local $sSymbol = "[OK]"
-	Local $sType = FileExistsAndGetType($sToolElement)
+	Local $bExist = FileExists($sToolElement)
 
-	If Null <> $sType Then
+	If $bExist = True Then
 		$sSymbol = "[X]"
-		AddRemoveAtRestart($sToolElement, $sType)
+		AddRemoveAtRestart($sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & $sToolElement & " deleted (" & $sToolVal & ")")
