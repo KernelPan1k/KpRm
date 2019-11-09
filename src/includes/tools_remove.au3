@@ -2,8 +2,6 @@
 Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 	Dim $bRemoveToolLastPass
 
-	UpdateStatusBar("Prepare to remove " & $sPath)
-
 	If $bRemoveToolLastPass = True Or Number($sForce) Then
 		_ClearObjectDacl($sPath)
 		_GrantAllAccess($sPath)
