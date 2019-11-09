@@ -167,7 +167,7 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 	EndIf
 EndFunc   ;==>RemoveRegistryKey
 
-Func CloseProcessAndWait($sProcess, $sForce = "0")
+Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
 	Dim $bRemoveToolLastPass
 
 	Local $iCpt = 50
@@ -180,7 +180,7 @@ Func CloseProcessAndWait($sProcess, $sForce = "0")
 		If 0 = ProcessExists($sProcess) Then Return True
 	EndIf
 
-	UpdateStatusBar("Close process " & $sProcess)
+	UpdateStatusBar("Close process " & $sProcessName)
 
 	ProcessClose($sProcess)
 
@@ -213,7 +213,7 @@ Func RemoveAllProcess($aList)
                     EndIf
 			    EndIf
 
-				CloseProcessAndWait($iPid, $aList[$iCpt][3])
+				CloseProcessAndWait($iPid, $sProcessName, $aList[$iCpt][3])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
 			EndIf
 		Next
