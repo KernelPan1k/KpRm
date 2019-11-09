@@ -11,7 +11,7 @@ Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 EndFunc   ;==>PrepareRemove
 
 Func IsFileInWhiteList($sFile)
-	Local Const $aWhiteList[3] = ["(?i)mkvextract.exe$", "(?i)mkvmerge.exe$", "(?i)mkvtoolnix.*\.exe$"]
+	Local Const $aWhiteList[4] = ["(?i)mkvextract.exe$", "(?i)mkvmerge.exe$", "(?i)mkvtoolnix.*\.exe$", "(?i)^MkvToMp4.*\.exe$"]
 	Local $bInWhiteList = False
 
 	For $i = 0 To UBound($aWhiteList) - 1
