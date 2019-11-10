@@ -876,6 +876,11 @@
         <download companyName="" force="0" pattern="(?i)^RapportCHK.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^Report_CHKDSK.*\.exe$"/>
     </tool>
+    <tool name="ResetBrowser">
+        <desktop companyName="" force="0" pattern="(?i)^ResetBrowser.*\.exe$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^ResetBrowser*\.exe$" type="file"/>
+        <process companyName="" force="0" process="(?i)^ResetBrowser.*\.exe$"/>
+    </tool>
     <tool name="ResetNavigator">
         <desktop companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
         <download companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
