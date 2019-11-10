@@ -59,6 +59,13 @@
         <download companyName="" force="0" pattern="(?i)^AuroraDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^AuroraDecrypter.*\.exe$"/>
     </tool>
+    <tool name="Autoruns">
+        <desktop companyName="(?i)^Sysinternals" force="0" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^Autoruns$" type="folder"/>
+        <download companyName="(?i)^Sysinternals" force="0" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^Autoruns$" type="folder"/>
+        <process companyName="(?i)^Sysinternals" force="0" process="(?i)^Autoruns.*\.exe$"/>
+    </tool>
     <tool name="AutorunsVTChecker">
         <desktop companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
         <desktop companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder"/>
