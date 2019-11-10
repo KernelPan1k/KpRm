@@ -148,6 +148,7 @@
  - Remediate VBS Worm (bartblaze)
  - Report_Antivir (Laddy)
  - Report_CHKDSK (Laddy)
+ - ResetBrowser (comment-supprimer.com)
  - ResetNavigator (SoftwareQuality)
  - RhythmScreen (g3n-h@ckm@n)
  - Rkill (Grinler)
