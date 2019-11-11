@@ -89,6 +89,7 @@ EndFunc   ;==>PowershellIsAvailable
 
 Func CheckVersionOfKpRm()
 	Dim $sKprmVersion
+	Dim $sTmpDir
 
 	If _IsInternetConnected() = False Then Return
 
@@ -100,93 +101,24 @@ Func CheckVersionOfKpRm()
 
 	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
 
-	If $bNeedsUpdate And PowershellIsAvailable() = True Then
-		Local $sDownloadedFilePath = DownloadLatest()
+	If $bNeedsUpdate Then
+	    ; https://github.com/KernelPan1k/KPAutoUpdater
+		FileInstall(".\binaries\KPAutoUpdater\KPAutoUpdater.exe", $sTmpDir & "\KPAutoUpdater.exe")
 
-		If @error <> 0 Or FileExists($sDownloadedFilePath) = False Then
-			Return
-		EndIf
+		Local $iAutoUpdaterPid = Run($sTmpDir & "\KPAutoUpdater.exe")
 
-		SelfUpdate($sDownloadedFilePath)
+		If 0 = $iAutoUpdaterPid Then Return
 
-		If @error <> 0 Then
-			MsgBox($MB_SYSTEMMODAL, "KpRm - Updater", "The script must be a compiled exe to work correctly or the update file must exist.")
-			QuitKprm(True, False)
-		EndIf
+		Local $iCpt = 50
+
+		Do
+            $iCpt -= 1
+            Sleep(500)
+        Until ($iCpt = 0 Or 0 = ProcessExists($iAutoUpdaterPid))
+
+        Sleep(5000)
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
-
-Func DownloadLatest()
-	ProgressOn("KpRm - Updater", "Downloading..", "0%")
-	Local $sURL = "https://download.toolslib.net/download/direct/951/latest"
-	Local $sFilePath = _WinAPI_GetTempFileName(@TempDir)
-	Local $iRemoteFileSize = InetGetSize($sURL)
-	Local $hDownload = InetGet($sURL, $sFilePath, $INET_FORCERELOAD, $INET_DOWNLOADBACKGROUND)
-
-	Do
-		Sleep(250)
-		Local $iBytesReceived = InetGetInfo($hDownload, $INET_LOCALCACHE)
-		Local $iPercentage = Int($iBytesReceived / $iRemoteFileSize * 100)
-		ProgressSet($iPercentage, $iPercentage & "%")
-	Until InetGetInfo($hDownload, $INET_DOWNLOADCOMPLETE)
-
-	Local $iBytesSize = InetGetInfo($hDownload, $INET_DOWNLOADREAD)
-	Local $iFileSize = FileGetSize($sFilePath)
-
-	InetClose($hDownload)
-
-	ProgressOff()
-
-	Return $sFilePath
-
-EndFunc   ;==>DownloadLatest
-
-Func SelfUpdate($sUpdatePath)
-	If @Compiled = 0 Or FileExists($sUpdatePath) = 0 Then
-		Return SetError(1, 0, 0)
-	EndIf
-
-	Local $sTempFileName = @ScriptName
-	Local $sProcessName = @ScriptName
-
-	$sTempFileName = StringLeft($sTempFileName, StringInStr($sTempFileName, '.', $STR_NOCASESENSEBASIC, -1) - 1)
-	$sProcessName = StringLeft($sProcessName, StringInStr($sProcessName, '.', $STR_NOCASESENSEBASIC, -1) - 1)
-
-	Local Const $sScriptPath = @ScriptFullPath
-
-	While FileExists(@TempDir & '\' & $sTempFileName & '.ps1')
-		$sTempFileName &= Chr(Random(65, 122, 1))
-	WEnd
-
-	$sTempFileName = @TempDir & '\' & $sTempFileName & '.ps1'
-
-	Local Const $sData = '$process = Get-Process "' & $sProcessName & '" -ErrorAction SilentlyContinue' & @CRLF _
-			 & 'if ($process) {' & @CRLF _
-			 & '$process | Stop-Process -Force' & @CRLF _
-			 & '}' & @CRLF _
-			 & 'sleep 2' & @CRLF _
-			 & 'Move-Item -Path "' & $sUpdatePath & '" -Destination "' & $sScriptPath & '" -Force' & @CRLF _
-			 & 'sleep 2' & @CRLF _
-			 & '& "' & $sScriptPath & '"' & @CRLF _
-			 & 'Remove-Item -Path "' & $sTempFileName & '" -Force'
-
-	Local Const $hFileOpen = FileOpen($sTempFileName, 130)
-
-	If $hFileOpen = -1 Then
-		Return False
-	EndIf
-
-	FileWrite($hFileOpen, $sData)
-	FileClose($hFileOpen)
-
-	If Not FileExists($sTempFileName) Then
-		Return False
-	EndIf
-
-	Run(@ComSpec & ' /c timeout 10 && powershell.exe -ExecutionPolicy Bypass -File ' & $sTempFileName, @TempDir, @SW_HIDE)
-
-	Exit
-EndFunc   ;==>SelfUpdate
 
 Func GetSuffixKey()
 	Local $s64Bit = ""

@@ -19,6 +19,7 @@
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\HoboCopy.exe
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcp100.dll
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy64\msvcr100.dll
+#AutoIt3Wrapper_Res_File_Add=.\binaries\KPAutoUpdater\KPAutoUpdater.exe
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rm /sf=1 /sv=1
