@@ -187,6 +187,13 @@
         <file path="@DesktopDir\cryptosearch-definitions.bin" companyName="" force="0"/>
         <process companyName="" force="0" process="(?i)^CryptoSearch.*\.exe$"/>
     </tool>
+    <tool name="CrystalDiskInfo (portable)">
+        <desktop companyName="" force="0" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^CrystalDiskInfo" type="folder"/>
+        <download companyName="" force="0" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^CrystalDiskInfo" type="folder"/>
+        <process companyName="(?i)^Crystal" force="0" process="(?i)^DiskInfo(32|64)\.exe$"/>
+    </tool>
     <tool name="DCryDecrypter">
         <desktop companyName="" force="0" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file"/>
         <desktop companyName="" force="0" pattern="(?i)^DCryDecrypter$" type="folder"/>
