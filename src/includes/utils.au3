@@ -57,7 +57,7 @@ Func QuitKprm($bAutoDelete = False, $open = True)
 	Exit
 EndFunc   ;==>QuitKprm
 
-Func _IsInternetConnected()
+Func IsInternetConnected()
 	Local $aReturn = DllCall('connect.dll', 'long', 'IsInternetConnected')
 
 	If @error <> 0 Then
@@ -87,13 +87,28 @@ Func PowershellIsAvailable()
 	Return $bPowerShellAvailable
 EndFunc   ;==>PowershellIsAvailable
 
+Func HTTP_Get($url)
+	Local $oHTTP = ObjCreate("winhttp.winhttprequest.5.1")
+	Local $res = $oHTTP.Open("GET", $url, False)
+	If (@error) Then Return SetError(1, 0, 0)
+	$oHTTP.Send()
+	If (@error) Then Return SetError(2, 0, 0)
+	Local $sReceived = $oHTTP.ResponseText
+	Local $iStatus = $oHTTP.Status
+	If $iStatus = 200 Then
+		Return $sReceived
+	Else
+		Return SetError(3, $iStatus, $sReceived)
+	EndIf
+EndFunc   ;==>HTTP_Get
+
 Func CheckVersionOfKpRm()
 	Dim $sKprmVersion
 	Dim $sTmpDir
 
-	If _IsInternetConnected() = False Then Return
+	If IsInternetConnected() = False Then Return
 
-	Local $sVersion = _HTTP_Get("https://toolslib.net/api/softwares/951/version")
+	Local $sVersion = HTTP_Get("https://toolslib.net/api/softwares/951/version")
 
 	If @error <> 0 Or StringInStr($sVersion, "Not found") Then
 		Return
@@ -102,7 +117,7 @@ Func CheckVersionOfKpRm()
 	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
 
 	If $bNeedsUpdate Then
-	    ; https://github.com/KernelPan1k/KPAutoUpdater
+		; https://github.com/KernelPan1k/KPAutoUpdater
 		FileInstall(".\binaries\KPAutoUpdater\KPAutoUpdater.exe", $sTmpDir & "\KPAutoUpdater.exe")
 
 		Local $iAutoUpdaterPid = Run($sTmpDir & '\KPAutoUpdater.exe "KpRm" "' & @AutoItPID & '" "https://download.toolslib.net/download/direct/951/latest"')
@@ -112,11 +127,11 @@ Func CheckVersionOfKpRm()
 		Local $iCpt = 50
 
 		Do
-            $iCpt -= 1
-            Sleep(500)
-        Until ($iCpt = 0 Or 0 = ProcessExists($iAutoUpdaterPid))
+			$iCpt -= 1
+			Sleep(500)
+		Until ($iCpt = 0 Or 0 = ProcessExists($iAutoUpdaterPid))
 
-        Sleep(5000)
+		Sleep(5000)
 	EndIf
 EndFunc   ;==>CheckVersionOfKpRm
 
@@ -271,9 +286,9 @@ Func FormatPathWithMacro($sPath)
 	ElseIf StringRegExp($sPath, "^@LocalAppDataDir") Then
 		$sPath = @LocalAppDataDir & StringReplace($sPath, "@LocalAppDataDir", "")
 	ElseIf StringRegExp($sPath, "^@HomeDrive") Then
-		$sPath =  @HomeDrive & StringReplace($sPath, "@HomeDrive", "")
+		$sPath = @HomeDrive & StringReplace($sPath, "@HomeDrive", "")
 	ElseIf StringRegExp($sPath, "^@TempDir") Then
-		$sPath =  @TempDir & StringReplace($sPath, "@TempDir", "")
+		$sPath = @TempDir & StringReplace($sPath, "@TempDir", "")
 	EndIf
 
 	Return $sPath

@@ -31,7 +31,6 @@
 #include <StaticConstants.au3>
 #include <StringConstants.au3>
 #include <WindowsConstants.au3>
-#include <InetConstants.au3>
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
@@ -82,7 +81,6 @@ EndIf
 #include "libs\UAC.au3"
 #include "libs\Permissions.au3"
 #include "libs\_XMLDomWrapper.au3"
-#include "libs\HTTP.au3"
 #include "includes\actions_restart.au3"
 #include "includes\utils.au3"
 #include "includes\progress_bar.au3"
