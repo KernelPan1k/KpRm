@@ -105,7 +105,7 @@ Func CheckVersionOfKpRm()
 	    ; https://github.com/KernelPan1k/KPAutoUpdater
 		FileInstall(".\binaries\KPAutoUpdater\KPAutoUpdater.exe", $sTmpDir & "\KPAutoUpdater.exe")
 
-		Local $iAutoUpdaterPid = Run($sTmpDir & "\KPAutoUpdater.exe")
+		Local $iAutoUpdaterPid = Run($sTmpDir & '\KPAutoUpdater.exe "KpRm" "' & @AutoItPID & '" "https://download.toolslib.net/download/direct/951/latest"')
 
 		If 0 = $iAutoUpdaterPid Then Return
 
