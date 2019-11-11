@@ -1022,6 +1022,15 @@
         <folder force="1" path="@TempDir\FixtoolQuarantine"/>
         <process companyName="(?i)^Symantec" force="0" process="(?i)^FixTempedreve.*\.exe$" />
     </tool>
+    <tool name="System Information Tool">
+        <desktop companyName="" force="0" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
+        <download companyName="" force="0" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
+        <download companyName="" force="0" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
+        <process companyName="(?i)^Tweaking\.com$" force="0" process="(?i)^System_Information\.exe$"/>
+    </tool>
     <tool name="Systemlook">
         <desktop companyName="" force="0" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
