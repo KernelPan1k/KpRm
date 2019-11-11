@@ -15,6 +15,8 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 		DirCreate($sBackUpPath)
 	EndIf
 
+	; https://github.com/candera/hobocopy
+
 	If @OSArch = "X64" Then
 		FileInstall(".\binaries\hobocopy64\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe")
 		FileInstall(".\binaries\hobocopy64\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll")
