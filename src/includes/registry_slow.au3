@@ -4,6 +4,8 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 	Dim $lRegistryBackupError
 	Dim $sCurrentHumanTime
 
+	UpdateStatusBar("Create Registry Backup in another way ...")
+
 	Local Const $sRegistryTmp = $sTmpDir & "\registry"
 	Local Const $sBackUpPath = @HomeDrive & "\KPRM\backup\" & $sCurrentHumanTime
 

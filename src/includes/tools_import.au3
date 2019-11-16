@@ -150,42 +150,61 @@ Func RunRemoveTools()
 
 		Switch $sAction
 			Case "process"
+				UpdateStatusBar("Search process ...")
 				RemoveAllProcess($aListTasks)
 			Case "uninstall"
+				UpdateStatusBar("Search uninstaller ...")
 				UninstallNormally($aListTasks)
 			Case "task"
+				UpdateStatusBar("Search tasks ...")
 				RemoveScheduleTask($aListTasks)
 			Case "desktop"
+				UpdateStatusBar("Search tools in desktop ...")
 				RemoveAllFileFromWithMaxDepth(@DesktopDir, $aListTasks)
 			Case "desktopCommon"
+				UpdateStatusBar("Search tools in common desktop ...")
 				RemoveAllFileFrom(@DesktopCommonDir, $aListTasks)
 			Case "download"
+				UpdateStatusBar("Search tools in download ...")
 				RemoveAllFileFromWithMaxDepth(@UserProfileDir & "\Downloads", $aListTasks)
 			Case "programFiles"
+				UpdateStatusBar("Search tools in Program files ...")
 				RemoveAllProgramFilesDir($aListTasks)
 			Case "homeDrive"
+				UpdateStatusBar("Search tools in home drive ...")
 				RemoveAllFileFrom(@HomeDrive, $aListTasks)
 			Case "appDataCommon"
+				UpdateStatusBar("Search tools in AppData ...")
 				RemoveAllFileFrom(@AppDataCommonDir, $aListTasks)
 			Case "appDataLocal"
+				UpdateStatusBar("Search tools in AppLocalData ...")
 				RemoveAllFileFrom(@LocalAppDataDir, $aListTasks)
 			Case "windowsFolder"
+				UpdateStatusBar("Search tools in Windows ...")
 				RemoveAllFileFrom(@WindowsDir, $aListTasks)
 			Case "softwareKey"
+				UpdateStatusBar("Search software keys ...")
 				RemoveAllSoftwareKeyList($aListTasks)
 			Case "registryKey"
+				UpdateStatusBar("Search tools in registry ...")
 				RemoveAllRegistryKeys($aListTasks)
 			Case "searchRegistryKey"
+				UpdateStatusBar("Specific search in registry ...")
 				RemoveUninstallStringWithSearch($aListTasks)
 			Case "startMenu"
+				UpdateStatusBar("Search tools in start menu ...")
 				RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
 			Case "cleanDirectory"
+				UpdateStatusBar("Search tools in specific directory ...")
 				CleanDirectoryContent($aListTasks)
 			Case "file"
+				UpdateStatusBar("Search specific files ...")
 				RemoveFileCustomPath($aListTasks)
 			Case "folder"
+				UpdateStatusBar("Search specific directory ...")
 				RemoveFolderCustomPath($aListTasks)
 		EndSwitch
+
 		ProgressBarUpdate()
 	Next
 

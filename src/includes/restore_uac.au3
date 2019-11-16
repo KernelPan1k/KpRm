@@ -2,7 +2,7 @@
 Func RestoreUAC()
 	LogMessage(@CRLF & "- Restore UAC -" & @CRLF)
 
-	UpdateStatusBar("Restore UAC")
+	UpdateStatusBar("Restore UAC ...")
 
 	Local $iStatus = _UAC_SetConsentPromptBehaviorAdmin()
 

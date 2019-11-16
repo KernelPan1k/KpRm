@@ -241,6 +241,7 @@ EndFunc   ;==>FileCopyVSS
 
 Func CreateBackupRegistry()
 	LogMessage(@CRLF & "- Create Registry Backup -" & @CRLF)
+	UpdateStatusBar("Create Registry Backup ...")
 
 	Dim $lFail
 	Dim $lRegistryBackupError
