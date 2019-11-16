@@ -59,16 +59,31 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	EndIf
 EndFunc   ;==>RemoveFile
 
-Func RemoveFolder($sPath, $sToolKey, $sForce = "0")
+Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
+	Dim $bDeleteQuarantines
+
 	Local $iFileExists = IsDir($sPath)
 
 	If $iFileExists Then
-		UpdateToolCpt($sToolKey, 'element', $sPath)
-		PrepareRemove($sPath, 1, $sForce)
+		Local $bIsQuarantine = False
 
-		UpdateStatusBar("Remove folder " & $sPath)
+		If $sQuarantine = "1" Then
+			$bIsQuarantine = True
 
-		DirRemove($sPath, $DIR_REMOVE)
+			If $bDeleteQuarantines = Null Then
+				AddElementToKeep($sPath)
+				Return
+			EndIf
+		EndIf
+
+		If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
+			UpdateToolCpt($sToolKey, 'element', $sPath)
+			PrepareRemove($sPath, 1, $sForce)
+			UpdateStatusBar("Remove folder " & $sPath)
+			DirRemove($sPath, $DIR_REMOVE)
+		ElseIf $bDeleteQuarantines = 7 Then
+			AddRemoveLater($sPath)
+		EndIf
 	EndIf
 EndFunc   ;==>RemoveFolder
 
@@ -112,7 +127,7 @@ Func RemoveFileHandler($sPathOfFile, $aElements)
 			If $sTypeOfFile = 'file' Then
 				RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2], $aElements[$e][4])
 			ElseIf $sTypeOfFile = 'folder' Then
-				RemoveFolder($sPathOfFile, $aElements[$e][0], $aElements[$e][4])
+				RemoveFolder($sPathOfFile, $aElements[$e][0], $aElements[$e][4], $aElements[$e][5])
 			EndIf
 		EndIf
 	Next
@@ -199,19 +214,19 @@ Func RemoveAllProcess($aList)
 
 		For $iCpt = 0 To UBound($aList) - 1
 			If IsProcessInWhiteList($sProcessName) = False And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
-			    If $aList[$iCpt][2] <> "" Then
-			        Local $sCompanyNamePattern = $aList[$iCpt][2]
-			        Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
+				If $aList[$iCpt][2] <> "" Then
+					Local $sCompanyNamePattern = $aList[$iCpt][2]
+					Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
 
-			        If @error <> 0 Then ContinueLoop
-			        If Not isFile($sProcessPath) Then ContinueLoop
+					If @error <> 0 Then ContinueLoop
+					If Not isFile($sProcessPath) Then ContinueLoop
 
-			        Local $sCompanyName = FileGetVersion($sProcessPath, "CompanyName")
+					Local $sCompanyName = FileGetVersion($sProcessPath, "CompanyName")
 
-                    If @error Or Not StringRegExp($sCompanyName, $sCompanyNamePattern) Then
-                        ContinueLoop
-                    EndIf
-			    EndIf
+					If @error Or Not StringRegExp($sCompanyName, $sCompanyNamePattern) Then
+						ContinueLoop
+					EndIf
+				EndIf
 
 				CloseProcessAndWait($iPid, $sProcessName, $aList[$iCpt][3])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
@@ -222,7 +237,7 @@ EndFunc   ;==>RemoveAllProcess
 
 Func RemoveScheduleTask($aList)
 	For $i = 0 To UBound($aList) - 1
-		UpdateStatusBar("Remove schedule task " &  $aList[$i][1])
+		UpdateStatusBar("Remove schedule task " & $aList[$i][1])
 		RunWait('schtasks.exe /delete /tn "' & $aList[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
@@ -310,15 +325,32 @@ Func RemoveAllRegistryKeys($aList)
 EndFunc   ;==>RemoveAllRegistryKeys
 
 Func CleanDirectoryContent($aList)
+	Dim $bDeleteQuarantines
+
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
 
 		If FileExists($sPath) Then
+			Local $bIsQuarantine = False
+
+			If $aList[$i][4] = "1" Then
+				$bIsQuarantine = True
+
+				If $bDeleteQuarantines = Null Then
+					AddElementToKeep($sPath)
+					ContinueLoop
+				EndIf
+			EndIf
+
 			Local $aFileList = _FileListToArray($sPath)
 
 			If @error = 0 Then
 				For $f = 1 To $aFileList[0]
-					RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
+					If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
+						RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
+					ElseIf $bDeleteQuarantines = 7 Then
+						AddRemoveLater($sPath & '\' & $aFileList[$f])
+					EndIf
 				Next
 			EndIf
 		EndIf
@@ -335,6 +367,6 @@ EndFunc   ;==>RemoveFileCustomPath
 Func RemoveFolderCustomPath($aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
-		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2])
+		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
 	Next
 EndFunc   ;==>RemoveFolderCustomPath

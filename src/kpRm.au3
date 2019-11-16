@@ -91,6 +91,7 @@ EndIf
 #include "includes\restore_system_settings.au3"
 #include "includes\tools_remove.au3"
 #include "includes\tools_import.au3"
+#include "includes\delete_later.au3"
 
 If 2 = UBound($CmdLine) - 2 Then
 	Local Const $sAction = $CmdLine[1]
@@ -117,6 +118,7 @@ Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-'
 Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
+Global $bDeleteQuarantines = Null
 
 Local Const $pLeft = 16
 Local Const $pRight = 220
@@ -218,6 +220,7 @@ EndFunc   ;==>UpdateStatusBar
 Func KpRemover()
 	Dim $sTmpDir
 	Dim $bRemoveToolLastPass
+	Dim $bDeleteQuarantines
 	Local $hGlobalTimer = TimerInit()
 
 	Init()
@@ -232,6 +235,16 @@ Func KpRemover()
 	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then LogMessage("    ~ UAC Restore")
 	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then LogMessage("    ~ Delete Restore Points")
 	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then LogMessage("    ~ Create Restore Point")
+	If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then LogMessage("    ~ Delete Quarantines")
+	If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then LogMessage("    ~ Delete Quarantines after 7 days")
+
+	$bDeleteQuarantines = Null
+
+	If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then
+		$bDeleteQuarantines = 1
+	ElseIf GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then
+		$bDeleteQuarantines = 7
+	EndIf
 
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
 		CreateBackupRegistry()

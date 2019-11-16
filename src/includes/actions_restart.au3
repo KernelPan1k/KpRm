@@ -1,20 +1,20 @@
-Global $oRemoveRestart = []
+Global $aRemoveRestart = []
 Global $bNeedRestart = False
 
 Func AddRemoveAtRestart($sElement)
-	Dim $oRemoveRestart
+	Dim $aRemoveRestart
 	Dim $bNeedRestart
 
 	$bNeedRestart = True
-	_ArrayAdd($oRemoveRestart, $sElement)
+	_ArrayAdd($aRemoveRestart, $sElement)
 EndFunc   ;==>AddRemoveAtRestart
 
 Func RestartIfNeeded()
-	Dim $oRemoveRestart
+	Dim $aRemoveRestart
 	Dim $bNeedRestart
 	Dim $sCurrentTime
 
-	If $bNeedRestart = True And UBound($oRemoveRestart) > 1 Then
+	If $bNeedRestart = True And UBound($aRemoveRestart) > 1 Then
 		Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks"
 		Local Const $sTasksPath = $sTasksFolder & "\task-" & $sCurrentTime & ".txt"
 
@@ -28,8 +28,8 @@ Func RestartIfNeeded()
 			Return False
 		EndIf
 
-		For $i = 1 To UBound($oRemoveRestart) - 1
-			FileWriteLine($hFileOpen, $oRemoveRestart[$i])
+		For $i = 1 To UBound($aRemoveRestart) - 1
+			FileWriteLine($hFileOpen, $aRemoveRestart[$i])
 		Next
 
 		FileClose($hFileOpen)
