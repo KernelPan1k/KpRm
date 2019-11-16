@@ -75,7 +75,7 @@ Func SR_EnumRestorePointsPowershell()
 EndFunc   ;==>SR_EnumRestorePointsPowershell
 
 Func SR_EnumRestorePoints()
-    Dim $__g_oSR_WMI
+	Dim $__g_oSR_WMI
 
 	Local $aRestorePoints[1][3], $iCounter = 0
 	$aRestorePoints[0][0] = $iCounter
@@ -108,7 +108,7 @@ Func SR_EnumRestorePoints()
 EndFunc   ;==>SR_EnumRestorePoints
 
 Func SR_Enable($DriveL)
-    Dim $__g_oSR
+	Dim $__g_oSR
 
 	If Not IsObj($__g_oSR) Then
 		$__g_oSR = ObjGet("winmgmts:{impersonationLevel=impersonate}!root/default:SystemRestore")
@@ -126,6 +126,8 @@ Func SR_Enable($DriveL)
 EndFunc   ;==>SR_Enable
 
 Func EnableRestoration()
+	UpdateStatusBar("Enable restoration ...")
+
 	Local $iSR_Enabled = SR_Enable(@HomeDrive & '\')
 
 	If $iSR_Enabled = 0 Then
@@ -146,6 +148,7 @@ EndFunc   ;==>SR_RemoveRestorePoint
 
 Func ClearRestorePoint()
 	LogMessage(@CRLF & "- Clear Restore Points -" & @CRLF)
+	UpdateStatusBar("Clear Restore Points ...")
 
 	Local Const $aRP = SR_EnumRestorePoints()
 	Local $iRet = 0
@@ -245,7 +248,7 @@ EndFunc   ;==>ShowCurrentRestorePoint
 Func CreateSystemRestorePointWmi()
 	#RequireAdmin
 
-	UpdateStatusBar("Create new restore point")
+	UpdateStatusBar("Create new restore point ...")
 
 	RunWait(@ComSpec & ' /c ' & 'wmic.exe /Namespace:\\root\default Path SystemRestore Call CreateRestorePoint "KpRm", 100, 7', "", @SW_HIDE)
 
@@ -255,7 +258,7 @@ EndFunc   ;==>CreateSystemRestorePointWmi
 Func CreateSystemRestorePointPowershell()
 	#RequireAdmin
 
-	UpdateStatusBar("Create new restore point")
+	UpdateStatusBar("Create new restore point ...")
 
 	If PowershellIsAvailable() = True Then
 		RunWait('Powershell.exe -Command Checkpoint-Computer -Description "KpRm"', @ScriptDir, @SW_HIDE)
@@ -265,7 +268,7 @@ Func CreateSystemRestorePointPowershell()
 EndFunc   ;==>CreateSystemRestorePointPowershell
 
 Func CheckIsRestorePointExist()
-	UpdateStatusBar("Verify if restore point exist")
+	UpdateStatusBar("Verify if restore point exist ...")
 
 	Local Const $aRP = SR_EnumRestorePoints()
 	Local Const $iNbr = $aRP[0][0]
@@ -298,6 +301,7 @@ EndFunc   ;==>CreateSystemRestorePoint
 
 Func CreateRestorePoint()
 	LogMessage(@CRLF & "- Create Restore Point -" & @CRLF)
+	UpdateStatusBar("Create Restore Point ...")
 
 	EnableRestoration()
 	CreateSystemRestorePoint()
