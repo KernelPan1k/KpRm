@@ -12,4 +12,6 @@ Global $lAdminRequired = "È necessario eseguire il programma con i diritti di a
 Global $lGetLastVersionTitle = "Aggiorna"
 Global $lGetLastVersion = "Esiste una versione più recente di KpRm, scaricatela, per favore"
 Global $lRestart = "È necessario riavviare il computer per completare determinate azioni"
-
+Global $lRemoveQuarantine = "Cancellare le quarantene"
+Global $lRemoveNow = "Cancella ora"
+Global $lRemoveQuarantineAfterNDays = "Cancella in 7 giorni"
