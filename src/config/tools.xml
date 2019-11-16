@@ -5,7 +5,7 @@
         <process companyName="" force="0" process="(?i)^AHK_NavScan.*\.exe"/>
     </tool>
     <tool name="AdliceDiag">
-        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\ADiag\quarantine"/>
+        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\ADiag\quarantine" quarantine="1" />
         <desktop companyName="" force="0" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^Diag_portable.*\.exe$"/>
@@ -20,7 +20,7 @@
         <desktopCommon companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^AdsFix.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^AdsFix" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^AdsFix" type="folder" quarantine="1" />
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^AdsFix.*\.exe$"/>
         <softwareKey pattern="(?i)^AdsFix"/>
     </tool>
@@ -34,7 +34,7 @@
     <tool name="AdwCleaner">
         <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
         <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^AdwCleaner" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^AdwCleaner" type="folder" quarantine="1"/>
         <process companyName="(?i)^Malwarebytes" force="0" process="(?i)^AdwCleaner.*\.exe$"/>
     </tool>
     <tool name="AlphaDecrypter">
@@ -88,7 +88,7 @@
         <desktop companyName="" force="0" pattern="(?i)^avenger" type="folder"/>
         <download companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^avenger" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^avenger" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^avenger" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^avenger.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^avenger.*\.exe$"/>
     </tool>
@@ -165,7 +165,7 @@
         <desktop companyName="" force="0" pattern="(?i)^CFScript\.txt$" type="file"/>
         <download companyName="(?i)^Swearware" force="0" pattern="(?i)^Combofix.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^CFScript\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^Qoobox$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^Qoobox$" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^Combofix.*\.txt$" type="file"/>
         <process companyName="(?i)^Swearware" force="1" process="(?i)^Combofix.*\.exe$"/>
         <registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"/>
@@ -221,7 +221,7 @@
     <tool name="Dr.Web LiveDisk">
         <desktop companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^DrWeb Quarantine$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1" />
     </tool>
     <tool name="Easy Restore Point">
         <desktop companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
@@ -231,7 +231,7 @@
     <tool name="Emisoft Emergency Kit">
         <desktop companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^EEK$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^EEK$" type="folder" quarantine="1" />
         <process companyName="" force="1" process="(?i)^(a2emergencykit|a2cmd).*\.exe$"/>
     </tool>
     <tool name="ESET AES-NI Decryptor">
@@ -370,7 +370,7 @@
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetolmarikolmascocleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Online Scanner">
-        <folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner"/>
+        <folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner" quarantine="1" />
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
         <desktop companyName="" force="0" pattern="(?i)^ESET Online Scanner\.lnk$" type="file"/>
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
@@ -403,7 +403,7 @@
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetretacinocleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Rogue Applications Remover">
-        <folder force="1" path="@AppDataCommonDir\ESET\ESET Rogue Applications Remover"/>
+        <folder force="1" path="@AppDataCommonDir\ESET\ESET Rogue Applications Remover" quarantine="1" />
         <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file"/>
         <download companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^eraremover.*\.exe$"/>
@@ -477,7 +477,7 @@
         <desktop companyName="" force="0" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
         <download companyName="(?i)^Farbar" force="0" pattern="(?i)^(FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^FRST" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^FRST" type="folder" quarantine="1" />
         <process companyName="(?i)^Farbar" force="0" process="(?i)^FRST.*\.exe$"/>
     </tool>
     <tool name="FSS">
@@ -501,7 +501,7 @@
         <desktop companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
         <desktopCommon companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
         <download companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Fix\-Purge$" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^Fix\-Purge$" type="folder" quarantine="1" />
         <process companyName="(?i)^Hacker Tool" force="0" process="(?i)^Fix\-Purge.*\.exe$"/>
         <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName"/>
         <startMenu companyName="" force="1" pattern="(?i)^Fix\-Purge$" type="folder"/>
@@ -604,7 +604,7 @@
     <tool name="Kaspersky Virus Removal Tool">
         <desktop companyName="(?i).*Kaspersky" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
         <download companyName="(?i).*Kaspersky" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^KVRT_Data$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^KVRT_Data$" type="folder" quarantine="1" />
         <process companyName="(?i).*Kaspersky" force="0" process="(?i)^KVRT.*\.exe$"/>
     </tool>
     <tool name="KPLive">
@@ -637,7 +637,7 @@
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe$"/>
     </tool>
     <tool name="Malwarebytes Anti-Rootkit">
-        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine"/>
+        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine" quarantine="1" />
         <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
         <desktop companyName="" force="0" pattern="(?i)^mbar" type="folder"/>
         <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
@@ -692,7 +692,7 @@
         <download companyName="(?i)^McAfee" force="0" pattern="(?i)^stinger.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
-        <folder force="1" path="@HomeDrive\Quarantine\Stinger"/>
+        <folder force="1" path="@HomeDrive\Quarantine\Stinger" quarantine="1" />
         <process companyName="(?i)^McAfee" force="0" process="(?i)^stinger.*\.exe$"/>
         <programFiles companyName="" force="0" pattern="(?i)^stinger$" type="folder"/>
     </tool>
@@ -752,7 +752,7 @@
     <tool name="OTA">
         <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file"/>
         <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTA$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^_OTA$" type="folder" quarantine="1" />
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTA.*\.exe$"/>
     </tool>
     <tool name="OTC">
@@ -769,7 +769,7 @@
         <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
         <desktop companyName="" force="0" pattern="(?i)^Extras\.txt$" type="file"/>
         <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTL$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^_OTL$" type="folder" quarantine="1" />
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTL.*\.exe$"/>
     </tool>
     <tool name="OTM">
@@ -781,7 +781,7 @@
     <tool name="OTS">
         <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
         <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTS$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^_OTS$" type="folder" quarantine="1" />
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTS.*\.exe$"/>
     </tool>
     <tool name="PCHunter">
@@ -802,7 +802,7 @@
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^winlogon.*\.exe$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^Pre_Scan.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^pre_scan$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^pre_scan$" type="folder" quarantine="1" />
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^Pre_Scan.*\.(com|pif|scr|exe)"/>
     </tool>
     <tool name="Process Analyzer">
@@ -821,7 +821,7 @@
         <download companyName="(?i)^SosVirus" force="1" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
         <download companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag" type="folder" quarantine="1" />
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^QuickDiag.*\.exe$"/>
     </tool>
     <tool name="Rakhni Decryptor">
@@ -830,7 +830,7 @@
         <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
         <download companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder"/>
         <homeDrive companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder" quarantine="1" />
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^RakhniDecryptor.*\.exe"/>
     </tool>
     <tool name="Rannoh Decryptor">
@@ -839,7 +839,7 @@
         <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
         <download companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder"/>
         <homeDrive companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder" quarantine="1" />
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^RannohDecryptor.*\.exe"/>
     </tool>
     <tool name="RansomNoteCleaner">
@@ -867,7 +867,7 @@
         <download companyName="" force="0" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^Rem-VBS.*\.log$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^Rem-VBS" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^Rem-VBS" type="folder" quarantine="1" />
         <process companyName="" force="0" process="(?i)^remediate.?vbs.?worm.*\.exe$"/>
         <process companyName="" force="0" process="(?i)^Rem-VBSworm.*\.exe$"/>
     </tool>
@@ -901,7 +901,7 @@
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^(rkill|iExplore).*\.exe$"/>
     </tool>
     <tool name="RogueKiller">
-        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\RogueKiller\quarantine"/>
+        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\RogueKiller\quarantine" quarantine="1" />
         <desktop companyName="" force="0" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file"/>
         <desktop companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
         <desktop companyName="" force="1" pattern="(?i)^RogueKiller" type="folder"/>
@@ -919,7 +919,7 @@
     <tool name="Rooter">
         <desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file"/>
         <download companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Rooter\$$" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^Rooter\$$" type="folder" quarantine="1" />
         <process companyName="(?i)^Eric_71$" force="0" process="(?i)^Rooter.*\.exe$"/>
     </tool>
     <tool name="RootkitRevealer">
@@ -1026,7 +1026,7 @@
     <tool name="Symantec Tempedreve Removal Tool">
         <desktop companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
         <download companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
-        <folder force="1" path="@TempDir\FixtoolQuarantine"/>
+        <folder force="1" path="@TempDir\FixtoolQuarantine" quarantine="1" />
         <process companyName="(?i)^Symantec" force="0" process="(?i)^FixTempedreve.*\.exe$" />
     </tool>
     <tool name="System Information Tool">
@@ -1054,7 +1054,7 @@
         <download companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder"/>
         <homeDrive companyName="" force="0" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder" quarantine="1" />
         <process companyName="(?i)^.*Kaspersky" force="1" process="(?i)^tdsskiller.*\.exe$"/>
     </tool>
     <tool name="TFC">
@@ -1088,7 +1088,7 @@
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
         <desktopCommon companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^UsbFix.*\.exe$"/>
         <programFiles companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
@@ -1104,7 +1104,7 @@
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^UnZacMe.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^UnZacMe$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^UnZacMe$" type="folder" quarantine="1" />
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^UnZacMe.*\.exe$"/>
     </tool>
     <tool name="Unlock92Decrypter">
@@ -1117,7 +1117,7 @@
     <tool name="Webroot DE-BUG">
         <desktop companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
         <download companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder" quarantine="1" />
         <process companyName="(?i)^Webroot" force="0" process="(?i)^webrootdebug.*\.exe$"/>
     </tool>
     <tool name="WildfireDecryptor">
@@ -1191,7 +1191,7 @@
         <desktop companyName="" force="0" pattern="(?i)^zoek.*\.exe$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^zoek.*\.exe$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^zoek.*\.log$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^zoek" type="folder"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^zoek" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^runcheck.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^zoek.*\.exe$"/>
     </tool>
