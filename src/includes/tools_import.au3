@@ -9,7 +9,7 @@ Local $s = _XMLFileOpen($sTmpDir & "\kprm-tools.xml")
 
 Func GetSwapOrder($sT)
 	If _ArraySearch($aActionsFile, $sT) <> -1 Then
-		Local $aOrder[4][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["force", "0"]]
+		Local $aOrder[5][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["force", "0"], ["quarantine", "0"]]
 		Return $aOrder
 	ElseIf $sT = "uninstall" Then
 		Local $aOrder[2][2] = [["folder", "__REQUIRED__"], ["uninstaller", "__REQUIRED__"]]
@@ -30,13 +30,13 @@ Func GetSwapOrder($sT)
 		Local $aOrder[3][2] = [["key", "__REQUIRED__"], ["pattern", "__REQUIRED__"], ["value", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "cleanDirectory" Then
-		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
+		Local $aOrder[4][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"], ["quarantine", "0"]]
 		Return $aOrder
 	ElseIf $sT = "file" Then
 		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "folder" Then
-		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["force", "0"]]
+		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["force", "0"], ["quarantine", "0"]]
 		Return $aOrder
 	EndIf
 EndFunc   ;==>GetSwapOrder
