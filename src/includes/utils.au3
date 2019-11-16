@@ -12,6 +12,8 @@ Func GetLanguage()
 			Return "it"
 		Case "16"
 			Return "pt"
+		Case "19"
+			Return "ru"
 		Case Else
 			Return "en"
 	EndSwitch
@@ -65,7 +67,7 @@ Func IsInternetConnected()
 	EndIf
 
 	Return $aReturn[0] = 0
-EndFunc   ;==>_IsInternetConnected
+EndFunc   ;==>IsInternetConnected
 
 Func PowershellIsAvailable()
 	Dim $bPowerShellAvailable
