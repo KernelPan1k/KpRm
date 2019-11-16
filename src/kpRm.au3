@@ -1,7 +1,6 @@
 #RequireAdmin
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
@@ -10,7 +9,6 @@
 #AutoIt3Wrapper_Res_ProductVersion=1.22
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
-#AutoIt3Wrapper_Res_Icon_Add=.\assets\bug.ico
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
 #AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\HoboCopy.exe
@@ -34,7 +32,6 @@
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
-#include <GuiStatusBar.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
 #include <WinAPIProc.au3>
@@ -44,6 +41,7 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 #include <File.au3>
+
 
 Global $sTmpDir = @TempDir & "\KPRM"
 
@@ -74,6 +72,8 @@ ElseIf $sLang = "es" Then
 	#include "locales\es.au3"
 ElseIf $sLang = "pt" Then
 	#include "locales\pt.au3"
+ElseIf $sLang = "ru" Then
+	#include "locales\ru.au3"
 Else
 	#include "locales\en.au3"
 EndIf
@@ -92,8 +92,13 @@ EndIf
 #include "includes\tools_remove.au3"
 #include "includes\tools_import.au3"
 
-If 1 = UBound($CmdLine) - 1 Then
-	ExecuteScriptFile($CmdLine[1])
+If 2 = UBound($CmdLine) - 2 Then
+	Local Const $sAction = $CmdLine[1]
+
+	If $sAction = 'restart' Then
+		ExecuteScriptFile($CmdLine[2])
+	EndIf
+
 	Exit
 EndIf
 
@@ -113,28 +118,42 @@ Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 235, 202, 112)
-Local Const $oGroup1 = GUICtrlCreateGroup("Actions", 8, 8, 400, 153)
-Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, 16, 40, 129, 17)
-Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, 16, 80, 190, 17)
-Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, 16, 120, 190, 17)
-Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, 220, 40, 137, 17)
-Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, 220, 80, 137, 17)
-Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, 220, 120, 180, 17)
-Local Const $mHelpMenu = GUICtrlCreateMenu("?")
-Local Const $idContribute = GUICtrlCreateMenuItem("Contribute", $mHelpMenu)
-Local Const $idDonation = GUICtrlCreateMenuItem("Donation", $mHelpMenu)
-Local Const $idRestoreHives = GUICtrlCreateMenuItem("Restore hives", $mHelpMenu)
-Global $oHStatus = _GUICtrlStatusBar_Create($oMainWindow)
-Global $oProgressBar = GUICtrlCreateProgress(8, 170, 480, 17)
+Local Const $pLeft = 16
+Local Const $pRight = 220
+Local Const $pPadding1 = 8
+Local Const $pWidth1 = 400
+Local Const $pCtrSize = 17
+Local Const $pStep = 36
 
-GUICtrlCreateGroup("", -99, -99, 1, 1)
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, $WS_POPUP)
+GUICtrlSetDefColor(0xFFFFFF)
+
+Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
+Global $oHStatus = GUICtrlCreateLabel("Ready...", $pPadding1, 220, 800, $pCtrSize)
+Local Const $oGroup1 = GUICtrlCreateGroup("Actions", $pPadding1, 25, $pWidth1, 120)
+Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
+Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
+Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
+Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
+Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
+Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, $pLeft, ($pPadding1 + ($pStep * 2)), 190, $pCtrSize)
+Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, $pLeft, ($pPadding1 + ($pStep * 3)), 190, $pCtrSize)
+Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, $pRight, $pPadding1 + $pStep, 137, $pCtrSize)
+Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, $pRight, ($pPadding1 + ($pStep * 2)), 137, $pCtrSize)
+Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $pRight, ($pPadding1 + ($pStep * 3)), 180, $pCtrSize)
+Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize, $BS_AUTOCHECKBOX)
+Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
 
 GUICtrlSetState($oRemoveTools, 1)
+GUICtrlSetState($oDeleteQuarantine, 1)
 
-Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 16, 76, 76)
-Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 120, 75, 40)
-
+GUICtrlSetBkColor($oRunKp, 0xb5e853)
+GUICtrlSetBkColor($oProgressBar, 0xFFFFFF)
+GUICtrlSetColor($oProgressBar, 0x1a1a1a)
+GUICtrlSetColor($oRunKp, 0x1a1a1a)
+GUICtrlSetColor($oHStatus, 0x63c0f5)
+GUICtrlSetColor($oTitleGUI, 0x63c0f5)
+GUISetBkColor(0x1a1a1a)
 GUISetState(@SW_SHOW)
 
 #EndRegion ### END Koda GUI section ###
@@ -146,13 +165,12 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
-		Case $idContribute
-			ShellExecute("https://github.com/KernelPan1k/KpRm")
-		Case $idDonation
-			ShellExecute("https://github.com/KernelPan1k/KpRm#donation")
-		Case $idRestoreHives
-			ShellExecute("https://toolslib.net/downloads/viewdownload/1004-kplive/")
+		Case $oDeleteQuarantine
+			GUICtrlSetState($oDeleteQuarantineAfter7Days, $GUI_UNCHECKED)
+		Case $oDeleteQuarantineAfter7Days
+			GUICtrlSetState($oDeleteQuarantine, $GUI_UNCHECKED)
 		Case $oRunKp
+			UpdateStatusBar("Running ...")
 			KpRemover()
 	EndSwitch
 WEnd
@@ -194,7 +212,7 @@ Func Init()
 EndFunc   ;==>Init
 
 Func UpdateStatusBar($sText)
-	_GUICtrlStatusBar_SetText($oHStatus, $sText)
+	GUICtrlSetData($oHStatus, $sText)
 EndFunc   ;==>UpdateStatusBar
 
 Func KpRemover()
