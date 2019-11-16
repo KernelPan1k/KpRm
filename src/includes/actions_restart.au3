@@ -36,7 +36,7 @@ Func RestartIfNeeded()
 
 		Local $sSuffix = GetSuffixKey()
 
-		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & @ScriptFullPath & '"' & " " & $sCurrentTime) Then
+		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & @ScriptFullPath & '" restart ' & $sCurrentTime) Then
 			Return False
 		EndIf
 
