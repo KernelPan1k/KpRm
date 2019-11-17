@@ -7,7 +7,7 @@ Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "pro
 
 Local $s = _XMLFileOpen($sTmpDir & "\kprm-tools.xml")
 
-Func GetSwapOrder($sT)
+Func GetSwapOrder(ByRef $sT)
 	If _ArraySearch($aActionsFile, $sT) <> -1 Then
 		Local $aOrder[5][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["force", "0"], ["quarantine", "0"]]
 		Return $aOrder
@@ -98,7 +98,9 @@ For $i = 1 To $aNodes[0]
 Next
 
 Func RunRemoveTools()
-    Dim $bRemoveToolLastPass
+	Dim $bRemoveToolLastPass
+	Dim $aElementsToKeep
+	Dim $bDeleteQuarantines
 
 	If $bRemoveToolLastPass = True Then
 		LogMessage(@CRLF & "- Remove Tools -" & @CRLF)
@@ -211,9 +213,6 @@ Func RunRemoveTools()
 	If $bRemoveToolLastPass = True Then
 		Local $bHasFoundTools = False
 		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
-		Local Const $sMessageZHP = "Warning, folder " & @AppDataDir & "\ZHP exists and contains the quarantines of the ZHP tools. At the request of the publisher (Nicolas Coolman) this folder is not deleted. "
-		Local $bToolZhpQuarantineDisplay = False
-		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
 
 		For $sToolsCptKey In $oToolsCpt
 			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
@@ -236,24 +235,39 @@ Func RunRemoveTools()
 						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
 						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
 					Next
-
-					If $sToolsCptKey = "ZHP Tools" And $bToolZhpQuarantineExist = True And $bToolZhpQuarantineDisplay = False Then
-						LogMessage("     [!] " & $sMessageZHP)
-						$bToolZhpQuarantineDisplay = True
-					EndIf
 				EndIf
 			Next
 		Next
 
-		If $bToolZhpQuarantineDisplay = False And $bToolZhpQuarantineExist = True Then
-			LogMessage(@CRLF & "  ## " & "ZHP Tools")
-			LogMessage("     [!] " & $sMessageZHP)
-		ElseIf $bHasFoundTools = False Then
-			LogMessage("  [I] No tools found")
+		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
+		Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
+		Local Const $bUseOtherLinesSection = $bToolZhpQuarantineExist = True Or $bHasElementToKeep = True
+
+		If $bUseOtherLinesSection = True Then
+			LogMessage(@CRLF & "- Other Lines -" & @CRLF)
+		EndIf
+
+		If $bToolZhpQuarantineExist = True Then
+			LogMessage(@CRLF & "  ## Never deleted")
+			LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
+		EndIf
+
+		If $bHasElementToKeep = True Then
+			If $bDeleteQuarantines = Null Then
+				LogMessage(@CRLF & "  ## Keeped")
+
+			ElseIf $bDeleteQuarantines = 7 Then
+				LogMessage(@CRLF & "  ## Will be deleted in 7 days")
+			EndIf
+
+			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
+
+			For $i = 1 To UBound($aElementsToKeep) - 1
+				LogMessage("    ~ " & $aElementsToKeep[$i][0] & " (" & $aElementsToKeep[$i][1] & ")")
+			Next
 		EndIf
 	EndIf
 
 	ProgressBarUpdate()
-
 
 EndFunc   ;==>RunRemoveTools
