@@ -6,7 +6,10 @@ Func AddRemoveAtRestart($sElement)
 	Dim $bNeedRestart
 
 	$bNeedRestart = True
-	_ArrayAdd($aRemoveRestart, $sElement)
+
+	If _ArraySearch($aRemoveRestart, $sElement) = -1 Then
+		_ArrayAdd($aRemoveRestart, $sElement)
+	EndIf
 EndFunc   ;==>AddRemoveAtRestart
 
 Func RestartIfNeeded()
@@ -58,8 +61,8 @@ Func ExecuteScriptFile($sReportTime)
 	If Not FileExists($sHomeReport) Then Exit
 	If Not FileExists($sDesktopReport) Then Exit
 
-	FileWrite($sHomeReport, @CRLF & @CRLF & "- Remove After Restart -" &@CRLF)
-	FileWrite($sDesktopReport, @CRLF & @CRLF & "- Remove After Restart -" &@CRLF)
+	FileWrite($sHomeReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
+	FileWrite($sDesktopReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
 
 	FileOpen($sTasksFile, 0)
 
