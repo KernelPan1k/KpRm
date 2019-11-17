@@ -74,6 +74,8 @@ ElseIf $sLang = "pt" Then
 	#include "locales\pt.au3"
 ElseIf $sLang = "ru" Then
 	#include "locales\ru.au3"
+ElseIf $sLang = "nl" Then
+	#include "locales\nl.au3"
 Else
 	#include "locales\en.au3"
 EndIf
@@ -288,11 +290,12 @@ Func KpRemover()
 
 	GUICtrlSetData($oProgressBar, 100)
 
-	RestartIfNeeded()
+	SetDeleteQuarantinesIn7DaysIfNeeded()
+	RestartIfNeeded($bMooveBinary)
 
 	UpdateStatusBar("Finish")
 
 	MsgBox(64, "OK", $lFinish)
 
-	QuitKprm(True)
+	QuitKprm(True, True)
 EndFunc   ;==>KpRemover
