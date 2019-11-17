@@ -14,6 +14,8 @@ Func GetLanguage()
 			Return "pt"
 		Case "19"
 			Return "ru"
+		Case "13"
+			Return "nl"
 		Case Else
 			Return "en"
 	EndSwitch
@@ -392,3 +394,7 @@ Func TimerWriteReport($hTimer, $sSection)
 	Local $sDiff = StringFormat("%.2f", TimerDiff($hTimer) / 1000)
 	LogMessage(@CRLF & "-- " & $sSection & " finished in " & $sDiff & "s --" & @CRLF)
 EndFunc   ;==>TimerWriteReport
+
+Func IsNewLine($arr, $line)
+	Return _ArraySearch($arr, $line, 0, 0, 0, 1, 1, 0) = -1
+EndFunc   ;==>IsNewLine
