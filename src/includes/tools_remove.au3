@@ -71,7 +71,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 			$bIsQuarantine = True
 
 			If $bDeleteQuarantines = Null Then
-				AddElementToKeep($sPath)
+				AddElementToKeep($sPath & '~~~~' & $sToolKey)
 				Return
 			EndIf
 		EndIf
@@ -82,7 +82,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 			UpdateStatusBar("Remove folder " & $sPath)
 			DirRemove($sPath, $DIR_REMOVE)
 		ElseIf $bDeleteQuarantines = 7 Then
-			AddRemoveLater($sPath)
+			AddElementToKeep($sPath & '~~~~' & $sToolKey)
 		EndIf
 	EndIf
 EndFunc   ;==>RemoveFolder
@@ -111,7 +111,7 @@ Func FindInPath($sPath, $sFile, $sReg)
 	Return $aReturn
 EndFunc   ;==>FindInPath
 
-Func RemoveFileHandler($sPathOfFile, $aElements)
+Func RemoveFileHandler($sPathOfFile, Const ByRef $aElements)
 	Local $sTypeOfFile = FileExistsAndGetType($sPathOfFile)
 
 	If $sTypeOfFile = Null Then
@@ -133,7 +133,7 @@ Func RemoveFileHandler($sPathOfFile, $aElements)
 	Next
 EndFunc   ;==>RemoveFileHandler
 
-Func RemoveAllFileFromWithMaxDepth($sPath, $aElements, $iDetpth = -2)
+Func RemoveAllFileFromWithMaxDepth($sPath, Const ByRef $aElements, $iDetpth = -2)
 	Local $aArray = _FileListToArrayRec($sPath, "*.exe;*.txt;*.lnk;*.log;*.reg;*.zip;*.dat;*.scr;*.com;*.bat;*.mbr;*.iso;*.pif", $FLTAR_FILESFOLDERS, $iDetpth, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 
 	If @error <> 0 Then
@@ -205,7 +205,7 @@ Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
 	Until ($iCpt = 0 Or 0 = ProcessExists($sProcess))
 EndFunc   ;==>CloseProcessAndWait
 
-Func RemoveAllProcess($aList)
+Func RemoveAllProcess(Const ByRef $aList)
 	Local $aProcessList = ProcessList()
 
 	For $i = 1 To $aProcessList[0][0]
@@ -235,14 +235,14 @@ Func RemoveAllProcess($aList)
 	Next
 EndFunc   ;==>RemoveAllProcess
 
-Func RemoveScheduleTask($aList)
+Func RemoveScheduleTask(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		UpdateStatusBar("Remove schedule task " & $aList[$i][1])
 		RunWait('schtasks.exe /delete /tn "' & $aList[$i][1] & '" /f', @TempDir, @SW_HIDE)
 	Next
 EndFunc   ;==>RemoveScheduleTask
 
-Func UninstallNormally($aList)
+Func UninstallNormally(Const ByRef $aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
 	For $i = 0 To UBound($aProgramFilesList) - 1
@@ -268,7 +268,7 @@ Func UninstallNormally($aList)
 	Next
 EndFunc   ;==>UninstallNormally
 
-Func RemoveAllProgramFilesDir($aList)
+Func RemoveAllProgramFilesDir(Const ByRef $aList)
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
 	For $i = 0 To UBound($aProgramFilesList) - 1
@@ -276,7 +276,7 @@ Func RemoveAllProgramFilesDir($aList)
 	Next
 EndFunc   ;==>RemoveAllProgramFilesDir
 
-Func RemoveAllSoftwareKeyList($aList)
+Func RemoveAllSoftwareKeyList(Const ByRef $aList)
 	Local $s64Bit = GetSuffixKey()
 	Local $aKeys[2] = ["HKCU" & $s64Bit & "\SOFTWARE", "HKLM" & $s64Bit & "\SOFTWARE"]
 
@@ -301,7 +301,7 @@ Func RemoveAllSoftwareKeyList($aList)
 	Next
 EndFunc   ;==>RemoveAllSoftwareKeyList
 
-Func RemoveUninstallStringWithSearch($aList)
+Func RemoveUninstallStringWithSearch(Const ByRef $aList)
 	For $i = 1 To UBound($aList) - 1
 		Local $sKey = FormatForUseRegistryKey($aList[$i][1])
 		Local $sKeyFound = SearchRegistryKeyStrings($sKey, $aList[$i][2], $aList[$i][3])
@@ -312,7 +312,7 @@ Func RemoveUninstallStringWithSearch($aList)
 	Next
 EndFunc   ;==>RemoveUninstallStringWithSearch
 
-Func RemoveAllRegistryKeys($aList)
+Func RemoveAllRegistryKeys(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sKey = FormatForUseRegistryKey($aList[$i][1])
 
@@ -324,7 +324,7 @@ Func RemoveAllRegistryKeys($aList)
 	Next
 EndFunc   ;==>RemoveAllRegistryKeys
 
-Func CleanDirectoryContent($aList)
+Func CleanDirectoryContent(Const ByRef $aList)
 	Dim $bDeleteQuarantines
 
 	For $i = 0 To UBound($aList) - 1
@@ -337,7 +337,7 @@ Func CleanDirectoryContent($aList)
 				$bIsQuarantine = True
 
 				If $bDeleteQuarantines = Null Then
-					AddElementToKeep($sPath)
+					AddElementToKeep($sPath & '~~~~' & $aList[$i][0])
 					ContinueLoop
 				EndIf
 			EndIf
@@ -349,7 +349,7 @@ Func CleanDirectoryContent($aList)
 					If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
 						RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
 					ElseIf $bDeleteQuarantines = 7 Then
-						AddRemoveLater($sPath & '\' & $aFileList[$f])
+						AddElementToKeep($sPath & '\' & $aFileList[$f] & '~~~~' & $aList[$i][0])
 					EndIf
 				Next
 			EndIf
@@ -357,14 +357,14 @@ Func CleanDirectoryContent($aList)
 	Next
 EndFunc   ;==>CleanDirectoryContent
 
-Func RemoveFileCustomPath($aList)
+Func RemoveFileCustomPath(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
 		RemoveFile($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
 	Next
 EndFunc   ;==>RemoveFileCustomPath
 
-Func RemoveFolderCustomPath($aList)
+Func RemoveFolderCustomPath(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
 		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
