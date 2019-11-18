@@ -33,6 +33,7 @@
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
+#include <GuiListView.au3>
 #include <GuiTab.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
@@ -96,6 +97,7 @@ EndIf
 #include "includes\tools_remove.au3"
 #include "includes\tools_import.au3"
 #include "includes\delete_later.au3"
+#include "includes\search.au3"
 
 If UBound($CmdLine) > 1 Then
 	Local $sAction = $CmdLine[1]
@@ -167,12 +169,14 @@ Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, $pLeft, ($p
 Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, $pRight, $pPadding1 + $pStep, 137, $pCtrSize)
 Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, $pRight, ($pPadding1 + ($pStep * 2)), 137, $pCtrSize)
 Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $pRight, ($pPadding1 + ($pStep * 3)), 180, $pCtrSize)
-Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize, $BS_AUTOCHECKBOX)
+Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize)
 Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
 
 Local Const $oTab2 = GUICtrlCreateTabItem("tab2")
 Local Const $oSearchLines = GUICtrlCreateButton("Search", 415, 159, 75, 52)
-Global $oListView = GUICtrlCreateListView("Select|Line   |Tool ", $pPadding1, 30, $pWidth1, 180)
+Global $oListView = GUICtrlCreateListView("Line|Tool", $pPadding1, 30, $pWidth1, 180, -1, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_GRIDLINES, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
+_GUICtrlListView_SetColumnWidth($oListView, 0, 350)
+_GUICtrlListView_SetColumnWidth($oListView, 1, 50)
 
 GUICtrlSetState($oRemoveTools, 1)
 GUICtrlSetState($oDeleteQuarantine, 1)

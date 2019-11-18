@@ -2,7 +2,7 @@ Dim $sTmpDir
 
 FileInstall(".\config\tools.xml", $sTmpDir & "\kprm-tools.xml")
 
-Global $oToolsCpt = ObjCreate("Scripting.Dictionary")
+Global $oToolsCpt = Null
 Local $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "startMenu"]
 
 Local $s = _XMLFileOpen($sTmpDir & "\kprm-tools.xml")
@@ -80,27 +80,37 @@ Func Swap($sTn, $aK, $aV, $aOrder)
 	Return $sData
 EndFunc   ;==>Swap
 
-Local $aNodes = _XMLSelectNodes("/tools/tool")
+Func InitOToolCpt()
+	Dim $oToolsCpt
 
-For $i = 1 To $aNodes[0]
-	Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
-	Local $oToolsValue = ObjCreate("Scripting.Dictionary")
-	Local $oToolsValueKey = ObjCreate("Scripting.Dictionary")
-	Local $oToolsValueFile = ObjCreate("Scripting.Dictionary")
-	Local $oToolsValueUninstall = ObjCreate("Scripting.Dictionary")
-	Local $oToolsValueProcess = ObjCreate("Scripting.Dictionary")
+	$oToolsCpt = ObjCreate("Scripting.Dictionary")
 
-	$oToolsValue.add("key", $oToolsValueKey)
-	$oToolsValue.add("element", $oToolsValueFile)
-	$oToolsValue.add("uninstall", $oToolsValueUninstall)
-	$oToolsValue.add("process", $oToolsValueProcess)
-	$oToolsCpt.add($sToolName, $oToolsValue)
-Next
+	Local $aNodes = _XMLSelectNodes("/tools/tool")
+
+	For $i = 1 To $aNodes[0]
+		Local $sToolName = _XMLGetAttrib("/tools/tool[" & $i & "]", "name")
+		Local $oToolsValue = ObjCreate("Scripting.Dictionary")
+		Local $oToolsValueKey = ObjCreate("Scripting.Dictionary")
+		Local $oToolsValueFile = ObjCreate("Scripting.Dictionary")
+		Local $oToolsValueUninstall = ObjCreate("Scripting.Dictionary")
+		Local $oToolsValueProcess = ObjCreate("Scripting.Dictionary")
+
+		$oToolsValue.add("key", $oToolsValueKey)
+		$oToolsValue.add("element", $oToolsValueFile)
+		$oToolsValue.add("uninstall", $oToolsValueUninstall)
+		$oToolsValue.add("process", $oToolsValueProcess)
+		$oToolsCpt.add($sToolName, $oToolsValue)
+	Next
+EndFunc   ;==>InitOToolCpt
+
 
 Func RunRemoveTools()
 	Dim $bRemoveToolLastPass
 	Dim $aElementsToKeep
 	Dim $bDeleteQuarantines
+	Dim $bSearchOnly
+
+	InitOToolCpt()
 
 	If $bRemoveToolLastPass = True Then
 		LogMessage(@CRLF & "- Remove Tools -" & @CRLF)
@@ -210,8 +220,7 @@ Func RunRemoveTools()
 		ProgressBarUpdate()
 	Next
 
-	If $bRemoveToolLastPass = True Then
-		Local $bHasFoundTools = False
+	If $bRemoveToolLastPass = True Or $bSearchOnly = True Then
 		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
 
 		For $sToolsCptKey In $oToolsCpt
@@ -224,20 +233,26 @@ Func RunRemoveTools()
 				Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
 
 				If UBound($oToolCptSubToolKeys) > 0 Then
-					If $bToolExistDisplayMessage = False Then
+					If $bToolExistDisplayMessage = False And $bSearchOnly = False Then
 						$bToolExistDisplayMessage = True
-						$bHasFoundTools = True
 						LogMessage(@CRLF & "  ## " & $sToolsCptKey)
 					EndIf
 
 					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
 						Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
 						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
-						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
+
+						If $bSearchOnly = False Then
+							CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
+						Else
+							AddToSearchList($oToolCptSubToolKey, $sToolsCptKey)
+						EndIf
 					Next
 				EndIf
 			Next
 		Next
+
+		If $bSearchOnly = True Then Return
 
 		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
 		Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
