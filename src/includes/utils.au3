@@ -54,10 +54,11 @@ Func QuitKprm($bAutoDelete = False, $open = True)
 		EndIf
 
 		If $bKpRmDev = False And @Compiled Then
-			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @ScriptFullPath & '"', @TempDir, @SW_HIDE)
-			FileDelete(@ScriptFullPath)
+			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
+			FileDelete(@AutoItExe)
 		EndIf
 	EndIf
+
 	Exit
 EndFunc   ;==>QuitKprm
 

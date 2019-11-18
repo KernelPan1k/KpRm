@@ -39,6 +39,8 @@ Func IsProcessInWhiteList($sProcess)
 EndFunc   ;==>IsProcessInWhiteList
 
 Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
+	Dim $bSearchOnly
+
 	Local Const $iFileExists = isFile($sFile)
 
 	If $iFileExists And IsFileInWhiteList($sFile) = False Then
@@ -51,11 +53,14 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 		EndIf
 
 		UpdateToolCpt($sToolKey, 'element', $sFile)
-		PrepareRemove($sFile, 0, $sForce)
 
-		UpdateStatusBar("Remove file " & $sFile)
-
-		FileDelete($sFile)
+		If $bSearchOnly = False Then
+			PrepareRemove($sFile, 0, $sForce)
+			UpdateStatusBar("Remove file " & $sFile)
+			FileDelete($sFile)
+		Else
+			UpdateStatusBar("File " & $sFile & ' found')
+		EndIf
 	EndIf
 EndFunc   ;==>RemoveFile
 
