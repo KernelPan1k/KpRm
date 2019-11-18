@@ -66,10 +66,17 @@ EndFunc   ;==>RemoveFile
 
 Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 	Dim $bDeleteQuarantines
+	Dim $bSearchOnly
 
 	Local $iFileExists = IsDir($sPath)
 
 	If $iFileExists Then
+		If $bSearchOnly = True Then
+			UpdateToolCpt($sToolKey, 'element', $sPath)
+			UpdateStatusBar("Folder " & $sPath & " found")
+			Return
+		EndIf
+
 		Local $bIsQuarantine = False
 
 		If $sQuarantine = "1" Then
@@ -172,6 +179,13 @@ EndFunc   ;==>RemoveAllFileFrom
 
 Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 	Dim $bRemoveToolLastPass
+	Dim $bSearchOnly
+
+	If $bSearchOnly = True Then
+		UpdateStatusBar("Registry key " & $key & " found")
+		UpdateToolCpt($sToolKey, "key", $key)
+		Return
+	EndIf
 
 	If $bRemoveToolLastPass = True Or Number($sForce) Then
 		_ClearObjectDacl($key)
@@ -211,6 +225,7 @@ Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
 EndFunc   ;==>CloseProcessAndWait
 
 Func RemoveAllProcess(Const ByRef $aList)
+	Dim $bSearchOnly
 	Local $aProcessList = ProcessList()
 
 	For $i = 1 To $aProcessList[0][0]
@@ -233,6 +248,12 @@ Func RemoveAllProcess(Const ByRef $aList)
 					EndIf
 				EndIf
 
+				If $bSearchOnly = True Then
+					UpdateStatusBar("Process " & $sProcessName & " found")
+					UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
+					ContinueLoop
+				EndIf
+
 				CloseProcessAndWait($iPid, $sProcessName, $aList[$iCpt][3])
 				UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
 			EndIf
@@ -248,6 +269,7 @@ Func RemoveScheduleTask(Const ByRef $aList)
 EndFunc   ;==>RemoveScheduleTask
 
 Func UninstallNormally(Const ByRef $aList)
+	Dim $bSearchOnly
 	Local Const $aProgramFilesList = GetProgramFilesList()
 
 	For $i = 0 To UBound($aProgramFilesList) - 1
@@ -264,7 +286,10 @@ Func UninstallNormally(Const ByRef $aList)
 					If isFile($aUninstallFiles[$u]) Then
 						UpdateStatusBar("Uninstall " & $aUninstallFiles[$u])
 
-						RunWait($aUninstallFiles[$u])
+						If $bSearchOnly = False Then
+							RunWait($aUninstallFiles[$u])
+						EndIf
+
 						UpdateToolCpt($aList[$c][0], "uninstall", $aUninstallFiles[$u])
 					EndIf
 				Next
@@ -375,3 +400,4 @@ Func RemoveFolderCustomPath(Const ByRef $aList)
 		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
 	Next
 EndFunc   ;==>RemoveFolderCustomPath
+
