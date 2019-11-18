@@ -1,6 +1,7 @@
 #RequireAdmin
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
@@ -32,6 +33,7 @@
 #include <MsgBoxConstants.au3>
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
+#include <GuiTab.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
 #include <WinAPIProc.au3>
@@ -53,7 +55,7 @@ DirCreate($sTmpDir)
 
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 
-Global $bKpRmDev = False
+Global $bKpRmDev = True
 Global $sKprmVersion = "1.22"
 
 If $bKpRmDev = True Then
@@ -95,11 +97,14 @@ EndIf
 #include "includes\tools_import.au3"
 #include "includes\delete_later.au3"
 
-If 2 = UBound($CmdLine) - 2 Then
-	Local Const $sAction = $CmdLine[1]
+If UBound($CmdLine) > 1 Then
+	Local $sAction = $CmdLine[1]
+	$sAction = StringStripWS($sAction, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 
 	If $sAction = 'restart' Then
 		ExecuteScriptFile($CmdLine[2])
+	ElseIf $sAction = 'quarantines' Then
+		RemoveQuarantines()
 	EndIf
 
 	Exit
@@ -121,6 +126,7 @@ Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
 Global $bDeleteQuarantines = Null
+Global $bSearchOnly = False
 
 Local Const $pLeft = 16
 Local Const $pRight = 220
@@ -128,17 +134,33 @@ Local Const $pPadding1 = 8
 Local Const $pWidth1 = 400
 Local Const $pCtrSize = 17
 Local Const $pStep = 36
+Local Const $cWhite = 0xFFFFFF
+Local Const $cBlack = 0x1a1a1a
+Local Const $cDisabled = 0x2a2a2a
+Local Const $cBlue = 0x63c0f5
+Local Const $cGreen = 0xb5e853
+
+Local Const $oTabSwitcher[2] = []
 
 Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, $WS_POPUP)
-GUICtrlSetDefColor(0xFFFFFF)
+GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
 Global $oHStatus = GUICtrlCreateLabel("Ready...", $pPadding1, 220, 800, $pCtrSize)
+Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
+Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
+
+Local Const $oTabSwitcher1 = GUICtrlCreateLabel("Suppression", 324, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher2 = GUICtrlCreateLabel("Detection", 412, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+
+Local Const $oTabs = GUICtrlCreateTab(10, 40, 200, 200)
+GUICtrlSetState($oTabs, $GUI_HIDE)
+
+Local Const $oTab1 = GUICtrlCreateTabItem("tab1")
+
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", $pPadding1, 25, $pWidth1, 120)
 Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
-Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
 Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
-Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, $pLeft, ($pPadding1 + ($pStep * 2)), 190, $pCtrSize)
 Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, $pLeft, ($pPadding1 + ($pStep * 3)), 190, $pCtrSize)
@@ -148,18 +170,31 @@ Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $
 Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize, $BS_AUTOCHECKBOX)
 Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
 
+Local Const $oTab2 = GUICtrlCreateTabItem("tab2")
+Local Const $oSearchLines = GUICtrlCreateButton("Search", 415, 159, 75, 52)
+Global $oListView = GUICtrlCreateListView("Select|Line   |Tool ", $pPadding1, 30, $pWidth1, 180)
+
 GUICtrlSetState($oRemoveTools, 1)
 GUICtrlSetState($oDeleteQuarantine, 1)
 
-GUICtrlSetBkColor($oRunKp, 0xb5e853)
-GUICtrlSetBkColor($oProgressBar, 0xFFFFFF)
-GUICtrlSetColor($oProgressBar, 0x1a1a1a)
-GUICtrlSetColor($oRunKp, 0x1a1a1a)
-GUICtrlSetColor($oHStatus, 0x63c0f5)
-GUICtrlSetColor($oTitleGUI, 0x63c0f5)
-GUISetBkColor(0x1a1a1a)
+GUICtrlCreateTabItem("")
+
+GUICtrlSetBkColor($oRunKp, $cGreen)
+GUICtrlSetBkColor($oSearchLines, $cBlue)
+GUICtrlSetBkColor($oProgressBar, $cWhite)
+GUICtrlSetColor($oProgressBar, $cBlack)
+GUICtrlSetColor($oRunKp, $cBlack)
+GUICtrlSetColor($oSearchLines, $cWhite)
+GUICtrlSetColor($oHStatus, $cBlue)
+GUICtrlSetColor($oTitleGUI, $cBlue)
+GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
+GUICtrlSetColor($oTabSwitcher1, $cBlack)
+GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
+GUICtrlSetColor($oTabSwitcher2, $cBlue)
+GUISetBkColor($cBlack)
 GUISetState(@SW_SHOW)
 
+GUICtrlCreateTabItem("")
 #EndRegion ### END Koda GUI section ###
 
 While 1
@@ -169,10 +204,27 @@ While 1
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
+		Case $oTabSwitcher1
+			If GUICtrlRead($oTabs, 1) = $oTab1 Then ContinueLoop
+			GUICtrlSetState($oTab1, $GUI_SHOW)
+			GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
+			GUICtrlSetColor($oTabSwitcher1, $cBlack)
+			GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
+			GUICtrlSetColor($oTabSwitcher2, $cBlue)
+		Case $oTabSwitcher2
+			If GUICtrlRead($oTabs, 1) = $oTab2 Then ContinueLoop ; To prevent the flickering and second state set.
+			GUICtrlSetState($oTab2, $GUI_SHOW)
+			GUICtrlSetBkColor($oTabSwitcher1, $cDisabled)
+			GUICtrlSetColor($oTabSwitcher1, $cBlue)
+			GUICtrlSetBkColor($oTabSwitcher2, $cGreen)
+			GUICtrlSetColor($oTabSwitcher2, $cBlack)
 		Case $oDeleteQuarantine
 			GUICtrlSetState($oDeleteQuarantineAfter7Days, $GUI_UNCHECKED)
 		Case $oDeleteQuarantineAfter7Days
 			GUICtrlSetState($oDeleteQuarantine, $GUI_UNCHECKED)
+		Case $oSearchLines
+			UpdateStatusBar("Search ...")
+			KpSearch()
 		Case $oRunKp
 			UpdateStatusBar("Running ...")
 			KpRemover()
@@ -218,6 +270,14 @@ EndFunc   ;==>Init
 Func UpdateStatusBar($sText)
 	GUICtrlSetData($oHStatus, $sText)
 EndFunc   ;==>UpdateStatusBar
+
+Func KpSearch()
+	Dim $bSearchOnly
+
+	$bSearchOnly = True
+
+	RunRemoveTools()
+EndFunc
 
 Func KpRemover()
 	Dim $sTmpDir
@@ -291,11 +351,11 @@ Func KpRemover()
 	GUICtrlSetData($oProgressBar, 100)
 
 	SetDeleteQuarantinesIn7DaysIfNeeded()
-	RestartIfNeeded($bMooveBinary)
+	RestartIfNeeded()
 
 	UpdateStatusBar("Finish")
 
 	MsgBox(64, "OK", $lFinish)
 
-	QuitKprm(True, True)
+	QuitKprm(True)
 EndFunc   ;==>KpRemover

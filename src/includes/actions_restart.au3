@@ -38,8 +38,11 @@ Func RestartIfNeeded()
 		FileClose($hFileOpen)
 
 		Local $sSuffix = GetSuffixKey()
+		Local $sBinaryPath = @AutoItExe
 
-		If Not RegWrite("HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & @ScriptFullPath & '" restart ' & $sCurrentTime) Then
+		If Not @Compiled Then $sBinaryPath = @ScriptFullPath
+
+		If Not RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sBinaryPath & '" "restart" "' & $sCurrentTime & '"') Then
 			Return False
 		EndIf
 
@@ -97,8 +100,8 @@ Func ExecuteScriptFile($sReportTime)
 	Run("notepad.exe " & $sHomeReport)
 
 	If $bKpRmDev = False And @Compiled Then
-		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @ScriptFullPath & '"', @ScriptDir, @SW_HIDE)
-		FileDelete(@ScriptFullPath)
+		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @ScriptDir, @SW_HIDE)
+		FileDelete(@AutoItExe)
 	EndIf
 
 	Exit

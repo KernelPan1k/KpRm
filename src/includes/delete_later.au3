@@ -7,7 +7,7 @@ Func AddElementToKeep($sElement)
 
 	Local $aSplit = StringSplit($sElement, $sDelim)
 
-	If IsNewLine($aElementsToKeep, $aSplit[0]) Then
+	If IsNewLine($aElementsToKeep, $aSplit[1]) Then
 		_ArrayAdd($aElementsToKeep, $sElement, 0, $sDelim)
 	EndIf
 EndFunc   ;==>AddElementToKeep
@@ -28,8 +28,12 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 		DirCreate($sTasksFolder)
 	EndIf
 
+	Local $sBinaryPath = @AutoItExe
+
+	If Not @Compiled Then $sBinaryPath = @ScriptFullPath
+
 	If Not FileExists($sTasksFolder & '\kprm-quarantines.exe') Then
-		FileCopy(@ScriptFullPath, $sTasksFolder & '\kprm-quarantines.exe')
+		FileCopy($sBinaryPath, $sTasksFolder & '\kprm-quarantines.exe')
 	EndIf
 
 	If Not FileExists($sTasksFolder & '\kprm-quarantines.exe') Then
@@ -50,17 +54,17 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 
 	Local $sSuffix = GetSuffixKey()
 
-	If Not RegWrite("HKCU" & $sSuffix & "\Software\KPRM\Quarantines", $sCurrentTime, "REG_SZ", _DateAdd('d', 7, _NowCalcDate())) Then
+	If Not RegWrite("HKLM" & $sSuffix & "\Software\KPRM\Quarantines", $sCurrentTime, "REG_SZ", _DateAdd('d', 7, _NowCalcDate())) Then
 		_ArrayAdd($aDebug, "Unable to write Software key")
 	EndIf
 
-	Local Const $sKey = "HKCU" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+	Local Const $sKey = "HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce"
 	Local Const $sVal = "kprm_quarantines"
 
 	RegRead($sKey, $sVal)
 
 	If @error <> 0 Then
-		If Not RegWrite($sKey, $sVal, "REG_SZ", '"' & $sTasksFolder & '\kprm-quarantines.exe" quarantines') Then
+		If Not RegWrite($sKey, $sVal, "REG_SZ", '"' & $sTasksFolder & '\kprm-quarantines.exe" "quarantines"') Then
 			_ArrayAdd($aDebug, "Unable to write RunOnce key")
 		EndIf
 	EndIf
@@ -75,6 +79,9 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 EndFunc   ;==>SetDeleteQuarantinesIn7DaysIfNeeded
 
 Func CurrentQuarantineTask($sVal, $sDate)
+	If $sVal = "" Or $sVal = Null Then Return
+	If $sDate = "" Or $sDate = Null Then Return
+
 	Local Const $sNow = _NowCalcDate()
 	Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks-quarantines"
 	Local Const $sTasksPath = $sTasksFolder & "\task-" & $sVal & ".txt"
@@ -84,7 +91,7 @@ Func CurrentQuarantineTask($sVal, $sDate)
 	Local Const $bHomeReportExist = FileExists($sHomeReport)
 	Local Const $bDesktopReportExist = FileExists($sDesktopReport)
 
-	If FileExists($sTasksPath) Then
+	If FileExists($sTasksPath) = 1 Then
 		If $sDate <= $sNow Then
 			_ArrayAdd($aValToRemove, $sVal)
 
@@ -140,17 +147,53 @@ EndFunc   ;==>CurrentQuarantineTask
 
 Func RemoveQuarantines()
 	Local $sSuffix = GetSuffixKey()
-	Local Const $sKey = "HKCU" & $sSuffix & "\Software\KPRM\Quarantines"
+	Local Const $sKey = "HKLM" & $sSuffix & "\Software\KPRM\Quarantines"
 
 	Local $i = 1
+	Local $sValue = RegEnumVal($sKey, $i)
+
+	While @error = 0 And $i <= 50
+		$i += 1
+		Local $sDate = RegRead($sKey, $sValue)
+		CurrentQuarantineTask($sValue, $sDate)
+		$sValue = RegEnumVal($sKey, $i)
+	WEnd
+
+	If UBound($aValToRemove) > 1 Then
+		For $i = 1 To UBound($aValToRemove) - 1
+			RegDelete($sKey, $aValToRemove[$i])
+		Next
+	EndIf
+
+	Local $i = 1
+	Local $bHasRemainingTasks = False
 	Local $sValue = RegEnumVal($sKey, $i)
 
 	While @error = 0 And $i <= 100
 		$i += 1
 		$sDate = RegRead($sKey, $sValue)
-		CurrentQuarantineTask($sValue, $sDate)
 		$sValue = RegEnumVal($sKey, $i)
+
+		If _DateIsValid($sDate) = 1 Then
+			$bHasRemainingTasks = True
+			ExitLoop
+		EndIf
 	WEnd
 
-;~ 	TODO
+	Local $sBinaryPath = @AutoItExe
+
+	If Not @Compiled Then $sBinaryPath = @ScriptFullPath
+
+	If $bHasRemainingTasks = True Then
+		RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_quarantines", "REG_SZ", '"' & $sBinaryPath & '" "quarantines"')
+	Else
+		RegDelete("HKLM" & $sSuffix & "\Software\KPRM")
+
+		If @Compiled Then
+			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
+			FileDelete(@AutoItExe)
+		EndIf
+	EndIf
+
+	Exit
 EndFunc   ;==>RemoveQuarantines

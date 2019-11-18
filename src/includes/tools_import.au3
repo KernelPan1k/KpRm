@@ -257,7 +257,7 @@ Func RunRemoveTools()
 				LogMessage(@CRLF & "  ## Keeped")
 
 			ElseIf $bDeleteQuarantines = 7 Then
-				LogMessage(@CRLF & "  ## Will be deleted in 7 days")
+				LogMessage(@CRLF & "  ## Will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
 			EndIf
 
 			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
