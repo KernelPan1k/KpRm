@@ -231,6 +231,10 @@ Func IsDir($sFilePath)
 	Return Int(FileExists($sFilePath) And StringInStr(FileGetAttrib($sFilePath), 'D', Default, 1) > 0)
 EndFunc   ;==>IsDir
 
+Func IsRegistryKey($sKey)
+	Return StringRegExp($sKey, "(?i)^(HKLM|HKCU|HKU|HKCR|HKCC)")
+EndFunc   ;==>IsRegistryKey
+
 Func FileExistsAndGetType($sFilePath)
 	Local $sFileType = Null
 
@@ -274,7 +278,7 @@ Func FormatForDisplayRegistryKey($sPkey)
 EndFunc   ;==>FormatForDisplayRegistryKey
 
 Func FormatForUseRegistryKey($sPkey)
-	If StringRegExp($sPkey, "(?i)^(HKLM|HKCU|HKU|HKCR|HKCC)") And @OSArch = "X64" Then
+	If IsRegistryKey($sPkey) And @OSArch = "X64" Then
 		Local $aSplit = StringSplit($sPkey, "\", $STR_NOCOUNT)
 		$aSplit[0] = $aSplit[0] & "64"
 		$sPkey = _ArrayToString($aSplit, "\")

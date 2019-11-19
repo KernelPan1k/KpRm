@@ -52,14 +52,14 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 			EndIf
 		EndIf
 
-		UpdateToolCpt($sToolKey, 'element', $sFile)
-
 		If $bSearchOnly = False Then
-			PrepareRemove($sFile, 0, $sForce)
 			UpdateStatusBar("Remove file " & $sFile)
+			UpdateToolCpt($sToolKey, 'element', $sFile)
+			PrepareRemove($sFile, 0, $sForce)
 			FileDelete($sFile)
 		Else
-			UpdateStatusBar("File " & $sFile & ' found')
+			UpdateStatusBar("File " & $sFile & " found")
+			AddToSearch($sFile, $sToolKey)
 		EndIf
 	EndIf
 EndFunc   ;==>RemoveFile
@@ -72,7 +72,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 
 	If $iFileExists Then
 		If $bSearchOnly = True Then
-			UpdateToolCpt($sToolKey, 'element', $sPath)
+			AddToSearch($sPath, $sToolKey)
 			UpdateStatusBar("Folder " & $sPath & " found")
 			Return
 		EndIf
@@ -183,7 +183,7 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 
 	If $bSearchOnly = True Then
 		UpdateStatusBar("Registry key " & $key & " found")
-		UpdateToolCpt($sToolKey, "key", $key)
+		AddToSearch($key, $sToolKey)
 		Return
 	EndIf
 
@@ -250,7 +250,7 @@ Func RemoveAllProcess(Const ByRef $aList)
 
 				If $bSearchOnly = True Then
 					UpdateStatusBar("Process " & $sProcessName & " found")
-					UpdateToolCpt($aList[$iCpt][0], "process", $sProcessName)
+					AddToSearch($sProcessPath, $aList[$iCpt][0])
 					ContinueLoop
 				EndIf
 
@@ -288,9 +288,10 @@ Func UninstallNormally(Const ByRef $aList)
 
 						If $bSearchOnly = False Then
 							RunWait($aUninstallFiles[$u])
+							UpdateToolCpt($aList[$c][0], "uninstall", $aUninstallFiles[$u])
+						Else
+							AddToSearch($aGlobFolder[$f], $aList[$c][0])
 						EndIf
-
-						UpdateToolCpt($aList[$c][0], "uninstall", $aUninstallFiles[$u])
 					EndIf
 				Next
 			Next

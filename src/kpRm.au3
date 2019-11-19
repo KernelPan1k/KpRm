@@ -11,6 +11,7 @@
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
+#AutoIt3Wrapper_Res_File_Add=.\assets\close.gif
 #AutoIt3Wrapper_Res_File_Add=.\config\tools.xml
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\HoboCopy.exe
 #AutoIt3Wrapper_Res_File_Add=.\binaries\hobocopy32\msvcp100.dll
@@ -55,6 +56,7 @@ EndIf
 DirCreate($sTmpDir)
 
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
+FileInstall(".\assets\close.gif", $sTmpDir & "\kprm-close.gif")
 
 Global $bKpRmDev = True
 Global $sKprmVersion = "1.22"
@@ -129,12 +131,19 @@ Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
 Global $bDeleteQuarantines = Null
 Global $bSearchOnly = False
+Global $bSearchOnlyHasFoundElement = False
+Global $aRemoveRestart = []
+Global $bNeedRestart = False
+Global $aElementsToKeep[1][2] = [[]]
+Global $aElementsFound[1][2] = [[]]
 
 Local Const $pLeft = 16
 Local Const $pRight = 220
 Local Const $pPadding1 = 8
 Local Const $pWidth1 = 400
 Local Const $pCtrSize = 17
+Local Const $pButtonDetectionHeight = 39
+Local Const $pButtonDetectionPT = 31
 Local Const $pStep = 36
 Local Const $cWhite = 0xFFFFFF
 Local Const $cBlack = 0x1a1a1a
@@ -149,17 +158,16 @@ GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
 Global $oHStatus = GUICtrlCreateLabel("Ready...", $pPadding1, 220, 800, $pCtrSize)
-Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
 Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
-
-Local Const $oTabSwitcher1 = GUICtrlCreateLabel("Suppression", 324, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
-Local Const $oTabSwitcher2 = GUICtrlCreateLabel("Detection", 412, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oCloseButton = GUICtrlCreatePic($sTmpDir & "\kprm-close.gif", 475, 5, 20, 20)
+Local Const $oTabSwitcher1 = GUICtrlCreateLabel("Suppression", 238, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher2 = GUICtrlCreateLabel("Detection", 326, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
 
 Local Const $oTabs = GUICtrlCreateTab(10, 40, 200, 200)
 GUICtrlSetState($oTabs, $GUI_HIDE)
 
 Local Const $oTab1 = GUICtrlCreateTabItem("tab1")
-
+Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
 Local Const $oGroup1 = GUICtrlCreateGroup("Actions", $pPadding1, 25, $pWidth1, 120)
 Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
 Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
@@ -173,16 +181,19 @@ Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176,
 Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
 
 Local Const $oTab2 = GUICtrlCreateTabItem("tab2")
-Local Const $oSearchLines = GUICtrlCreateButton("Search", 415, 159, 75, 52)
-Global $oListView = GUICtrlCreateListView("Line|Tool", $pPadding1, 30, $pWidth1, 180, -1, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_GRIDLINES, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
-_GUICtrlListView_SetColumnWidth($oListView, 0, 350)
-_GUICtrlListView_SetColumnWidth($oListView, 1, 50)
+Local Const $oUnSelectAllSearchLines = GUICtrlCreateButton("Déselectionner", 415, $pButtonDetectionPT, 75, $pButtonDetectionHeight)
+Local Const $oSelectAllSearchLines = GUICtrlCreateButton("Sélectionner", 415, ($pButtonDetectionPT + $pButtonDetectionHeight + $pPadding1), 75, $pButtonDetectionHeight)
+Local Const $oClearSearchLines = GUICtrlCreateButton("Vider", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 2) + ($pPadding1 * 2)), 75, $pButtonDetectionHeight)
+Local Const $oSearchLines = GUICtrlCreateButton("Search", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
+Local Const $oRemoveSearchLines = GUICtrlCreateButton("Remove", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
+
+Global $oListView = GUICtrlCreateListView("Line", $pPadding1, 30, $pWidth1, 180, $LVS_NOCOLUMNHEADER, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
 
 GUICtrlSetState($oRemoveTools, 1)
 GUICtrlSetState($oDeleteQuarantine, 1)
 
 GUICtrlCreateTabItem("")
-
+_GUICtrlListView_SetColumnWidth($oListView, 0, $pWidth1 - 5)
 GUICtrlSetBkColor($oRunKp, $cGreen)
 GUICtrlSetBkColor($oSearchLines, $cBlue)
 GUICtrlSetBkColor($oProgressBar, $cWhite)
@@ -196,27 +207,41 @@ GUICtrlSetColor($oTabSwitcher1, $cBlack)
 GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
 GUICtrlSetColor($oTabSwitcher2, $cBlue)
 GUISetBkColor($cBlack)
+GUICtrlSetBkColor($oListView, $cBlack)
+GUICtrlSetColor($oListView, $cWhite)
+GUICtrlSetBkColor($oRemoveSearchLines, $cGreen)
+GUICtrlSetColor($oRemoveSearchLines, $cBlack)
+GUICtrlSetColor($oUnSelectAllSearchLines, $cWhite)
+GUICtrlSetColor($oSelectAllSearchLines, $cWhite)
+GUICtrlSetColor($oClearSearchLines, $cWhite)
+SetButtonSearchMode()
 GUISetState(@SW_SHOW)
 
 GUICtrlCreateTabItem("")
-#EndRegion ### END Koda GUI section ###
 
 While 1
+	Sleep(10)
 
 	Local $nMsg = GUIGetMsg()
 
 	Switch $nMsg
 		Case $GUI_EVENT_CLOSE
 			Exit
+		Case $oCloseButton
+			Exit
 		Case $oTabSwitcher1
-			If GUICtrlRead($oTabs, 1) = $oTab1 Then ContinueLoop
+			If GUICtrlRead($oTabs, 1) = $oTab1 Then
+				ContinueLoop
+			EndIf
 			GUICtrlSetState($oTab1, $GUI_SHOW)
 			GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
 			GUICtrlSetColor($oTabSwitcher1, $cBlack)
 			GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
 			GUICtrlSetColor($oTabSwitcher2, $cBlue)
 		Case $oTabSwitcher2
-			If GUICtrlRead($oTabs, 1) = $oTab2 Then ContinueLoop ; To prevent the flickering and second state set.
+			If GUICtrlRead($oTabs, 1) = $oTab2 Then
+				ContinueLoop
+			EndIf
 			GUICtrlSetState($oTab2, $GUI_SHOW)
 			GUICtrlSetBkColor($oTabSwitcher1, $cDisabled)
 			GUICtrlSetColor($oTabSwitcher1, $cBlue)
@@ -224,14 +249,57 @@ While 1
 			GUICtrlSetColor($oTabSwitcher2, $cBlack)
 		Case $oDeleteQuarantine
 			GUICtrlSetState($oDeleteQuarantineAfter7Days, $GUI_UNCHECKED)
+			If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then
+				GUICtrlSetState($oRemoveTools, $GUI_CHECKED)
+			EndIf
 		Case $oDeleteQuarantineAfter7Days
 			GUICtrlSetState($oDeleteQuarantine, $GUI_UNCHECKED)
+			If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then
+				GUICtrlSetState($oRemoveTools, $GUI_CHECKED)
+			EndIf
+		Case $oRemoveTools
+			If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Or GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then
+				GUICtrlSetState($oRemoveTools, $GUI_CHECKED)
+			EndIf
 		Case $oSearchLines
+			InitGlobalVars()
 			UpdateStatusBar("Search ...")
 			KpSearch()
 		Case $oRunKp
+			InitGlobalVars()
 			UpdateStatusBar("Running ...")
 			KpRemover()
+		Case $oSelectAllSearchLines
+			_GUICtrlListView_SetItemChecked($oListView, -1, True)
+		Case $oUnSelectAllSearchLines
+			_GUICtrlListView_SetItemChecked($oListView, -1, False)
+		Case $oClearSearchLines
+			_GUICtrlListView_DeleteAllItems($oListView)
+			SetButtonSearchMode()
+			InitGlobalVars()
+		Case $oRemoveSearchLines
+			Local $aRemoveSelection[1][2] = [[]]
+
+			For $i = 1 To UBound($aElementsFound) - 1
+				If _GUICtrlListView_GetItemChecked($oListView, $i - 1) Then
+					_ArrayAdd($aRemoveSelection, $aElementsFound[$i][0] & '~~~~' & $aElementsFound[$i][1], 0, '~~~~')
+				EndIf
+			Next
+
+			If UBound($aRemoveSelection) = 1 Then
+				MsgBox(0, "", "Aucun element de séclectionné")
+			Else
+				Local $hGlobalTimer = TimerInit()
+				InitGlobalVars()
+				Init()
+				ProgressBarUpdate()
+				LogMessage(@CRLF & "- Checked options -" & @CRLF)
+				LogMessage("    ~ Custom deletions")
+				RemoveAllSelectedLineSearch($aRemoveSelection)
+				UpdateStatusBar("Finish")
+				MsgBox(64, "OK", $lFinish)
+				QuitKprm(False, True)
+			EndIf
 	EndSwitch
 WEnd
 
@@ -275,24 +343,66 @@ Func UpdateStatusBar($sText)
 	GUICtrlSetData($oHStatus, $sText)
 EndFunc   ;==>UpdateStatusBar
 
-Func KpSearch()
-	Dim $bSearchOnly
+Func SetButtonSearchMode()
+	GUICtrlSetState($oRemoveSearchLines, $GUI_HIDE)
+	GUICtrlSetState($oSearchLines, $GUI_SHOW)
+	GUICtrlSetBkColor($oUnSelectAllSearchLines, $cDisabled)
+	GUICtrlSetBkColor($oSelectAllSearchLines, $cDisabled)
+	GUICtrlSetBkColor($oClearSearchLines, $cDisabled)
+	GUICtrlSetState($oUnSelectAllSearchLines, $GUI_DISABLE)
+	GUICtrlSetState($oSelectAllSearchLines, $GUI_DISABLE)
+	GUICtrlSetState($oClearSearchLines, $GUI_DISABLE)
+EndFunc   ;==>SetButtonSearchMode
 
-	$bSearchOnly = True
+Func SetButtonDeleteSearchMode()
+	GUICtrlSetState($oRemoveSearchLines, $GUI_SHOW)
+	GUICtrlSetState($oSearchLines, $GUI_HIDE)
+	GUICtrlSetBkColor($oUnSelectAllSearchLines, $cBlue)
+	GUICtrlSetBkColor($oSelectAllSearchLines, $cBlue)
+	GUICtrlSetBkColor($oClearSearchLines, $cBlue)
+	GUICtrlSetState($oUnSelectAllSearchLines, $GUI_ENABLE)
+	GUICtrlSetState($oSelectAllSearchLines, $GUI_ENABLE)
+	GUICtrlSetState($oClearSearchLines, $GUI_ENABLE)
+EndFunc   ;==>SetButtonDeleteSearchMode
+
+Func InitGlobalVars()
+	Dim $bRemoveToolLastPass = False
+	Dim $bPowerShellAvailable = Null
+	Dim $bDeleteQuarantines = Null
+	Dim $bSearchOnly = False
+	Dim $bSearchOnlyHasFoundElement = False
+	Dim $aRemoveRestart = []
+	Dim $bNeedRestart = False
+	Dim $aElementsToKeep[1][2] = [[]]
+	Dim $aElementsFound[1][2] = [[]]
+
+	InitOToolCpt()
+	UpdateStatusBar("Ready ...")
+	ProgressBarInit()
+EndFunc   ;==>InitGlobalVars
+
+Func KpSearch()
+	SetButtonSearchMode()
+
+	Dim $bSearchOnly = True
+	Dim $bSearchOnlyHasFoundElement = False
 
 	RunRemoveTools()
-EndFunc
+
+	If $bSearchOnlyHasFoundElement = True Then
+		SetButtonDeleteSearchMode()
+	Else
+		MsgBox($MB_ICONINFORMATION, "Terminé", "Aucun outils de trouvés")
+		SetButtonSearchMode()
+	EndIf
+
+EndFunc   ;==>KpSearch
 
 Func KpRemover()
-	Dim $sTmpDir
-	Dim $bRemoveToolLastPass
-	Dim $bDeleteQuarantines
 	Local $hGlobalTimer = TimerInit()
 
 	Init()
-
 	ProgressBarUpdate()
-
 	LogMessage(@CRLF & "- Checked options -" & @CRLF)
 
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then LogMessage("    ~ Registry Backup")
@@ -356,9 +466,7 @@ Func KpRemover()
 
 	SetDeleteQuarantinesIn7DaysIfNeeded()
 	RestartIfNeeded()
-
 	UpdateStatusBar("Finish")
-
 	MsgBox(64, "OK", $lFinish)
 
 	QuitKprm(True)

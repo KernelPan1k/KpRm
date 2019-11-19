@@ -103,14 +103,79 @@ Func InitOToolCpt()
 	Next
 EndFunc   ;==>InitOToolCpt
 
+Func GenerateDeleteReport()
+	Dim $bDeleteQuarantines
+	Dim $bRemoveToolLastPass
+	Dim $aElementsToKeep
+	Dim $bRemoveToolLastPass
+
+	If $bRemoveToolLastPass = True Then
+		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
+		Local $bHasFoundTools = False
+
+		For $sToolsCptKey In $oToolsCpt
+			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
+			Local $bToolExistDisplayMessage = False
+
+			For $sToolCptSubKeyI = 0 To UBound($aToolCptSubKeys) - 1
+				Local $sToolCptSubKey = $aToolCptSubKeys[$sToolCptSubKeyI]
+				Local $oToolCptSubTool = $oToolCptTool.Item($sToolCptSubKey)
+				Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
+
+				If UBound($oToolCptSubToolKeys) > 0 Then
+					$bHasFoundTools = True
+					If $bToolExistDisplayMessage = False Then
+						$bToolExistDisplayMessage = True
+						LogMessage(@CRLF & "  ## " & $sToolsCptKey)
+					EndIf
+
+					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
+						Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
+						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
+						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
+					Next
+				EndIf
+			Next
+		Next
+
+		If $bHasFoundTools = False Then
+			LogMessage("  [I] No tools found")
+		EndIf
+
+		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
+		Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
+		Local Const $bUseOtherLinesSection = $bToolZhpQuarantineExist = True Or $bHasElementToKeep = True
+
+		If $bUseOtherLinesSection = True Then
+			LogMessage(@CRLF & "- Other Lines -" & @CRLF)
+		EndIf
+
+		If $bToolZhpQuarantineExist = True Then
+			LogMessage(@CRLF & "  ## Never deleted")
+			LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
+		EndIf
+
+		If $bHasElementToKeep = True Then
+			If $bDeleteQuarantines = Null Then
+				LogMessage(@CRLF & "  ## Keeped")
+
+			ElseIf $bDeleteQuarantines = 7 Then
+				LogMessage(@CRLF & "  ## Will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
+			EndIf
+
+			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
+
+			For $i = 1 To UBound($aElementsToKeep) - 1
+				LogMessage("    ~ " & $aElementsToKeep[$i][0] & " (" & $aElementsToKeep[$i][1] & ")")
+			Next
+		EndIf
+	EndIf
+EndFunc   ;==>GenerateDeleteReport
+
 
 Func RunRemoveTools()
 	Dim $bRemoveToolLastPass
-	Dim $aElementsToKeep
-	Dim $bDeleteQuarantines
 	Dim $bSearchOnly
-
-	InitOToolCpt()
 
 	If $bRemoveToolLastPass = True Then
 		LogMessage(@CRLF & "- Remove Tools -" & @CRLF)
@@ -217,72 +282,23 @@ Func RunRemoveTools()
 				RemoveFolderCustomPath($aListTasks)
 		EndSwitch
 
-		ProgressBarUpdate()
+		Local $iStepProgress = 1
+
+		If $bSearchOnly = True Then
+			$iStepProgress = 2
+		EndIf
+
+		ProgressBarUpdate($iStepProgress)
 	Next
 
-	If $bRemoveToolLastPass = True Or $bSearchOnly = True Then
-		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
-
-		For $sToolsCptKey In $oToolsCpt
-			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
-			Local $bToolExistDisplayMessage = False
-
-			For $sToolCptSubKeyI = 0 To UBound($aToolCptSubKeys) - 1
-				Local $sToolCptSubKey = $aToolCptSubKeys[$sToolCptSubKeyI]
-				Local $oToolCptSubTool = $oToolCptTool.Item($sToolCptSubKey)
-				Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
-
-				If UBound($oToolCptSubToolKeys) > 0 Then
-					If $bToolExistDisplayMessage = False And $bSearchOnly = False Then
-						$bToolExistDisplayMessage = True
-						LogMessage(@CRLF & "  ## " & $sToolsCptKey)
-					EndIf
-
-					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
-						Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
-						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
-
-						If $bSearchOnly = False Then
-							CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
-						Else
-							AddToSearchList($oToolCptSubToolKey, $sToolsCptKey)
-						EndIf
-					Next
-				EndIf
-			Next
-		Next
-
-		If $bSearchOnly = True Then Return
-
-		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
-		Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
-		Local Const $bUseOtherLinesSection = $bToolZhpQuarantineExist = True Or $bHasElementToKeep = True
-
-		If $bUseOtherLinesSection = True Then
-			LogMessage(@CRLF & "- Other Lines -" & @CRLF)
-		EndIf
-
-		If $bToolZhpQuarantineExist = True Then
-			LogMessage(@CRLF & "  ## Never deleted")
-			LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
-		EndIf
-
-		If $bHasElementToKeep = True Then
-			If $bDeleteQuarantines = Null Then
-				LogMessage(@CRLF & "  ## Keeped")
-
-			ElseIf $bDeleteQuarantines = 7 Then
-				LogMessage(@CRLF & "  ## Will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
-			EndIf
-
-			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
-
-			For $i = 1 To UBound($aElementsToKeep) - 1
-				LogMessage("    ~ " & $aElementsToKeep[$i][0] & " (" & $aElementsToKeep[$i][1] & ")")
-			Next
-		EndIf
+	If $bSearchOnly = True Then
+		ProgressBarUpdate(50)
+		UpdateStatusBar("Finish ...")
+		SetSearchList()
+		Return
 	EndIf
 
+	GenerateDeleteReport()
 	ProgressBarUpdate()
 
 EndFunc   ;==>RunRemoveTools
