@@ -1,12 +1,10 @@
 Local $aValToRemove = []
 
-Func AddElementToKeep($sElement)
+Func AddElementToKeep($sElement, $sTool)
 	Dim $aElementsToKeep
 
-	Local $aSplit = StringSplit($sElement, '~~~~')
-
-	If IsNewLine($aElementsToKeep, $aSplit[1]) Then
-		_ArrayAdd($aElementsToKeep, $sElement, 0, '~~~~')
+	If IsNewLine($aElementsToKeep, $sElement) Then
+		_ArrayAdd($aElementsToKeep, $sElement & '~~~~' & $sTool, 0, '~~~~')
 	EndIf
 EndFunc   ;==>AddElementToKeep
 
@@ -95,11 +93,11 @@ Func CurrentQuarantineTask($sVal, $sDate)
 			_ArrayAdd($aValToRemove, $sVal)
 
 			If $bHomeReportExist = True Then
-				FileWrite($sHomeReport, @CRLF & "- Deletions (" & $sDate & ") -" & @CRLF)
+				FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
 			EndIf
 
 			If $bDesktopReportExist = True Then
-				FileWrite($sDesktopReport, @CRLF & "- Deletions (" & $sDate & ") -" & @CRLF)
+				FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
 			EndIf
 
 			FileOpen($sTasksPath, 0)
@@ -120,12 +118,13 @@ Func CurrentQuarantineTask($sVal, $sDate)
 
 				If $bHomeReportExist = True Or $bDesktopReportExist = True Then
 					Local $sSymbol = "[OK]"
-					Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (after 7 days)"
 					Local $bExist = FileExists($sLine)
 
 					If $bExist = True Then
 						$sSymbol = "[X]"
 					EndIf
+
+					Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (after 7 days)"
 
 					If $bHomeReportExist = True Then
 						FileWrite($sHomeReport, $sMessage & @CRLF)

@@ -48,15 +48,13 @@ Func QuitKprm($bAutoDelete = False, $open = True)
 
 	DirRemove($sTmpDir, $DIR_REMOVE)
 
-	If $bAutoDelete = True Then
-		If $open = True Then
-			Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $sKPLogFile)
-		EndIf
+	If $open = True Then
+		Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $sKPLogFile)
+	EndIf
 
-		If $bKpRmDev = False And @Compiled Then
-			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
-			FileDelete(@AutoItExe)
-		EndIf
+	If $bAutoDelete = True And $bKpRmDev = False And @Compiled Then
+		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
+		FileDelete(@AutoItExe)
 	EndIf
 
 	Exit

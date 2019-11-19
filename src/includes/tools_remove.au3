@@ -83,7 +83,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 			$bIsQuarantine = True
 
 			If $bDeleteQuarantines = Null Then
-				AddElementToKeep($sPath & '~~~~' & $sToolKey)
+				AddElementToKeep($sPath, $sToolKey)
 				Return
 			EndIf
 		EndIf
@@ -94,7 +94,7 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 			UpdateStatusBar("Remove folder " & $sPath)
 			DirRemove($sPath, $DIR_REMOVE)
 		ElseIf $bDeleteQuarantines = 7 Then
-			AddElementToKeep($sPath & '~~~~' & $sToolKey)
+			AddElementToKeep($sPath, $sToolKey)
 		EndIf
 	EndIf
 EndFunc   ;==>RemoveFolder
@@ -357,6 +357,7 @@ EndFunc   ;==>RemoveAllRegistryKeys
 
 Func CleanDirectoryContent(Const ByRef $aList)
 	Dim $bDeleteQuarantines
+	Dim $bSearchOnly
 
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
@@ -367,8 +368,8 @@ Func CleanDirectoryContent(Const ByRef $aList)
 			If $aList[$i][4] = "1" Then
 				$bIsQuarantine = True
 
-				If $bDeleteQuarantines = Null Then
-					AddElementToKeep($sPath & '~~~~' & $aList[$i][0])
+				If $bDeleteQuarantines = Null And $bSearchOnly = False Then
+					AddElementToKeep($sPath, $aList[$i][0])
 					ContinueLoop
 				EndIf
 			EndIf
@@ -377,10 +378,14 @@ Func CleanDirectoryContent(Const ByRef $aList)
 
 			If @error = 0 Then
 				For $f = 1 To $aFileList[0]
-					If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
-						RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
-					ElseIf $bDeleteQuarantines = 7 Then
-						AddElementToKeep($sPath & '\' & $aFileList[$f] & '~~~~' & $aList[$i][0])
+					If $bSearchOnly = False Then
+						If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
+							RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
+						ElseIf $bDeleteQuarantines = 7 Then
+							AddElementToKeep($sPath & '\' & $aFileList[$f], $aList[$i][0])
+						EndIf
+					Else
+						AddToSearch($sPath & '\' & $aFileList[$f], $aList[$i][0])
 					EndIf
 				Next
 			EndIf
