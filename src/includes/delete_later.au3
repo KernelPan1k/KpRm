@@ -1,20 +1,19 @@
-Global $aElementsToKeep[1][2] = [[]]
-Local Const $sDelim = '~~~~'
 Local $aValToRemove = []
 
 Func AddElementToKeep($sElement)
 	Dim $aElementsToKeep
 
-	Local $aSplit = StringSplit($sElement, $sDelim)
+	Local $aSplit = StringSplit($sElement, '~~~~')
 
 	If IsNewLine($aElementsToKeep, $aSplit[1]) Then
-		_ArrayAdd($aElementsToKeep, $sElement, 0, $sDelim)
+		_ArrayAdd($aElementsToKeep, $sElement, 0, '~~~~')
 	EndIf
 EndFunc   ;==>AddElementToKeep
 
 Func SetDeleteQuarantinesIn7DaysIfNeeded()
 	Dim $bDeleteQuarantines
 	Dim $sCurrentTime
+	Dim $aElementsToKeep
 
 	Local $aDebug = []
 

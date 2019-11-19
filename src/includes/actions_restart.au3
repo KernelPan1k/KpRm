@@ -1,9 +1,6 @@
-Global $aRemoveRestart = []
-Global $bNeedRestart = False
-
 Func AddRemoveAtRestart($sElement)
 	Dim $aRemoveRestart
-	Dim $bNeedRestart
+	Dim $bNeedRestart = True
 
 	$bNeedRestart = True
 
