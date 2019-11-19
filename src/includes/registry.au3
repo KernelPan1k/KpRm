@@ -230,7 +230,7 @@ Func FileCopyVSS(ByRef Const $aAllHives)
 			Return -9
 		Else
 			ClearAttributes($sBackupFile)
-			LogMessage("    ~ [OK] Hive " & $sHive & " backed up")
+			LogMessage("   ~ [OK] Hive " & $sHive & " backed up")
 		EndIf
 	Next
 
@@ -279,6 +279,6 @@ Func CreateBackupRegistry()
 		Return
 	EndIf
 
-	LogMessage(@CRLF & "  [OK] Registry Backup: " & $sBackupPath)
+	LogMessage(@CRLF & "     [OK] Registry Backup: " & $sBackupPath)
 
 EndFunc   ;==>CreateBackupRegistry

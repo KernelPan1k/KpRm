@@ -150,6 +150,7 @@ Local Const $cBlack = 0x1a1a1a
 Local Const $cDisabled = 0x2a2a2a
 Local Const $cBlue = 0x63c0f5
 Local Const $cGreen = 0xb5e853
+Local Const $cRed = 0xf74432
 
 Local Const $oTabSwitcher[2] = []
 
@@ -209,8 +210,8 @@ GUICtrlSetColor($oTabSwitcher2, $cBlue)
 GUISetBkColor($cBlack)
 GUICtrlSetBkColor($oListView, $cBlack)
 GUICtrlSetColor($oListView, $cWhite)
-GUICtrlSetBkColor($oRemoveSearchLines, $cGreen)
-GUICtrlSetColor($oRemoveSearchLines, $cBlack)
+GUICtrlSetBkColor($oRemoveSearchLines, $cRed)
+GUICtrlSetColor($oRemoveSearchLines, $cWhite)
 GUICtrlSetColor($oUnSelectAllSearchLines, $cWhite)
 GUICtrlSetColor($oSelectAllSearchLines, $cWhite)
 GUICtrlSetColor($oClearSearchLines, $cWhite)

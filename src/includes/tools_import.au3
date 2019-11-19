@@ -139,7 +139,7 @@ Func GenerateDeleteReport()
 		Next
 
 		If $bHasFoundTools = False Then
-			LogMessage("  [I] No tools found")
+			LogMessage("     [I] No tools found")
 		EndIf
 
 		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
@@ -151,16 +151,16 @@ Func GenerateDeleteReport()
 		EndIf
 
 		If $bToolZhpQuarantineExist = True Then
-			LogMessage(@CRLF & "  ## Never deleted")
+			LogMessage(@CRLF & "  ## Quarantines never deleted")
 			LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
 		EndIf
 
 		If $bHasElementToKeep = True Then
 			If $bDeleteQuarantines = Null Then
-				LogMessage(@CRLF & "  ## Keeped")
+				LogMessage(@CRLF & "  ## Quarantines keeped")
 
 			ElseIf $bDeleteQuarantines = 7 Then
-				LogMessage(@CRLF & "  ## Will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
+				LogMessage(@CRLF & "  ## Quarantines that will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
 			EndIf
 
 			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
@@ -178,7 +178,7 @@ Func RunRemoveTools()
 	Dim $bSearchOnly
 
 	If $bRemoveToolLastPass = True Then
-		LogMessage(@CRLF & "- Remove Tools -" & @CRLF)
+		LogMessage(@CRLF & "- Delete Tools -" & @CRLF)
 	EndIf
 
 	Local Const $aListActions = [ _

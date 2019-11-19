@@ -63,16 +63,16 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 
 			If Not FileExists($sBackupFile) Then
 				MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & $sHive)
-				LogMessage("  [X] Failed Registry Backup: " & $sHive)
+				LogMessage("     [X] Failed Registry Backup: " & $sHive)
 				QuitKprm(False)
 			Else
 				ClearAttributes($sBackupFile)
-				LogMessage("    ~ [OK] Hive " & $sHive & " backed up")
+				LogMessage("   ~ [OK] Hive " & $sHive & " backed up")
 			EndIf
 		EndIf
 	Next
 
-	LogMessage(@CRLF & "  [OK] Registry Backup: " & $sBackUpPath)
+	LogMessage(@CRLF & "     [OK] Registry Backup: " & $sBackUpPath)
 EndFunc   ;==>CreateBackupRegistryHobocopy
 
 
