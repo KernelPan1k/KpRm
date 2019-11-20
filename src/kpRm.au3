@@ -88,6 +88,7 @@ EndIf
 #include "libs\UAC.au3"
 #include "libs\Permissions.au3"
 #include "libs\_XMLDomWrapper.au3"
+#include "libs\taskplanerCOM.au3"
 #include "includes\actions_restart.au3"
 #include "includes\utils.au3"
 #include "includes\progress_bar.au3"
@@ -108,7 +109,7 @@ If UBound($CmdLine) > 1 Then
 	If $sAction = 'restart' Then
 		ExecuteScriptFile($CmdLine[2])
 	ElseIf $sAction = 'quarantines' Then
-		RemoveQuarantines()
+		RemoveQuarantines($CmdLine[2])
 	EndIf
 
 	Exit
