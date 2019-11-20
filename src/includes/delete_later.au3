@@ -1,5 +1,3 @@
-Local $aValToRemove = []
-
 Func AddElementToKeep($sElement, $sTool)
 	Dim $aElementsToKeep
 
@@ -8,12 +6,18 @@ Func AddElementToKeep($sElement, $sTool)
 	EndIf
 EndFunc   ;==>AddElementToKeep
 
+Func WriteErrorMessage($sMessage)
+	LogMessage(@CRLF & "- Errors -" & @CRLF)
+
+	For $i = 1 To UBound($aElementsToKeep) - 1
+		LogMessage("    ~ " & $sMessage)
+	Next
+EndFunc   ;==>WriteErrorMessage
+
 Func SetDeleteQuarantinesIn7DaysIfNeeded()
 	Dim $bDeleteQuarantines
 	Dim $sCurrentTime
 	Dim $aElementsToKeep
-
-	Local $aDebug = []
 
 	If $bDeleteQuarantines <> 7 Then Return
 	If UBound($aElementsToKeep) = 1 Then Return
@@ -34,164 +38,137 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 	EndIf
 
 	If Not FileExists($sTasksFolder & '\kprm-quarantines.exe') Then
-		_ArrayAdd($aDebug, "Unable to copy binary in " & $sTasksFolder & '\kprm-quarantines.exe')
+		Return WriteErrorMessage("Unable to copy binary in " & $sTasksFolder & '\kprm-quarantines.exe')
 	EndIf
 
 	Local $hFileOpen = FileOpen($sTasksPath, $FO_APPEND)
 
 	If $hFileOpen = -1 Then
-		_ArrayAdd($aDebug, "Unable to open tasks file for writing")
-	Else
-		For $i = 1 To UBound($aElementsToKeep) - 1
-			FileWriteLine($hFileOpen, $aElementsToKeep[$i][0])
-		Next
-
-		FileClose($hFileOpen)
+		Return WriteErrorMessage("Unable to open tasks file for writing")
 	EndIf
 
-	Local $sSuffix = GetSuffixKey()
+	For $i = 1 To UBound($aElementsToKeep) - 1
+		FileWriteLine($hFileOpen, $aElementsToKeep[$i][0])
+	Next
 
-	If Not RegWrite("HKLM" & $sSuffix & "\Software\KPRM\Quarantines", $sCurrentTime, "REG_SZ", _DateAdd('d', 7, _NowCalcDate())) Then
-		_ArrayAdd($aDebug, "Unable to write Software key")
-	EndIf
+	FileClose($hFileOpen)
 
-	Local Const $sKey = "HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-	Local Const $sVal = "kprm_quarantines"
+	Local $sStartDateTime = _DateAdd('d', 7, _NowCalc())
+	$sStartDateTime = StringReplace($sStartDateTime, "/", "-")
+	$sStartDateTime = StringReplace($sStartDateTime, " ", "T")
 
-	RegRead($sKey, $sVal)
+	Local $sEndDateTime = _DateAdd("M", 4, _NowCalc())
+	$sEndDateTime = StringReplace($sEndDateTime, "/", "-")
+	$sEndDateTime = StringReplace($sEndDateTime, " ", "T")
 
-	If @error <> 0 Then
-		If Not RegWrite($sKey, $sVal, "REG_SZ", '"' & $sTasksFolder & '\kprm-quarantines.exe" "quarantines"') Then
-			_ArrayAdd($aDebug, "Unable to write RunOnce key")
+	Local Const $sTaskFolderName = "KpRm-quarantines"
+	Local Const $sTaskName = "KpRm-quarantines-" & $sCurrentTime
+	Local $iTest
+
+	$iTest = _TaskFolderExists($sTaskFolderName)
+
+	If $result <> 1 Then
+		$iTest = _TaskFolderCreate($sTaskFolderName)
+
+		If $iTest <> 1 Then
+			Return WriteErrorMessage("The folder with the name " & $sTaskFolderName & " was not created successfully")
 		EndIf
 	EndIf
 
-	If UBound($aDebug) > 1 Then
-		LogMessage(@CRLF & "- Errors -" & @CRLF)
+	$iTest = _TaskCreate($sTaskFolderName & "\" & $sTaskName, _
+			"KpRm shedule quarantines deletion", _
+			1, _
+			$sStartDateTime, _
+			$sEndDateTime, _
+			Null, _
+			Null, _
+			Null, _
+			Null, _
+			Null, _
+			"PT5M", _
+			False, _
+			3, _
+			1, _
+			"", _
+			"", _
+			$sTasksFolder & '\kprm-quarantines.exe', _
+			$sTasksFolder, _
+			"quarantines " & $sCurrentTime, _
+			False)
 
-		For $i = 1 To UBound($aElementsToKeep) - 1
-			LogMessage("    ~ " & $aDebug[$i])
-		Next
+	If $iTest <> 1 Then
+		Return WriteErrorMessage("The task with the name " & $sTaskName & " was not created successfully")
 	EndIf
 EndFunc   ;==>SetDeleteQuarantinesIn7DaysIfNeeded
 
-Func CurrentQuarantineTask($sVal, $sDate)
-	If $sVal = "" Or $sVal = Null Then Return
-	If $sDate = "" Or $sDate = Null Then Return
-
-	Local Const $sNow = _NowCalcDate()
+Func RemoveQuarantines($sTaskTime)
 	Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks-quarantines"
-	Local Const $sTasksPath = $sTasksFolder & "\task-" & $sVal & ".txt"
-	Local Const $sKPReportFile = "kprm-" & $sVal & ".txt"
+	Local Const $sTasksPath = $sTasksFolder & "\task-" & $sTaskTime & ".txt"
+	Local Const $sKPReportFile = "kprm-" & $sTaskTime & ".txt"
 	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
 	Local Const $sDesktopReport = @DesktopDir & "\" & $sKPReportFile
 	Local Const $bHomeReportExist = FileExists($sHomeReport)
 	Local Const $bDesktopReportExist = FileExists($sDesktopReport)
 
 	If FileExists($sTasksPath) = 1 Then
-		If $sDate <= $sNow Then
-			_ArrayAdd($aValToRemove, $sVal)
 
-			If $bHomeReportExist = True Then
-				FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
-			EndIf
-
-			If $bDesktopReportExist = True Then
-				FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
-			EndIf
-
-			FileOpen($sTasksPath, 0)
-
-			For $i = 1 To _FileCountLines($sTasksPath)
-				Local $sLine = FileReadLine($sTasksPath, $i)
-				$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
-
-				If $sLine = "" Then ContinueLoop
-
-				If IsFile($sLine) Then
-					PrepareRemove($sLine, 0, "1")
-					FileDelete($sLine)
-				ElseIf IsDir($sLine) Then
-					PrepareRemove($sLine, 1, "1")
-					DirRemove($sLine, $DIR_REMOVE)
-				EndIf
-
-				If $bHomeReportExist = True Or $bDesktopReportExist = True Then
-					Local $sSymbol = "[OK]"
-					Local $bExist = FileExists($sLine)
-
-					If $bExist = True Then
-						$sSymbol = "[X]"
-					EndIf
-
-					Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (after 7 days)"
-
-					If $bHomeReportExist = True Then
-						FileWrite($sHomeReport, $sMessage & @CRLF)
-					EndIf
-
-					If $bDesktopReportExist = True Then
-						FileWrite($sDesktopReport, $sMessage & @CRLF)
-					EndIf
-				EndIf
-			Next
-
-			FileClose($sTasksPath)
+		If $bHomeReportExist = True Then
+			FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
 		EndIf
-	Else
-		_ArrayAdd($aValToRemove, $sVal)
-	EndIf
-EndFunc   ;==>CurrentQuarantineTask
 
-Func RemoveQuarantines()
-	Local $sSuffix = GetSuffixKey()
-	Local Const $sKey = "HKLM" & $sSuffix & "\Software\KPRM\Quarantines"
+		If $bDesktopReportExist = True Then
+			FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+		EndIf
 
-	Local $i = 1
-	Local $sValue = RegEnumVal($sKey, $i)
+		FileOpen($sTasksPath, 0)
 
-	While @error = 0 And $i <= 50
-		$i += 1
-		Local $sDate = RegRead($sKey, $sValue)
-		CurrentQuarantineTask($sValue, $sDate)
-		$sValue = RegEnumVal($sKey, $i)
-	WEnd
+		For $i = 1 To _FileCountLines($sTasksPath)
+			Local $sLine = FileReadLine($sTasksPath, $i)
+			$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 
-	If UBound($aValToRemove) > 1 Then
-		For $i = 1 To UBound($aValToRemove) - 1
-			RegDelete($sKey, $aValToRemove[$i])
+			If $sLine = "" Then ContinueLoop
+
+			If IsFile($sLine) Then
+				PrepareRemove($sLine, 0, "1")
+				FileDelete($sLine)
+			ElseIf IsDir($sLine) Then
+				PrepareRemove($sLine, 1, "1")
+				DirRemove($sLine, $DIR_REMOVE)
+			EndIf
+
+			If $bHomeReportExist = True Or $bDesktopReportExist = True Then
+				Local $sSymbol = "[OK]"
+				Local $bExist = FileExists($sLine)
+
+				If $bExist = True Then
+					$sSymbol = "[X]"
+				EndIf
+
+				Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (after 7 days)"
+
+				If $bHomeReportExist = True Then
+					FileWrite($sHomeReport, $sMessage & @CRLF)
+				EndIf
+
+				If $bDesktopReportExist = True Then
+					FileWrite($sDesktopReport, $sMessage & @CRLF)
+				EndIf
+			EndIf
 		Next
+
+		FileClose($sTasksPath)
+
 	EndIf
-
-	Local $i = 1
-	Local $bHasRemainingTasks = False
-	Local $sValue = RegEnumVal($sKey, $i)
-
-	While @error = 0 And $i <= 100
-		$i += 1
-		$sDate = RegRead($sKey, $sValue)
-		$sValue = RegEnumVal($sKey, $i)
-
-		If _DateIsValid($sDate) = 1 Then
-			$bHasRemainingTasks = True
-			ExitLoop
-		EndIf
-	WEnd
 
 	Local $sBinaryPath = @AutoItExe
 
 	If Not @Compiled Then $sBinaryPath = @ScriptFullPath
 
-	If $bHasRemainingTasks = True Then
-		RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_quarantines", "REG_SZ", '"' & $sBinaryPath & '" "quarantines"')
-	Else
-		RegDelete("HKLM" & $sSuffix & "\Software\KPRM")
-
-		If @Compiled Then
-			Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
-			FileDelete(@AutoItExe)
-		EndIf
+	If @Compiled Then
+		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
+		FileDelete(@AutoItExe)
 	EndIf
 
 	Exit
 EndFunc   ;==>RemoveQuarantines
+
