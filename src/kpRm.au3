@@ -123,6 +123,15 @@ If $bKpRmDev = False Then
 	CheckVersionOfKpRm()
 EndIf
 
+Local Const $iEULAisOK = MsgBox(BitOR($MB_YESNO, $MB_ICONINFORMATION), "Disclaimer of warranty!", "Disclaimer of warranty!" & @CRLF & @CRLF _
+		 & 'This software is provided "AS IS" without warranty of any kind.' & @CRLF _
+		 & 'You may use this software at your own risk.' & @CRLF & @CRLF _
+		 & 'This software is not permitted for commercial purposes.' & @CRLF & @CRLF _
+		 & 'Are you sure you want to continue?' & @CRLF & @CRLF _
+		 & 'Click Yes to continue. Click No to exit.')
+
+If $iEULAisOK <> $IDYES Then Exit
+
 Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
 Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & '-' & @SEC
@@ -161,15 +170,15 @@ Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVer
 Global $oHStatus = GUICtrlCreateLabel("Ready...", $pPadding1, 220, 800, $pCtrSize)
 Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
 Local Const $oCloseButton = GUICtrlCreatePic($sTmpDir & "\kprm-close.gif", 475, 5, 20, 20)
-Local Const $oTabSwitcher1 = GUICtrlCreateLabel("Suppression", 238, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
-Local Const $oTabSwitcher2 = GUICtrlCreateLabel("Detection", 326, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher1 = GUICtrlCreateLabel($lAuto, 238, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher2 = GUICtrlCreateLabel($lCustom, 326, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
 
 Local Const $oTabs = GUICtrlCreateTab(10, 40, 200, 200)
 GUICtrlSetState($oTabs, $GUI_HIDE)
 
 Local Const $oTab1 = GUICtrlCreateTabItem("tab1")
 Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
-Local Const $oGroup1 = GUICtrlCreateGroup("Actions", $pPadding1, 25, $pWidth1, 120)
+Local Const $oGroup1 = GUICtrlCreateGroup($lActions, $pPadding1, 25, $pWidth1, 120)
 Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
 Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
@@ -182,16 +191,15 @@ Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176,
 Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
 
 Local Const $oTab2 = GUICtrlCreateTabItem("tab2")
-Local Const $oUnSelectAllSearchLines = GUICtrlCreateButton("Déselectionner", 415, $pButtonDetectionPT, 75, $pButtonDetectionHeight)
-Local Const $oSelectAllSearchLines = GUICtrlCreateButton("Sélectionner", 415, ($pButtonDetectionPT + $pButtonDetectionHeight + $pPadding1), 75, $pButtonDetectionHeight)
-Local Const $oClearSearchLines = GUICtrlCreateButton("Vider", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 2) + ($pPadding1 * 2)), 75, $pButtonDetectionHeight)
-Local Const $oSearchLines = GUICtrlCreateButton("Search", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
-Local Const $oRemoveSearchLines = GUICtrlCreateButton("Remove", 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
+Local Const $oUnSelectAllSearchLines = GUICtrlCreateButton($lNoElement, 415, $pButtonDetectionPT, 75, $pButtonDetectionHeight)
+Local Const $oSelectAllSearchLines = GUICtrlCreateButton($lAll, 415, ($pButtonDetectionPT + $pButtonDetectionHeight + $pPadding1), 75, $pButtonDetectionHeight)
+Local Const $oClearSearchLines = GUICtrlCreateButton($lEmpty, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 2) + ($pPadding1 * 2)), 75, $pButtonDetectionHeight)
+Local Const $oSearchLines = GUICtrlCreateButton($lSearch, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
+Local Const $oRemoveSearchLines = GUICtrlCreateButton($lRemove, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
 
 Global $oListView = GUICtrlCreateListView("Line", $pPadding1, 30, $pWidth1, 180, $LVS_NOCOLUMNHEADER, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
 
 GUICtrlSetState($oRemoveTools, 1)
-GUICtrlSetState($oDeleteQuarantine, 1)
 
 GUICtrlCreateTabItem("")
 _GUICtrlListView_SetColumnWidth($oListView, 0, $pWidth1 - 5)
@@ -288,7 +296,7 @@ While 1
 			Next
 
 			If UBound($aRemoveSelection) = 1 Then
-				MsgBox(0, "", "Aucun element de séclectionné")
+				MsgBox($MB_ICONWARNING, "Warning", $lNoSelected)
 			Else
 				Local $hGlobalTimer = TimerInit()
 				InitGlobalVars()
@@ -393,7 +401,7 @@ Func KpSearch()
 	If $bSearchOnlyHasFoundElement = True Then
 		SetButtonDeleteSearchMode()
 	Else
-		MsgBox($MB_ICONINFORMATION, "Terminé", "Aucun outils de trouvés")
+		MsgBox($MB_ICONINFORMATION, $lFinishTitle, $lNoTool)
 		SetButtonSearchMode()
 	EndIf
 
