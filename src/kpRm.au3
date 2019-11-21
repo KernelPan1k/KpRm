@@ -100,7 +100,7 @@ EndIf
 #include "includes\tools_remove.au3"
 #include "includes\tools_import.au3"
 #include "includes\delete_later.au3"
-#include "includes\search.au3"
+#include "includes\custom_search.au3"
 
 If UBound($CmdLine) > 1 Then
 	Local $sAction = $CmdLine[1]
@@ -307,8 +307,11 @@ While 1
 				LogMessage("    ~ Custom deletions")
 				RemoveAllSelectedLineSearch($aRemoveSelection)
 				UpdateStatusBar("Finish")
+				RestartIfNeeded()
+				_GUICtrlListView_DeleteAllItems($oListView)
+				SetButtonSearchMode()
 				MsgBox(64, "OK", $lFinish)
-				QuitKprm(False, True)
+				OpenReport()
 			EndIf
 	EndSwitch
 WEnd
@@ -376,6 +379,9 @@ Func SetButtonDeleteSearchMode()
 EndFunc   ;==>SetButtonDeleteSearchMode
 
 Func InitGlobalVars()
+	Dim $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
+	Dim $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & '-' & @SEC
+	Dim $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
 	Dim $bRemoveToolLastPass = False
 	Dim $bPowerShellAvailable = Null
 	Dim $bDeleteQuarantines = Null

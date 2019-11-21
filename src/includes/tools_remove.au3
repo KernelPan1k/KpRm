@@ -201,6 +201,15 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 	EndIf
 EndFunc   ;==>RemoveRegistryKey
 
+Func CloseUnEssentialProcess()
+	Local Const $aProcess[1] = ["notepad.exe"]
+
+	For $i = 0 To UBound($aProcess) - 1
+		If 0 = ProcessExists($aProcess[$i]) Then ContinueLoop
+		ProcessClose($aProcess[$i])
+	Next
+EndFunc   ;==>CloseUnEssentialProcess
+
 Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
 	Dim $bRemoveToolLastPass
 
@@ -234,13 +243,12 @@ Func RemoveAllProcess(Const ByRef $aList)
 
 		For $iCpt = 0 To UBound($aList) - 1
 			If IsProcessInWhiteList($sProcessName) = False And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
+				Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
+				If @error <> 0 Then ContinueLoop
+				If Not isFile($sProcessPath) Then ContinueLoop
+
 				If $aList[$iCpt][2] <> "" Then
 					Local $sCompanyNamePattern = $aList[$iCpt][2]
-					Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
-
-					If @error <> 0 Then ContinueLoop
-					If Not isFile($sProcessPath) Then ContinueLoop
-
 					Local $sCompanyName = FileGetVersion($sProcessPath, "CompanyName")
 
 					If @error Or Not StringRegExp($sCompanyName, $sCompanyNamePattern) Then

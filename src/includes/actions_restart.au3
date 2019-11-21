@@ -2,8 +2,6 @@ Func AddRemoveAtRestart($sElement)
 	Dim $aRemoveRestart
 	Dim $bNeedRestart = True
 
-	$bNeedRestart = True
-
 	If _ArraySearch($aRemoveRestart, $sElement) = -1 Then
 		_ArrayAdd($aRemoveRestart, $sElement)
 	EndIf
@@ -78,15 +76,27 @@ Func ExecuteScriptFile($sReportTime)
 		ElseIf IsDir($sLine) Then
 			PrepareRemove($sLine, 1, "1")
 			DirRemove($sLine, $DIR_REMOVE)
+		ElseIf IsRegistryKey($sLine) Then
+			_ClearObjectDacl($sLine)
+			_GrantAllAccess($sLine, $SE_REGISTRY_KEY)
+			RegDelete($sLine)
+		Else
+			ContinueLoop
 		EndIf
 
 		Local $sSymbol = "[OK]"
-		Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (restart)"
-		Local $bExist = FileExists($sLine)
 
-		If $bExist = True Then
+		If IsRegistryKey($sLine) Then
+			RegEnumVal($sLine, "1")
+
+			If @error >= 0 Then
+				$sSymbol = "[X]"
+			EndIf
+		ElseIf FileExists($sLine) = True Then
 			$sSymbol = "[X]"
 		EndIf
+
+		Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (restart)"
 
 		FileWrite($sHomeReport, $sMessage & @CRLF)
 		FileWrite($sDesktopReport, $sMessage & @CRLF)
@@ -94,12 +104,8 @@ Func ExecuteScriptFile($sReportTime)
 
 	FileClose($sTasksFile)
 
-	Run("notepad.exe " & $sHomeReport)
-
-	If $bKpRmDev = False And @Compiled Then
-		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @ScriptDir, @SW_HIDE)
-		FileDelete(@AutoItExe)
-	EndIf
+	OpenReport($sHomeReport)
+	HaraKiri()
 
 	Exit
 EndFunc   ;==>ExecuteScriptFile

@@ -8,10 +8,7 @@ EndFunc   ;==>AddElementToKeep
 
 Func WriteErrorMessage($sMessage)
 	LogMessage(@CRLF & "- Errors -" & @CRLF)
-
-	For $i = 1 To UBound($aElementsToKeep) - 1
-		LogMessage("    ~ " & $sMessage)
-	Next
+	LogMessage("    ~ " & $sMessage)
 EndFunc   ;==>WriteErrorMessage
 
 Func SetDeleteQuarantinesIn7DaysIfNeeded()
@@ -67,7 +64,7 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 
 	$iTest = _TaskFolderExists($sTaskFolderName)
 
-	If $result <> 1 Then
+	If $iTest <> 1 Then
 		$iTest = _TaskFolderCreate($sTaskFolderName)
 
 		If $iTest <> 1 Then
@@ -75,26 +72,26 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 		EndIf
 	EndIf
 
-	$iTest = _TaskCreate($sTaskFolderName & "\" & $sTaskName, _
-			"KpRm shedule quarantines deletion", _
-			1, _
-			$sStartDateTime, _
-			$sEndDateTime, _
-			Null, _
-			Null, _
-			Null, _
-			Null, _
-			Null, _
-			"PT5M", _
-			False, _
-			3, _
-			1, _
-			"", _
-			"", _
-			$sTasksFolder & '\kprm-quarantines.exe', _
-			$sTasksFolder, _
-			"quarantines " & $sCurrentTime, _
-			False)
+	$iTest = _TaskCreate($sTaskFolderName & "\" & $sTaskName, _ ;task Folder \ Name
+			"KpRm shedule quarantines deletion", _ ; Description
+			1, _ ; TASK_TRIGGER_TIME
+			$sStartDateTime, _ ; Start time
+			$sEndDateTime, _ ; End time
+			Null, _ ; Unused
+			Null, _ ; Unused
+			Null, _ ; Unused
+			Null, _ ; Unused
+			Null, _ ; Unused
+			"PT5M", _ ; Start 5 minutes after logon
+			False, _ ; Disable interval
+			3, _ ; User must already be logged in
+			1, _ ; Runlevel highest
+			"", _ ; Username
+			"", _ ; Password
+			$sTasksFolder & '\kprm-quarantines.exe', _ ; Full Path and Programname to run
+			$sTasksFolder, _ ; Execution directory
+			"quarantines " & $sCurrentTime, _ ; Arguments
+			False) ; RunOnly If Network Available
 
 	If $iTest <> 1 Then
 		Return WriteErrorMessage("The task with the name " & $sTaskName & " was not created successfully")
@@ -134,6 +131,8 @@ Func RemoveQuarantines($sTaskTime)
 			ElseIf IsDir($sLine) Then
 				PrepareRemove($sLine, 1, "1")
 				DirRemove($sLine, $DIR_REMOVE)
+			Else
+				ContinueLoop
 			EndIf
 
 			If $bHomeReportExist = True Or $bDesktopReportExist = True Then
@@ -160,13 +159,30 @@ Func RemoveQuarantines($sTaskTime)
 
 	EndIf
 
-	Local $sBinaryPath = @AutoItExe
+	Local Const $sSheduleTaskFolderName = "KpRm-quarantines"
+	Local Const $sScheduleTaskName = "KpRm-quarantines-" & $sTaskTime
+	Local $iTest
 
-	If Not @Compiled Then $sBinaryPath = @ScriptFullPath
+	$iTest = _TaskDelete($sScheduleTaskName, $sSheduleTaskFolderName)
 
-	If @Compiled Then
-		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
-		FileDelete(@AutoItExe)
+	If $iTest <> 1 Then
+		WriteErrorMessage("Error durring deletetion " & $sScheduleTaskName)
+		Exit
+	EndIf
+
+	$iTest = _TaskListAll($sSheduleTaskFolderName)
+
+	If @error <> 0 Then
+		WriteErrorMessage("Tasks could not be listed in " & $sScheduleTaskName)
+		Exit
+	EndIf
+
+	Local Const $aTaskListSplitted = StringSplit($iTest, "|")
+	Local Const $bHasEmptyTaskFolder = $aTaskListSplitted[0] = 1 And $aTaskListSplitted[1] = ""
+
+	If $bHasEmptyTaskFolder = True Then
+		_TaskFolderDelete($sSheduleTaskFolderName)
+		HaraKiri()
 	EndIf
 
 	Exit

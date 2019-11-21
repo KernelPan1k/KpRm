@@ -6,7 +6,7 @@
 #include <Misc.au3>
 #include "comerrorhandler.au3"
 
-$taskplanerudfcom_version = "5.4"
+Local Const $taskplanerudfcom_version = "5.4"
 
 ;http://codesnob.wordpress.com/2009/05/18/displaying-windows-task-scheduler-tasks-with-php/
 ;http://msdn.microsoft.com/en-us/library/windows/desktop/aa381345%28v=VS.85%29.aspx
@@ -43,7 +43,7 @@ Const $VT_NULL = 1
 ;==================================================================================
 Func _TaskFolderCreate($folder)
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder, $onewfolder
+	Local $oService, $oFolder, $onewfolder, $result
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
 	$oFolder = $oService.GetFolder("\")
@@ -73,7 +73,7 @@ EndFunc   ;==>_TaskFolderCreate
 ;==================================================================================
 Func _TaskFolderDelete($folder)
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $result
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
 	$oFolder = $oService.GetFolder("\")
@@ -140,7 +140,7 @@ EndFunc   ;==>_TaskFolderExists
 ;==================================================================================
 Func _TaskExists($taskname, $folder = "\");check if a Task exists
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $retval
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -179,7 +179,7 @@ EndFunc   ;==>_TaskExists
 ;==================================================================================
 Func _TaskStop($taskname, $folder = "\")
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $temperror, $instcount, $instances, $retval, $oTask
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -235,7 +235,7 @@ EndFunc   ;==>_TaskStop
 ;==================================================================================
 Func _TaskEnable($taskname, $folder = ""); enable a Task
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $instcount, $retval
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -276,7 +276,7 @@ EndFunc   ;==>_TaskEnable
 ;==================================================================================
 Func _TaskDisable($taskname, $folder = ""); disable a Task
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $instcount, $retval
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -317,7 +317,7 @@ EndFunc   ;==>_TaskDisable
 ;==================================================================================
 Func _TaskIsEnabled($taskname, $folder = "");check if a Task is enabled
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $instcount, $retval
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -357,7 +357,7 @@ EndFunc   ;==>_TaskIsEnabled
 ;==================================================================================
 Func _TaskStart($taskname, $folder = "\");start a task
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $instcount, $retval
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -399,7 +399,7 @@ EndFunc   ;==>_TaskStart
 ;==================================================================================
 Func _TaskIsRunning($taskname, $folder = "\")
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $oTask, $instances, $retval
 
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
@@ -450,7 +450,7 @@ EndFunc   ;==>_TaskIsRunning
 ;==================================================================================
 Func _TaskDelete($taskname, $folder = "\")
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
-	Local $oService, $oFolder
+	Local $oService, $oFolder, $odeleted
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
 	$oService.Connect()
@@ -483,7 +483,8 @@ EndFunc   ;==>_TaskDelete
 Func _TaskListAll($folder = "\", $hidden = 1)
 	If Not _TaskIsValidPlatfrom() Then Return SetError(2, 2, 0)
 	Local $iCount = 1
-	$Output = ""
+	Local $Output = ""
+	Local $oTasks
 	Local $oService, $oFolder
 	;	$oMyError = ObjEvent("AutoIt.Error", "MyTaskErrFunc") ; Initialize a COM error handler
 	$oService = ObjCreate("Schedule.Service")
@@ -763,7 +764,7 @@ EndFunc   ;==>_TaskSchedulerAutostart
 ; Thread: 			http://www.autoitscript.com/forum/topic/135994-taskplanner-udf/
 ;==================================================================================
 Func _TaskIsValidPlatfrom()
-	$autiotversionok = _VersionCompare(@AutoItVersion, "3.3.9.4") = 0
+	Local $autiotversionok = _VersionCompare(@AutoItVersion, "3.3.9.4") = 0
 
 	If Not @error And @OSVersion = "WIN_XP" Or @OSVersion = "WIN_XPe" Or @OSVersion = "WIN_2000" And $autiotversionok <> -1 Then ;win Vusta or newer and Autoit 3.3.9.4 or newer needed for this uDF to work
 		Return 0
