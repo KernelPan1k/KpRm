@@ -41,20 +41,41 @@ Func ClearAttributes($sPath)
 	EndIf
 EndFunc   ;==>ClearAttributes
 
+Func OpenReport($sParamReport = Null)
+	Dim $sKPLogFile
+
+	Local $sReport = @HomeDrive & "\KPRM" & "\" & $sKPLogFile
+
+	If $sParamReport <> Null Then
+		$sReport = $sParamReport
+	EndIf
+
+	If FileExists($sReport) Then
+		Run("notepad.exe " & $sReport)
+	EndIf
+EndFunc   ;==>OpenReport
+
+Func HaraKiri()
+	Dim $bKpRmDev
+
+	If $bKpRmDev = False And @Compiled Then
+		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
+		FileDelete(@AutoItExe)
+	EndIf
+EndFunc   ;==>HaraKiri
+
 Func QuitKprm($bAutoDelete = False, $open = True)
 	Dim $bKpRmDev
-	Dim $sKPLogFile
 	Dim $sTmpDir
 
 	DirRemove($sTmpDir, $DIR_REMOVE)
 
 	If $open = True Then
-		Run("notepad.exe " & @HomeDrive & "\KPRM" & "\" & $sKPLogFile)
+		OpenReport()
 	EndIf
 
-	If $bAutoDelete = True And $bKpRmDev = False And @Compiled Then
-		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', @TempDir, @SW_HIDE)
-		FileDelete(@AutoItExe)
+	If $bAutoDelete = True Then
+		HaraKiri()
 	EndIf
 
 	Exit
@@ -341,6 +362,8 @@ Func UCheckIfRegistyKeyExist($sToolElement, $sToolVal)
 
 	If @error >= 0 Then
 		$sSymbol = "[OK]"
+	Else
+		AddRemoveAtRestart($sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & FormatForDisplayRegistryKey($sToolElement) & " deleted (" & $sToolVal & ")")

@@ -77,6 +77,7 @@ EndFunc   ;==>RemoveSelectedLineSearchPass
 Func RemoveAllSelectedLineSearch(ByRef Const $aRemoveSelection)
 	Dim $bRemoveToolLastPass = False
 
+	CloseUnEssentialProcess()
 	RemoveSelectedLineSearchPass($aRemoveSelection, "0")
 	$bRemoveToolLastPass = True
 	RemoveSelectedLineSearchPass($aRemoveSelection, "1")

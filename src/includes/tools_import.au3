@@ -204,6 +204,8 @@ Func RunRemoveTools()
 
 	Local $aNodes = _XMLSelectNodes("/tools/tool")
 
+	CloseUnEssentialProcess()
+
 	For $n = 0 To UBound($aListActions) - 1
 		Local $sAction = $aListActions[$n]
 		Local $aOrder = GetSwapOrder($sAction)

@@ -678,7 +678,7 @@
         <desktop companyName="" force="0" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
         <download companyName="(?i)^McAfee" force="0" pattern="(?i)^getsusp.*\.(exe|zip)$" type="file"/>
         <download companyName="" force="0" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
-        <process companyName="(?i)^McAfee" force="0" process="(?i)^getsusp.*\.exe$"/>
+        <process companyName="" force="0" process="(?i)^getsusp.*\.exe$"/>
     </tool>
     <tool name="McAfee RootkitRemover">
         <desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
@@ -1090,7 +1090,7 @@
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
-        <process companyName="(?i)^SosVirus" force="0" process="(?i)^UsbFix.*\.exe$"/>
+        <process companyName="" force="0" process="(?i)^UsbFix.*\.exe$"/>
         <programFiles companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
         <softwareKey pattern="(?i)^UsbFix"/>
         <uninstall folder="(?i)^UsbFix" uninstaller="(?i)^Un-UsbFix\.exe$"/>
