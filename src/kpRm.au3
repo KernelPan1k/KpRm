@@ -59,7 +59,7 @@ FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 FileInstall(".\assets\close.gif", $sTmpDir & "\kprm-close.gif")
 
 Global $bKpRmDev = True
-Global $sKprmVersion = "1.22"
+Global $sKprmVersion = "Dev.01"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -168,66 +168,95 @@ Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by
 GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
+GUICtrlSetColor($oTitleGUI, $cBlue)
+
 Global $oHStatus = GUICtrlCreateLabel("Ready...", $pPadding1, 220, 800, $pCtrSize)
-Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
+GUICtrlSetColor($oHStatus, $cBlue)
+
 Local Const $oCloseButton = GUICtrlCreatePic($sTmpDir & "\kprm-close.gif", 475, 5, 20, 20)
+
 Local Const $oTabSwitcher1 = GUICtrlCreateLabel($lAuto, 238, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
+GUICtrlSetColor($oTabSwitcher1, $cBlack)
+
 Local Const $oTabSwitcher2 = GUICtrlCreateLabel($lCustom, 326, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
+GUICtrlSetColor($oTabSwitcher2, $cBlue)
 
 Local Const $oTabs = GUICtrlCreateTab(10, 40, 200, 200)
 GUICtrlSetState($oTabs, $GUI_HIDE)
 
 Local Const $oTab1 = GUICtrlCreateTabItem("tab1")
 Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
+
+XPStyle(1)
+Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
+GUICtrlSetBkColor($oProgressBar, $cWhite)
+GUICtrlSetColor($oProgressBar, $cBlack)
+
 Local Const $oGroup1 = GUICtrlCreateGroup($lActions, $pPadding1, 25, $pWidth1, 120)
+GUICtrlSetColor($oGroup1, $cWhite)
+
 Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
-Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
+GUICtrlSetColor($oGroup2, $cWhite)
+
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
+GUICtrlSetState($oRemoveTools, 1)
+GUICtrlSetColor($oRemoveTools, $cWhite)
+
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, $pLeft, ($pPadding1 + ($pStep * 2)), 190, $pCtrSize)
+GUICtrlSetColor($oRemoveRP, $cWhite)
+
 Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, $pLeft, ($pPadding1 + ($pStep * 3)), 190, $pCtrSize)
+GUICtrlSetColor($oCreateRP, $cWhite)
+
 Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, $pRight, $pPadding1 + $pStep, 137, $pCtrSize)
+GUICtrlSetColor($oBackupRegistry, $cWhite)
+
 Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, $pRight, ($pPadding1 + ($pStep * 2)), 137, $pCtrSize)
+GUICtrlSetColor($oRestoreUAC, $cWhite)
+
 Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $pRight, ($pPadding1 + ($pStep * 3)), 180, $pCtrSize)
+GUICtrlSetColor($oRestoreSystemSettings, $cWhite)
+
 Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize)
+GUICtrlSetColor($oDeleteQuarantine, $cWhite)
+
 Local Const $oDeleteQuarantineAfter7Days = GUICtrlCreateCheckbox($lRemoveQuarantineAfterNDays, $pRight, 176, 137, $pCtrSize)
+GUICtrlSetColor($oDeleteQuarantineAfter7Days, $cWhite)
+XPStyle(0)
+
+Local Const $oRunKp = GUICtrlCreateButton($lRun, 415, 159, 75, 52)
+GUICtrlSetBkColor($oRunKp, $cGreen)
+GUICtrlSetColor($oRunKp, $cBlack)
 
 Local Const $oTab2 = GUICtrlCreateTabItem("tab2")
 Local Const $oUnSelectAllSearchLines = GUICtrlCreateButton($lNoElement, 415, $pButtonDetectionPT, 75, $pButtonDetectionHeight)
+GUICtrlSetColor($oUnSelectAllSearchLines, $cWhite)
+
 Local Const $oSelectAllSearchLines = GUICtrlCreateButton($lAll, 415, ($pButtonDetectionPT + $pButtonDetectionHeight + $pPadding1), 75, $pButtonDetectionHeight)
+GUICtrlSetColor($oSelectAllSearchLines, $cWhite)
+
 Local Const $oClearSearchLines = GUICtrlCreateButton($lEmpty, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 2) + ($pPadding1 * 2)), 75, $pButtonDetectionHeight)
+GUICtrlSetColor($oClearSearchLines, $cWhite)
+
 Local Const $oSearchLines = GUICtrlCreateButton($lSearch, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
-Local Const $oRemoveSearchLines = GUICtrlCreateButton($lRemove, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
-
-Global $oListView = GUICtrlCreateListView("Line", $pPadding1, 30, $pWidth1, 180, $LVS_NOCOLUMNHEADER, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
-
-GUICtrlSetState($oRemoveTools, 1)
-
-GUICtrlCreateTabItem("")
-_GUICtrlListView_SetColumnWidth($oListView, 0, $pWidth1 - 5)
-GUICtrlSetBkColor($oRunKp, $cGreen)
-GUICtrlSetBkColor($oSearchLines, $cBlue)
-GUICtrlSetBkColor($oProgressBar, $cWhite)
-GUICtrlSetColor($oProgressBar, $cBlack)
-GUICtrlSetColor($oRunKp, $cBlack)
 GUICtrlSetColor($oSearchLines, $cWhite)
-GUICtrlSetColor($oHStatus, $cBlue)
-GUICtrlSetColor($oTitleGUI, $cBlue)
-GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
-GUICtrlSetColor($oTabSwitcher1, $cBlack)
-GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
-GUICtrlSetColor($oTabSwitcher2, $cBlue)
-GUISetBkColor($cBlack)
-GUICtrlSetBkColor($oListView, $cBlack)
-GUICtrlSetColor($oListView, $cWhite)
+GUICtrlSetBkColor($oSearchLines, $cBlue)
+
+Local Const $oRemoveSearchLines = GUICtrlCreateButton($lRemove, 415, ($pButtonDetectionPT + ($pButtonDetectionHeight * 3) + ($pPadding1 * 3)), 75, $pButtonDetectionHeight)
 GUICtrlSetBkColor($oRemoveSearchLines, $cRed)
 GUICtrlSetColor($oRemoveSearchLines, $cWhite)
-GUICtrlSetColor($oUnSelectAllSearchLines, $cWhite)
-GUICtrlSetColor($oSelectAllSearchLines, $cWhite)
-GUICtrlSetColor($oClearSearchLines, $cWhite)
-SetButtonSearchMode()
-GUISetState(@SW_SHOW)
 
+Global $oListView = GUICtrlCreateListView("Line", $pPadding1, 30, $pWidth1, 180, $LVS_NOCOLUMNHEADER, BitOR($WS_EX_CLIENTEDGE, $LVS_EX_CHECKBOXES, $LVS_EX_FULLROWSELECT))
+GUICtrlSetBkColor($oListView, $cBlack)
+GUICtrlSetColor($oListView, $cWhite)
+_GUICtrlListView_SetColumnWidth($oListView, 0, $pWidth1 - 5)
+SetButtonSearchMode()
 GUICtrlCreateTabItem("")
+
+GUISetBkColor($cBlack)
+GUISetState(@SW_SHOW)
 
 While 1
 	Sleep(10)
