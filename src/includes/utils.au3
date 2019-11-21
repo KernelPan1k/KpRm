@@ -1,3 +1,17 @@
+Func XPStyle($OnOff = 1)
+	Local $XS_n
+    If $OnOff And StringInStr(@OSTYPE, "WIN32_NT") Then
+        $XS_n = DllCall("uxtheme.dll", "int", "GetThemeAppProperties")
+        DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", 0)
+        Return 1
+    ElseIf StringInStr(@OSTYPE, "WIN32_NT") And IsArray($XS_n) Then
+        DllCall("uxtheme.dll", "none", "SetThemeAppProperties", "int", $XS_n[0])
+        $XS_n = ""
+        Return 1
+    EndIf
+    Return 0
+EndFunc   ;==>XPStyle
+
 Func GetLanguage()
 	Switch StringRight(@MUILang, 2)
 		Case "07"
