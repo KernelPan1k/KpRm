@@ -503,7 +503,7 @@
         <desktopCommon companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
         <download companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
         <homeDrive companyName="" force="0" pattern="(?i)^Fix\-Purge$" type="folder" quarantine="1" />
-        <process companyName="(?i)^Hacker Tool" force="0" process="(?i)^Fix\-Purge.*\.exe$"/>
+        <process companyName="" force="0" process="(?i)^Fix\-Purge.*\.exe$"/>
         <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName"/>
         <startMenu companyName="" force="1" pattern="(?i)^Fix\-Purge$" type="folder"/>
     </tool>
@@ -616,6 +616,7 @@
     <tool name="ListCWall">
         <desktop companyName="(?i)^Bleeping" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
         <download companyName="(?i)^Bleeping" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^ListCWall$" type="folder"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^ListCWall.*\.exe$"/>
     </tool>
     <tool name="ListParts">
@@ -1080,10 +1081,10 @@
         <process companyName="" force="0" process="(?i)^uac-manager.*\.exe$"/>
     </tool>
     <tool name="USB File Resc">
-        <desktop companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file"/>
-        <download companyName="(?i)^Streuner" force="0" pattern="(?i)^usb-file-resc.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Streuner" force="0" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
+        <download companyName="(?i)^Streuner" force="0" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^USB File Resc$" type="folder"/>
-        <process companyName="(?i)^Streuner" force="0" process="(?i)^usb-file-resc.*\.exe$"/>
+        <process companyName="(?i)^Streuner" force="0" process="(?i)^usb\-file\-resc.*\.exe$"/>
     </tool>
     <tool name="USBFix">
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
@@ -1091,6 +1092,7 @@
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^autorun\.inf$" type="folder"/>
         <process companyName="" force="0" process="(?i)^UsbFix.*\.exe$"/>
         <programFiles companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
         <softwareKey pattern="(?i)^UsbFix"/>
