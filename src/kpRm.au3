@@ -161,10 +161,11 @@ Local Const $cDisabled = 0x2a2a2a
 Local Const $cBlue = 0x63c0f5
 Local Const $cGreen = 0xb5e853
 Local Const $cRed = 0xf74432
+Local Const $SC_DRAGMOVE = 0xF012
 
 Local Const $oTabSwitcher[2] = []
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, $WS_POPUP)
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, BitOR($WS_POPUP,$WS_BORDER), $WS_EX_TOPMOST))
 GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
@@ -264,6 +265,8 @@ While 1
 	Local $nMsg = GUIGetMsg()
 
 	Switch $nMsg
+	    Case $GUI_EVENT_PRIMARYDOWN
+            _SendMessage($hGUI, $WM_SYSCOMMAND, $SC_DRAGMOVE, 0)
 		Case $GUI_EVENT_CLOSE
 			Exit
 		Case $oCloseButton
