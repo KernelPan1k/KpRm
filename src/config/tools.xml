@@ -144,6 +144,7 @@
     <tool name="Clean_DNS">
         <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" force="0" pattern="(?i)^Clean_Dns$" type="folder"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^clean(-|_)dns.*\.exe$"/>
         <softwareKey pattern="(?i)^Clean_Dns$"/>
     </tool>
