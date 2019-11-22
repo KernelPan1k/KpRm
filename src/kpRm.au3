@@ -2,7 +2,7 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=KpRm.exe
+#AutoIt3Wrapper_Outfile=KpRm-dev.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
 #AutoIt3Wrapper_Res_Fileversion=56
@@ -59,7 +59,7 @@ FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 FileInstall(".\assets\close.gif", $sTmpDir & "\kprm-close.gif")
 
 Global $bKpRmDev = True
-Global $sKprmVersion = "Dev.01"
+Global $sKprmVersion = "Dev.02"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -165,7 +165,7 @@ Local Const $SC_DRAGMOVE = 0xF012
 
 Local Const $oTabSwitcher[2] = []
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, BitOR($WS_POPUP,$WS_BORDER), $WS_EX_TOPMOST))
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, BitOR($WS_POPUP,$WS_BORDER), $WS_EX_TOPMOST)
 GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
@@ -202,7 +202,6 @@ Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPad
 GUICtrlSetColor($oGroup2, $cWhite)
 
 Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
-GUICtrlSetState($oRemoveTools, 1)
 GUICtrlSetColor($oRemoveTools, $cWhite)
 
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, $pLeft, ($pPadding1 + ($pStep * 2)), 190, $pCtrSize)
@@ -266,7 +265,7 @@ While 1
 
 	Switch $nMsg
 	    Case $GUI_EVENT_PRIMARYDOWN
-            _SendMessage($hGUI, $WM_SYSCOMMAND, $SC_DRAGMOVE, 0)
+            _SendMessage($oMainWindow, $WM_SYSCOMMAND, $SC_DRAGMOVE, 0)
 		Case $GUI_EVENT_CLOSE
 			Exit
 		Case $oCloseButton
