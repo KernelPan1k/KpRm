@@ -165,7 +165,7 @@ Local Const $SC_DRAGMOVE = 0xF012
 
 Local Const $oTabSwitcher[2] = []
 
-Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, BitOR($WS_POPUP,$WS_BORDER), $WS_EX_TOPMOST)
+Local Const $oMainWindow = GUICreate($sProgramName & " v" & $sKprmVersion & " by kernel-panik", 500, 263, 202, 112, BitOR($WS_POPUP, $WS_BORDER), $WS_EX_TOPMOST)
 GUICtrlSetDefColor($cWhite)
 
 Local Const $oTitleGUI = GUICtrlCreateLabel("KpRm By Kernel-panik v" & $sKprmVersion, $pPadding1, $pPadding1)
@@ -184,6 +184,12 @@ Local Const $oTabSwitcher2 = GUICtrlCreateLabel($lCustom, 326, 5, 80, 20, $SS_SU
 GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
 GUICtrlSetColor($oTabSwitcher2, $cBlue)
 
+XPStyle(1)
+Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
+GUICtrlSetBkColor($oProgressBar, $cWhite)
+GUICtrlSetColor($oProgressBar, $cBlack)
+XPStyle(0)
+
 Local Const $oTabs = GUICtrlCreateTab(10, 40, 200, 200)
 GUICtrlSetState($oTabs, $GUI_HIDE)
 
@@ -191,10 +197,6 @@ Local Const $oTab1 = GUICtrlCreateTabItem("tab1")
 Local Const $oPic1 = GUICtrlCreatePic($sTmpDir & "\kprm-logo.gif", 415, 50, 75, 75)
 
 XPStyle(1)
-Global $oProgressBar = GUICtrlCreateProgress(0, 245, 500, $pCtrSize)
-GUICtrlSetBkColor($oProgressBar, $cWhite)
-GUICtrlSetColor($oProgressBar, $cBlack)
-
 Local Const $oGroup1 = GUICtrlCreateGroup($lActions, $pPadding1, 25, $pWidth1, 120)
 GUICtrlSetColor($oGroup1, $cWhite)
 
@@ -264,8 +266,8 @@ While 1
 	Local $nMsg = GUIGetMsg()
 
 	Switch $nMsg
-	    Case $GUI_EVENT_PRIMARYDOWN
-            _SendMessage($oMainWindow, $WM_SYSCOMMAND, $SC_DRAGMOVE, 0)
+		Case $GUI_EVENT_PRIMARYDOWN
+			_SendMessage($oMainWindow, $WM_SYSCOMMAND, $SC_DRAGMOVE, 0)
 		Case $GUI_EVENT_CLOSE
 			Exit
 		Case $oCloseButton
@@ -319,6 +321,8 @@ While 1
 			SetButtonSearchMode()
 			InitGlobalVars()
 		Case $oRemoveSearchLines
+			GUICtrlSetState($oRemoveSearchLines, $GUI_DISABLE)
+
 			Local $aRemoveSelection[1][2] = [[]]
 
 			For $i = 1 To UBound($aElementsFound) - 1
@@ -329,6 +333,7 @@ While 1
 
 			If UBound($aRemoveSelection) = 1 Then
 				MsgBox($MB_ICONWARNING, "Warning", $lNoSelected)
+				GUICtrlSetState($oRemoveSearchLines, $GUI_ENABLE)
 			Else
 				Local $hGlobalTimer = TimerInit()
 				InitGlobalVars()
@@ -396,10 +401,12 @@ Func SetButtonSearchMode()
 	GUICtrlSetState($oUnSelectAllSearchLines, $GUI_DISABLE)
 	GUICtrlSetState($oSelectAllSearchLines, $GUI_DISABLE)
 	GUICtrlSetState($oClearSearchLines, $GUI_DISABLE)
+	GUICtrlSetState($oSearchLines, $GUI_ENABLE)
 EndFunc   ;==>SetButtonSearchMode
 
 Func SetButtonDeleteSearchMode()
 	GUICtrlSetState($oRemoveSearchLines, $GUI_SHOW)
+	GUICtrlSetState($oRemoveSearchLines, $GUI_ENABLE)
 	GUICtrlSetState($oSearchLines, $GUI_HIDE)
 	GUICtrlSetBkColor($oUnSelectAllSearchLines, $cBlue)
 	GUICtrlSetBkColor($oSelectAllSearchLines, $cBlue)
@@ -434,6 +441,7 @@ Func KpSearch()
 	Dim $bSearchOnly = True
 	Dim $bSearchOnlyHasFoundElement = False
 
+	GUICtrlSetState($oSearchLines, $GUI_DISABLE)
 	RunRemoveTools()
 
 	If $bSearchOnlyHasFoundElement = True Then
