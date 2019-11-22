@@ -1135,10 +1135,10 @@
         <process companyName="" force="0" process="(?i)^winchk.*\.exe$"/>
     </tool>
     <tool name="Windows Repair All In One (portable)">
-        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio.*\.zip" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio.*\.zip" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair_aio" type="folder"/>
+        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
+        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
+        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
+        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
         <process companyName="" force="0" process="(?i)^Repair_Windows.*\.exe$"/>
     </tool>
     <tool name="WinsockAnalyzer">
