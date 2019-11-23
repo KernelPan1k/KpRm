@@ -206,9 +206,9 @@ however a line in the report indicates its presence. It is now possible since ve
 A new feature allows you to detect tools and choose which files/keys will be deleted.
 
 
-![KpRm logo](../screenshots/automatic.png "KpRm logo")
+![KpRm logo](./screenshots/automatic.png "KpRm logo")
 
-![KpRm logo](../screenshots/custom.png "KpRm logo")
+![KpRm logo](./screenshots/custom.png "KpRm logo")
 
 ### - Save the registry
 
