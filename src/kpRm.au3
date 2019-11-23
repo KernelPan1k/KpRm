@@ -2,12 +2,12 @@
 
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
-#AutoIt3Wrapper_Outfile=KpRm-dev.exe
+#AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
-#AutoIt3Wrapper_Res_Fileversion=56
+#AutoIt3Wrapper_Res_Fileversion=57
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=1.22
+#AutoIt3Wrapper_Res_ProductVersion=2.0
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_File_Add=.\assets\bug.gif
@@ -58,8 +58,8 @@ DirCreate($sTmpDir)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif")
 FileInstall(".\assets\close.gif", $sTmpDir & "\kprm-close.gif")
 
-Global $bKpRmDev = True
-Global $sKprmVersion = "Dev.02"
+Global $bKpRmDev = False
+Global $sKprmVersion = "2.0"
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
