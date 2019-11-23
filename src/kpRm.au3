@@ -176,11 +176,11 @@ GUICtrlSetColor($oHStatus, $cBlue)
 
 Local Const $oCloseButton = GUICtrlCreatePic($sTmpDir & "\kprm-close.gif", 475, 5, 20, 20)
 
-Local Const $oTabSwitcher1 = GUICtrlCreateLabel($lAuto, 238, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher1 = GUICtrlCreateLabel($lAuto, 158, 5, 120, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
 GUICtrlSetBkColor($oTabSwitcher1, $cGreen)
 GUICtrlSetColor($oTabSwitcher1, $cBlack)
 
-Local Const $oTabSwitcher2 = GUICtrlCreateLabel($lCustom, 326, 5, 80, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
+Local Const $oTabSwitcher2 = GUICtrlCreateLabel($lCustom, 286, 5, 120, 20, $SS_SUNKEN + $SS_CENTER + $SS_CENTERIMAGE)
 GUICtrlSetBkColor($oTabSwitcher2, $cDisabled)
 GUICtrlSetColor($oTabSwitcher2, $cBlue)
 
@@ -203,7 +203,7 @@ GUICtrlSetColor($oGroup1, $cWhite)
 Local Const $oGroup2 = GUICtrlCreateGroup($lRemoveQuarantine, $pPadding1, ($pPadding1 + ($pStep * 4)), $pWidth1, 58)
 GUICtrlSetColor($oGroup2, $cWhite)
 
-Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 129, $pCtrSize)
+Local Const $oRemoveTools = GUICtrlCreateCheckbox($lDeleteTools, $pLeft, $pPadding1 + $pStep, 190, $pCtrSize)
 GUICtrlSetColor($oRemoveTools, $cWhite)
 
 Local Const $oRemoveRP = GUICtrlCreateCheckbox($lDeleteSystemRestorePoints, $pLeft, ($pPadding1 + ($pStep * 2)), 190, $pCtrSize)
@@ -212,13 +212,13 @@ GUICtrlSetColor($oRemoveRP, $cWhite)
 Local Const $oCreateRP = GUICtrlCreateCheckbox($lCreateRestorePoint, $pLeft, ($pPadding1 + ($pStep * 3)), 190, $pCtrSize)
 GUICtrlSetColor($oCreateRP, $cWhite)
 
-Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, $pRight, $pPadding1 + $pStep, 137, $pCtrSize)
+Local Const $oBackupRegistry = GUICtrlCreateCheckbox($lSaveRegistry, $pRight, $pPadding1 + $pStep, 185, $pCtrSize)
 GUICtrlSetColor($oBackupRegistry, $cWhite)
 
-Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, $pRight, ($pPadding1 + ($pStep * 2)), 137, $pCtrSize)
+Local Const $oRestoreUAC = GUICtrlCreateCheckbox($lRestoreUAC, $pRight, ($pPadding1 + ($pStep * 2)), 185, $pCtrSize)
 GUICtrlSetColor($oRestoreUAC, $cWhite)
 
-Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $pRight, ($pPadding1 + ($pStep * 3)), 180, $pCtrSize)
+Local Const $oRestoreSystemSettings = GUICtrlCreateCheckbox($lRestoreSettings, $pRight, ($pPadding1 + ($pStep * 3)), 185, $pCtrSize)
 GUICtrlSetColor($oRestoreSystemSettings, $cWhite)
 
 Local Const $oDeleteQuarantine = GUICtrlCreateCheckbox($lRemoveNow, $pLeft, 176, 137, $pCtrSize)
