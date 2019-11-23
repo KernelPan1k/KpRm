@@ -1,7 +1,7 @@
 # KpRm
 
 
-![Google logo](./src/assets/bug.gif "google logo")
+![KpRm logo](./src/assets/bug.gif "KpRm logo")
 
 
 ### KpRm is a tool to use to finalize a disinfection, it removes the following software:
@@ -202,8 +202,13 @@
 
 The search for executables downloaded by the user is only performed in the Desktop and the download folder.
 To respect Nicolas Coolman's choice, the quarantine of ZHP tools located under AppData\ZHP is no longer deleted,
-however a line in the report indicates its presence.
+however a line in the report indicates its presence. It is now possible since version 2.0 to choose whether to delete quarantines directly, delete them in 7 days or not delete them at all.
+A new feature allows you to detect tools and choose which files/keys will be deleted.
 
+
+![KpRm logo](../screenshots/automatic.png "KpRm logo")
+
+![KpRm logo](../screenshots/custom.png "KpRm logo")
 
 ### - Save the registry
 
@@ -215,8 +220,6 @@ To restore hives easily, it is possible to use KPLive: https://github.com/Kernel
 
 ### - Create a restore point
 
-During this phase, KpRm first activates system recovery and then deletes recovery points that were created less
-than 24 hours ago. After creating a restore point, this tool will list all the points on the machine.
 
 ### - Restore system settings
 
