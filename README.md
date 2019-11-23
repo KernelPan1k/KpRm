@@ -3,6 +3,8 @@
 
 ![KpRm logo](./src/assets/bug.gif "KpRm logo")
 
+[Download KpRm](https://toolslib.net/downloads/viewdownload/951-kprm/)
+
 
 ### KpRm is a tool to use to finalize a disinfection, it removes the following software:
 
