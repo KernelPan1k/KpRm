@@ -12,29 +12,6 @@ Func XPStyle($OnOff = 1)
     Return 0
 EndFunc   ;==>XPStyle
 
-Func GetLanguage()
-	Switch StringRight(@MUILang, 2)
-		Case "07"
-			Return "de"
-		Case "09"
-			Return "en"
-		Case "0a"
-			Return "es"
-		Case "0c"
-			Return "fr"
-		Case "10"
-			Return "it"
-		Case "16"
-			Return "pt"
-		Case "19"
-			Return "ru"
-		Case "13"
-			Return "nl"
-		Case Else
-			Return "en"
-	EndSwitch
-EndFunc   ;==>GetLanguage
-
 Func ClearAttributes($sPath)
 	Local $sAttrib = FileGetAttrib($sPath)
 
