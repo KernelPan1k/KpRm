@@ -20,13 +20,13 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 	; https://github.com/candera/hobocopy
 
 	If @OSArch = "X64" Then
-		FileInstall(".\binaries\hobocopy64\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe")
-		FileInstall(".\binaries\hobocopy64\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll")
-		FileInstall(".\binaries\hobocopy64\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll")
+		FileInstall(".\binaries\hobocopy64\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe", 1)
+		FileInstall(".\binaries\hobocopy64\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll", 1)
+		FileInstall(".\binaries\hobocopy64\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll", 1)
 	Else
-		FileInstall(".\binaries\hobocopy32\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe")
-		FileInstall(".\binaries\hobocopy32\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll")
-		FileInstall(".\binaries\hobocopy32\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll")
+		FileInstall(".\binaries\hobocopy32\HoboCopy.exe", $sRegistryTmp & "\HoboCopy.exe", 1)
+		FileInstall(".\binaries\hobocopy32\msvcp100.dll", $sRegistryTmp & "\msvcp100.dll", 1)
+		FileInstall(".\binaries\hobocopy32\msvcr100.dll", $sRegistryTmp & "\msvcr100.dll", 1)
 	EndIf
 
 	If Not FileExists($sBackUpPath) _
