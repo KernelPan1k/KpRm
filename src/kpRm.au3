@@ -1,4 +1,5 @@
 #RequireAdmin
+#include "kp_includes\kprm_is_running.au3"
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
@@ -7,7 +8,7 @@
 #AutoIt3Wrapper_Res_Fileversion=57.0.0.1
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=2.1
+#AutoIt3Wrapper_Res_ProductVersion=2.0
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Res_LegalTradeMarks=kernel-panik
