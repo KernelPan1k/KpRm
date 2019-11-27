@@ -268,5 +268,5 @@ GCLLHFLOZFYIV5IR2BWBIU7Q55E4EYWHWAOPYMLN3NHXTBQQCAIWJ6FC
 
 
 <ul>
-    <li><a target="_blank" href="https://www.sosvirus.net/">G3n-H@ckm@n</a></li>
+    <li><a target="_blank" href="https://www.sosvirus.net/">G3n-H@ckm@n de SosVirus</a></li>
 </ul>
