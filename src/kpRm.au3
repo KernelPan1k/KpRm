@@ -2,12 +2,16 @@
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=assets\bug.ico
 #AutoIt3Wrapper_Outfile=KpRm.exe
-#AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
-#AutoIt3Wrapper_Res_Fileversion=57
+#AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
+#AutoIt3Wrapper_Res_Fileversion=57.0.0.1
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=2.0
+#AutoIt3Wrapper_Res_ProductVersion=2.1
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
+#AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
+#AutoIt3Wrapper_Res_LegalTradeMarks=kernel-panik
+#AutoIt3Wrapper_Res_SaveSource=y
 #AutoIt3Wrapper_Res_requestedExecutionLevel=requireAdministrator
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_AU3Check_Stop_OnWarning=y
@@ -26,8 +30,12 @@ EndIf
 
 DirCreate($sTmpDir)
 
+FileInstall(".\config\tools.xml", $sTmpDir & "\kprm-tools.xml", 1)
 FileInstall(".\assets\bug.gif", $sTmpDir & "\kprm-logo.gif", 1)
 FileInstall(".\assets\close.gif", $sTmpDir & "\kprm-close.gif", 1)
+FileInstall(".\config\tools.xml", $sTmpDir & "\kprm-tools.xml", 1)
+
+_XMLFileOpen($sTmpDir & "\kprm-tools.xml")
 
 If $bKpRmDev = True Then
 	AutoItSetOption("MustDeclareVars", 1)
@@ -46,10 +54,6 @@ If UBound($CmdLine) > 1 Then
 	Exit
 EndIf
 
-If Not IsAdmin() Then
-	MsgBox(16, $lFail, $lAdminRequired)
-	QuitKprm()
-EndIf
 
 If $bKpRmDev = False Then
 	CheckVersionOfKpRm()

@@ -1081,7 +1081,6 @@
         <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^autorun\.inf$" type="folder"/>
         <process companyName="" force="0" process="(?i)^UsbFix.*\.exe$"/>
         <programFiles companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
         <softwareKey pattern="(?i)^UsbFix"/>

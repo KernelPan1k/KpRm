@@ -46,3 +46,10 @@ Global $oCreateRP
 Global $oDeleteQuarantine
 Global $oDeleteQuarantineAfter7Days
 Global $oProgressBar
+Global $iNbrTask = 47
+Global $iCurrentNbrTask
+Global Const $iTaskStep = Floor(100 / $iNbrTask)
+Global $oToolsCpt = Null
+Global $aActionsFile = ["desktop", "desktopCommon", "download", "homeDrive", "programFiles", "appData", "appDataCommon", "appDataLocal", "windowsFolder", "startMenu"]
+Global $__g_oSR_WMI = Null
+Global $__g_oSR = Null
