@@ -1281,16 +1281,16 @@ Func ClearRestorePoint()
 	For $i = 1 To $aRP[0][0]
 		UpdateStatusBar("Remove restore point " & $aRP[$i][1])
 
-		Local $iStatus = SR_RemoveRestorePoint($aRP[$i][0])
+		SR_RemoveRestorePoint($aRP[$i][0])
 
-		If $iStatus = 0 And @error <> 0 Then
-			LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+		If @error <> 0 Then
+			LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " not deleted")
 		Else
 			$iRet += 1
 			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		EndIf
 
-		Sleep(200)
+		Sleep(250)
 	Next
 
 	If $aRP[0][0] = $iRet Then
@@ -1331,15 +1331,15 @@ Func ClearDailyRestorePoint()
 
 			UpdateStatusBar("Remove restore point " & $aRP[$i][1])
 
-			Local $iStatus = SR_RemoveRestorePoint($aRP[$i][0])
+			SR_RemoveRestorePoint($aRP[$i][0])
 
-			If $iStatus = 0 And @error <> 0 Then
-				LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
+			If @error <> 0 Then
+				LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " not deleted")
 			Else
 				LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $iDateCreated & " deleted")
 			EndIf
 
-			Sleep(200)
+			Sleep(250)
 		EndIf
 	Next
 
@@ -1360,7 +1360,7 @@ Func ShowCurrentRestorePoint()
 	EndIf
 
 	For $i = 1 To $aRP[0][0]
-		LogMessage("   ~ [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " found")
+		LogMessage("   ~ [I] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2])
 	Next
 
 EndFunc   ;==>ShowCurrentRestorePoint
@@ -1410,7 +1410,7 @@ Func CreateSystemRestorePoint()
 	EndIf
 
 	If Not CheckIsRestorePointExist() Then
-		LogMessage("     [X] System Restore Point created")
+		LogMessage("     [X] System Restore Point not created")
 	Else
 		LogMessage("     [OK] System Restore Point created")
 	EndIf
