@@ -1,5 +1,7 @@
 Global $bKpRmDev = False
 Global $sKprmVersion = "2.1"
+Global Const $sUPLOAD_PAGE = ""
+Global Const $sUPDATE_SITE = ""
 Global $sTmpDir = @TempDir & "\KPRM"
 Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC

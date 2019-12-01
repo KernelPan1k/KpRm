@@ -22,6 +22,8 @@
 #include "Permissions.au3"
 #include "_XMLDomWrapper.au3"
 #include "taskplanerCOM.au3"
+#include <JSMN.au3>
+#include <WinHttp.au3>
 #include "kp_languages.au3"
 #include "variables.au3"
 #include "functions.au3"
