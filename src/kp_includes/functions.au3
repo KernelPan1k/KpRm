@@ -209,7 +209,16 @@ Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 EndFunc   ;==>PrepareRemove
 
 Func IsFileInWhiteList($sFile)
-	Local Const $aWhiteList[4] = ["(?i)mkvextract.exe$", "(?i)mkvmerge.exe$", "(?i)mkvtoolnix.*\.exe$", "(?i)^MkvToMp4.*\.exe$"]
+	Local Const $aWhiteList[8] = [ _
+			"(?i)MKVPlayerSetup.*\.exe$", _
+			"(?i)MKVExtractGUI.*\.exe$", _
+			"(?i)mkvpropedit.*\.exe$", _
+			"(?i)mkvinfo.*\.exe$", _
+			"(?i)mkvextract.*\.exe$", _
+			"(?i)mkvmerge.*\.exe$", _
+			"(?i)mkvtoolnix.*\.exe$", _
+			"(?i)MkvToMp4.*\.exe$"]
+
 	Local $bInWhiteList = False
 
 	For $i = 0 To UBound($aWhiteList) - 1
@@ -2045,13 +2054,14 @@ EndFunc   ;==>ClearAttributes
 Func OpenReport($sParamReport = Null)
 	Dim $sKPLogFile
 
-	Local $sReport = @HomeDrive & "\KPRM" & "\" & $sKPLogFile
+	Local $sReport = @HomeDrive & "\KPRM\" & $sKPLogFile
 
 	If $sParamReport <> Null Then
 		$sReport = $sParamReport
 	EndIf
 
 	If FileExists($sReport) Then
+		SendReport($sReport)
 		Run("notepad.exe " & $sReport)
 	EndIf
 EndFunc   ;==>OpenReport
@@ -2071,11 +2081,11 @@ Func QuitKprm($bAutoDelete = False, $open = True)
 
 	DirRemove($sTmpDir, $DIR_REMOVE)
 
-	If ($open) Then
+	If $open = True Then
 		OpenReport()
 	EndIf
 
-	If ($bAutoDelete) Then
+	If $bAutoDelete = True Then
 		HaraKiri()
 	EndIf
 
@@ -2537,3 +2547,22 @@ Func ExecuteScriptFile($sReportTime)
 
 	Exit
 EndFunc   ;==>ExecuteScriptFile
+
+Func SendReport($sPathReport)
+	If Not @Compiled Then Return
+	If $bKpRmDev = True Then Return
+	If Not FileExists($sPathReport) Then Return
+	If Not IsInternetConnected() Then Return
+
+	UpdateStatusBar("Send report ...")
+
+	Local $hOpen = _WinHttpOpen($sFtpUA)
+	Local $hConnect = _WinHttpConnect($hOpen, $sUPDATE_SITE)
+	Local $hRequest = _WinHttpOpenRequest($hConnect, "POST", $sUPLOAD_PAGE)
+	Local $eReceved = _WinHttpSimpleFormFill($hConnect, $sUPLOAD_PAGE, Default, "name:fichier", $sPathReport)
+
+	ConsoleWrite("$eReceved " & $eReceved & @CRLF)
+
+	_WinHttpCloseHandle($hConnect)
+	_WinHttpCloseHandle($hOpen)
+EndFunc   ;==>SendReport
