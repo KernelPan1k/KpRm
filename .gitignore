@@ -1,4 +1,4 @@
-.idea/
+.idea/*
 /**/BackUp/
 kpRm_stripped.au3
 kpRm-*-dev.exe
@@ -7,3 +7,4 @@ kpRm-dev.exe
 KpRm-dev.exe
 kpRm.exe
 KpRm.exe
+ignore/*
