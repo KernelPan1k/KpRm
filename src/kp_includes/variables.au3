@@ -1,8 +1,8 @@
 Global $bKpRmDev = False
 Global $sKprmVersion = "2.2"
-Global Const $sUPLOAD_PAGE = ""
-Global Const $sUPDATE_SITE = ""
-Global Const $sFtpUA = ""
+Global Const $sUPLOAD_PAGE = "upload-logs.php"
+Global Const $sUPDATE_SITE = "kernel-panik.ovh"
+Global Const $sFtpUA = "Autoit/3 KPRM"
 Global $sTmpDir = @TempDir & "\KPRM"
 Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC

@@ -2559,9 +2559,7 @@ Func SendReport($sPathReport)
 	Local $hOpen = _WinHttpOpen($sFtpUA)
 	Local $hConnect = _WinHttpConnect($hOpen, $sUPDATE_SITE)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, "POST", $sUPLOAD_PAGE)
-	Local $eReceved = _WinHttpSimpleFormFill($hConnect, $sUPLOAD_PAGE, Default, "name:fichier", $sPathReport)
-
-	ConsoleWrite("$eReceved " & $eReceved & @CRLF)
+	Local $eReceved = _WinHttpSimpleFormFill($hConnect, $sUPLOAD_PAGE, Default, "name:my_log", $sPathReport)
 
 	_WinHttpCloseHandle($hConnect)
 	_WinHttpCloseHandle($hOpen)
