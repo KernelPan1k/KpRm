@@ -27,6 +27,7 @@ Func Lang_FR()
 	Global $lNoSelected = "Aucun élément de sélectionné"
 	Global $lFinishTitle = "Terminé"
 	Global $lNoTool = "Aucun outil trouvé"
+	Global $lNoOptionSelected = "Vous devez choisir une action"
 EndFunc   ;==>Lang_FR
 
 Func Lang_EN()
@@ -58,6 +59,7 @@ Func Lang_EN()
 	Global $lNoSelected = "No selected element"
 	Global $lFinishTitle = "Completed"
 	Global $lNoTool = "No tools found"
+	Global $lNoOptionSelected = "You must choose an action"
 EndFunc   ;==>Lang_EN
 
 Func Lang_DE()
@@ -89,6 +91,7 @@ Func Lang_DE()
 	Global $lNoSelected = "Kein ausgewähltes Element"
 	Global $lFinishTitle = "Abgeschlossen"
 	Global $lNoTool = "Keine Werkzeuge gefunden"
+	Global $lNoOptionSelected = "Du musst eine Aktion auswählen"
 EndFunc   ;==>Lang_DE
 
 Func Lang_IT()
@@ -120,6 +123,7 @@ Func Lang_IT()
 	Global $lNoSelected = "Nessun elemento selezionato"
 	Global $lFinishTitle = "Completato"
 	Global $lNoTool = "Nessun utensile trovato"
+	Global $lNoOptionSelected = "È necessario scegliere un'azione"
 EndFunc   ;==>Lang_IT
 
 Func Lang_PT()
@@ -151,6 +155,7 @@ Func Lang_PT()
 	Global $lNoSelected = "Nenhum item marcado"
 	Global $lFinishTitle = "Concluído"
 	Global $lNoTool = "Nenhuma ferramenta encontrada"
+    Global $lNoOptionSelected = "Você deve escolher uma ação"
 EndFunc   ;==>Lang_PT
 
 Func Lang_RU()
@@ -182,6 +187,7 @@ Func Lang_RU()
 	Global $lNoSelected = "Нет выбранных элементов"
 	Global $lFinishTitle = "Завершено"
 	Global $lNoTool = "Инструментов не найдено"
+	Global $lNoOptionSelected = "Вы должны выбрать действие"
 EndFunc   ;==>Lang_RU
 
 Func Lang_ES()
@@ -213,6 +219,7 @@ Func Lang_ES()
 	Global $lNoSelected = "Ninguna posición fija"
 	Global $lFinishTitle = "Concluido"
 	Global $lNoTool = "No se han encontrado herramientas"
+	Global $lNoOptionSelected = "Debe seleccionar una acción"
 EndFunc   ;==>Lang_ES
 
 Func Lang_NL()
@@ -244,6 +251,7 @@ Func Lang_NL()
 	Global $lNoSelected = "Geen geselecteerde artikele"
 	Global $lFinishTitle = "Voltooid"
 	Global $lNoTool = "Geen gereedschap gevonden"
+	Global $lNoOptionSelected = "Je moet een actie kiezen"
 EndFunc   ;==>Lang_NL
 
 Select

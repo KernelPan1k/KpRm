@@ -120,6 +120,22 @@ Func KpSearch()
 EndFunc   ;==>KpSearch
 
 Func KpRemover()
+    Local $bHasCheckedOption = False
+
+    If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then $bHasCheckedOption = True
+    If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then $bHasCheckedOption = True
+
+    If $bHasCheckedOption = False Then
+        MsgBox($MB_ICONWARNING, "Warning", $lNoOptionSelected)
+        Return
+    EndIf
+
 	Local $hGlobalTimer = TimerInit()
 
 	Init()
