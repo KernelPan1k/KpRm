@@ -1,5 +1,5 @@
 Global $bKpRmDev = False
-Global $sKprmVersion = "2.3"
+Global $sKprmVersion = "2.4"
 Global Const $sUPLOAD_PAGE = "upload-logs.php"
 Global Const $sUPDATE_SITE = "kernel-panik.ovh"
 Global Const $sFtpUA = "Autoit/3 KPRM"
