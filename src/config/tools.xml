@@ -823,6 +823,7 @@
         <download companyName="(?i)^SosVirus" force="1" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
         <download companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag.*\.txt$" type="file"/>
+        <homeDrive companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
         <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag" type="folder" quarantine="1" />
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^QuickDiag.*\.exe$"/>
     </tool>
