@@ -18,7 +18,6 @@
 #include <SendMessage.au3>
 #include <Array.au3>
 #include <File.au3>
-#include "UAC.au3"
 #include "Permissions.au3"
 #include "_XMLDomWrapper.au3"
 #include "taskplanerCOM.au3"
