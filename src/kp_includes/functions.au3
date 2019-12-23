@@ -120,21 +120,21 @@ Func KpSearch()
 EndFunc   ;==>KpSearch
 
 Func KpRemover()
-    Local $bHasCheckedOption = False
+	Local $bHasCheckedOption = False
 
-    If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then $bHasCheckedOption = True
-    If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oRestoreSystemSettings) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oRestoreUAC) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oRemoveRP) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oCreateRP) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oDeleteQuarantine) = $GUI_CHECKED Then $bHasCheckedOption = True
+	If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then $bHasCheckedOption = True
 
-    If $bHasCheckedOption = False Then
-        MsgBox($MB_ICONWARNING, "Warning", $lNoOptionSelected)
-        Return
-    EndIf
+	If $bHasCheckedOption = False Then
+		MsgBox($MB_ICONWARNING, "Warning", $lNoOptionSelected)
+		Return
+	EndIf
 
 	Local $hGlobalTimer = TimerInit()
 
@@ -1001,61 +1001,64 @@ Func RestoreUAC()
 
 	UpdateStatusBar("Restore UAC ...")
 
-	If _UAC_SetConsentPromptBehaviorAdmin() Then
-		LogMessage("     [OK] Set ConsentPromptBehaviorAdmin with default (5) value")
-	Else
-		LogMessage("     [X] Set ConsentPromptBehaviorAdmin with default value")
-	EndIf
+	Local $s64Bit = ""
+	If @OSArch = "X64" Then $s64Bit = "64"
 
-	If _UAC_SetConsentPromptBehaviorUser(3) Then
-		LogMessage("     [OK] Set ConsentPromptBehaviorUser with default (3) value")
-	Else
-		LogMessage("     [X] Set ConsentPromptBehaviorUser with default value")
-	EndIf
-
-	If _UAC_SetEnableInstallerDetection() Then
-		LogMessage("     [OK] Set EnableInstallerDetection with default (0) value")
-	Else
-		LogMessage("     [X] Set EnableInstallerDetection with default value")
-	EndIf
-
-	If _UAC_SetEnableLUA() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLUA", "REG_DWORD", 1) = 1 Then
 		LogMessage("     [OK] Set EnableLUA with default (1) value")
 	Else
 		LogMessage("     [X] Set EnableLUA with default value")
 	EndIf
 
-	If _UAC_SetEnableSecureUIAPaths() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "ConsentPromptBehaviorAdmin", "REG_DWORD", 5) = 1 Then
+		LogMessage("     [OK] Set ConsentPromptBehaviorAdmin with default (5) value")
+	Else
+		LogMessage("     [X] Set ConsentPromptBehaviorAdmin with default value")
+	EndIf
+
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "ConsentPromptBehaviorUser", "REG_DWORD", 3) = 1 Then
+		LogMessage("     [OK] Set ConsentPromptBehaviorUser with default (3) value")
+	Else
+		LogMessage("     [X] Set ConsentPromptBehaviorUser with default value")
+	EndIf
+
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "EnableInstallerDetection", "REG_DWORD", 0) = 1 Then
+		LogMessage("     [OK] Set EnableInstallerDetection with default (0) value")
+	Else
+		LogMessage("     [X] Set EnableInstallerDetection with default value")
+	EndIf
+
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "EnableSecureUIAPaths", "REG_DWORD", 1) = 1 Then
 		LogMessage("     [OK] Set EnableSecureUIAPaths with default (1) value")
 	Else
 		LogMessage("     [X] Set EnableSecureUIAPaths with default value")
 	EndIf
 
-	If _UAC_SetEnableUIADesktopToggle() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "EnableUIADesktopToggle", "REG_DWORD", 0) = 1 Then
 		LogMessage("     [OK] Set EnableUIADesktopToggle with default (0) value")
 	Else
 		LogMessage("     [X] Set EnableUIADesktopToggle with default value")
 	EndIf
 
-	If _UAC_SetEnableVirtualization() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "EnableVirtualization", "REG_DWORD", 1) = 1 Then
 		LogMessage("     [OK] Set EnableVirtualization with default (1) value")
 	Else
 		LogMessage("     [X] Set EnableVirtualization with default value")
 	EndIf
 
-	If _UAC_SetFilterAdministratorToken() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "FilterAdministratorToken", "REG_DWORD", 0) = 1 Then
 		LogMessage("     [OK] Set FilterAdministratorToken with default (0) value")
 	Else
 		LogMessage("     [X] Set FilterAdministratorToken with default value")
 	EndIf
 
-	If _UAC_SetPromptOnSecureDesktop() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "PromptOnSecureDesktop", "REG_DWORD", 1) = 1 Then
 		LogMessage("     [OK] Set PromptOnSecureDesktop with default (1) value")
 	Else
 		LogMessage("     [X] Set PromptOnSecureDesktop with default value")
 	EndIf
 
-	If _UAC_SetValidateAdminCodeSignatures() Then
+	If RegWrite("HKEY_LOCAL_MACHINE" & $s64Bit & "\Software\Microsoft\Windows\CurrentVersion\Policies\System", "ValidateAdminCodeSignatures", "REG_DWORD", 0) = 1 Then
 		LogMessage("     [OK] Set ValidateAdminCodeSignatures with default (0) value")
 	Else
 		LogMessage("     [X] Set ValidateAdminCodeSignatures with default value")
@@ -1296,7 +1299,7 @@ Func ClearRestorePoint()
 	UpdateStatusBar("Clear Restore Points ...")
 
 	Local Const $aRP = SR_EnumRestorePoints()
-	Local $iRet = 0
+	Local $aFailsSequenceNumber = [] ;
 
 	If $aRP[0][0] = 0 Then
 		LogMessage("     [I] No system recovery points were found")
@@ -1306,24 +1309,62 @@ Func ClearRestorePoint()
 	For $i = 1 To $aRP[0][0]
 		UpdateStatusBar("Remove restore point " & $aRP[$i][1])
 
-		SR_RemoveRestorePoint($aRP[$i][0])
+		Local $iSequenceNumber = $aRP[$i][0]
+
+		SR_RemoveRestorePoint($iSequenceNumber)
 
 		If @error <> 0 Then
-			LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " not deleted")
-		Else
-			$iRet += 1
-			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+			_ArrayAdd($aFailsSequenceNumber, $iSequenceNumber)
 		EndIf
-
-		Sleep(250)
 	Next
 
-	If $aRP[0][0] = $iRet Then
+	If UBound($aFailsSequenceNumber) = 1 Then
+		For $i = 1 To $aRP[0][0]
+			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+		Next
+
 		LogMessage(@CRLF & "     [OK] All system restore points have been successfully deleted")
-	Else
-		LogMessage(@CRLF & "     [X] Failure when deleting all restore points")
+
+		Return True
 	EndIf
 
+;~ 	This horrible code exists because sometimes I receive a failure code when the restore point is removed.
+
+	Sleep(5000)
+
+	Local Const $aRPCheck = SR_EnumRestorePoints()
+
+	If $aRPCheck[0][0] = 0 Then
+		For $i = 1 To $aRP[0][0]
+			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+		Next
+
+		LogMessage(@CRLF & "     [OK] All system restore points have been successfully deleted")
+
+		Return True
+	EndIf
+
+	For $i = 1 To $aRP[0][0]
+		Local $iSequenceNumber = $aRP[$i][0]
+		Local $bExist = False
+
+		For $z = 0 To $aRPCheck[0][0]
+			Local $iSequenceNumberCheck = $aRPCheck[$z][0]
+
+			If $iSequenceNumber = $iSequenceNumberCheck Then
+				$bExist = True
+				ExitLoop
+			EndIf
+		Next
+
+		If $bExist = True Then
+			LogMessage("   ~ [X] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " not deleted")
+		Else
+			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
+		EndIf
+	Next
+
+	LogMessage(@CRLF & "     [X] Failure when deleting all restore points")
 EndFunc   ;==>ClearRestorePoint
 
 Func convertDate($sDtmDate)
