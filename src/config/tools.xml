@@ -85,9 +85,7 @@
     </tool>
     <tool name="Avenger">
         <desktop companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^avenger" type="folder"/>
         <download companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^avenger" type="folder"/>
         <homeDrive companyName="" force="0" pattern="(?i)^avenger" type="folder" quarantine="1" />
         <homeDrive companyName="" force="0" pattern="(?i)^avenger.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^avenger.*\.exe$"/>
