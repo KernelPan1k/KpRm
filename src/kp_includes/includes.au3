@@ -8,6 +8,7 @@
 #include <AutoItConstants.au3>
 #include <FileConstants.au3>
 #include <GuiListView.au3>
+#include <Constants.au3>
 #include <GuiTab.au3>
 #include <Date.au3>
 #include <WinAPI.au3>
@@ -26,3 +27,4 @@
 #include "kp_languages.au3"
 #include "variables.au3"
 #include "functions.au3"
+#include "ExtMsgBox.au3"

@@ -24,7 +24,7 @@ Func CreateKPRMDir()
 	EndIf
 
 	If Not FileExists($sDir) Then
-		MsgBox(16, $lFail, $lRegistryBackupError)
+		CustomMsgBox(16, $lFail, $lRegistryBackupError)
 		Exit
 	EndIf
 EndFunc   ;==>CreateKPRMDir
@@ -113,7 +113,7 @@ Func KpSearch()
 	If $bSearchOnlyHasFoundElement = True Then
 		SetButtonDeleteSearchMode()
 	Else
-		MsgBox($MB_ICONINFORMATION, $lFinishTitle, $lNoTool)
+		CustomMsgBox($MB_ICONINFORMATION, $lFinishTitle, $lNoTool)
 		SetButtonSearchMode()
 	EndIf
 
@@ -132,7 +132,7 @@ Func KpRemover()
 	If GUICtrlRead($oDeleteQuarantineAfter7Days) = $GUI_CHECKED Then $bHasCheckedOption = True
 
 	If $bHasCheckedOption = False Then
-		MsgBox($MB_ICONWARNING, "Warning", $lNoOptionSelected)
+		CustomMsgBox($MB_ICONWARNING, "Warning", $lNoOptionSelected)
 		Return
 	EndIf
 
@@ -204,7 +204,7 @@ Func KpRemover()
 	SetDeleteQuarantinesIn7DaysIfNeeded()
 	RestartIfNeeded()
 	UpdateStatusBar("Finish")
-	MsgBox(64, "OK", $lFinish)
+	CustomMsgBox(64, "OK", $lFinish)
 
 	QuitKprm(True)
 EndFunc   ;==>KpRemover
@@ -697,7 +697,7 @@ Func Swap($sTn, $aK, $aV, $aOrder)
 			Local $sDefaultValue = $aOrder[$i][1]
 
 			If $sDefaultValue = "__REQUIRED__" Then
-				MsgBox(16, "Fail", "Attribute " & $aOrder[$i][0] & " for tool " & $sTn & " is required")
+				CustomMsgBox(16, "Fail", "Attribute " & $aOrder[$i][0] & " for tool " & $sTn & " is required")
 				Exit
 			EndIf
 
@@ -707,7 +707,7 @@ Func Swap($sTn, $aK, $aV, $aOrder)
 	Next
 
 	If $iLength <> $iCountOrder Then
-		MsgBox(16, "Fail", "Values for tool " & $sTn & " are invalid ! Number of expected values " & $iLength & " and number of values received " & $iCountOrder)
+		CustomMsgBox(16, "Fail", "Values for tool " & $sTn & " are invalid ! Number of expected values " & $iLength & " and number of values received " & $iCountOrder)
 		Exit
 	EndIf
 
@@ -1104,7 +1104,7 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 			Or Not FileExists($sTmpDir & "\registry\HoboCopy.exe") _
 			Or Not FileExists($sTmpDir & "\registry\msvcp100.dll") _
 			Or Not FileExists($sTmpDir & "\registry\msvcr100.dll") Then
-		MsgBox(16, $lFail, $lRegistryBackupError)
+		CustomMsgBox(16, $lFail, $lRegistryBackupError)
 		QuitKprm(False, False)
 	EndIf
 
@@ -1133,7 +1133,7 @@ Func CreateBackupRegistryHobocopy($aAllHives)
 			Sleep(1000)
 
 			If Not FileExists($sBackupFile) Then
-				MsgBox(16, $lFail, $lRegistryBackupError & @CRLF & $sHive)
+				CustomMsgBox(16, $lFail, $lRegistryBackupError & @CRLF & $sHive)
 				LogMessage("     [X] Failed Registry Backup: " & $sHive)
 				QuitKprm(False)
 			Else
@@ -2070,6 +2070,17 @@ EndFunc   ;==>RemoveQuarantines
 
 ;################################################| Utils
 
+Func CustomMsgBox($vIcon = 0, $sTitle = "", $sMsg = "", $vButton = 0)
+    Dim $cBlack
+    Dim $cWhite
+
+    _ExtMsgBoxSet(-1, -1, $cBlack, $cWhite)
+    Local Const $iRetValue = _ExtMsgBox($vIcon, $vButton, $sTitle, $sMsg, 0)
+    _ExtMsgBoxSet(Default)
+
+    Return $iRetValue
+EndFunc
+
 Func XPStyle($OnOff = 1)
 	Local $XS_n
 	If $OnOff And StringInStr(@OSType, "WIN32_NT") Then
@@ -2540,7 +2551,7 @@ Func RestartIfNeeded()
 		EndIf
 
 		UpdateStatusBar("Need Restart")
-		MsgBox(64, "Restart Now", $lRestart)
+		CustomMsgBox(64, "Restart Now", $lRestart)
 		Shutdown(6)
 	EndIf
 EndFunc   ;==>RestartIfNeeded

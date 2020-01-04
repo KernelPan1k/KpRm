@@ -59,14 +59,14 @@ If $bKpRmDev = False Then
 	CheckVersionOfKpRm()
 EndIf
 
-Local Const $iEULAisOK = MsgBox(BitOR($MB_YESNO, $MB_ICONINFORMATION), "Disclaimer of warranty!", "Disclaimer of warranty!" & @CRLF & @CRLF _
+Local Const $iEULAisOK = CustomMsgBox($MB_ICONINFORMATION, "Disclaimer of warranty!", "Disclaimer of warranty!" & @CRLF & @CRLF _
 		 & 'This software is provided "AS IS" without warranty of any kind.' & @CRLF _
 		 & 'You may use this software at your own risk.' & @CRLF & @CRLF _
 		 & 'This software is not permitted for commercial purposes.' & @CRLF & @CRLF _
 		 & 'Are you sure you want to continue?' & @CRLF & @CRLF _
-		 & 'Click Yes to continue. Click No to exit.')
+		 & 'Click Yes to continue. Click No to exit.', $MB_YESNO)
 
-If $iEULAisOK <> $IDYES Then Exit
+If $iEULAisOK <> 1 Then Exit
 
 Local Const $oTabSwitcher[2] = []
 
@@ -237,7 +237,7 @@ While 1
 			Next
 
 			If UBound($aRemoveSelection) = 1 Then
-				MsgBox($MB_ICONWARNING, "Warning", $lNoSelected)
+				CustomMsgBox($MB_ICONWARNING, "Warning", $lNoSelected)
 				GUICtrlSetState($oRemoveSearchLines, $GUI_ENABLE)
 			Else
 				Local $hGlobalTimer = TimerInit()
@@ -251,7 +251,7 @@ While 1
 				RestartIfNeeded()
 				_GUICtrlListView_DeleteAllItems($oListView)
 				SetButtonSearchMode()
-				MsgBox(64, "OK", $lFinish)
+				CustomMsgBox(64, "OK", $lFinish)
 				OpenReport()
 			EndIf
 	EndSwitch
