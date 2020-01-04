@@ -1323,7 +1323,7 @@ Func ClearRestorePoint()
 			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		Next
 
-		LogMessage(@CRLF & "     [OK] All system restore points have been successfully deleted")
+		LogMessage("     [OK] All system restore points have been successfully deleted")
 
 		Return True
 	EndIf
@@ -1339,7 +1339,7 @@ Func ClearRestorePoint()
 			LogMessage("   ~ [OK] RP named " & $aRP[$i][1] & " created at " & $aRP[$i][2] & " deleted")
 		Next
 
-		LogMessage(@CRLF & "     [OK] All system restore points have been successfully deleted")
+		LogMessage("     [OK] All system restore points have been successfully deleted")
 
 		Return True
 	EndIf
@@ -1364,7 +1364,7 @@ Func ClearRestorePoint()
 		EndIf
 	Next
 
-	LogMessage(@CRLF & "     [X] Failure when deleting all restore points")
+	LogMessage("     [X] Failure when deleting all restore points")
 EndFunc   ;==>ClearRestorePoint
 
 Func convertDate($sDtmDate)
