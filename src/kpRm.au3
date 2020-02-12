@@ -46,7 +46,7 @@ If UBound($CmdLine) > 1 Then
 	$sAction = StringStripWS($sAction, $STR_STRIPLEADING + $STR_STRIPTRAILING)
 
 	If $sAction = 'restart' Then
-		ExecuteScriptFile($CmdLine[2])
+		ExecuteOnReboot($CmdLine[2])
 	ElseIf $sAction = 'quarantines' Then
 		RemoveQuarantines($CmdLine[2])
 	EndIf

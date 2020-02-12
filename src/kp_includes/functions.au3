@@ -1899,6 +1899,7 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 
 	Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks-quarantines"
 	Local Const $sTasksPath = $sTasksFolder & "\task-" & $sCurrentTime & ".txt"
+	Local Const $sSuffixKey = GetSuffixKey()
 
 	If FileExists($sTasksFolder) = False Then
 		DirCreate($sTasksFolder)
@@ -1916,17 +1917,11 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 		Return WriteErrorMessage("Unable to copy binary in " & $sTasksFolder & '\kprm-quarantines.exe')
 	EndIf
 
-	Local $hFileOpen = FileOpen($sTasksPath, $FO_APPEND)
-
-	If $hFileOpen = -1 Then
-		Return WriteErrorMessage("Unable to open tasks file for writing")
-	EndIf
-
 	For $i = 1 To UBound($aElementsToKeep) - 1
-		FileWriteLine($hFileOpen, $aElementsToKeep[$i][0])
+	    ; TODO FIX ERROR
+		Local $sPath = StringReplace($aElementsToKeep[$i], "\", "\\")
+		RegWrite("HKLM" & $sSuffixKey & "\Software\KPRM\quarantines\" & $sCurrentTime, $i, "REG_SZ", $sPath)
 	Next
-
-	FileClose($hFileOpen)
 
 	Local $sStartDateTime = _DateAdd('d', 7, _NowCalc())
 	$sStartDateTime = StringReplace($sStartDateTime, "/", "-")
@@ -1978,50 +1973,56 @@ EndFunc   ;==>SetDeleteQuarantinesIn7DaysIfNeeded
 
 Func RemoveQuarantines($sTaskTime)
 	Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks-quarantines"
-	Local Const $sTasksPath = $sTasksFolder & "\task-" & $sTaskTime & ".txt"
 	Local Const $sKPReportFile = "kprm-" & $sTaskTime & ".txt"
 	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
 	Local Const $sDesktopReport = @DesktopDir & "\" & $sKPReportFile
 	Local Const $bHomeReportExist = FileExists($sHomeReport)
 	Local Const $bDesktopReportExist = FileExists($sDesktopReport)
+	Local Const $sSuffixKey = GetSuffixKey()
+	Local Const $sKey = "HKLM" & $sSuffixKey & "\Software\KPRM\quarantines"
 
-	If FileExists($sTasksPath) = 1 Then
+	For $i = 1 To 50
+		Local $sVal = RegEnumVal($sKey, $i)
+		If @error <> 0 Then ExitLoop
 
-		If $bHomeReportExist = True Then
-			FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
-		EndIf
+		For $n = 1 To 10000
+			Local $sVal2 = RegEnumVal($sKey & "\" & $sVal, $n)
+			If @error <> 0 Then ExitLoop
 
-		If $bDesktopReportExist = True Then
-			FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
-		EndIf
+			Local $sElementPath = RegRead($sKey & "\" & $sVal, $sVal2)
+			If @error <> 0 Then ExitLoop
 
-		FileOpen($sTasksPath, 0)
+			Local $sPath = StringReplace($sElementPath, "\\", "\")
 
-		For $i = 1 To _FileCountLines($sTasksPath)
-			Local $sLine = FileReadLine($sTasksPath, $i)
-			$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
+			If $bHomeReportExist = True Then
+				FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+			EndIf
 
-			If $sLine = "" Then ContinueLoop
+			If $bDesktopReportExist = True Then
+				FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+			EndIf
 
-			If IsFile($sLine) Then
-				PrepareRemove($sLine, 0, "1")
-				FileDelete($sLine)
-			ElseIf IsDir($sLine) Then
-				PrepareRemove($sLine, 1, "1")
-				DirRemove($sLine, $DIR_REMOVE)
+			If $sPath = "" Then ContinueLoop
+
+			If IsFile($sPath) Then
+				PrepareRemove($sPath, 0, "1")
+				FileDelete($sPath)
+			ElseIf IsDir($sPath) Then
+				PrepareRemove($sPath, 1, "1")
+				DirRemove($sPath, $DIR_REMOVE)
 			Else
 				ContinueLoop
 			EndIf
 
 			If $bHomeReportExist = True Or $bDesktopReportExist = True Then
 				Local $sSymbol = "[OK]"
-				Local $bExist = FileExists($sLine)
+				Local $bExist = FileExists($sPath)
 
 				If $bExist = True Then
 					$sSymbol = "[X]"
 				EndIf
 
-				Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (after 7 days)"
+				Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (after 7 days)"
 
 				If $bHomeReportExist = True Then
 					FileWrite($sHomeReport, $sMessage & @CRLF)
@@ -2032,36 +2033,19 @@ Func RemoveQuarantines($sTaskTime)
 				EndIf
 			EndIf
 		Next
+	Next
 
-		FileClose($sTasksPath)
+	RegDelete($sKey)
 
+	RegEnumVal("HKLM" & $sSuffixKey & "\Software\KPRM", "1")
+
+	If @error <> 0 Then
+		RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM")
 	EndIf
 
 	Local Const $sSheduleTaskFolderName = "KpRm-quarantines"
-	Local Const $sScheduleTaskName = "KpRm-quarantines-" & $sTaskTime
-	Local $iTest
-
-	$iTest = _TaskDelete($sScheduleTaskName, $sSheduleTaskFolderName)
-
-	If $iTest <> 1 Then
-		WriteErrorMessage("Error durring deletetion " & $sScheduleTaskName)
-		Exit
-	EndIf
-
-	$iTest = _TaskListAll($sSheduleTaskFolderName)
-
-	If @error <> 0 Then
-		WriteErrorMessage("Tasks could not be listed in " & $sScheduleTaskName)
-		Exit
-	EndIf
-
-	Local Const $aTaskListSplitted = StringSplit($iTest, "|")
-	Local Const $bHasEmptyTaskFolder = $aTaskListSplitted[0] = 1 And $aTaskListSplitted[1] = ""
-
-	If $bHasEmptyTaskFolder = True Then
-		_TaskFolderDelete($sSheduleTaskFolderName)
-		HaraKiri()
-	EndIf
+	_TaskFolderDelete($sSheduleTaskFolderName)
+	HaraKiri()
 
 	Exit
 EndFunc   ;==>RemoveQuarantines
@@ -2071,15 +2055,15 @@ EndFunc   ;==>RemoveQuarantines
 ;################################################| Utils
 
 Func CustomMsgBox($vIcon = 0, $sTitle = "", $sMsg = "", $vButton = 0)
-    Dim $cBlack
-    Dim $cWhite
+	Dim $cBlack
+	Dim $cWhite
 
-    _ExtMsgBoxSet(-1, -1, $cBlack, $cWhite)
-    Local Const $iRetValue = _ExtMsgBox($vIcon, $vButton, $sTitle, $sMsg, 0)
-    _ExtMsgBoxSet(Default)
+	_ExtMsgBoxSet(-1, -1, $cBlack, $cWhite)
+	Local Const $iRetValue = _ExtMsgBox($vIcon, $vButton, $sTitle, $sMsg, 0)
+	_ExtMsgBoxSet(Default)
 
-    Return $iRetValue
-EndFunc
+	Return $iRetValue
+EndFunc   ;==>CustomMsgBox
 
 Func XPStyle($OnOff = 1)
 	Local $XS_n
@@ -2111,7 +2095,7 @@ Func ClearAttributes($sPath)
 	For $sAttribFound In $aAttribFound
 		If StringInStr($sAttrib, $sAttribFound) Then
 			If $iTimer = 1 Then
-			    _GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
+				_GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
 				$iTimer += 1
 			EndIf
 			FileSetAttrib($sPath, "-" & $sAttribFound)
@@ -2138,7 +2122,7 @@ Func HaraKiri()
 	Dim $bKpRmDev
 
 	If $bKpRmDev = False And @Compiled Then
-		Run(@ComSpec & ' /c timeout 3 && del /F /Q "' & @AutoItExe & '"', "", @SW_HIDE)
+		Run(@ComSpec & ' /c timeout 5 && del /F /Q "' & @AutoItExe & '"', "", @SW_HIDE)
 		FileDelete(@AutoItExe)
 	EndIf
 EndFunc   ;==>HaraKiri
@@ -2254,16 +2238,16 @@ EndFunc   ;==>LogMessage
 
 Func _Restart_Windows_Explorer()
 	Local $ifailure = 100, $zfailure = 100, $rPID = 0, $iExplorerPath = @WindowsDir & "\Explorer.exe"
-	_WinAPI_ShellChangeNotify($shcne_AssocChanged, 0, 0, 0) ; Save icon positions
+	_WinAPI_ShellChangeNotify($shcne_AssocChanged, 0, 0, 0)     ; Save icon positions
 	Local $hSystray = _WinAPI_FindWindow("Shell_TrayWnd", "")
-	_SendMessage($hSystray, 1460, 0, 0) ; Close the Explorer shell gracefully
-	While ProcessExists("Explorer.exe") ; Try Close the Explorer
+	_SendMessage($hSystray, 1460, 0, 0)     ; Close the Explorer shell gracefully
+	While ProcessExists("Explorer.exe")     ; Try Close the Explorer
 		Sleep(10)
 		$ifailure -= ProcessClose("Explorer.exe") ? 0 : 1
 		If $ifailure < 1 Then Return SetError(1, 0, 0)
 	WEnd
 
-	While (Not ProcessExists("Explorer.exe")) ; Start the Explorer
+	While (Not ProcessExists("Explorer.exe"))     ; Start the Explorer
 		If Not FileExists($iExplorerPath) Then Return SetError(-1, 0, 0)
 		Sleep(500)
 		$rPID = ShellExecute($iExplorerPath)
@@ -2518,24 +2502,24 @@ Func AddRemoveAtRestart($sElement)
 EndFunc   ;==>AddRemoveAtRestart
 
 Func MoveElementOnReboot($sElement)
-    $MOVEFILE_DELAY_UNTIL_REBOOT = 4
+	$MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
-    If IsFile($sElement) Then
-        PrepareRemove($sElement, 0, "1")
-        DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
-        FileDelete($sElement)
-    ElseIf isDir($sElement) Then
-        PrepareRemove($sElement, 1, "1")
-        DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
-        Local $aFileList = _FileListToArray($sElement, Default, Default, True)
-        If @error <> 0 Then Return
-        For $i = 1 to UBound($aFileList) -1
-            DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $aFileList[$i] & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
-            FileDelete($aFileList[$i])
-        Next
-        DirRemove($sElement, $DIR_REMOVE)
-    EndIf
-EndFunc
+	If IsFile($sElement) Then
+		PrepareRemove($sElement, 0, "1")
+		DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+		FileDelete($sElement)
+	ElseIf IsDir($sElement) Then
+		PrepareRemove($sElement, 1, "1")
+		DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+		Local $aFileList = _FileListToArray($sElement, Default, Default, True)
+		If @error <> 0 Then Return
+		For $i = 1 To UBound($aFileList) - 1
+			DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $aFileList[$i] & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+			FileDelete($aFileList[$i])
+		Next
+		DirRemove($sElement, $DIR_REMOVE)
+	EndIf
+EndFunc   ;==>MoveElementOnReboot
 
 Func RestartIfNeeded()
 	Dim $aRemoveRestart
@@ -2543,93 +2527,100 @@ Func RestartIfNeeded()
 	Dim $sCurrentTime
 
 	If $bNeedRestart = True And UBound($aRemoveRestart) > 1 Then
-		Local Const $sTasksPath = @HomeDrive & "\KPRM\tasks\task-" & $sCurrentTime & ".txt"
+		Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks"
+		Local Const $sSuffixKey = GetSuffixKey()
+		Local Const $sTasksBinary = $sTasksFolder & '\kprm-tasks.exe'
+		Local $sBinaryPath = @AutoItExe
+		If Not @Compiled Then $sBinaryPath = @ScriptFullPath
 
-		If Not FileExists(@HomeDrive & "\KPRM\tasks") Then
-			DirCreate(@HomeDrive & "\KPRM\tasks")
+		If Not FileExists($sTasksFolder) Then
+			DirCreate($sTasksFolder)
 		EndIf
 
-		Local $hFileOpen = FileOpen($sTasksPath, $FO_APPEND)
-
-		If $hFileOpen = -1 Then
-			Return False
+		If Not FileExists($sTasksBinary) Then
+			FileCopy($sBinaryPath, $sTasksBinary)
 		EndIf
 
 		For $i = 1 To UBound($aRemoveRestart) - 1
-			FileWriteLine($hFileOpen, $aRemoveRestart[$i])
 			MoveElementOnReboot($aRemoveRestart[$i])
+			Local $sPath = StringReplace($aRemoveRestart[$i], "\", "\\")
+			RegWrite("HKLM" & $sSuffixKey & "\Software\KPRM\Reboot\" & $sCurrentTime, $i, "REG_SZ", $sPath)
 		Next
 
-		FileClose($hFileOpen)
-		Local $sSuffix = GetSuffixKey()
-		Local $sBinaryPath = @AutoItExe
-		If Not @Compiled Then $sBinaryPath = @ScriptFullPath
-		RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sBinaryPath & '" "restart" "' & $sCurrentTime & '"')
+		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sTasksBinary & '" "restart" "' & $sCurrentTime & '"')
+
 		UpdateStatusBar("Need Restart")
 		CustomMsgBox(64, "Restart Now", $lRestart)
+		HaraKiri()
 		Shutdown(6)
 	EndIf
 EndFunc   ;==>RestartIfNeeded
 
-Func ExecuteScriptFile($sReportTime)
+Func ExecuteOnReboot($sReportTime)
 	Dim $bKpRmDev
 
 	Local Const $sKPReportFile = "kprm-" & $sReportTime & ".txt"
 	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
 	Local Const $sDesktopReport = @DesktopDir & "\" & $sKPReportFile
-	Local Const $sTasksFile = @HomeDrive & "\KPRM\tasks\task-" & $sReportTime & ".txt"
+	Local Const $sSuffixKey = GetSuffixKey()
+	Local Const $sKey = "HKLM" & $sSuffixKey & "\Software\KPRM\Reboot\" & $sCurrentTime
 
-	If Not FileExists($sTasksFile) Then Exit
 	If Not FileExists($sHomeReport) Then Exit
 	If Not FileExists($sDesktopReport) Then Exit
 
 	FileWrite($sHomeReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
 	FileWrite($sDesktopReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
 
-	FileOpen($sTasksFile, 0)
-
-	For $i = 1 To _FileCountLines($sTasksFile)
-		Local $sLine = FileReadLine($sTasksFile, $i)
-		$sLine = StringStripWS($sLine, $STR_STRIPLEADING + $STR_STRIPTRAILING)
-
+	For $i = 1 To 10000
+		Local $sVal = RegEnumVal($sKey, $i)
+		If @error <> 0 Then ExitLoop
+		Local $sElementPath = RegRead($sKey, $sVal)
+		If @error <> 0 Then ExitLoop
+		Local $sPath = StringReplace($sElementPath, "\\", "\")
 		Select
-			Case $sLine = ""
-			Case IsFile($sLine)
-				PrepareRemove($sLine, 0, "1")
-				FileDelete($sLine)
-			Case IsDir($sLine)
-				PrepareRemove($sLine, 1, "1")
-				DirRemove($sLine, $DIR_REMOVE)
-			Case IsRegistryKey($sLine)
-				_ClearObjectDacl($sLine, $SE_REGISTRY_KEY)
-				_GrantAllAccess($sLine, $SE_REGISTRY_KEY, @UserName)
-				RegDelete($sLine)
+			Case $sPath = ""
+			Case IsFile($sPath)
+				PrepareRemove($sPath, 0, "1")
+				FileDelete($sPath)
+			Case IsDir($sPath)
+				PrepareRemove($sPath, 1, "1")
+				DirRemove($sPath, $DIR_REMOVE)
+			Case IsRegistryKey($sPath)
+				_ClearObjectDacl($sPath, $SE_REGISTRY_KEY)
+				_GrantAllAccess($sPath, $SE_REGISTRY_KEY, @UserName)
+				RegDelete($sPath)
 			Case Else
 		EndSelect
 
 		Local $sSymbol = "[OK]"
 
 		Select
-			Case IsRegistryKey($sLine)
-				If RegEnumVal($sLine, "1") Then
+			Case IsRegistryKey($sPath)
+				If RegEnumVal($sPath, "1") Then
 					$sSymbol = "[X]"
 				EndIf
-			Case FileExists($sLine)
+			Case FileExists($sPath)
 				$sSymbol = "[X]"
 		EndSelect
 
-		Local $sMessage = "     " & $sSymbol & " " & $sLine & " deleted (restart)"
+		Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (restart)"
 
 		FileWrite($sHomeReport, $sMessage & @CRLF)
 		FileWrite($sDesktopReport, $sMessage & @CRLF)
 	Next
 
-	FileClose($sTasksFile)
+	RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM\Reboot")
+	RegEnumVal("HKLM" & $sSuffixKey & "\Software\KPRM", "1")
+
+	If @error <> 0 Then
+		RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM")
+	EndIf
+
 	OpenReport($sHomeReport)
 	HaraKiri()
 
 	Exit
-EndFunc   ;==>ExecuteScriptFile
+EndFunc   ;==>ExecuteOnReboot
 
 Func SendReport($sPathReport)
 	If Not @Compiled Then Return
@@ -2647,3 +2638,4 @@ Func SendReport($sPathReport)
 	_WinHttpCloseHandle($hConnect)
 	_WinHttpCloseHandle($hOpen)
 EndFunc   ;==>SendReport
+
