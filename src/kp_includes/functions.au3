@@ -217,8 +217,8 @@ Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
 	Dim $bRemoveToolLastPass
 
 	If $bRemoveToolLastPass = True Or Number($sForce) Then
-		_ClearObjectDacl($sPath)
-		_GrantAllAccess($sPath)
+		_ClearObjectDacl($sPath, $SE_FILE_OBJECT)
+		_GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
 	EndIf
 
 	ClearAttributes($sPath)
@@ -411,8 +411,8 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 	EndIf
 
 	If $bRemoveToolLastPass = True Or Number($sForce) Then
-		_ClearObjectDacl($key)
-		_GrantAllAccess($key, $SE_REGISTRY_KEY)
+		_ClearObjectDacl($key, $SE_REGISTRY_KEY)
+		_GrantAllAccess($key, $SE_REGISTRY_KEY, @UserName)
 	EndIf
 
 	UpdateStatusBar("Remove registry key " & $key)
@@ -2111,7 +2111,7 @@ Func ClearAttributes($sPath)
 	For $sAttribFound In $aAttribFound
 		If StringInStr($sAttrib, $sAttribFound) Then
 			If $iTimer = 1 Then
-				_GrantAllAccess($sPath)
+			    _GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
 				$iTimer += 1
 			EndIf
 			FileSetAttrib($sPath, "-" & $sAttribFound)
@@ -2517,6 +2517,26 @@ Func AddRemoveAtRestart($sElement)
 	EndIf
 EndFunc   ;==>AddRemoveAtRestart
 
+Func MoveElementOnReboot($sElement)
+    $MOVEFILE_DELAY_UNTIL_REBOOT = 4
+
+    If IsFile($sElement) Then
+        PrepareRemove($sElement, 0, "1")
+        DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+        FileDelete($sElement)
+    ElseIf isDir($sElement) Then
+        PrepareRemove($sElement, 1, "1")
+        DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+        Local $aFileList = _FileListToArray($sElement, Default, Default, True)
+        If @error <> 0 Then Return
+        For $i = 1 to UBound($aFileList) -1
+            DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $aFileList[$i] & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+            FileDelete($aFileList[$i])
+        Next
+        DirRemove($sElement, $DIR_REMOVE)
+    EndIf
+EndFunc
+
 Func RestartIfNeeded()
 	Dim $aRemoveRestart
 	Dim $bNeedRestart
@@ -2537,19 +2557,14 @@ Func RestartIfNeeded()
 
 		For $i = 1 To UBound($aRemoveRestart) - 1
 			FileWriteLine($hFileOpen, $aRemoveRestart[$i])
+			MoveElementOnReboot($aRemoveRestart[$i])
 		Next
 
 		FileClose($hFileOpen)
-
 		Local $sSuffix = GetSuffixKey()
 		Local $sBinaryPath = @AutoItExe
-
 		If Not @Compiled Then $sBinaryPath = @ScriptFullPath
-
-		If Not RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sBinaryPath & '" "restart" "' & $sCurrentTime & '"') Then
-			Return False
-		EndIf
-
+		RegWrite("HKLM" & $sSuffix & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sBinaryPath & '" "restart" "' & $sCurrentTime & '"')
 		UpdateStatusBar("Need Restart")
 		CustomMsgBox(64, "Restart Now", $lRestart)
 		Shutdown(6)
@@ -2586,8 +2601,8 @@ Func ExecuteScriptFile($sReportTime)
 				PrepareRemove($sLine, 1, "1")
 				DirRemove($sLine, $DIR_REMOVE)
 			Case IsRegistryKey($sLine)
-				_ClearObjectDacl($sLine)
-				_GrantAllAccess($sLine, $SE_REGISTRY_KEY)
+				_ClearObjectDacl($sLine, $SE_REGISTRY_KEY)
+				_GrantAllAccess($sLine, $SE_REGISTRY_KEY, @UserName)
 				RegDelete($sLine)
 			Case Else
 		EndSelect
