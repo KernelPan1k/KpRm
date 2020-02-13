@@ -1918,8 +1918,7 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 	EndIf
 
 	For $i = 1 To UBound($aElementsToKeep) - 1
-	    ; TODO FIX ERROR
-		Local $sPath = StringReplace($aElementsToKeep[$i], "\", "\\")
+		Local $sPath = StringReplace($aElementsToKeep[$i][0], "\", "\\")
 		RegWrite("HKLM" & $sSuffixKey & "\Software\KPRM\quarantines\" & $sCurrentTime, $i, "REG_SZ", $sPath)
 	Next
 
@@ -1971,6 +1970,7 @@ Func SetDeleteQuarantinesIn7DaysIfNeeded()
 	EndIf
 EndFunc   ;==>SetDeleteQuarantinesIn7DaysIfNeeded
 
+
 Func RemoveQuarantines($sTaskTime)
 	Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks-quarantines"
 	Local Const $sKPReportFile = "kprm-" & $sTaskTime & ".txt"
@@ -1980,72 +1980,109 @@ Func RemoveQuarantines($sTaskTime)
 	Local Const $bDesktopReportExist = FileExists($sDesktopReport)
 	Local Const $sSuffixKey = GetSuffixKey()
 	Local Const $sKey = "HKLM" & $sSuffixKey & "\Software\KPRM\quarantines"
+	Local Const $sKeyTime = $sKey & "\" & $sTaskTime
 
-	For $i = 1 To 50
-		Local $sVal = RegEnumVal($sKey, $i)
+	If $bHomeReportExist = True Then
+		FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+	EndIf
+
+	If $bDesktopReportExist = True Then
+		FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+	EndIf
+
+	For $i = 1 To 10000
+		Local $sVal = RegEnumVal($sKeyTime, $i)
 		If @error <> 0 Then ExitLoop
 
-		For $n = 1 To 10000
-			Local $sVal2 = RegEnumVal($sKey & "\" & $sVal, $n)
-			If @error <> 0 Then ExitLoop
+		Local $sElementPath = RegRead($sKeyTime, $sVal)
+		If @error <> 0 Then ExitLoop
 
-			Local $sElementPath = RegRead($sKey & "\" & $sVal, $sVal2)
-			If @error <> 0 Then ExitLoop
+		Local $sPath = StringReplace($sElementPath, "\\", "\")
+		If $sPath = "" Then ContinueLoop
 
-			Local $sPath = StringReplace($sElementPath, "\\", "\")
+		If IsFile($sPath) Then
+			PrepareRemove($sPath, 0, "1")
+			FileDelete($sPath)
+		ElseIf IsDir($sPath) Then
+			PrepareRemove($sPath, 1, "1")
+			DirRemove($sPath, $DIR_REMOVE)
+		Else
+			ContinueLoop
+		EndIf
+
+		If $bHomeReportExist = True Or $bDesktopReportExist = True Then
+			Local $sSymbol = "[OK]"
+			Local $bExist = FileExists($sPath)
+
+			If $bExist = True Then
+				$sSymbol = "[X]"
+			EndIf
+
+			Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (after 7 days)"
 
 			If $bHomeReportExist = True Then
-				FileWrite($sHomeReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+				FileWrite($sHomeReport, $sMessage & @CRLF)
 			EndIf
 
 			If $bDesktopReportExist = True Then
-				FileWrite($sDesktopReport, @CRLF & "- Deletions scheduled (" & _NowCalcDate() & ") -" & @CRLF)
+				FileWrite($sDesktopReport, $sMessage & @CRLF)
 			EndIf
-
-			If $sPath = "" Then ContinueLoop
-
-			If IsFile($sPath) Then
-				PrepareRemove($sPath, 0, "1")
-				FileDelete($sPath)
-			ElseIf IsDir($sPath) Then
-				PrepareRemove($sPath, 1, "1")
-				DirRemove($sPath, $DIR_REMOVE)
-			Else
-				ContinueLoop
-			EndIf
-
-			If $bHomeReportExist = True Or $bDesktopReportExist = True Then
-				Local $sSymbol = "[OK]"
-				Local $bExist = FileExists($sPath)
-
-				If $bExist = True Then
-					$sSymbol = "[X]"
-				EndIf
-
-				Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (after 7 days)"
-
-				If $bHomeReportExist = True Then
-					FileWrite($sHomeReport, $sMessage & @CRLF)
-				EndIf
-
-				If $bDesktopReportExist = True Then
-					FileWrite($sDesktopReport, $sMessage & @CRLF)
-				EndIf
-			EndIf
-		Next
+		EndIf
 	Next
 
-	RegDelete($sKey)
+	Local $hasRemainingTasks = True
+
+	RegDelete($sKeyTime)
+	RegEnumVal($sKey, "1")
+
+	If @error <> 0 Then
+		Local $hasRemainingTasks = False
+		RegDelete($sKey)
+	EndIf
 
 	RegEnumVal("HKLM" & $sSuffixKey & "\Software\KPRM", "1")
 
 	If @error <> 0 Then
+		Local $hasRemainingTasks = False
 		RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM")
 	EndIf
 
 	Local Const $sSheduleTaskFolderName = "KpRm-quarantines"
-	_TaskFolderDelete($sSheduleTaskFolderName)
-	HaraKiri()
+	Local Const $sScheduleTaskName = "KpRm-quarantines-" & $sTaskTime
+	Local $iTest
+
+	$iTest = _TaskDelete($sScheduleTaskName, $sSheduleTaskFolderName)
+
+	If $iTest <> 1 Then
+		Exit
+	EndIf
+
+	$iTest = _TaskListAll($sSheduleTaskFolderName)
+
+	If @error <> 0 Then
+		Exit
+	EndIf
+
+	Local Const $aTaskListSplitted = StringSplit($iTest, "|")
+	Local Const $bHasEmptyTaskFolder = $aTaskListSplitted[0] = 1 And $aTaskListSplitted[1] = ""
+
+	If $bHasEmptyTaskFolder = True Then
+		_TaskFolderDelete($sSheduleTaskFolderName)
+
+		If $hasRemainingTasks Then
+			RegDelete($sKey)
+		EndIf
+
+		HaraKiri()
+	ElseIf $hasRemainingTasks = False Then
+		For $i = 1 To UBound($aTaskListSplitted) - 1
+			_TaskDelete($aTaskListSplitted[$i], $sSheduleTaskFolderName)
+		Next
+
+		_TaskFolderDelete($sSheduleTaskFolderName)
+
+		HaraKiri()
+	EndIf
 
 	Exit
 EndFunc   ;==>RemoveQuarantines
@@ -2552,7 +2589,11 @@ Func RestartIfNeeded()
 		UpdateStatusBar("Need Restart")
 		CustomMsgBox(64, "Restart Now", $lRestart)
 		HaraKiri()
-		Shutdown(6)
+
+		If Shutdown(6) <> 1 Then
+			Shutdown(2)
+		EndIf
+
 	EndIf
 EndFunc   ;==>RestartIfNeeded
 
