@@ -86,7 +86,6 @@ Func InitGlobalVars()
 	Dim $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
 	Dim $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & '-' & @SEC
 	Dim $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
-	Dim $bRemoveToolLastPass = False
 	Dim $bPowerShellAvailable = Null
 	Dim $bDeleteQuarantines = Null
 	Dim $bSearchOnly = False
@@ -167,10 +166,8 @@ Func KpRemover()
 
 	If GUICtrlRead($oRemoveTools) = $GUI_CHECKED Then
 		RunRemoveTools()
-		$bRemoveToolLastPass = True
-		RunRemoveTools()
 	Else
-		ProgressBarUpdate(32)
+		ProgressBarUpdate(16)
 	EndIf
 
 	ProgressBarUpdate()
@@ -213,14 +210,9 @@ EndFunc   ;==>KpRemover
 
 ;################################################| Tools_remove
 
-Func PrepareRemove($sPath, $bRecursive = 0, $sForce = "0")
-	Dim $bRemoveToolLastPass
-
-	If $bRemoveToolLastPass = True Or Number($sForce) Then
-		_ClearObjectDacl($sPath, $SE_FILE_OBJECT)
-		_GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
-	EndIf
-
+Func PrepareRemove($sPath, $bRecursive = 0)
+	_ClearObjectDacl($sPath, $SE_FILE_OBJECT)
+	_GrantAllAccess($sPath, $SE_FILE_OBJECT, @UserName)
 	ClearAttributes($sPath)
 EndFunc   ;==>PrepareRemove
 
@@ -261,8 +253,82 @@ Func IsProcessInWhiteList($sProcess)
 	Return $bInWhiteList
 EndFunc   ;==>IsProcessInWhiteList
 
-Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
+Func RemoveTheFile($sFile)
+	Dim $bNeedRestart
+
+	If FileExists($sFile) Then
+		PrepareRemove($sFile, 0)
+
+		FileDelete($sFile)
+
+		If FileExists($sFile) Then
+			DllCall('kernel32.dll', 'bool', 'DeleteFileW', 'wstr', $sFile)
+		EndIf
+
+		If FileExists($sFile) Then
+			$bNeedRestart = True
+			DllCall('kernel32.dll', "int", "MoveFileExW", "wstr", $sFile, "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
+		EndIf
+	EndIf
+EndFunc   ;==>RemoveTheFile
+
+Func RemoveTheFolder($sPath)
+	Dim $bNeedRestart
+
+	If FileExists($sPath) Then
+		PrepareRemove($sPath, 1)
+
+		DirRemove($sPath, $DIR_REMOVE)
+
+		If FileExists($sPath) Then
+			Local $aFileList = _FileListToArrayRec($sPath, "*", $FLTA_FILES, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+			If @error <> 0 Then Return
+
+			_ArrayDelete($aFileList, 0)
+			_ArrayReverse($aFileList)
+
+			For $i = 0 To UBound($aFileList) - 1
+				RemoveTheFile($aFileList[$i])
+			Next
+
+			Local $aFolderList = _FileListToArrayRec($sPath, "*", $FLTA_FOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+			If @error <> 0 Then Return
+
+			_ArrayDelete($aFileList, 0)
+			_ArrayReverse($aFileList)
+
+			For $i = 0 To UBound($aFolderList) - 1
+				DirRemove($aFolderList[$i], $DIR_REMOVE)
+			Next
+
+			DirRemove($sPath, $DIR_REMOVE)
+
+			If FileExists($sPath) Then
+				$bNeedRestart = True
+
+				$aFolderList = _FileListToArrayRec($sPath, "*", $FLTA_FOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+				If @error <> 0 Then Return
+
+				_ArrayDelete($aFileList, 0)
+				_ArrayReverse($aFileList)
+
+				Local $hDll = DllOpen('kernel32.dll')
+
+				For $i = 0 To UBound($aFolderList) - 1
+					DllCall($hDll, "int", "MoveFileExW", "wstr", $aFolderList[$i], "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
+				Next
+
+				DllCall($hDll, "int", "MoveFileExW", "wstr", $sPath, "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
+
+				DllClose($hDll)
+			EndIf
+		EndIf
+	EndIf
+EndFunc   ;==>RemoveTheFolder
+
+Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null)
 	Dim $bSearchOnly
+	Dim $bNeedRestart
 
 	Local Const $iFileExists = IsFile($sFile)
 
@@ -278,8 +344,7 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 		If $bSearchOnly = False Then
 			UpdateStatusBar("Remove file " & $sFile)
 			UpdateToolCpt($sToolKey, 'element', $sFile)
-			PrepareRemove($sFile, 0, $sForce)
-			FileDelete($sFile)
+			RemoveTheFile($sFile)
 		Else
 			UpdateStatusBar("File " & $sFile & " found")
 			AddToSearch($sFile, $sToolKey)
@@ -287,9 +352,10 @@ Func RemoveFile($sFile, $sToolKey, $sDescriptionPattern = Null, $sForce = "0")
 	EndIf
 EndFunc   ;==>RemoveFile
 
-Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
+Func RemoveFolder($sPath, $sToolKey, $sQuarantine = "0")
 	Dim $bDeleteQuarantines
 	Dim $bSearchOnly
+	Dim $bNeedRestart
 
 	Local $iFileExists = IsDir($sPath)
 
@@ -313,9 +379,9 @@ Func RemoveFolder($sPath, $sToolKey, $sForce = "0", $sQuarantine = "0")
 
 		If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
 			UpdateToolCpt($sToolKey, 'element', $sPath)
-			PrepareRemove($sPath, 1, $sForce)
+			PrepareRemove($sPath, 1)
 			UpdateStatusBar("Remove folder " & $sPath)
-			DirRemove($sPath, $DIR_REMOVE)
+			RemoveTheFolder($sPath)
 		ElseIf $bDeleteQuarantines = 7 Then
 			AddElementToKeep($sPath, $sToolKey)
 		EndIf
@@ -358,11 +424,13 @@ Func RemoveFileHandler($sPathOfFile, Const ByRef $aElements)
 	Local $sFile = $sFileName & $sExtension
 
 	For $e = 0 To UBound($aElements) - 1
-		If $aElements[$e][3] And $sTypeOfFile = $aElements[$e][1] And StringRegExp($sFile, $aElements[$e][3]) Then
+		If $aElements[$e][3] _
+				And $sTypeOfFile = $aElements[$e][1] _
+				And StringRegExp($sFile, $aElements[$e][3]) Then
 			If $sTypeOfFile = 'file' Then
-				RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2], $aElements[$e][4])
+				RemoveFile($sPathOfFile, $aElements[$e][0], $aElements[$e][2])
 			ElseIf $sTypeOfFile = 'folder' Then
-				RemoveFolder($sPathOfFile, $aElements[$e][0], $aElements[$e][4], $aElements[$e][5])
+				RemoveFolder($sPathOfFile, $aElements[$e][0], $aElements[$e][4])
 			EndIf
 		EndIf
 	Next
@@ -400,8 +468,7 @@ Func RemoveAllFileFrom($sPath, $aElements)
 
 EndFunc   ;==>RemoveAllFileFrom
 
-Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
-	Dim $bRemoveToolLastPass
+Func RemoveRegistryKey($key, $sToolKey)
 	Dim $bSearchOnly
 
 	If $bSearchOnly = True Then
@@ -410,10 +477,8 @@ Func RemoveRegistryKey($key, $sToolKey, $sForce = "0")
 		Return
 	EndIf
 
-	If $bRemoveToolLastPass = True Or Number($sForce) Then
-		_ClearObjectDacl($key, $SE_REGISTRY_KEY)
-		_GrantAllAccess($key, $SE_REGISTRY_KEY, @UserName)
-	EndIf
+	_ClearObjectDacl($key, $SE_REGISTRY_KEY)
+	_GrantAllAccess($key, $SE_REGISTRY_KEY, @UserName)
 
 	UpdateStatusBar("Remove registry key " & $key)
 
@@ -434,13 +499,11 @@ Func CloseUnEssentialProcess()
 EndFunc   ;==>CloseUnEssentialProcess
 
 Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
-	Dim $bRemoveToolLastPass
-
 	Local $iCpt = 50
 
 	If 0 = ProcessExists($sProcess) Then Return False
 
-	If $bRemoveToolLastPass = True Or Number($sForce) Then
+	If Number($sForce) Then
 		_Permissions_KillProcess($sProcess)
 
 		If 0 = ProcessExists($sProcess) Then Return True
@@ -465,7 +528,8 @@ Func RemoveAllProcess(Const ByRef $aList)
 		Local $iPid = $aProcessList[$i][1]
 
 		For $iCpt = 0 To UBound($aList) - 1
-			If IsProcessInWhiteList($sProcessName) = False And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
+			If IsProcessInWhiteList($sProcessName) = False _
+					And StringRegExp($sProcessName, $aList[$iCpt][1]) Then
 				Local $sProcessPath = _WinAPI_GetProcessFileName($iPid)
 				If @error <> 0 Then ContinueLoop
 				If Not IsFile($sProcessPath) Then ContinueLoop
@@ -581,7 +645,7 @@ Func RemoveAllRegistryKeys(Const ByRef $aList)
 		RegEnumVal($sKey, "1")
 
 		If @error = 0 Then
-			RemoveRegistryKey($sKey, $aList[$i][0], $aList[$i][2])
+			RemoveRegistryKey($sKey, $aList[$i][0])
 		EndIf
 	Next
 EndFunc   ;==>RemoveAllRegistryKeys
@@ -596,7 +660,7 @@ Func CleanDirectoryContent(Const ByRef $aList)
 		If FileExists($sPath) Then
 			Local $bIsQuarantine = False
 
-			If $aList[$i][4] = "1" Then
+			If $aList[$i][3] = "1" Then
 				$bIsQuarantine = True
 
 				If $bDeleteQuarantines = Null And $bSearchOnly = False Then
@@ -611,7 +675,7 @@ Func CleanDirectoryContent(Const ByRef $aList)
 				For $f = 1 To $aFileList[0]
 					If $bSearchOnly = False Then
 						If $bIsQuarantine = False Or $bDeleteQuarantines = 1 Then
-							RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2], $aList[$i][3])
+							RemoveFile($sPath & '\' & $aFileList[$f], $aList[$i][0], $aList[$i][2])
 						ElseIf $bDeleteQuarantines = 7 Then
 							AddElementToKeep($sPath & '\' & $aFileList[$f], $aList[$i][0])
 						EndIf
@@ -627,14 +691,14 @@ EndFunc   ;==>CleanDirectoryContent
 Func RemoveFileCustomPath(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
-		RemoveFile($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
+		RemoveFile($sPath, $aList[$i][0], $aList[$i][2])
 	Next
 EndFunc   ;==>RemoveFileCustomPath
 
 Func RemoveFolderCustomPath(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
 		Local $sPath = FormatPathWithMacro($aList[$i][1])
-		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2], $aList[$i][3])
+		RemoveFolder($sPath, $aList[$i][0], $aList[$i][2])
 	Next
 EndFunc   ;==>RemoveFolderCustomPath
 
@@ -645,7 +709,7 @@ EndFunc   ;==>RemoveFolderCustomPath
 
 Func GetSwapOrder(ByRef $sT)
 	If _ArraySearch($aActionsFile, $sT) <> -1 Then
-		Local $aOrder[5][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["force", "0"], ["quarantine", "0"]]
+		Local $aOrder[4][2] = [["type", "file"], ["companyName", ""], ["pattern", "__REQUIRED__"], ["quarantine", "0"]]
 		Return $aOrder
 	ElseIf $sT = "uninstall" Then
 		Local $aOrder[2][2] = [["folder", "__REQUIRED__"], ["uninstaller", "__REQUIRED__"]]
@@ -660,19 +724,19 @@ Func GetSwapOrder(ByRef $sT)
 		Local $aOrder[3][2] = [["process", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
 		Return $aOrder
 	ElseIf $sT = "registryKey" Then
-		Local $aOrder[2][2] = [["key", "__REQUIRED__"], ["force", "0"]]
+		Local $aOrder[1][2] = [["key", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "searchRegistryKey" Then
 		Local $aOrder[3][2] = [["key", "__REQUIRED__"], ["pattern", "__REQUIRED__"], ["value", "__REQUIRED__"]]
 		Return $aOrder
 	ElseIf $sT = "cleanDirectory" Then
-		Local $aOrder[4][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"], ["quarantine", "0"]]
+		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["quarantine", "0"]]
 		Return $aOrder
 	ElseIf $sT = "file" Then
-		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["companyName", ""], ["force", "0"]]
+		Local $aOrder[2][2] = [["path", "__REQUIRED__"], ["companyName", ""]]
 		Return $aOrder
 	ElseIf $sT = "folder" Then
-		Local $aOrder[3][2] = [["path", "__REQUIRED__"], ["force", "0"], ["quarantine", "0"]]
+		Local $aOrder[2][2] = [["path", "__REQUIRED__"], ["quarantine", "0"]]
 		Return $aOrder
 	EndIf
 EndFunc   ;==>GetSwapOrder
@@ -741,81 +805,74 @@ EndFunc   ;==>InitOToolCpt
 
 Func GenerateDeleteReport()
 	Dim $bDeleteQuarantines
-	Dim $bRemoveToolLastPass
 	Dim $aElementsToKeep
-	Dim $bRemoveToolLastPass
 
-	If $bRemoveToolLastPass = True Then
-		Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
-		Local $bHasFoundTools = False
+	Local Const $aToolCptSubKeys[4] = ["process", "uninstall", "element", "key"]
+	Local $bHasFoundTools = False
 
-		For $sToolsCptKey In $oToolsCpt
-			Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
-			Local $bToolExistDisplayMessage = False
+	For $sToolsCptKey In $oToolsCpt
+		Local $oToolCptTool = $oToolsCpt.Item($sToolsCptKey)
+		Local $bToolExistDisplayMessage = False
 
-			For $sToolCptSubKeyI = 0 To UBound($aToolCptSubKeys) - 1
-				Local $sToolCptSubKey = $aToolCptSubKeys[$sToolCptSubKeyI]
-				Local $oToolCptSubTool = $oToolCptTool.Item($sToolCptSubKey)
-				Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
+		For $sToolCptSubKeyI = 0 To UBound($aToolCptSubKeys) - 1
+			Local $sToolCptSubKey = $aToolCptSubKeys[$sToolCptSubKeyI]
+			Local $oToolCptSubTool = $oToolCptTool.Item($sToolCptSubKey)
+			Local $oToolCptSubToolKeys = $oToolCptSubTool.Keys
 
-				If UBound($oToolCptSubToolKeys) > 0 Then
-					$bHasFoundTools = True
-					If $bToolExistDisplayMessage = False Then
-						$bToolExistDisplayMessage = True
-						LogMessage(@CRLF & "  ## " & $sToolsCptKey)
-					EndIf
-
-					For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
-						Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
-						Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
-						CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
-					Next
+			If UBound($oToolCptSubToolKeys) > 0 Then
+				$bHasFoundTools = True
+				If $bToolExistDisplayMessage = False Then
+					$bToolExistDisplayMessage = True
+					LogMessage(@CRLF & "  ## " & $sToolsCptKey)
 				EndIf
-			Next
-		Next
 
-		If $bHasFoundTools = False Then
-			LogMessage("     [I] No tools found")
-		EndIf
-
-		Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
-		Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
-		Local Const $bUseOtherLinesSection = $bToolZhpQuarantineExist = True Or $bHasElementToKeep = True
-
-		If $bUseOtherLinesSection = True Then
-			LogMessage(@CRLF & "- Other Lines -" & @CRLF)
-		EndIf
-
-		If $bToolZhpQuarantineExist = True Then
-			LogMessage(@CRLF & "  ## Quarantines never deleted")
-			LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
-		EndIf
-
-		If $bHasElementToKeep = True Then
-			If $bDeleteQuarantines = Null Then
-				LogMessage(@CRLF & "  ## Quarantines keeped")
-
-			ElseIf $bDeleteQuarantines = 7 Then
-				LogMessage(@CRLF & "  ## Quarantines that will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
+				For $oToolCptSubToolKeyI = 0 To UBound($oToolCptSubToolKeys) - 1
+					Local $oToolCptSubToolKey = $oToolCptSubToolKeys[$oToolCptSubToolKeyI]
+					Local $oToolCptSubToolVal = $oToolCptSubTool.Item($oToolCptSubToolKey)
+					CheckIfExist($sToolCptSubKey, $oToolCptSubToolKey, $oToolCptSubToolVal)
+				Next
 			EndIf
+		Next
+	Next
 
-			_ArraySort($aElementsToKeep, 0, 0, 0, 1)
+	If $bHasFoundTools = False Then
+		LogMessage("     [I] No tools found")
+	EndIf
 
-			For $i = 1 To UBound($aElementsToKeep) - 1
-				LogMessage("    ~ " & $aElementsToKeep[$i][0] & " (" & $aElementsToKeep[$i][1] & ")")
-			Next
+	Local Const $bToolZhpQuarantineExist = IsDir(@AppDataDir & "\ZHP")
+	Local Const $bHasElementToKeep = UBound($aElementsToKeep) > 1
+	Local Const $bUseOtherLinesSection = $bToolZhpQuarantineExist = True Or $bHasElementToKeep = True
+
+	If $bUseOtherLinesSection = True Then
+		LogMessage(@CRLF & "- Other Lines -" & @CRLF)
+	EndIf
+
+	If $bToolZhpQuarantineExist = True Then
+		LogMessage(@CRLF & "  ## Quarantines never deleted")
+		LogMessage("    ~ " & @AppDataDir & "\ZHP (ZHP)")
+	EndIf
+
+	If $bHasElementToKeep = True Then
+		If $bDeleteQuarantines = Null Then
+			LogMessage(@CRLF & "  ## Quarantines keeped")
+
+		ElseIf $bDeleteQuarantines = 7 Then
+			LogMessage(@CRLF & "  ## Quarantines that will be deleted in 7 days (" & _DateAdd('d', 7, _NowCalcDate()) & ")")
 		EndIf
+
+		_ArraySort($aElementsToKeep, 0, 0, 0, 1)
+
+		For $i = 1 To UBound($aElementsToKeep) - 1
+			LogMessage("    ~ " & $aElementsToKeep[$i][0] & " (" & $aElementsToKeep[$i][1] & ")")
+		Next
 	EndIf
 EndFunc   ;==>GenerateDeleteReport
 
 
 Func RunRemoveTools()
-	Dim $bRemoveToolLastPass
 	Dim $bSearchOnly
 
-	If $bRemoveToolLastPass = True Then
-		LogMessage(@CRLF & "- Delete Tools -" & @CRLF)
-	EndIf
+	LogMessage(@CRLF & "- Delete Tools -" & @CRLF)
 
 	Local Const $aListActions = [ _
 			"process", _
@@ -1549,7 +1606,7 @@ Func CloseAllSelectedProcess(ByRef Const $aRemoveSelection, $sForce = "0")
 	ProgressBarUpdate(10)
 EndFunc   ;==>CloseAllSelectedProcess
 
-Func RemoveSelectedLineSearchPass(ByRef Const $aRemoveSelection, $sForce = "0")
+Func RemoveSelectedLineSearchPass(ByRef Const $aRemoveSelection, $sForce = "1")
 	CloseAllSelectedProcess($aRemoveSelection, $sForce)
 
 	Local Const $sCompanyName = Null
@@ -1560,11 +1617,11 @@ Func RemoveSelectedLineSearchPass(ByRef Const $aRemoveSelection, $sForce = "0")
 		Local $sTool = $aRemoveSelection[$iCpt][1]
 
 		If IsFile($sLine) Then
-			RemoveFile($sLine, $sTool, $sCompanyName, $sForce)
+			RemoveFile($sLine, $sTool, $sCompanyName)
 		ElseIf IsDir($sLine) Then
-			RemoveFolder($sLine, $sTool, $sForce, $sQuarantine)
+			RemoveFolder($sLine, $sTool, $sQuarantine)
 		ElseIf IsRegistryKey($sLine) Then
-			RemoveRegistryKey($sLine, $sTool, $sForce)
+			RemoveRegistryKey($sLine, $sTool)
 		EndIf
 	Next
 
@@ -1572,11 +1629,7 @@ Func RemoveSelectedLineSearchPass(ByRef Const $aRemoveSelection, $sForce = "0")
 EndFunc   ;==>RemoveSelectedLineSearchPass
 
 Func RemoveAllSelectedLineSearch(ByRef Const $aRemoveSelection)
-	Dim $bRemoveToolLastPass = False
-
 	CloseUnEssentialProcess()
-	RemoveSelectedLineSearchPass($aRemoveSelection, "0")
-	$bRemoveToolLastPass = True
 	RemoveSelectedLineSearchPass($aRemoveSelection, "1")
 	GenerateDeleteReport()
 	ProgressBarUpdate(50)
@@ -2001,10 +2054,10 @@ Func RemoveQuarantines($sTaskTime)
 		If $sPath = "" Then ContinueLoop
 
 		If IsFile($sPath) Then
-			PrepareRemove($sPath, 0, "1")
+			PrepareRemove($sPath, 0)
 			FileDelete($sPath)
 		ElseIf IsDir($sPath) Then
-			PrepareRemove($sPath, 1, "1")
+			PrepareRemove($sPath, 1)
 			DirRemove($sPath, $DIR_REMOVE)
 		Else
 			ContinueLoop
@@ -2541,54 +2594,44 @@ EndFunc   ;==>AddRemoveAtRestart
 Func MoveElementOnReboot($sElement)
 	$MOVEFILE_DELAY_UNTIL_REBOOT = 4
 
+	Local $hDll = DllOpen("kernel32.dll")
+
 	If IsFile($sElement) Then
-		PrepareRemove($sElement, 0, "1")
-		DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+		PrepareRemove($sElement, 0)
+		DllCall($hDll, "int", "MoveFileExW", "wstr", $sElement, "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
 		FileDelete($sElement)
 	ElseIf IsDir($sElement) Then
-		PrepareRemove($sElement, 1, "1")
-		DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $sElement & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+		PrepareRemove($sElement, 1)
+		DllCall($hDll, "int", "MoveFileExW", "wstr", $sElement, "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
 		Local $aFileList = _FileListToArray($sElement, Default, Default, True)
 		If @error <> 0 Then Return
 		For $i = 1 To UBound($aFileList) - 1
-			DllCall("kernel32.dll", "int", "MoveFileEx", "str", '"' & $aFileList[$i] & '"', "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
+			DllCall($hDll, "int", "MoveFileExW", "wstr", $sElement, "ptr", 0, "dword", $MOVEFILE_DELAY_UNTIL_REBOOT)
 			FileDelete($aFileList[$i])
 		Next
 		DirRemove($sElement, $DIR_REMOVE)
 	EndIf
+
+	DllClose($hDll)
 EndFunc   ;==>MoveElementOnReboot
 
 Func RestartIfNeeded()
-	Dim $aRemoveRestart
 	Dim $bNeedRestart
-	Dim $sCurrentTime
+	Dim $sKPLogFile
 
-	If $bNeedRestart = True And UBound($aRemoveRestart) > 1 Then
-		Local Const $sTasksFolder = @HomeDrive & "\KPRM\tasks"
+	If $bNeedRestart = True Then
 		Local Const $sSuffixKey = GetSuffixKey()
-		Local Const $sTasksBinary = $sTasksFolder & '\kprm-tasks.exe'
-		Local $sBinaryPath = @AutoItExe
-		If Not @Compiled Then $sBinaryPath = @ScriptFullPath
+		Local $reportPath = StringReplace(@DesktopDir & "\" & $sKPLogFile, "\", "\\")
+		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", "notepad.exe " & '"' & $reportPath & '"')
 
-		If Not FileExists($sTasksFolder) Then
-			DirCreate($sTasksFolder)
+		If @Compiled Then
+			Local $exePath = StringReplace(@AutoItExe, "\", "\\")
+			RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_remove", "REG_SZ", "DEL /F /Q " & '"' & $exePath & '"')
 		EndIf
 
-		If Not FileExists($sTasksBinary) Then
-			FileCopy($sBinaryPath, $sTasksBinary)
-		EndIf
-
-		For $i = 1 To UBound($aRemoveRestart) - 1
-			MoveElementOnReboot($aRemoveRestart[$i])
-			Local $sPath = StringReplace($aRemoveRestart[$i], "\", "\\")
-			RegWrite("HKLM" & $sSuffixKey & "\Software\KPRM\Reboot\" & $sCurrentTime, $i, "REG_SZ", $sPath)
-		Next
-
-		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", '"' & $sTasksBinary & '" "restart" "' & $sCurrentTime & '"')
-
+		LogMessage(@CRLF & "- Need to Restart -" & @CRLF)
 		UpdateStatusBar("Need Restart")
 		CustomMsgBox(64, "Restart Now", $lRestart)
-		HaraKiri()
 
 		If Shutdown(6) <> 1 Then
 			Shutdown(2)
@@ -2596,72 +2639,6 @@ Func RestartIfNeeded()
 
 	EndIf
 EndFunc   ;==>RestartIfNeeded
-
-Func ExecuteOnReboot($sReportTime)
-	Dim $bKpRmDev
-
-	Local Const $sKPReportFile = "kprm-" & $sReportTime & ".txt"
-	Local Const $sHomeReport = @HomeDrive & "\KPRM" & "\" & $sKPReportFile
-	Local Const $sDesktopReport = @DesktopDir & "\" & $sKPReportFile
-	Local Const $sSuffixKey = GetSuffixKey()
-	Local Const $sKey = "HKLM" & $sSuffixKey & "\Software\KPRM\Reboot\" & $sCurrentTime
-
-	If Not FileExists($sHomeReport) Then Exit
-	If Not FileExists($sDesktopReport) Then Exit
-
-	FileWrite($sHomeReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
-	FileWrite($sDesktopReport, @CRLF & @CRLF & "- Remove After Restart -" & @CRLF)
-
-	For $i = 1 To 10000
-		Local $sVal = RegEnumVal($sKey, $i)
-		If @error <> 0 Then ExitLoop
-		Local $sElementPath = RegRead($sKey, $sVal)
-		If @error <> 0 Then ExitLoop
-		Local $sPath = StringReplace($sElementPath, "\\", "\")
-		Select
-			Case $sPath = ""
-			Case IsFile($sPath)
-				PrepareRemove($sPath, 0, "1")
-				FileDelete($sPath)
-			Case IsDir($sPath)
-				PrepareRemove($sPath, 1, "1")
-				DirRemove($sPath, $DIR_REMOVE)
-			Case IsRegistryKey($sPath)
-				_ClearObjectDacl($sPath, $SE_REGISTRY_KEY)
-				_GrantAllAccess($sPath, $SE_REGISTRY_KEY, @UserName)
-				RegDelete($sPath)
-			Case Else
-		EndSelect
-
-		Local $sSymbol = "[OK]"
-
-		Select
-			Case IsRegistryKey($sPath)
-				If RegEnumVal($sPath, "1") Then
-					$sSymbol = "[X]"
-				EndIf
-			Case FileExists($sPath)
-				$sSymbol = "[X]"
-		EndSelect
-
-		Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (restart)"
-
-		FileWrite($sHomeReport, $sMessage & @CRLF)
-		FileWrite($sDesktopReport, $sMessage & @CRLF)
-	Next
-
-	RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM\Reboot")
-	RegEnumVal("HKLM" & $sSuffixKey & "\Software\KPRM", "1")
-
-	If @error <> 0 Then
-		RegDelete("HKLM" & $sSuffixKey & "\Software\KPRM")
-	EndIf
-
-	OpenReport($sHomeReport)
-	HaraKiri()
-
-	Exit
-EndFunc   ;==>ExecuteOnReboot
 
 Func SendReport($sPathReport)
 	If Not @Compiled Then Return
@@ -2679,4 +2656,3 @@ Func SendReport($sPathReport)
 	_WinHttpCloseHandle($hConnect)
 	_WinHttpCloseHandle($hOpen)
 EndFunc   ;==>SendReport
-

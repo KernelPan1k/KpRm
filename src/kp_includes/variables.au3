@@ -8,7 +8,6 @@ Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
 Global $sCurrentHumanTime = @YEAR & '-' & @MON & '-' & @MDAY & '-' & @HOUR & '-' & @MIN & '-' & @SEC
 Global $sKPLogFile = "kprm-" & $sCurrentTime & ".txt"
-Global $bRemoveToolLastPass = False
 Global $bPowerShellAvailable = Null
 Global $bDeleteQuarantines = Null
 Global $bSearchOnly = False
@@ -49,7 +48,7 @@ Global $oCreateRP
 Global $oDeleteQuarantine
 Global $oDeleteQuarantineAfter7Days
 Global $oProgressBar
-Global $iNbrTask = 47
+Global $iNbrTask = 24
 Global $iCurrentNbrTask
 Global Const $iTaskStep = Floor(100 / $iNbrTask)
 Global $oToolsCpt = Null
