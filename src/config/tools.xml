@@ -1,1210 +1,1198 @@
 <tools>
     <tool name="AHK_NavScan">
-        <desktop companyName="" force="0" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file"/>
+        <desktop companyName="" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file"/>
+        <desktop companyName="" pattern="(?i)^AHK_NavScan.*\.(exe|txt)" type="file"/>
         <process companyName="" force="0" process="(?i)^AHK_NavScan.*\.exe"/>
     </tool>
     <tool name="AdliceDiag">
-        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\ADiag\quarantine" quarantine="1"/>
-        <desktop companyName="" force="0" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
+        <cleanDirectory companyName="" path="@AppDataCommonDir\ADiag\quarantine" quarantine="1"/>
+        <desktop companyName="" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Diag_(portable|setup).*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^Diag_portable.*\.exe$"/>
     </tool>
     <tool name="AdminRun">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^AdminRun.*\.exe$" type="file"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^AdminRun.*\.exe$"/>
     </tool>
     <tool name="AdsFix">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
-        <desktopCommon companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^AdsFix.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^AdsFix" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
+        <desktopCommon companyName="(?i)^SosVirus" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^AdsFix.*\.(exe|txt|lnk)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^AdsFix.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^AdsFix" type="folder" quarantine="1"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^AdsFix.*\.exe$"/>
         <softwareKey pattern="(?i)^AdsFix"/>
     </tool>
     <!-- Please keep me after AdsFix -->
     <tool name="Ads">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Services_List\.txt$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^ads.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^ads.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Services_List\.txt$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^ads.*\.exe$" type="file"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^ads.*\.exe$"/>
     </tool>
     <tool name="AdwCleaner">
-        <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
-        <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^AdwCleaner" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^AdwCleaner.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^AdwCleaner" type="folder" quarantine="1"/>
         <process companyName="(?i)^Malwarebytes" force="0" process="(?i)^AdwCleaner.*\.exe$"/>
     </tool>
     <tool name="AlphaDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^AlphaDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^AlphaDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^AlphaDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^AlphaDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^AlphaDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^AlphaDecrypter.*\.exe$"/>
     </tool>
     <tool name="AswMBR">
-        <desktop companyName="(?i)^avast" force="0" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^MBR\.dat$" type="file"/>
-        <download companyName="(?i)^avast" force="0" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MBR\.dat$" type="file"/>
+        <desktop companyName="(?i)^avast" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MBR\.dat$" type="file"/>
+        <desktop companyName="(?i)^avast" pattern="(?i)^aswmbr.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MBR\.dat$" type="file"/>
         <process companyName="" force="1" process="(?i)^aswmbr.*\.exe$"/>
-        <registryKey force="1" key="HKLM\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR"/>
+        <registryKey key="HKLM\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR"/>
     </tool>
     <tool name="AuroraDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^AuroraDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^AuroraDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^AuroraDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^AuroraDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^AuroraDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^AuroraDecrypter.*\.exe$"/>
     </tool>
     <tool name="Autoruns">
-        <desktop companyName="(?i)^Sysinternals" force="0" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Autoruns$" type="folder"/>
-        <download companyName="(?i)^Sysinternals" force="0" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Autoruns$" type="folder"/>
+        <desktop companyName="(?i)^Sysinternals" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Autoruns$" type="folder"/>
+        <desktop companyName="(?i)^Sysinternals" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Autoruns$" type="folder"/>
         <process companyName="(?i)^Sysinternals" force="0" process="(?i)^Autoruns.*\.exe$"/>
     </tool>
     <tool name="AutorunsVTChecker">
-        <desktop companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder"/>
-        <download companyName="(?i)^regist$" force="0" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^autorunsvtchecker" type="folder"/>
+        <desktop companyName="(?i)^regist$" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^autorunsvtchecker" type="folder"/>
+        <desktop companyName="(?i)^regist$" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^autorunsvtchecker" type="folder"/>
         <process companyName="(?i)^regist$" force="1" process="(?i)^autorunsvtchecker.*\.exe$"/>
     </tool>
     <tool name="Avast Decryptor Cryptomix">
-        <desktop companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file"/>
-        <download companyName="(?i)^Avast" force="0" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Avast" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Avast" pattern="(?i)^avast_decryptor_cryptomix.*\.exe$" type="file"/>
         <process companyName="(?i)^Avast" force="0" process="(?i)^avast_decryptor_cryptomix.*\.exe$"/>
     </tool>
     <tool name="AVCertClean">
-        <desktop companyName="" force="0" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^avcertclean.*\.(exe|log)$" type="file"/>
         <process companyName="" force="0" process="(?i)^avcertclean.*\.exe$"/>
     </tool>
     <tool name="Avenger">
-        <desktop companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^avenger" type="folder" quarantine="1"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^avenger.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^avenger.*\.(exe|zip)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^avenger" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^avenger.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^avenger.*\.exe$"/>
     </tool>
+    <tool name="Avira Registry Cleaner">
+        <desktop companyName="(?i)^Avira" pattern="(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$" type="file"/>
+        <download companyName="(?i)^Avira" pattern="(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$" type="file"/>
+        <process companyName="(?i)^Avira" force="0" process="(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$" />
+    </tool>
     <tool name="BTCWareDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^BTCWareDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^BTCWareDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BTCWareDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BTCWareDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^BTCWareDecrypter.*\.exe$"/>
     </tool>
     <tool name="BitKangarooDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^BitKangarooDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^BitKangarooDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BitKangarooDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BitKangarooDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^BitKangarooDecrypter.*\.exe$"/>
     </tool>
     <tool name="BitStakDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^BitStakDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^BitStakDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BitStakDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^BitStakDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^BitStakDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^BitStakDecrypter.*\.exe$"/>
     </tool>
     <tool name="BlitzBlank">
-        <desktop companyName="(?i)^Emsi" force="0" pattern="(?i)^BlitzBlank.*\.exe$" type="file"/>
-        <download companyName="(?i)^Emsi" force="0" pattern="(?i)^BlitzBlank.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^BlitzBlank.*\.log$" type="file"/>
+        <desktop companyName="(?i)^Emsi" pattern="(?i)^BlitzBlank.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Emsi" pattern="(?i)^BlitzBlank.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^BlitzBlank.*\.log$" type="file"/>
         <process companyName="(?i)^Emsi" force="0" process="(?i)^BlitzBlank.*\.exe$"/>
     </tool>
     <tool name="CKScanner">
-        <desktop companyName="" force="0" pattern="(?i)^CKScanner.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^CKfiles.*\.txt$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CKScanner.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CKfiles.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CKScanner.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CKfiles.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CKScanner.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CKfiles.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^CKScanner.*\.exe$"/>
     </tool>
     <tool name="CMD_Command">
-        <desktop companyName="(?i)^g3n-h@ckm@n$" force="0" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
-        <download companyName="(?i)^g3n-h@ckm@n$" force="0" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^g3n-h@ckm@n$" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^g3n-h@ckm@n$" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
         <process companyName="(?i)^g3n-h@ckm@n$" force="0" process="(?i)^cmd-command.*\.exe$"/>
     </tool>
     <tool name="Catchme">
-        <desktop companyName="" force="0" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file"/>
         <process companyName="" force="0" process="(?i)^catchme.*\.exe$"/>
     </tool>
     <tool name="Check Browsers LNK">
-        <desktop companyName="" force="0" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$" type="file"/>
         <process companyName="" force="0" process="(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.exe$"/>
     </tool>
     <tool name="Clean_DNS">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Clean_Dns$" type="folder"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^clean(-|_)dns.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Clean_Dns$" type="folder"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^clean(-|_)dns.*\.exe$"/>
         <softwareKey pattern="(?i)^Clean_Dns$"/>
     </tool>
     <tool name="ClearLNK">
-        <desktop companyName="" force="0" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^clearlnk.*\.(log|exe)$" type="file"/>
         <process companyName="" force="0" process="(?i)^clearlnk.*\.exe$"/>
     </tool>
     <tool name="CoinVaultDecryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^CoinVaultDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CoinVaultDecryptor" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^CoinVaultDecryptor.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CoinVaultDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^CoinVaultDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CoinVaultDecryptor" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^CoinVaultDecryptor.*\.txt$" type="file"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^CoinVaultDecryptor.*\.exe$"/>
     </tool>
     <tool name="Combofix">
-        <desktop companyName="(?i)^Swearware" force="0" pattern="(?i)^Combofix.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^CFScript\.txt$" type="file"/>
-        <download companyName="(?i)^Swearware" force="0" pattern="(?i)^Combofix.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CFScript\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^Qoobox$" type="folder" quarantine="1"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Combofix.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Swearware" pattern="(?i)^Combofix.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CFScript\.txt$" type="file"/>
+        <desktop companyName="(?i)^Swearware" pattern="(?i)^Combofix.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CFScript\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Qoobox$" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^Combofix.*\.txt$" type="file"/>
         <process companyName="(?i)^Swearware" force="1" process="(?i)^Combofix.*\.exe$"/>
-        <registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"/>
+        <registryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe"/>
         <softwareKey pattern="(?i)^Swearware$"/>
-        <windowsFolder companyName="" force="1" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$"
-                       type="file"/>
+        <windowsFolder companyName="" pattern="(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$" type="file"/>
     </tool>
     <tool name="Crypt38Decrypter">
-        <desktop companyName="" force="0" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Crypt38(KeyGen|Decrypter)$" type="folder"/>
         <process companyName="" force="0" process="(?i)^Crypt38Decrypter.*\.exe$"/>
     </tool>
     <tool name="CryptoSearch">
-        <desktop companyName="" force="0" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^CryptoSearch$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CryptoSearch$" type="folder"/>
-        <file path="@DesktopDir\cryptosearch-definitions.bin" companyName="" force="0"/>
+        <desktop companyName="" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CryptoSearch$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CryptoSearch$" type="folder"/>
+        <file path="@DesktopDir\cryptosearch-definitions.bin" companyName="" />
         <process companyName="" force="0" process="(?i)^CryptoSearch.*\.exe$"/>
     </tool>
     <tool name="CrystalDiskInfo (portable)">
-        <desktop companyName="" force="0" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^CrystalDiskInfo" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^CrystalDiskInfo" type="folder"/>
+        <desktop companyName="" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CrystalDiskInfo" type="folder"/>
+        <desktop companyName="" pattern="(?i)^CrystalDiskInfo.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^CrystalDiskInfo" type="folder"/>
         <process companyName="(?i)^Crystal" force="0" process="(?i)^DiskInfo(32|64)\.exe$"/>
     </tool>
     <tool name="DCryDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^DCryDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^DCryDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^DCryDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^DCryDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^DCryDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^DCryDecrypter.*\.exe$"/>
     </tool>
     <tool name="DDS">
-        <desktop companyName="(?i)^Swearware" force="0" pattern="(?i)^dds.*\.com$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^(dds|attach).*\.txt$" type="file"/>
-        <download companyName="(?i)^Swearware" force="0" pattern="(?i)^dds.*\.com$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^(dds|attach).*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Swearware" pattern="(?i)^dds.*\.com$" type="file"/>
+        <desktop companyName="" pattern="(?i)^(dds|attach).*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Swearware" pattern="(?i)^dds.*\.com$" type="file"/>
+        <desktop companyName="" pattern="(?i)^(dds|attach).*\.txt$" type="file"/>
         <process companyName="(?i)^Swearware" force="0" process="(?i)^dds.*\.com$"/>
     </tool>
     <tool name="Decrypt CryptON">
-        <desktop companyName="(?i)^Emsisoft" force="0" pattern="(?i)^decrypt_CryptON.*\.exe" type="file"/>
-        <download companyName="(?i)^Emsisoft" force="0" pattern="(?i)^decrypt_CryptON.*\.exe" type="file"/>
+        <desktop companyName="(?i)^Emsisoft" pattern="(?i)^decrypt_CryptON.*\.exe" type="file"/>
+        <desktop companyName="(?i)^Emsisoft" pattern="(?i)^decrypt_CryptON.*\.exe" type="file"/>
         <process companyName="(?i)^Emsisoft" force="0" process="(?i)^decrypt_CryptON.*\.exe"/>
     </tool>
     <tool name="Defogger">
-        <desktop companyName="" force="0" pattern="(?i)^defogger.*\.(log|exe)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^defogger.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^defogger.*\.(log|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^defogger.*\.(log|exe)$" type="file"/>
         <process companyName="" force="0" process="(?i)^defogger.*\.exe$"/>
     </tool>
     <tool name="Dr.Web LiveDisk">
-        <desktop companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
+        <desktop companyName="" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
     </tool>
     <tool name="Easy Restore Point">
-        <desktop companyName="(?i)^kernel\-panik$" force="0"
-                 pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
-        <download companyName="(?i)^kernel\-panik$" force="0"
-                  pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
-        <process companyName="(?i)^kernel\-panik$" force="0"
-                 process="(?i)^(easy-restore-point|easyrestorepoint).*\.exe$"/>
+        <desktop companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <download companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <process companyName="(?i)^kernel\-panik$" force="0" process="(?i)^(easy-restore-point|easyrestorepoint).*\.exe$"/>
     </tool>
     <tool name="Emisoft Emergency Kit">
-        <desktop companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^EEK$" type="folder" quarantine="1"/>
+        <desktop companyName="" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^EEK$" type="folder" quarantine="1"/>
         <process companyName="" force="1" process="(?i)^(a2emergencykit|a2cmd).*\.exe$"/>
     </tool>
     <tool name="ESET AES-NI Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetaesnidecryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetaesnidecryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Bedep Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETBedepCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETBedepCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Bubnix Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETBubnixCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET CodplatAA Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETCodplatAACleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Conficker Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetconfickercleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetconfickercleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Crypt888 Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetcrypt888decryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetcrypt888decryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Crysis Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetcrysisdecryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetcrysisdecryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Daonol Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetdaonolcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetdaonolcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Dorkbot Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetdorkbotcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetdorkbotcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET ELEX Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetelexcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetelexcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Eternal Blue Checker">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETEternalBlueChecker.*\.exe$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETEternalBlueChecker.*\.exe$"/>
     </tool>
     <tool name="ESET Filecoder Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^decoder.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^decoder.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^decoder.*\.exe$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^decoder.*\.exe$"/>
     </tool>
     <tool name="ESET Filecoder.AA Cleaner">
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderaacleaner" type="folder"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaacleaner" type="folder"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaacleaner.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaacleaner" type="folder"/>
     </tool>
     <tool name="ESET Filecoder.AE Cleaner">
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaecleaner.*\.zip$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderaecleaner" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderaecleaner.*\.zip$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderaecleaner" type="folder"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaecleaner.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaecleaner" type="folder"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaecleaner.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderaecleaner" type="folder"/>
     </tool>
     <tool name="ESET Filecoder.AR Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecoderarcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecoderarcleaner.*\.(exe|log|zip)$"
-                  type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetfilecoderarcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetfilecoderarcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetfilecoderarcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Filecoder.NAC Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$"
-                 type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$"
-                  type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetfilecodernaccleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Filecoder.R Cleaner">
-        <desktop companyName="" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="" force="0" process="(?i)^esetfilecoderrcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET GandCrab Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetgandcrabdecryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetgandcrabdecryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Goblin Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetgoblincleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetgoblincleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetgoblincleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetgoblincleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetgoblincleaner.*\.exe$"/>
     </tool>
     <tool name="ESET JS/Bondat Fixer">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetjsbondatfixer.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetjsbondatfixer.*\.exe$"/>
     </tool>
     <tool name="ESET Log Collector">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetlogcollector.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^ELC_logs\.zip$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetlogcollector.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ELC_logs\.zip$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetlogcollector.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ELC_logs\.zip$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetlogcollector.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ELC_logs\.zip$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetlogcollector.*\.exe$"/>
         <registryKey force="0" key="HKCU\Software\ESET\ESET Log Collector"/>
     </tool>
     <tool name="ESET Mabezat Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetmabezatadecryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Mebroot Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetmebrootcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetmebrootcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Medre Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetacadmedrecleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetacadmedrecleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Necurs.A Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetnecurscleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetnecurscleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Olmarik Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$"
-                 type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$"
-                  type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetolmarikolmascocleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Online Scanner">
         <folder force="1" path="@LocalAppDataDir\ESET\ESETOnlineScanner" quarantine="1"/>
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^ESET Online Scanner\.lnk$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ESET Online Scanner\.lnk$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetonlinescanner.*\.exe$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetonlinescanner.*\.exe$"/>
         <registryKey force="0" key="HKLM\SOFTWARE\ESET\ESET Online Scanner"/>
     </tool>
     <tool name="ESET Poweliks Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetpowelikscleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetpowelikscleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Quervar.C Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetquervarcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetquervarcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetquervarcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetquervarcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetquervarcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Retefe Detector">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetretefedetector.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetretefedetector.*\.exe$"/>
     </tool>
     <tool name="ESET Rovnix.A Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetrovnixcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetrovnixcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetrovnixcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetrovnixcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetrovnixcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Retacino Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetretacinocleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetretacinocleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Rogue Applications Remover">
         <folder force="1" path="@AppDataCommonDir\ESET\ESET Rogue Applications Remover" quarantine="1"/>
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^eraremover.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^eraremover.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^eraremover.*\.exe$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^eraremover.*\.exe$"/>
     </tool>
     <tool name="ESET Simda Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsimdacleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetsimdacleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Sirefef Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsirefefcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetsirefefcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET SpyEye Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETSpyEyeCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Spy.Tuscas Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETSpyTuscasCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETSpyTuscasCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Spy.Zbot.ZR Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETZBotZRCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETZBotZRCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Superfish Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetsuperfishcleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetsuperfishcleaner.*\.exe$"/>
     </tool>
     <tool name="ESET SysRescue">
-        <desktop companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file"/>
+        <desktop companyName="" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file"/>
+        <desktop companyName="" pattern="(?i)^eset_sysrescue_live.*\.iso$" type="file"/>
     </tool>
     <tool name="ESET TeslaCrypt Decryptor">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esetteslacryptdecryptor.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetteslacryptdecryptor.*\.exe$"/>
     </tool>
     <tool name="ESET Trustezeb.A Decoder">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^esettrustezebadecoder.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^esettrustezebadecoder.*\.exe$"/>
     </tool>
     <tool name="ESET VB.NAX Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETVBNAXCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET VB.OGJ Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETVbOgjCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Virlock Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETVirlockCleaner.*\.exe$"/>
     </tool>
     <tool name="ESET Zimuse Cleaner">
-        <desktop companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$" type="file"/>
-        <download companyName="(?i)^ESET" force="0" pattern="(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$" type="file"/>
+        <desktop companyName="(?i)^ESET" pattern="(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$" type="file"/>
         <process companyName="(?i)^ESET" force="0" process="(?i)^ESETZimuseCleaner.*\.exe$"/>
     </tool>
     <tool name="FRST">
-        <desktop companyName="(?i)^Farbar" force="0"
-                 pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
-        <download companyName="(?i)^Farbar" force="0"
-                  pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^FRST" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+        <download companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^FRST" type="folder" quarantine="1"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^FRST.*\.exe$"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^EnglishFRST.*\.exe$"/>
     </tool>
     <tool name="FSS">
-        <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^FSS.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="(?i)^Farbar" force="0" pattern="(?i)^FSS.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^FSS.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^FSS.*\.(exe|txt|lnk)$" type="file"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^FSS.*\.exe$"/>
     </tool>
     <tool name="FilesLockerDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^FilesLockerDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^FilesLockerDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FilesLockerDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FilesLockerDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^FilesLockerDecrypter.*\.exe$"/>
     </tool>
     <tool name="FixExec">
-        <desktop companyName="(?i)^Bleeping" force="0" pattern="(?i)^FixExec.*\.(exe|txt|com)$" type="file"/>
-        <download companyName="(?i)^Bleeping" force="0" pattern="(?i)^FixExec.*\.(exe|txt|com)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^FixExec.*\.(exe|txt|com)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^FixExec.*\.(exe|txt|com)$" type="file"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^FixExec.*\.(exe|com)$"/>
     </tool>
     <tool name="FixPurge">
-        <desktop companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
-        <desktopCommon companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
-        <download companyName="(?i)^Hacker Tool" force="0" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Fix\-Purge$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Hacker Tool" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
+        <desktopCommon companyName="(?i)^Hacker Tool" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
+        <desktop companyName="(?i)^Hacker Tool" pattern="(?i)^Fix\-Purge.*\.(exe|lnk)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Fix\-Purge$" type="folder" quarantine="1"/>
         <process companyName="" force="0" process="(?i)^Fix\-Purge.*\.exe$"/>
-        <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge"
-                           value="DisplayName"/>
-        <startMenu companyName="" force="1" pattern="(?i)^Fix\-Purge$" type="folder"/>
+        <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName"/>
+        <startMenu companyName="" pattern="(?i)^Fix\-Purge$" type="folder"/>
     </tool>
     <tool name="g3n-h@ckm@n tools">
         <softwareKey pattern="(?i)^g3n-h@ckm@n$"/>
     </tool>
     <tool name="GetSystemInfo">
-        <desktop companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^GetSystemInfo.*$" type="folder"/>
-        <download companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^GetSystemInfo.*$" type="folder"/>
+        <desktop companyName="(?i)^.*Kaspersky" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GetSystemInfo.*$" type="folder"/>
+        <desktop companyName="(?i)^.*Kaspersky" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GetSystemInfo.*$" type="folder"/>
         <process companyName="(?i)^.*Kaspersky" force="0" process="(?i)^GetSystemInfo.*\.exe$"/>
     </tool>
     <tool name="GhostCryptDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^GhostCryptDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^GhostCryptDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GhostCryptDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GhostCryptDecrypter.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^alphadecrypter\-log.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GhostCryptDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^GhostCryptDecrypter.*\.exe$"/>
     </tool>
     <tool name="GibonDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^GibonDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^GibonDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GibonDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GibonDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^GibonDecrypter.*\.exe$"/>
-        <startMenu companyName="" force="0" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <startMenu companyName="" pattern="(?i)^GibonDecrypter.*\.(exe|zip|txt)$" type="file"/>
     </tool>
     <tool name="GooredFix">
-        <desktop companyName="(?i)^jpshortstuff$" force="0" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^GooredFix.*" type="folder"/>
-        <download companyName="(?i)^jpshortstuff$" force="0" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^GooredFix.*" type="folder"/>
+        <desktop companyName="(?i)^jpshortstuff$" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GooredFix.*" type="folder"/>
+        <desktop companyName="(?i)^jpshortstuff$" pattern="(?i)^GooredFix.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GooredFix.*" type="folder"/>
         <process companyName="(?i)^jpshortstuff$" force="0" process="(?i)^GooredFix.*\.exe$"/>
     </tool>
     <tool name="Grantperms">
-        <desktop companyName="" force="0" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Perms\.txt$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^GrantPerms" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Perms\.txt$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^GrantPerms" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Perms\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GrantPerms" type="folder"/>
+        <desktop companyName="" pattern="(?i)^GrantPerms.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Perms\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^GrantPerms" type="folder"/>
         <process companyName="" force="0" process="(?i)^GrantPerms.*\.exe$"/>
     </tool>
     <tool name="HiddenTear Bruteforcer">
-        <desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Hidden.*Tear.*Bruteforcer" type="folder"/>
         <process companyName="" force="0" process="(?i)^Hidden.*Tear.*Bruteforcer.*\.exe$"/>
     </tool>
     <tool name="HiddenTearDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^HiddenTearDecrypter.*$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^HiddenTearDecrypter.*$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^HiddenTearDecrypter.*$" type="folder"/>
         <process companyName="" force="0" process="(?i)^HiddenTearDecrypter.*\.exe$"/>
     </tool>
     <tool name="HostsXpert">
-        <desktop companyName="(?i)^funkytoad" force="0" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^HostsXpert.*" type="folder"/>
-        <download companyName="(?i)^funkytoad" force="0" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^HostsXpert.*" type="folder"/>
+        <desktop companyName="(?i)^funkytoad" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^HostsXpert.*" type="folder"/>
+        <desktop companyName="(?i)^funkytoad" pattern="(?i)^HostsXpert.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^HostsXpert.*" type="folder"/>
         <process companyName="(?i)^funkytoad" force="0" process="(?i)^HostsXpert.*\.exe$"/>
     </tool>
     <tool name="Hosts-perm">
-        <desktop companyName="" force="0" pattern="(?i)^hosts\-perm.*\.bat$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^hosts\-perm.*\.bat$" type="file"/>
+        <desktop companyName="" pattern="(?i)^hosts\-perm.*\.bat$" type="file"/>
+        <desktop companyName="" pattern="(?i)^hosts\-perm.*\.bat$" type="file"/>
     </tool>
     <tool name="InsaneCryptDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^InsaneCryptDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^InsaneCryptDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^InsaneCryptDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^InsaneCryptDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^InsaneCryptDecrypter.*\.exe$"/>
     </tool>
     <tool name="JavaRa">
-        <desktop companyName="(?i)^The RaProducts Team" force="0" pattern="(?i)^Javara.*\.(zip|exe)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Javara" type="folder"/>
-        <download companyName="(?i)^The RaProducts Team" force="0" pattern="(?i)^Javara.*\.(zip|exe)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Javara" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Javara.*\.log$" type="file"/>
+        <desktop companyName="(?i)^The RaProducts Team" pattern="(?i)^Javara.*\.(zip|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Javara" type="folder"/>
+        <desktop companyName="(?i)^The RaProducts Team" pattern="(?i)^Javara.*\.(zip|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Javara" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^Javara.*\.log$" type="file"/>
         <process companyName="(?i)^The RaProducts Team" force="0" process="(?i)^Javara.*\.exe$"/>
     </tool>
     <tool name="JigSawDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^JigsawDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^JigsawDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^JigsawDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^JigsawDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^JigsawDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^JigsawDecrypter.*\.exe$"/>
     </tool>
     <tool name="Junkware Removal Tool">
-        <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^Malwarebytes" force="0" process="(?i)^JRT.*\.exe$"/>
     </tool>
     <tool name="Kaspersky Virus Removal Tool">
-        <desktop companyName="(?i).*Kaspersky" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
-        <download companyName="(?i).*Kaspersky" force="0" pattern="(?i)^KVRT.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^KVRT_Data$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
+        <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^KVRT_Data$" type="folder" quarantine="1"/>
         <process companyName="(?i).*Kaspersky" force="0" process="(?i)^KVRT.*\.exe$"/>
     </tool>
     <tool name="KPLive">
-        <desktop companyName="" force="0" pattern="(?i)^KPLive.*\.iso$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^KPLive.*\.iso$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^kprm_restore.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^KPLive.*\.iso$" type="file"/>
+        <desktop companyName="" pattern="(?i)^KPLive.*\.iso$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^kprm_restore.*\.txt$" type="file"/>
     </tool>
     <tool name="KPTemp">
-        <desktop companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^kptemp.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^kernel\-panik$" force="0" pattern="(?i)^kptemp.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^kernel\-panik$" pattern="(?i)^kptemp.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^kernel\-panik$" pattern="(?i)^kptemp.*\.(exe|txt)$" type="file"/>
     </tool>
     <tool name="ListCWall">
-        <desktop companyName="(?i)^Bleeping" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^Bleeping" force="0" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^ListCWall$" type="folder"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^ListCWall.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^ListCWall$" type="folder"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^ListCWall.*\.exe$"/>
     </tool>
     <tool name="ListParts">
-        <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^listParts.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Results\.txt$" type="file"/>
-        <download companyName="(?i)^Farbar" force="0" pattern="(?i)^listParts.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Results\.txt$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^listParts.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Results\.txt$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^listParts.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Results\.txt$" type="file"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^listParts.*\.exe$"/>
     </tool>
     <tool name="LogonFix">
-        <desktop companyName="" force="0" pattern="(?i)^logonfix.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^logonfix.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^LogonFix.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^logonfix.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^logonfix.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^LogonFix.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^logonfix.*\.exe$"/>
     </tool>
     <tool name="Look_my_hardware">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$"
-                 type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$"
-                  type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Look_my_hardware$" type="folder"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Look_my_hardware$" type="folder"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe$"/>
     </tool>
     <tool name="Malwarebytes Anti-Rootkit">
-        <cleanDirectory companyName="" force="1"
-                        path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine" quarantine="1"/>
-        <desktop companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^mbar" type="folder"/>
-        <download companyName="(?i)^Malwarebytes" force="0" pattern="(?i)^mbar.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^mbar" type="folder"/>
+        <cleanDirectory companyName="" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine" quarantine="1"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^mbar.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^mbar" type="folder"/>
+        <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^mbar.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^mbar" type="folder"/>
         <process companyName="(?i)^Malwarebytes" force="1" process="(?i)^mbar.*\.exe$"/>
         <softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$"/>
     </tool>
     <tool name="Malwarebytes (log)">
-        <desktop companyName="" force="0" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+        <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+        <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
     </tool>
     <tool name="MbrScan">
-        <desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
-        <download companyName="(?i)^Eric_71$" force="0" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
+        <desktop companyName="(?i)^Eric_71$" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
+        <desktop companyName="(?i)^Eric_71$" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Dump_.*\.mbr$" type="file"/>
         <process companyName="(?i)^Eric_71$" force="0" process="(?i)^MbrScan.*\.exe$"/>
     </tool>
     <!-- Please keep MbrScan before MBRCheck -->
     <tool name="MBRCheck">
-        <desktop companyName="" force="0" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MBRCheck.*\.(exe|txt)$" type="file"/>
         <process companyName="" force="0" process="(?i)^MBRCheck.*\.exe$"/>
     </tool>
     <!-- Please keep MBRCheck before Mbr.exe -->
     <tool name="Mbr.exe">
-        <desktop companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^mbr.*\.(exe|log)$" type="file"/>
         <process companyName="" force="0" process="(?i)^mbr.*\.exe$"/>
     </tool>
     <tool name="McAfee Pinkslipbot">
-        <desktop companyName="" force="0" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^amipinkc2.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^amipinkc2.*\.exe$"/>
     </tool>
     <tool name="McAfee GetSusp">
-        <desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^getsusp.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
-        <download companyName="(?i)^McAfee" force="0" pattern="(?i)^getsusp.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^getsusp.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^getsusp.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^getsusp(32|64)?\-epo.*" type="folder"/>
         <process companyName="" force="0" process="(?i)^getsusp.*\.exe$"/>
     </tool>
     <tool name="McAfee RootkitRemover">
-        <desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^McAfee" force="0" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^RootkitRemover.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^McAfee" force="0" process="(?i)^RootkitRemover.*\.exe$"/>
     </tool>
     <tool name="McAfee Stinger">
-        <desktop companyName="(?i)^McAfee" force="0" pattern="(?i)^stinger.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
-        <download companyName="(?i)^McAfee" force="0" pattern="(?i)^stinger.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
-        <folder force="1" path="@HomeDrive\Quarantine\Stinger" quarantine="1"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^stinger.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
+        <desktop companyName="(?i)^McAfee" pattern="(?i)^stinger.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^stinger(32|64)\-epo.*\.zip$" type="file"/>
+        <desktop companyName="" pattern="(?i)^stinger(32|64)\-epo" type="folder"/>
+        <folder path="@HomeDrive\Quarantine\Stinger" quarantine="1"/>
         <process companyName="(?i)^McAfee" force="0" process="(?i)^stinger.*\.exe$"/>
-        <programFiles companyName="" force="0" pattern="(?i)^stinger$" type="folder"/>
+        <programFiles companyName="" pattern="(?i)^stinger$" type="folder"/>
     </tool>
     <tool name="McAfee Tesladecrypt">
-        <desktop companyName="" force="0" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^tesladecrypt.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^tesladecrypt.*\.exe$"/>
     </tool>
     <tool name="MiniregTool">
-        <desktop companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^MiniRegTool" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MiniRegTool" type="folder"/>
+        <desktop companyName="" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MiniRegTool" type="folder"/>
+        <desktop companyName="" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MiniRegTool" type="folder"/>
         <process companyName="" force="0" process="(?i)^MiniRegTool.*\.exe$"/>
     </tool>
     <tool name="Minitoolbox">
-        <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^MiniToolBox.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^MTB\.txt$" type="file"/>
-        <download companyName="(?i)^Farbar" force="0" pattern="(?i)^MiniToolBox.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MTB\.txt$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^MiniToolBox.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MTB\.txt$" type="file"/>
+        <desktop companyName="(?i)^Farbar" pattern="(?i)^MiniToolBox.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MTB\.txt$" type="file"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^MiniToolBox.*\.exe$"/>
     </tool>
     <tool name="MirCopDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^MirCopDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MirCopDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MirCopDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^MirCopDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MirCopDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^MirCopDecrypter.*\.exe$"/>
     </tool>
     <tool name="MKV">
-        <desktop companyName="" force="0" pattern="(?i)^MKV.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^MKV.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MKV.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^MKV.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^MKV\.exe$"/>
     </tool>
     <tool name="Mole02Decryptor">
-        <desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Mole02Decryptor" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Mole02Decryptor" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Mole02Decryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Mole02Decryptor" type="folder"/>
         <process companyName="" force="0" process="(?i)^Mole02Decryptor.*\.exe$"/>
     </tool>
     <tool name="NetAdapter Repair All In One">
-        <desktop companyName="(?i)^Conner" force="0" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
-        <download companyName="(?i)^Conner" force="0" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Conner" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Conner" pattern="(?i)^NetAdapter.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^netadapter\-log.*\.txt$" type="file"/>
         <process companyName="(?i)^Conner" force="0" process="(?i)^NetAdapter.*\.exe$"/>
     </tool>
     <tool name="OldTimer Tools">
         <softwareKey pattern="(?i)^OldTimer Tools$"/>
     </tool>
     <tool name="OneClick2RP">
-        <desktop companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)OneClick2RP.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)OneClick2RP.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)OneClick2RP.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^OneClick2RP.*\.exe$"/>
     </tool>
     <tool name="OTA">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTA.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTA$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTA.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTA.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^_OTA$" type="folder" quarantine="1"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTA.*\.exe$"/>
     </tool>
     <tool name="OTC">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTC.*\.exe$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTC.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTC.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTC.*\.exe$" type="file"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTC.*\.exe$"/>
     </tool>
     <tool name="OTH">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTH.*\.exe$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTH.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTH.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTH.*\.exe$" type="file"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTH.*\.exe$"/>
     </tool>
     <tool name="OTL">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Extras\.txt$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTL$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Extras\.txt$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTL.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^_OTL$" type="folder" quarantine="1"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTL.*\.exe$"/>
     </tool>
     <tool name="OTM">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTM.*\.exe$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTM.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTM$" type="folder"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTM.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTM.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^_OTM$" type="folder"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTM.*\.exe$"/>
     </tool>
     <tool name="OTS">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^_OTS$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^OTS.*\.(exe|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^_OTS$" type="folder" quarantine="1"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^OTS.*\.exe$"/>
     </tool>
     <tool name="PCHunter">
-        <desktop companyName="" force="0" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^PCHunter.*\.(exe|zip)$" type="file"/>
         <process companyName="" force="0" process="(?i)^PCHunter.*\.exe$"/>
     </tool>
     <tool name="PowerLockyDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^PowerLockyDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^PowerLockyDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^PowerLockyDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^PowerLockyDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^PowerLockyDecrypter.*\.exe$"/>
     </tool>
     <tool name="Pre_Scan">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$"
-                 type="file"/>
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^winlogon.*\.exe$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$"
-                  type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^winlogon.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Pre_Scan.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^pre_scan$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^winlogon.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^winlogon.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Pre_Scan.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^pre_scan$" type="folder" quarantine="1"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^Pre_Scan.*\.(com|pif|scr|exe)"/>
     </tool>
     <tool name="Process Analyzer">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^Process_Analyzer.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^Process_Analyzer.*\.exe$"/>
     </tool>
     <tool name="ProcessClose">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^processclose.*\.exe$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^processclose.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^processclose.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^processclose.*\.exe$" type="file"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^processclose.*\.exe$"/>
     </tool>
     <tool name="QuickDiag">
-        <desktop companyName="(?i)^SosVirus" force="1" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="1" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^QuickDiag" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^QuickDiag.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^QuickDiag.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^QuickScript.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^QuickDiag" type="folder" quarantine="1"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^QuickDiag.*\.exe$"/>
     </tool>
     <tool name="Rakhni Decryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder"/>
-        <homeDrive companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RakhniDecryptor" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <desktop companyName="" pattern="(?i)^RakhniDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <desktop companyName="" pattern="(?i)^RakhniDecryptor" type="folder"/>
+        <homeDrive companyName="(?i)^Kaspersky" pattern="(?i)^RakhniDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^RakhniDecryptor" type="folder" quarantine="1"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^RakhniDecryptor.*\.exe"/>
     </tool>
     <tool name="Rannoh Decryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder"/>
-        <homeDrive companyName="(?i)^Kaspersky" force="0" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RannohDecryptor" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <desktop companyName="" pattern="(?i)^RannohDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <desktop companyName="" pattern="(?i)^RannohDecryptor" type="folder"/>
+        <homeDrive companyName="(?i)^Kaspersky" pattern="(?i)^RannohDecryptor.*\.(exe|txt|zip)" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^RannohDecryptor" type="folder" quarantine="1"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^RannohDecryptor.*\.exe"/>
     </tool>
     <tool name="RansomNoteCleaner">
-        <desktop companyName="" force="0" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^RansomNoteCleaner$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RansomNoteCleaner$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RansomNoteCleaner$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^RansomNoteCleaner.*\.(log|exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RansomNoteCleaner$" type="folder"/>
         <process companyName="" force="0" process="(?i)^RansomNoteCleaner.*\.exe$"/>
     </tool>
     <tool name="RAV">
-        <desktop companyName="" force="0" pattern="(?i)^RAV\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RAV\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RAV\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RAV\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^RAV\.exe$"/>
     </tool>
     <tool name="RegtoolExport">
-        <desktop companyName="" force="0" pattern="(?i)^regtoolexport.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Export.*\.reg$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^regtoolexport.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Export.*\.reg$" type="file"/>
+        <desktop companyName="" pattern="(?i)^regtoolexport.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Export.*\.reg$" type="file"/>
+        <desktop companyName="" pattern="(?i)^regtoolexport.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Export.*\.reg$" type="file"/>
         <process companyName="" force="0" process="(?i)^regtoolexport.*\.exe$"/>
     </tool>
     <tool name="Remediate VBS Worm">
-        <desktop companyName="" force="0" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Rem-VBS.*\.log$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^Rem-VBS" type="folder" quarantine="1"/>
+        <desktop companyName="" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Rem-VBS.*\.log$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Rem-VBS" type="folder" quarantine="1"/>
         <process companyName="" force="0" process="(?i)^remediate.?vbs.?worm.*\.exe$"/>
         <process companyName="" force="0" process="(?i)^Rem-VBSworm.*\.exe$"/>
     </tool>
     <tool name="Report_Antivir">
-        <desktop companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file"/>
         <process companyName="" force="0" process="(?i)^Report_Antivir.*\.exe$"/>
     </tool>
     <tool name="Report_CHKDSK">
-        <desktop companyName="" force="0" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^RapportCHK.*\.txt$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RapportCHK.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RapportCHK.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Report_CHKDSK.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RapportCHK.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^Report_CHKDSK.*\.exe$"/>
     </tool>
     <tool name="ResetBrowser">
-        <desktop companyName="" force="0" pattern="(?i)^ResetBrowser.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ResetBrowser*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ResetBrowser.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ResetBrowser*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^ResetBrowser.*\.exe$"/>
     </tool>
     <tool name="ResetNavigator">
-        <desktop companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
-        <download companyName="(?i)^Software\-Quality" force="0" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Software\-Quality" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Software\-Quality" pattern="(?i)^resetnavigator.*\.exe$" type="file"/>
         <process companyName="(?i)^Software\-Quality" force="0" process="(?i)^resetnavigator.*\.exe$"/>
     </tool>
     <tool name="Rkill">
-        <desktop companyName="(?i)^Bleeping" force="1" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^rkill$" type="folder"/>
-        <download companyName="(?i)^Bleeping" force="1" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^rkill$" type="folder"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rkill$" type="folder"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^(rkill|iExplore).*\.(exe|txt|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rkill$" type="folder"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^(rkill|iExplore).*\.exe$"/>
     </tool>
     <tool name="RogueKiller">
-        <cleanDirectory companyName="" force="1" path="@AppDataCommonDir\RogueKiller\quarantine" quarantine="1"/>
-        <desktop companyName="" force="0" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file"/>
-        <desktop companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" force="1" pattern="(?i)^RogueKiller" type="folder"/>
-        <desktopCommon companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file"/>
-        <download companyName="(?i)^Adlice" force="0" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="1" pattern="(?i)^RogueKiller" type="folder"/>
+        <cleanDirectory companyName="" path="@AppDataCommonDir\RogueKiller\quarantine" quarantine="1"/>
+        <desktop companyName="" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Adlice" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RogueKiller" type="folder"/>
+        <desktopCommon companyName="(?i)^Adlice" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RogueKiller_portable.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Adlice" pattern="(?i)^RogueKiller.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RogueKiller" type="folder"/>
         <process companyName="" force="0" process="(?i)^RogueKiller_portable.*\.exe$"/>
     </tool>
     <tool name="RogueKillerCMD">
-        <desktop companyName="" force="0" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RogueKillerCMD.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^RogueKillerCMD.*\.exe$"/>
     </tool>
     <tool name="Rooter">
-        <desktop companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file"/>
-        <download companyName="(?i)^Eric_71$" force="0" pattern="(?i)^Rooter.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^Rooter\$$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Eric_71$" pattern="(?i)^Rooter.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Eric_71$" pattern="(?i)^Rooter.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Rooter\$$" type="folder" quarantine="1"/>
         <process companyName="(?i)^Eric_71$" force="0" process="(?i)^Rooter.*\.exe$"/>
     </tool>
     <tool name="RootkitRevealer">
-        <desktop companyName="(?i)^Sysinternals" force="0" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^RootkitRevealer" type="folder"/>
-        <download companyName="(?i)^Sysinternals" force="0" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^RootkitRevealer" type="folder"/>
+        <desktop companyName="(?i)^Sysinternals" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RootkitRevealer" type="folder"/>
+        <desktop companyName="(?i)^Sysinternals" pattern="(?i)^RootkitRevealer.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^RootkitRevealer" type="folder"/>
         <process companyName="(?i)^Sysinternals" force="0" process="(?i)^RootkitRevealer.*\.exe$"/>
     </tool>
     <tool name="RstAssociations">
-        <desktop companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RstAssociations.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rstassociations.*\.(exe|scr)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^RstAssociations.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^rstassociations.*\.(exe|scr)$"/>
     </tool>
     <tool name="RstHosts">
-        <desktop companyName="" force="0" pattern="(?i)^rsthosts.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^rsthosts.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^RstHosts.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rsthosts.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^rsthosts.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^RstHosts.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^rsthosts.*\.exe$"/>
     </tool>
     <tool name="ScanRapide">
-        <desktop companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ScanRapide.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ScanRapide.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ScanRapide.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^ScanRapide\[R[0-9]+\]\.txt$" type="file"/>
     </tool>
     <tool name="SEAF">
-        <desktop companyName="(?i)^C_XX$" force="0" pattern="(?i)^seaf.*\.exe$" type="file"/>
-        <download companyName="(?i)^C_XX$" force="0" pattern="(?i)^seaf.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^SeafLog.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^C_XX$" pattern="(?i)^seaf.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^C_XX$" pattern="(?i)^seaf.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^SeafLog.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^seaf.*\.exe$"/>
-        <programFiles companyName="" force="1" pattern="(?i)^SEAF$" type="folder"/>
-        <registryKey force="0" key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF"/>
+        <programFiles companyName="" pattern="(?i)^SEAF$" type="folder"/>
+        <registryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF"/>
         <uninstall folder="(?i)^SEAF$" uninstaller="(?i)^Un-SEAF\.exe$"/>
     </tool>
     <tool name="SecurityCheck">
-        <desktop companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^SecurityCheck.*\.exe$"/>
     </tool>
     <tool name="ServicesRepair">
-        <desktop companyName="" force="0" pattern="(?i)^ServicesRepair.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ServicesRepair.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ServicesRepair.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ServicesRepair.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^ServicesRepair.*\.exe$"/>
     </tool>
     <tool name="SFT">
-        <desktop companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SFT.*\.(txt|exe|zip)$" type="file"/>
         <process companyName="" force="0" process="(?i)^SFT.*\.exe$"/>
     </tool>
     <tool name="ShadeDecryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^ShadeDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ShadeDecryptor" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^ShadeDecryptor.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ShadeDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^ShadeDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ShadeDecryptor" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^ShadeDecryptor.*\.txt$" type="file"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^ShadeDecryptor.*\.exe$"/>
     </tool>
     <tool name="Shortcut Cleaner">
-        <desktop companyName="(?i)^Bleeping" force="0" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^Bleeping" force="0" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^sc-cleaner.*\.exe$"/>
     </tool>
     <tool name="SMBCheck">
-        <desktop companyName="(?i).*Webroot" force="0" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i).*Webroot" force="0" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i).*Webroot" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i).*Webroot" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file"/>
         <process companyName="(?i).*Webroot" force="0" process="(?i)^smbcheck.*\.exe$"/>
     </tool>
     <tool name="StrikedDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^StrikedDecrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^StrikedDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^StrikedDecrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^StrikedDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^StrikedDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^StrikedDecrypter.*\.exe$"/>
     </tool>
     <tool name="StupidDecrypter">
-        <desktop companyName="" force="0" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^StupidDecrypter.*$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^StupidDecrypter.*$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^StupidDecrypter.*$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^StupidDecrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^StupidDecrypter.*$" type="folder"/>
         <process companyName="" force="0" process="(?i)^StupidDecrypter.*\.exe$"/>
     </tool>
     <tool name="Symantec Kovter Removal Tool">
-        <desktop companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTool.*\.(log|exe)$" type="file"/>
-        <download companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTool.*\.(log|exe)$" type="file"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FixTool.*\.(log|exe)$" type="file"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FixTool.*\.(log|exe)$" type="file"/>
         <process companyName="(?i)^Symantec" force="0" process="(?i)^FixTool.*\.exe$"/>
     </tool>
     <tool name="Symantec Pasobir Removal Tool">
-        <desktop companyName="" force="0" pattern="(?i)^FixPaso?bi?r.*\.(exe|log)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^FixPaso?bi?r.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FixPaso?bi?r.*\.(exe|log)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^FixPaso?bi?r.*\.(exe|log)$" type="file"/>
         <process companyName="" force="0" process="(?i)^FixPasobir.*\.exe$"/>
     </tool>
     <tool name="Symantec Ramnit Removal Tool">
-        <desktop companyName="(?i)^Symantec" force="0" pattern="(?i)^FxRamnit.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^Symantec" force="0" pattern="(?i)^FxRamnit.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FxRamnit.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FxRamnit.*\.(exe|log)$" type="file"/>
         <process companyName="(?i)^Symantec" force="0" process="(?i)^FxRamnit.*\.exe$"/>
     </tool>
     <tool name="Symantec Tempedreve Removal Tool">
-        <desktop companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
-        <download companyName="(?i)^Symantec" force="0" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
-        <folder force="1" path="@TempDir\FixtoolQuarantine" quarantine="1"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
+        <desktop companyName="(?i)^Symantec" pattern="(?i)^FixTempedreve.*\.(exe|log)$" type="file"/>
+        <folder path="@TempDir\FixtoolQuarantine" quarantine="1"/>
         <process companyName="(?i)^Symantec" force="0" process="(?i)^FixTempedreve.*\.exe$"/>
     </tool>
     <tool name="System Information Tool">
-        <desktop companyName="" force="0" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Tweaking\.com \- System Information.*" type="folder"/>
+        <desktop companyName="" pattern="(?i)^System_Information_By_Tweaking\.com.*\.txt$" type="file"/>
         <process companyName="(?i)^Tweaking\.com$" force="0" process="(?i)^System_Information\.exe$"/>
     </tool>
     <tool name="Systemlook">
-        <desktop companyName="" force="0" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^SystemLook.*\.(exe|txt)$" type="file"/>
         <process companyName="" force="0" process="(?i)^SystemLook.*\.exe$"/>
     </tool>
     <tool name="TDSSKiller">
-        <desktop companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder"/>
-        <download companyName="(?i)^.*Kaspersky" force="0" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^TDSSKiller" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^.*Kaspersky" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^TDSSKiller" type="folder"/>
+        <desktop companyName="(?i)^.*Kaspersky" pattern="(?i)^tdsskiller.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^TDSSKiller" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^TDSSKiller.*_log\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^TDSSKiller" type="folder" quarantine="1"/>
         <process companyName="(?i)^.*Kaspersky" force="1" process="(?i)^tdsskiller.*\.exe$"/>
     </tool>
     <tool name="TFC">
-        <desktop companyName="(?i)^OldTimer" force="0" pattern="(?i)^TFC.*\.exe$" type="file"/>
-        <download companyName="(?i)^OldTimer" force="0" pattern="(?i)^TFC.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^TFC.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^OldTimer" pattern="(?i)^TFC.*\.exe$" type="file"/>
         <process companyName="(?i)^OldTimer" force="0" process="(?i)^TFC.*\.exe$"/>
     </tool>
     <tool name="ToolsDiag">
-        <desktop companyName="" force="0" pattern="(?i)^toolsdiag.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^toolsdiag.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^ToolsDiag$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^toolsdiag.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^toolsdiag.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^ToolsDiag$" type="folder"/>
         <process companyName="" force="0" process="(?i)^toolsdiag.*\.exe$"/>
     </tool>
     <tool name="UAC-Level">
-        <desktop companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^uac-level.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^uac-level.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^uac-level.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^uac-level.*\.exe$"/>
     </tool>
     <tool name="UAC Manager">
-        <desktop companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^uac-manager.*\.exe$"/>
     </tool>
     <tool name="USB File Resc">
-        <desktop companyName="(?i)^Streuner" force="0" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
-        <download companyName="(?i)^Streuner" force="0" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^USB File Resc$" type="folder"/>
+        <desktop companyName="(?i)^Streuner" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Streuner" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^USB File Resc$" type="folder"/>
         <process companyName="(?i)^Streuner" force="0" process="(?i)^usb\-file\-resc.*\.exe$"/>
     </tool>
     <tool name="USBFix">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
-        <desktopCommon companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
+        <desktopCommon companyName="(?i)^SosVirus" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^UsbFix.*\.(exe|lnk|txt)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^UsbFixQuarantine$" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^UsbFix" type="folder"/>
         <process companyName="" force="0" process="(?i)^UsbFix.*\.exe$"/>
-        <programFiles companyName="" force="0" pattern="(?i)^UsbFix" type="folder"/>
+        <programFiles companyName="" pattern="(?i)^UsbFix" type="folder"/>
         <softwareKey pattern="(?i)^UsbFix"/>
         <uninstall folder="(?i)^UsbFix" uninstaller="(?i)^Un-UsbFix\.exe$"/>
     </tool>
     <tool name="UnHide">
-        <desktop companyName="(?i)^Bleeping" force="0" pattern="(?i)^unhide.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^Bleeping" force="0" pattern="(?i)^unhide.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^unhide.*\.(exe|txt)$" type="file"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^unhide.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^Bleeping" force="0" process="(?i)^unhide.*\.exe$"/>
     </tool>
     <tool name="UnZacMe">
-        <desktop companyName="(?i)^SosVirus" force="0" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="(?i)^SosVirus" force="0" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^UnZacMe.*\.txt$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^UnZacMe$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="(?i)^SosVirus" pattern="(?i)^UnZacMe.*\.(exe|txt|lnk)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^UnZacMe.*\.txt$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^UnZacMe$" type="folder" quarantine="1"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^UnZacMe.*\.exe$"/>
     </tool>
     <tool name="Unlock92Decrypter">
-        <desktop companyName="" force="0" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^Unlock92Decrypter$" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^Unlock92Decrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Unlock92Decrypter$" type="folder"/>
+        <desktop companyName="" pattern="(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Unlock92Decrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^Unlock92Decrypter.*\.exe$"/>
     </tool>
     <tool name="Webroot DE-BUG">
-        <desktop companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
-        <download companyName="(?i)^Webroot" force="0" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^WebrootDebug$" type="folder" quarantine="1"/>
+        <desktop companyName="(?i)^Webroot" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
+        <desktop companyName="(?i)^Webroot" pattern="(?i)^webrootdebug.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^WebrootDebug$" type="folder" quarantine="1"/>
         <process companyName="(?i)^Webroot" force="0" process="(?i)^webrootdebug.*\.exe$"/>
     </tool>
     <tool name="WildfireDecryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^WildfireDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^WildfireDecryptor" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^WildfireDecryptor.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^WildfireDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^WildfireDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^WildfireDecryptor" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^WildfireDecryptor.*\.txt$" type="file"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^WildfireDecryptor.*\.exe$"/>
     </tool>
     <tool name="WinCHK">
-        <desktop companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^winchk.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^WinChk.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winchk.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winchk.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^WinChk.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^winchk.*\.exe$"/>
     </tool>
     <tool name="Windows Repair All In One (portable)">
-        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
-        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
+        <desktop companyName="" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
+        <desktop companyName="" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
+        <desktop companyName="" pattern="(?i)^tweaking\.com_windows_repair.*\.zip" type="file"/>
+        <desktop companyName="" pattern="(?i)^tweaking\.com_windows_repair.*" type="folder"/>
         <process companyName="" force="0" process="(?i)^Repair_Windows.*\.exe$"/>
     </tool>
     <tool name="WinsockAnalyzer">
-        <desktop companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^WinsockAnalyzer.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winsockanalyzer.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^WinsockAnalyzer.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^winsockanalyzer.*\.exe$"/>
     </tool>
     <tool name="WinUpdatefix">
-        <desktop companyName="" force="0" pattern="(?i)^winupdatefix.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^winupdatefix.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^winupdatefix.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winupdatefix.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^winupdatefix.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^winupdatefix.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^winupdatefix.*\.exe$"/>
     </tool>
     <tool name="XoristDecryptor">
-        <desktop companyName="(?i)^Kaspersky" force="0" pattern="(?i)^xoristDecryptor.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" force="0" pattern="(?i)^xoristDecryptor" type="folder"/>
-        <download companyName="(?i)^Kaspersky" force="0" pattern="(?i)^xoristDecryptor.*\.(exe|zip)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^xoristDecryptor" type="folder"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^xoristDecryptor.*\.txt$" type="file"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^xoristDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^xoristDecryptor" type="folder"/>
+        <desktop companyName="(?i)^Kaspersky" pattern="(?i)^xoristDecryptor.*\.(exe|zip)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^xoristDecryptor" type="folder"/>
+        <homeDrive companyName="" pattern="(?i)^xoristDecryptor.*\.txt$" type="file"/>
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^xoristDecryptor.*\.exe$"/>
     </tool>
     <tool name="ZHP Tools">
-        <appDataLocal companyName="" force="1" pattern="(?i)^ZHP$" type="folder"/>
+        <appDataLocal companyName="" pattern="(?i)^ZHP$" type="folder"/>
         <softwareKey pattern="(?i)^ZHP$"/>
     </tool>
     <tool name="ZHPCleaner">
-        <desktop companyName="" force="0" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
         <process companyName="" force="0" process="(?i)^ZHPCleaner.*\.exe$"/>
     </tool>
     <tool name="ZHPDiag">
-        <desktop companyName="" force="0" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
-        <desktopCommon companyName="" force="0" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^PhysicalDisk[0-9]_MBR\.bin$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
+        <desktopCommon companyName="" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPDiag.*\.(exe|txt|lnk)$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^PhysicalDisk[0-9]_MBR\.bin$" type="file"/>
         <process companyName="" force="0" process="(?i)^ZHPDiag.*\.exe$"/>
     </tool>
     <tool name="ZHPFix">
-        <desktop companyName="" force="0" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPFix.*\.(exe|txt|lnk)$" type="file"/>
         <process companyName="" force="0" process="(?i)^ZHPFix.*\.exe$"/>
     </tool>
     <tool name="ZHPLite">
-        <desktop companyName="" force="0" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPLite.*\.(exe|txt|lnk)$" type="file"/>
         <process companyName="" force="0" process="(?i)^ZHPLite.*\.exe$"/>
     </tool>
     <tool name="Zoek">
-        <desktop companyName="" force="0" pattern="(?i)^zoek.*\.exe$" type="file"/>
-        <download companyName="" force="0" pattern="(?i)^zoek.*\.exe$" type="file"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^zoek.*\.log$" type="file"/>
-        <homeDrive companyName="" force="1" pattern="(?i)^zoek" type="folder" quarantine="1"/>
-        <homeDrive companyName="" force="0" pattern="(?i)^runcheck.*\.txt$" type="file"/>
+        <desktop companyName="" pattern="(?i)^zoek.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^zoek.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^zoek.*\.log$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^zoek" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^runcheck.*\.txt$" type="file"/>
         <process companyName="" force="0" process="(?i)^zoek.*\.exe$"/>
     </tool>
 </tools>
