@@ -13,7 +13,7 @@
 ;#AutoIt3Wrapper_au3check_parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w- 7
 
 ; #INCLUDES# =========================================================================================================
-#include "StringSize.au3"
+#include "string_size.au3"
 #include <GDIPlus.au3>
 #include <WinAPIGdi.au3>
 #include <WinAPISys.au3>

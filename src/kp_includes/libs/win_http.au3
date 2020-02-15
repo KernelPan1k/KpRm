@@ -21,7 +21,7 @@
 #comments-end
 
 #include-once
-#include "WinHttpConstants.au3"
+#include "win_http_constants.au3"
 
 ; #INDEX# ===================================================================================
 ; Title ...............: WinHttp
