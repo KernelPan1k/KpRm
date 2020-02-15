@@ -12,7 +12,6 @@ Global $bPowerShellAvailable = Null
 Global $bDeleteQuarantines = Null
 Global $bSearchOnly = False
 Global $bSearchOnlyHasFoundElement = False
-Global $aRemoveRestart = []
 Global $bNeedRestart = False
 Global $aElementsToKeep[1][2] = [[]]
 Global $aElementsFound[1][2] = [[]]
@@ -48,7 +47,7 @@ Global $oCreateRP
 Global $oDeleteQuarantine
 Global $oDeleteQuarantineAfter7Days
 Global $oProgressBar
-Global $iNbrTask = 24
+Global $iNbrTask = 25
 Global $iCurrentNbrTask
 Global Const $iTaskStep = Floor(100 / $iNbrTask)
 Global $oToolsCpt = Null
