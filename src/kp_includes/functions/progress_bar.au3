@@ -1,6 +1,8 @@
 Func ProgressBarUpdate($nbr = 1)
-	$iCurrentNbrTask += $nbr
 	Dim $oProgressBar
+	Dim $iCurrentNbrTask
+
+	$iCurrentNbrTask += $nbr
 	GUICtrlSetData($oProgressBar, $iCurrentNbrTask * $iTaskStep)
 
 	If $iCurrentNbrTask = $iNbrTask Then
@@ -9,7 +11,9 @@ Func ProgressBarUpdate($nbr = 1)
 EndFunc   ;==>ProgressBarUpdate
 
 Func ProgressBarInit()
-	$iCurrentNbrTask = 0
 	Dim $oProgressBar
+	Dim $iCurrentNbrTask
+
+	$iCurrentNbrTask = 0
 	GUICtrlSetData($oProgressBar, 0)
 EndFunc   ;==>ProgressBarInit

@@ -47,7 +47,7 @@ Global $oCreateRP
 Global $oDeleteQuarantine
 Global $oDeleteQuarantineAfter7Days
 Global $oProgressBar
-Global $iNbrTask = 25
+Global $iNbrTask = 27
 Global $iCurrentNbrTask
 Global Const $iTaskStep = Floor(100 / $iNbrTask)
 Global $oToolsCpt = Null
