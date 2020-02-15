@@ -124,6 +124,8 @@ Func KpRemover()
 		$bDeleteQuarantines = 7
 	EndIf
 
+	_InitiatePermissionResources()
+
 	If GUICtrlRead($oBackupRegistry) = $GUI_CHECKED Then
 		CreateBackupRegistry()
 	EndIf
@@ -163,6 +165,8 @@ Func KpRemover()
 	TimerWriteReport($hGlobalTimer, "KPRM")
 
 	GUICtrlSetData($oProgressBar, 100)
+
+	_ClosePermissionResources()
 
 	SetDeleteQuarantinesIn7DaysIfNeeded()
 	RestartIfNeeded()

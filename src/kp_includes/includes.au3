@@ -38,4 +38,4 @@
 #include "functions\remove.au3"
 #include "functions\search.au3"
 #include "functions\quarantines.au3"
-#include "functions.au3"
+#include "functions\functions.au3"

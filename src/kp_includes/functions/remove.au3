@@ -88,9 +88,7 @@ Func RemoveTheFile($sFile)
 	If FileExists($sFile) Then
 		PrepareRemove($sFile, 0)
 
-		FileDelete($sFile)
-
-		If FileExists($sFile) Then
+		If Not FileDelete($sFile) Then
 			DllCall('kernel32.dll', 'bool', 'DeleteFileW', 'wstr', $sFile)
 		EndIf
 
@@ -107,26 +105,25 @@ Func RemoveTheFolder($sPath)
 	If FileExists($sPath) Then
 		PrepareRemove($sPath, 1)
 
-		DirRemove($sPath, $DIR_REMOVE)
-
-		If FileExists($sPath) Then
+		If Not DirRemove($sPath, $DIR_REMOVE) Then
 			Local $aFileList = _FileListToArrayRec($sPath, "*", $FLTA_FILES, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
-			If @error <> 0 Then Return
+			If @error <> 0 Then _
+					Return
 
-			_ArrayDelete($aFileList, 0)
-			_ArrayReverse($aFileList)
-
-			For $i = 0 To UBound($aFileList) - 1
+			For $i = 1 To UBound($aFileList) - 1
+				PrepareRemove($aFileList[$i], 0)
 				RemoveTheFile($aFileList[$i])
 			Next
 
 			Local $aFolderList = _FileListToArrayRec($sPath, "*", $FLTA_FOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
-			If @error <> 0 Then Return
+			If @error <> 0 Then _
+					Return
 
-			_ArrayDelete($aFileList, 0)
-			_ArrayReverse($aFileList)
+			_ArrayDelete($aFolderList, 0)
+			_ArrayReverse($aFolderList)
 
 			For $i = 0 To UBound($aFolderList) - 1
+				PrepareRemove($aFolderList[$i], 1)
 				DirRemove($aFolderList[$i], $DIR_REMOVE)
 			Next
 
@@ -135,16 +132,17 @@ Func RemoveTheFolder($sPath)
 			If FileExists($sPath) Then
 				$bNeedRestart = True
 
-				$aFolderList = _FileListToArrayRec($sPath, "*", $FLTA_FOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
-				If @error <> 0 Then Return
+				Local $aElementsList = _FileListToArrayRec($sPath, "*", $FLTAR_FILESFOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
+				If @error <> 0 Then _
+						Return
 
-				_ArrayDelete($aFileList, 0)
-				_ArrayReverse($aFileList)
+				_ArrayDelete($aElementsList, 0)
+				_ArrayReverse($aElementsList)
 
 				Local $hDll = DllOpen('kernel32.dll')
 
-				For $i = 0 To UBound($aFolderList) - 1
-					DllCall($hDll, "int", "MoveFileExW", "wstr", $aFolderList[$i], "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
+				For $i = 0 To UBound($aElementsList) - 1
+					DllCall($hDll, "int", "MoveFileExW", "wstr", $aElementsList[$i], "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
 				Next
 
 				DllCall($hDll, "int", "MoveFileExW", "wstr", $sPath, "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
@@ -335,7 +333,8 @@ Func CloseProcessAndWait($sProcess, $sProcessName, $sForce = "0")
 	If Number($sForce) Then
 		_Permissions_KillProcess($sProcess)
 
-		If 0 = ProcessExists($sProcess) Then Return True
+		If 0 = ProcessExists($sProcess) Then _
+				Return True
 	EndIf
 
 	UpdateStatusBar("Close process " & $sProcessName)
