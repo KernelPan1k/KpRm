@@ -60,6 +60,7 @@ Func InitGlobalVars()
 	Dim $bNeedRestart = False
 	Dim $aElementsToKeep[1][2] = [[]]
 	Dim $aElementsFound[1][2] = [[]]
+	Dim $aRemoveRestart = []
 
 	InitOToolCpt()
 	UpdateStatusBar("Ready ...")
@@ -523,7 +524,8 @@ Func UCheckIfUninstallOk($sToolElement, $sToolVal)
 		Local $sSymbol = "[OK]"
 
 		If FileExists($sFolderPath) Then
-			$sSymbol = "[X]"
+			$sSymbol = "[R]"
+			AddRemoveAtRestart($sFolderPath)
 		EndIf
 
 		LogMessage("     " & $sSymbol & " Uninstaller run correctly")
@@ -537,6 +539,7 @@ Func UCheckIfElementExist($sToolElement, $sToolVal)
 
 	If FileExists($sToolElement) Then
 		$sSymbol = "[R]"
+		AddRemoveAtRestart($sToolElement)
 	EndIf
 
 	LogMessage("     " & $sSymbol & " " & $sToolElement & " deleted")
@@ -560,16 +563,37 @@ EndFunc   ;==>CheckIfExist
 
 Func RestartIfNeeded()
 	Dim $bNeedRestart
+	Dim $aRemoveRestart
 	Dim $sKPLogFile
 
 	If $bNeedRestart = True Then
 		Local Const $sSuffixKey = GetSuffixKey()
+
+		Local $sCmd = StringReplace(@ComSpec, "\", "\\")
+
+		For $i = 1 To UBound($aRemoveRestart) - 1
+			Local $sType = FileExistsAndGetType($aRemoveRestart[$i])
+			Local $sElement = StringReplace($aRemoveRestart[$i], "\", "\\")
+			Local $sCommand = Null
+
+			If $sType = 'file' Then
+				$sCommand = $sCmd & " /c IF EXIST " & '"' & $sElement & '"' & " DEL /F /Q " & '"' & $sElement & '"'
+			ElseIf $sType = 'folder' Then
+				$sCommand = $sCmd & " /c IF EXIST " & '"' & $sElement & '"' & " RMDIR /S /Q " & '"' & $sElement & '"'
+			EndIf
+
+			If $sCommand <> Null Then
+				RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_remove__" & $i, "REG_SZ", $sCommand)
+			EndIf
+		Next
+
 		Local $reportPath = StringReplace(@DesktopDir & "\" & $sKPLogFile, "\", "\\")
-		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_restart", "REG_SZ", "notepad.exe " & '"' & $reportPath & '"')
+		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_report", "REG_SZ", "notepad.exe " & '"' & $reportPath & '"')
 
 		If @Compiled Then
-			Local $exePath = StringReplace(@AutoItExe, "\", "\\")
-			RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_remove", "REG_SZ", "DEL /F /Q " & '"' & $exePath & '"')
+			Local $sExe = StringReplace(@AutoItExe, "\", "\\")
+			Local $sCommand = $sCmd & " /c IF EXIST " & '"' & $sExe & '"' & " DEL /F /Q " & '"' & $sExe & '"'
+			RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_remove_exe", "REG_SZ", $sCommand)
 		EndIf
 
 		LogMessage(@CRLF & "- Need to Restart -" & @CRLF)

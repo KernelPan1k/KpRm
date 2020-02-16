@@ -214,7 +214,7 @@ Global Const $RECURSE_OBJECTS		 = 3
 Global $h__Advapi32Dll 			= @SystemDir&'\Advapi32.dll'
 Global $h__Kernel32Dll 			= @SystemDir&'\Kernel32.dll'
 
-Global $a__Priv[4][2], $a__Prev[4][2]
+Global $a__Priv[5][2], $a__Prev[5][2]
 Global $ResourcesState = 0
 #EndRegion ;**** Global Constants and vars ****
 
@@ -243,6 +243,8 @@ Func _InitiatePermissionResources()
 	$a__Priv[2][1] = 2
 	$a__Priv[3][0] = "SeSecurityPrivilege"
 	$a__Priv[3][1] = 2
+	$a__Priv[4][0] = "SeShutdownPrivilege"
+	$a__Priv[4][1] = 2
 	$a__Prev = _SetPrivilege($a__Priv)
 	$ResourcesState = 1
 EndFunc ;==>_InitiatePermissionResources

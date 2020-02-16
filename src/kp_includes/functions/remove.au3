@@ -83,8 +83,6 @@ Func IsProcessInWhiteList($sProcess)
 EndFunc   ;==>IsProcessInWhiteList
 
 Func RemoveTheFile($sFile)
-	Dim $bNeedRestart
-
 	If FileExists($sFile) Then
 		PrepareRemove($sFile, 0)
 
@@ -93,7 +91,6 @@ Func RemoveTheFile($sFile)
 		EndIf
 
 		If FileExists($sFile) Then
-			$bNeedRestart = True
 			DllCall('kernel32.dll', "int", "MoveFileExW", "wstr", $sFile, "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
 		EndIf
 	EndIf
@@ -130,8 +127,6 @@ Func RemoveTheFolder($sPath)
 			DirRemove($sPath, $DIR_REMOVE)
 
 			If FileExists($sPath) Then
-				$bNeedRestart = True
-
 				Local $aElementsList = _FileListToArrayRec($sPath, "*", $FLTAR_FILESFOLDERS, $FLTAR_RECUR, $FLTAR_NOSORT, $FLTAR_FULLPATH)
 				If @error <> 0 Then _
 						Return
@@ -515,6 +510,15 @@ Func CleanDirectoryContent(Const ByRef $aList)
 		EndIf
 	Next
 EndFunc   ;==>CleanDirectoryContent
+
+Func AddRemoveAtRestart($sElement)
+	Dim $aRemoveRestart
+	Dim $bNeedRestart = True
+
+	If _ArraySearch($aRemoveRestart, $sElement) = -1 Then
+		_ArrayAdd($aRemoveRestart, $sElement)
+	EndIf
+EndFunc   ;==>AddRemoveAtRestart
 
 Func RemoveFileCustomPath(Const ByRef $aList)
 	For $i = 0 To UBound($aList) - 1
