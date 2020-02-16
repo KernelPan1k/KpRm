@@ -15,6 +15,7 @@ Global $bSearchOnlyHasFoundElement = False
 Global $bNeedRestart = False
 Global $aElementsToKeep[1][2] = [[]]
 Global $aElementsFound[1][2] = [[]]
+Global $aRemoveRestart = []
 Global $pLeft = 16
 Global $pRight = 220
 Global $pPadding1 = 8
