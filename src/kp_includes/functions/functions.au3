@@ -569,17 +569,15 @@ Func RestartIfNeeded()
 	If $bNeedRestart = True Then
 		Local Const $sSuffixKey = GetSuffixKey()
 
-		Local $sCmd = StringReplace(@ComSpec, "\", "\\")
-
 		For $i = 1 To UBound($aRemoveRestart) - 1
 			Local $sType = FileExistsAndGetType($aRemoveRestart[$i])
 			Local $sElement = StringReplace($aRemoveRestart[$i], "\", "\\")
 			Local $sCommand = Null
 
 			If $sType = 'file' Then
-				$sCommand = $sCmd & " /c IF EXIST " & '"' & $sElement & '"' & " DEL /F /Q " & '"' & $sElement & '"'
+				$sCommand = "cmd.exe /c IF EXIST " & '"' & $sElement & '"' & " DEL /F /Q " & '"' & $sElement & '"'
 			ElseIf $sType = 'folder' Then
-				$sCommand = $sCmd & " /c IF EXIST " & '"' & $sElement & '"' & " RMDIR /S /Q " & '"' & $sElement & '"'
+				$sCommand = "cmd.exe /c IF EXIST " & '"' & $sElement & '"' & " RMDIR /S /Q " & '"' & $sElement & '"'
 			EndIf
 
 			If $sCommand <> Null Then
@@ -591,9 +589,7 @@ Func RestartIfNeeded()
 		RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_report", "REG_SZ", "notepad.exe " & '"' & $reportPath & '"')
 
 		If @Compiled Then
-			Local $sExe = StringReplace(@AutoItExe, "\", "\\")
-			Local $sCommand = $sCmd & " /c IF EXIST " & '"' & $sExe & '"' & " DEL /F /Q " & '"' & $sExe & '"'
-			RegWrite("HKLM" & $sSuffixKey & "\Software\Microsoft\Windows\CurrentVersion\RunOnce", "kprm_remove_exe", "REG_SZ", $sCommand)
+			DllCall('kernel32.dll', "int", "MoveFileExW", "wstr", @AutoItExe, "ptr", 0, "dword", $MOVE_FILE_DELAY_UNTIL_REBOOT)
 		EndIf
 
 		LogMessage(@CRLF & "- Need to Restart -" & @CRLF)

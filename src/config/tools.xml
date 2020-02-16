@@ -606,6 +606,10 @@
         <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^JRT.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^Malwarebytes" force="0" process="(?i)^JRT.*\.exe$"/>
     </tool>
+    <tool name="Kaspersky Rescue Disk">
+        <desktop companyName="" pattern="(?i)^krd\.iso$" type="file"/>
+        <download companyName="" pattern="(?i)^krd\.iso$" type="file"/>
+    </tool>
     <tool name="Kaspersky Virus Removal Tool">
         <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
         <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
