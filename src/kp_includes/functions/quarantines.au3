@@ -123,11 +123,9 @@ Func RemoveQuarantines($sTaskTime)
 		If $sPath = "" Then ContinueLoop
 
 		If IsFile($sPath) Then
-			PrepareRemove($sPath, 0)
-			FileDelete($sPath)
+			RemoveTheFile($sPath)
 		ElseIf IsDir($sPath) Then
-			PrepareRemove($sPath, 1)
-			DirRemove($sPath, $DIR_REMOVE)
+			RemoveTheFolder($sPath)
 		Else
 			ContinueLoop
 		EndIf
@@ -137,7 +135,7 @@ Func RemoveQuarantines($sTaskTime)
 			Local $bExist = FileExists($sPath)
 
 			If $bExist = True Then
-				$sSymbol = "[X]"
+				$sSymbol = "[R]"
 			EndIf
 
 			Local $sMessage = "     " & $sSymbol & " " & $sPath & " deleted (after 7 days)"
