@@ -8,6 +8,29 @@ Func SR_WMIDateStringToDate($dtmDate)
 			StringMid($dtmDate, 13, 2))
 EndFunc   ;==>SR_WMIDateStringToDate
 
+Func _SR_CreateRestorePoint($strDescription)
+	Local Const $MAX_DESC = 64
+	Local Const $MAX_DESC_W = 256
+	Local Const $BEGIN_SYSTEM_CHANGE = 100
+	Local Const $MODIFY_SETTINGS = 12
+	Local $_RESTOREPTINFO = DllStructCreate('DWORD dwEventType;DWORD dwRestorePtType;INT64 llSequenceNumber;WCHAR szDescription[' & $MAX_DESC_W & ']')
+
+	DllStructSetData($_RESTOREPTINFO, 'dwEventType', $BEGIN_SYSTEM_CHANGE)
+	DllStructSetData($_RESTOREPTINFO, 'dwRestorePtType', $MODIFY_SETTINGS)
+	DllStructSetData($_RESTOREPTINFO, 'llSequenceNumber', 0)
+	DllStructSetData($_RESTOREPTINFO, 'szDescription', $strDescription)
+
+	Local $pRestorePtSpec = DllStructGetPtr($_RESTOREPTINFO)
+	Local $_SMGRSTATUS = DllStructCreate('UINT  nStatus;INT64 llSequenceNumber')
+	Local $pSMgrStatus = DllStructGetPtr($_SMGRSTATUS)
+	Local $aRet = DllCall('SrClient.dll', 'BOOL', 'SRSetRestorePointW', 'ptr', $pRestorePtSpec, 'ptr', $pSMgrStatus)
+
+	If @error Then Return 0
+
+	Return $aRet[0]
+
+EndFunc   ;==>_SR_CreateRestorePoint
+
 Func SR_EnumRestorePointsPowershell()
 	Local $aRestorePoints[1][3], $iCounter = 0
 	$aRestorePoints[0][0] = $iCounter
@@ -308,6 +331,9 @@ Func CheckIsRestorePointExist()
 	Local Const $aRP = SR_EnumRestorePoints()
 	Local Const $iNbr = $aRP[0][0]
 
+	ConsoleWrite($iNbr)
+	ConsoleWrite($aRP[$iNbr][1])
+
 	If $iNbr = 0 Then
 		Return False
 	EndIf
@@ -319,9 +345,13 @@ Func CreateSystemRestorePoint()
 	CreateSystemRestorePointWmi()
 
 	If Not CheckIsRestorePointExist() Then
-		ClearDailyRestorePoint()
-		CreateSystemRestorePointPowershell()
-		$bExist = CheckIsRestorePointExist()
+		_SR_CreateRestorePoint("KpRm")
+
+		If Not CheckIsRestorePointExist() Then
+			ClearDailyRestorePoint()
+			CreateSystemRestorePointPowershell()
+			$bExist = CheckIsRestorePointExist()
+		EndIf
 	EndIf
 
 	If Not CheckIsRestorePointExist() Then
