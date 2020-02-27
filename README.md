@@ -200,6 +200,7 @@
  - ZHPDiag (Nicolas Coolman)
  - ZHPFix (Nicolas Coolman)
  - ZHPLite (Nicolas Coolman)
+ - ZHPSuite (Nicolas Coolman)
  - Zoek (Smeenk)
 
 
