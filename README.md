@@ -127,6 +127,7 @@
  - McAfee RootkitRemover (McAfee)
  - McAfee Stinger (McAfee)
  - McAfee Tesladecrypt (McAfee)
+ - MemControl (g3n-h@ckm@n)
  - MicroCop Decryptor (Michael Gillespie)
  - Miniregtool (Farbar)
  - Minitoolbox (Farbar)
