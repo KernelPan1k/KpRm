@@ -1180,8 +1180,8 @@
         <softwareKey pattern="(?i)^ZHP$"/>
     </tool>
     <tool name="ZHPCleaner">
-        <desktop companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk|zip)$" type="file"/>
+        <download companyName="" pattern="(?i)^ZHPCleaner.*\.(exe|txt|lnk|zip)$" type="file"/>
         <process companyName="" force="0" process="(?i)^ZHPCleaner.*\.exe$"/>
     </tool>
     <tool name="ZHPDiag">
@@ -1202,8 +1202,8 @@
         <process companyName="" force="0" process="(?i)^ZHPLite.*\.exe$"/>
     </tool>
     <tool name="ZHPSuite">
-        <desktop companyName="(?i)^Nicolas Coolman" pattern="(?i)^ZHPSuite.*\.(exe|txt|lnk)$" type="file"/>
-        <download companyName="(?i)^Nicolas Coolman" pattern="(?i)^ZHPSuite.*\.(exe|txt|lnk)$" type="file"/>
+        <desktop companyName="(?i)^Nicolas Coolman" pattern="(?i)^ZHPSuite.*\.(exe|txt|lnk|zip)$" type="file"/>
+        <download companyName="(?i)^Nicolas Coolman" pattern="(?i)^ZHPSuite.*\.(exe|txt|lnk|zip)$" type="file"/>
         <process companyName="(?i)^Nicolas Coolman" force="0" process="(?i)^ZHPSuite.*\.exe$"/>
     </tool>
     <tool name="Zoek">
