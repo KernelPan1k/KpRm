@@ -17,7 +17,6 @@
  - AlphaDecrypter (Michael Gillespie)
  - AswMBR (Avast!Software)
  - AuroraDecrypter (Michael Gillespie)
- - Autoruns (sysinternals)
  - AutorunsVTChecker (regist)
  - Avast Decryptor Cryptomix (Avast!Software)
  - AVCertClean (fr33tux)

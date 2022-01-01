@@ -60,13 +60,6 @@
         <download companyName="" pattern="(?i)^AuroraDecrypter$" type="folder"/>
         <process companyName="" force="0" process="(?i)^AuroraDecrypter.*\.exe$"/>
     </tool>
-    <tool name="Autoruns">
-        <desktop companyName="(?i)^Sysinternals" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
-        <desktop companyName="" pattern="(?i)^Autoruns$" type="folder"/>
-        <download companyName="(?i)^Sysinternals" pattern="(?i)^Autoruns.*\.(exe|zip)$" type="file"/>
-        <download companyName="" pattern="(?i)^Autoruns$" type="folder"/>
-        <process companyName="(?i)^Sysinternals" force="0" process="(?i)^Autoruns.*\.exe$"/>
-    </tool>
     <tool name="AutorunsVTChecker">
         <desktop companyName="(?i)^regist$" pattern="(?i)^autorunsvtchecker.*\.(exe|zip)$" type="file"/>
         <desktop companyName="" pattern="(?i)^autorunsvtchecker" type="folder"/>
@@ -479,9 +472,11 @@
     </tool>
     <tool name="FRST">
         <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
-        <desktop companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+		<desktop companyName="" force="0" pattern="(?i)^(Search|SearchReg)\.txt$" type="file"/>
+		<desktop companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
         <download companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
         <download companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+		<download companyName="" force="0" pattern="(?i)^(Search|SearchReg)\.txt$" type="file"/>
         <homeDrive companyName="" pattern="(?i)^FRST" type="folder" quarantine="1"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^FRST.*\.exe$"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^EnglishFRST.*\.exe$"/>
