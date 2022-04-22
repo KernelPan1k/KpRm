@@ -248,8 +248,6 @@ To restore hives easily, it is possible to use KPLive: https://github.com/Kernel
 - ValidateAdminCodeSignatures (0)
 
 
-Project website: https://kernel-panik.me/tool/kprm/
-
 
 ## Contributors
 
