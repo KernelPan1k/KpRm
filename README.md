@@ -251,20 +251,6 @@ To restore hives easily, it is possible to use KPLive: https://github.com/Kernel
 Project website: https://kernel-panik.me/tool/kprm/
 
 
-## Donation
-
-If you think KpRm has helped you, you can make a donation:
-
-### Bitcoin address:
-
-1L7YjRfxaci9Zwz5Hv84wfRYSmcbQSTNAo
-
-
-### Stellar Lumens address:
-
-GCLLHFLOZFYIV5IR2BWBIU7Q55E4EYWHWAOPYMLN3NHXTBQQCAIWJ6FC
-
-
 ## Contributors
 
 <a href="https://github.com/kernelPan1k"><img src="https://avatars2.githubusercontent.com/u/3338681?s=460&v=4" title="KernelPan1k" width="80" height="80"></a>
