@@ -42,7 +42,7 @@ Func SR_EnumRestorePointsPowershell()
 		Return $aRestorePoints
 	EndIf
 
-	Local $iPid = Run('Powershell.exe -Command "$date = @{Expression={$_.ConvertToDateTime($_.CreationTime)}}; Get-ComputerRestorePoint | Select-Object -Property SequenceNumber, Description, $date"', @SystemDir, @SW_HIDE, $STDOUT_CHILD)
+	Local $iPid = Run('Powershell.exe -ep bypass -nop -Command "$date = @{Expression={$_.ConvertToDateTime($_.CreationTime)}}; Get-ComputerRestorePoint | Select-Object -Property SequenceNumber, Description, $date"', @SystemDir, @SW_HIDE, $STDOUT_CHILD)
 
 	While 1
 		$sOutput &= StdoutRead($iPid)
@@ -152,7 +152,7 @@ Func EnableRestoration()
 
 	If $iSR_Enabled = 0 Then
 		If PowershellIsAvailable() = True Then
-			RunWait("Powershell.exe -Command  Enable-ComputeRrestore -drive '" & @HomeDrive & "\' | Set-Content -Encoding utf8 ", @ScriptDir, @SW_HIDE)
+			RunWait("Powershell.exe -ep bypass -nop -Command  Enable-ComputeRrestore -drive '" & @HomeDrive & "\' | Set-Content -Encoding utf8 ", @ScriptDir, @SW_HIDE)
 		EndIf
 	EndIf
 EndFunc   ;==>EnableRestoration
@@ -319,7 +319,7 @@ Func CreateSystemRestorePointPowershell()
 	UpdateStatusBar("Create new restore point ...")
 
 	If PowershellIsAvailable() = True Then
-		RunWait('Powershell.exe -Command Checkpoint-Computer -Description "KpRm"', @ScriptDir, @SW_HIDE)
+		RunWait('Powershell.exe -ep bypass -nop -Command Checkpoint-Computer -Description "KpRm"', @ScriptDir, @SW_HIDE)
 	EndIf
 
 	Sleep(2000)

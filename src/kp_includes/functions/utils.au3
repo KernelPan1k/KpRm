@@ -165,7 +165,7 @@ Func PowershellIsAvailable()
 
 	If IsBool($bPowerShellAvailable) Then Return $bPowerShellAvailable
 
-	Local $iPid = Run("powershell.exe", "", @SW_HIDE)
+	Local $iPid = Run("powershell.exe -ep bypass", "", @SW_HIDE)
 
 	If @error <> 0 Or Not $iPid Then
 		$bPowerShellAvailable = False

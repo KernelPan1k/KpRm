@@ -609,7 +609,7 @@
     <tool name="Kaspersky Virus Removal Tool">
         <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
         <download companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
-        <homeDrive companyName="" pattern="(?i)^KVRT_Data$" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^KVRT_([0-9]{4})?Data$" type="folder" quarantine="1"/>
         <process companyName="(?i).*Kaspersky" force="0" process="(?i)^KVRT.*\.exe$"/>
     </tool>
     <tool name="KPLive">
@@ -979,6 +979,7 @@
         <desktop companyName="" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
         <download companyName="" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
         <process companyName="" force="0" process="(?i)^SecurityCheck.*\.exe$"/>
+		<homeDrive companyName="" pattern="(?i)^SecurityCheck$" type="folder"/>
     </tool>
     <tool name="ServicesRepair">
         <desktop companyName="" pattern="(?i)^ServicesRepair.*\.exe$" type="file"/>
