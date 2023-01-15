@@ -5,9 +5,9 @@
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=2.0.0.10.0
+#AutoIt3Wrapper_Res_Fileversion=2.0.0.11.0
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=2.10.0
+#AutoIt3Wrapper_Res_ProductVersion=2.11.0
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Res_LegalTradeMarks=kernel-panik
@@ -50,11 +50,6 @@ If UBound($CmdLine) > 1 Then
 	EndIf
 
 	Exit
-EndIf
-
-
-If $bKpRmDev = False Then
-	CheckVersionOfKpRm()
 EndIf
 
 Local Const $iEULAisOK = CustomMsgBox($MB_ICONINFORMATION, "Disclaimer of warranty!", "Disclaimer of warranty!" & @CRLF & @CRLF _

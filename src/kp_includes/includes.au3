@@ -23,7 +23,6 @@
 #include "libs\permissions.au3"
 #include "libs\xml_dom_wrapper.au3"
 #include "libs\taskplaner_com.au3"
-#include "libs\win_http.au3"
 #include "libs\ext_msg_box.au3"
 #include "libs\jsmn.au3"
 #include "kp_languages.au3"
