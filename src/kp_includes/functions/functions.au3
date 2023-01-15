@@ -19,7 +19,7 @@ Func Init()
 	LogMessage("# Website https://kernel-panik.me/tool/kprm/")
 	LogMessage("# Run by " & @UserName & " from " & @WorkingDir)
 	LogMessage("# Computer Name: " & @ComputerName)
-	LogMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") " & @OSServicePack)
+	LogMessage("# OS: " & GetHumanVersion() & " " & @OSArch & " (" & @OSBuild & ") (" & GetOsVersion() &") " & @OSServicePack)
 	LogMessage("# Number of passes: " & CountKpRmPass())
 
 	ProgressBarInit()

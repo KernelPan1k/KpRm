@@ -7,23 +7,6 @@ Func IsNewLine($arr, $line)
 	Return _ArraySearch($arr, $line, 0, 0, 0, 1, 1, 0) = -1
 EndFunc   ;==>IsNewLine
 
-Func SendReport($sPathReport)
-	If Not @Compiled Then Return
-	If $bKpRmDev = True Then Return
-	If Not FileExists($sPathReport) Then Return
-	If Not IsInternetConnected() Then Return
-
-	UpdateStatusBar("Send report ...")
-
-	Local $hOpen = _WinHttpOpen($sFtpUA)
-	Local $hConnect = _WinHttpConnect($hOpen, $sUPDATE_SITE)
-	Local $hRequest = _WinHttpOpenRequest($hConnect, "POST", $sUPLOAD_PAGE)
-	Local $eReceved = _WinHttpSimpleFormFill($hConnect, $sUPLOAD_PAGE, Default, "name:my_log", $sPathReport)
-
-	_WinHttpCloseHandle($hConnect)
-	_WinHttpCloseHandle($hOpen)
-EndFunc   ;==>SendReport
-
 Func FormatPathWithMacro($sPath)
 	Select
 		Case StringRegExp($sPath, "^@AppDataCommonDir")
@@ -75,54 +58,6 @@ Func LogMessage($message)
 	FileWrite(@HomeDrive & "\KPRM" & "\" & $sKPLogFile, $message & @CRLF)
 	FileWrite(@DesktopDir & "\" & $sKPLogFile, $message & @CRLF)
 EndFunc   ;==>LogMessage
-
-Func HTTP_Get($url)
-	Local $oHTTP = ObjCreate("winhttp.winhttprequest.5.1")
-	Local $res = $oHTTP.Open("GET", $url, False)
-	If (@error) Then Return SetError(1, 0, 0)
-	$oHTTP.Send()
-	If (@error) Then Return SetError(2, 0, 0)
-	Local $sReceived = $oHTTP.ResponseText
-	Local $iStatus = $oHTTP.Status
-	If $iStatus = 200 Then
-		Return $sReceived
-	Else
-		Return SetError(3, $iStatus, $sReceived)
-	EndIf
-EndFunc   ;==>HTTP_Get
-
-Func CheckVersionOfKpRm()
-	Dim $sKprmVersion
-	Dim $sTmpDir
-
-	If IsInternetConnected() = False Then Return
-
-	Local $sVersion = HTTP_Get("https://toolslib.net/api/softwares/951/version")
-
-	If @error <> 0 Or StringInStr($sVersion, "Not found") Then
-		Return
-	EndIf
-
-	Local $bNeedsUpdate = $sKprmVersion And $sVersion And $sKprmVersion <> $sVersion
-
-	If $bNeedsUpdate Then
-		; https://github.com/KernelPan1k/KPAutoUpdater
-		FileInstall(".\binaries\KPAutoUpdater\KPAutoUpdater.exe", $sTmpDir & "\KPAutoUpdater.exe")
-
-		Local $iAutoUpdaterPid = Run($sTmpDir & '\KPAutoUpdater.exe "KpRm" "' & @AutoItPID & '" "https://download.toolslib.net/download/direct/951/latest"')
-
-		If 0 = $iAutoUpdaterPid Then Return
-
-		Local $iCpt = 50
-
-		Do
-			$iCpt -= 1
-			Sleep(500)
-		Until ($iCpt = 0 Or 0 = ProcessExists($iAutoUpdaterPid))
-
-		Sleep(5000)
-	EndIf
-EndFunc   ;==>CheckVersionOfKpRm
 
 Func HaraKiri()
 	Dim $bKpRmDev
@@ -190,7 +125,6 @@ Func OpenReport($sParamReport = Null)
 	EndIf
 
 	If FileExists($sReport) Then
-		SendReport($sReport)
 		Run("notepad.exe " & $sReport)
 	EndIf
 EndFunc   ;==>OpenReport
@@ -305,3 +239,18 @@ Func FormatForUseRegistryKey($sPkey)
 
 	Return $sPkey
 EndFunc   ;==>FormatForUseRegistryKey
+
+Func GetOsVersion()
+	; https://www.autoitscript.com/forum/topic/183139-windows-10-complete-build-numberversion/
+	$sCommand = "Powershell [System.Environment]::OSVersion.Version.tostring()"
+	$iPID = run($sCommand , "" , @SW_HIDE , $stdout_child)
+
+	$sOutput = ""
+
+	While 1
+        $sOutput &= StdoutRead($iPID)
+        If @error Then ExitLoop
+    WEnd
+
+	Return stringsplit($sOutput , @CRLF, 2)[0]
+EndFunc
