@@ -361,6 +361,7 @@ Func RunRemoveTools()
 			"registryKey", _
 			"searchRegistryKey", _
 			"startMenu", _
+			"userStartMenu", _
 			"cleanDirectory", _
 			"file", _
 			"folder"]
@@ -436,6 +437,9 @@ Func RunRemoveTools()
 			Case "startMenu"
 				UpdateStatusBar("Search tools in start menu ...")
 				RemoveAllFileFrom(@AppDataCommonDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
+			Case "userStartMenu"
+				UpdateStatusBar("Search tools in user start menu ...")
+				RemoveAllFileFrom(@AppDataDir & "\Microsoft\Windows\Start Menu\Programs", $aListTasks)
 			Case "cleanDirectory"
 				UpdateStatusBar("Search tools in specific directory ...")
 				CleanDirectoryContent($aListTasks)
