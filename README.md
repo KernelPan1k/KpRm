@@ -254,3 +254,4 @@ To restore hives easily, it is possible to use KPLive: https://github.com/Kernel
 <a href="https://github.com/kernelPan1k"><img src="https://avatars2.githubusercontent.com/u/3338681?s=460&v=4" title="KernelPan1k" width="80" height="80"></a>
 <a href="https://github.com/cocochepeau"><img src="https://avatars1.githubusercontent.com/u/2019778?s=460&v=4" title="cocochepeau" width="80" height="80"></a>
 <a href="https://genhackmantools.wordpress.com/"><img src="https://genhackmantools.files.wordpress.com/2018/05/avatar_sos.gif" title="G3n-H@ckm@n" width="80" height="80"></a>
+<a href="https://github.com/ave9858"><img src="https://avatars.githubusercontent.com/u/112294121?v=4" title="May" width="80" height="80"></a>
