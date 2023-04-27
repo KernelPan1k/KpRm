@@ -666,6 +666,7 @@
     </tool>
     <tool name="Malwarebytes (log)">
         <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+        <desktopCommon companyName="" pattern="(?i)^mbst-grab-results\.zip$" type="file"/>
         <download companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
     </tool>
     <tool name="MbrScan">
