@@ -342,6 +342,12 @@
         <process companyName="(?i)^ESET" force="0" process="(?i)^esetlogcollector.*\.exe$"/>
         <registryKey force="0" key="HKCU\Software\ESET\ESET Log Collector"/>
     </tool>
+    <tool name="ESET SysInspector">
+        <desktop companyName="(?i)^ESET" pattern="(?i)^sysinspector.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esi-eula\.rtf$" type="file"/>
+        <download companyName="(?i)^ESET" pattern="(?i)^sysinspector.*\.exe$" type="file"/>
+        <download companyName="" pattern="(?i)^esi-eula\.rtf$" type="file"/>
+    </tool>
     <tool name="ESET Mabezat Decryptor">
         <desktop companyName="(?i)^ESET" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
         <download companyName="(?i)^ESET" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
@@ -660,6 +666,7 @@
     </tool>
     <tool name="Malwarebytes (log)">
         <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+        <desktopCommon companyName="" pattern="(?i)^mbst-grab-results\.zip$" type="file"/>
         <download companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
     </tool>
     <tool name="MbrScan">
