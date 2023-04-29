@@ -124,9 +124,9 @@
         <process companyName="" force="0" process="(?i)^CKScanner.*\.exe$"/>
     </tool>
     <tool name="CMD_Command">
-        <desktop companyName="(?i)^g3n-h@ckm@n$" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
-        <download companyName="(?i)^g3n-h@ckm@n$" pattern="(?i)^cmd-command.*\.exe$" type="file"/>
-        <process companyName="(?i)^g3n-h@ckm@n$" force="0" process="(?i)^cmd-command.*\.exe$"/>
+        <desktop companyName="(?i)^g3n\-h@ckm@n$" pattern="(?i)^cmd\-command.*\.exe$" type="file"/>
+        <download companyName="(?i)^g3n\-h@ckm@n$" pattern="(?i)^cmd\-command.*\.exe$" type="file"/>
+        <process companyName="(?i)^g3n\-h@ckm@n$" force="0" process="(?i)^cmd\-command.*\.exe$"/>
     </tool>
     <tool name="Catchme">
         <desktop companyName="" pattern="(?i)^catchme.*\.(exe|zip|log)$" type="file"/>
@@ -182,7 +182,7 @@
         <desktop companyName="" pattern="(?i)^CryptoSearch$" type="folder"/>
         <download companyName="" pattern="(?i)^CryptoSearch.*\.(exe|zip|txt)$" type="file"/>
         <download companyName="" pattern="(?i)^CryptoSearch$" type="folder"/>
-        <file path="@DesktopDir\cryptosearch-definitions.bin" companyName="" />
+        <file path="@DesktopDir\cryptosearch\-definitions.bin" companyName="" />
         <process companyName="" force="0" process="(?i)^CryptoSearch.*\.exe$"/>
     </tool>
     <tool name="CrystalDiskInfo (portable)">
@@ -217,14 +217,14 @@
         <process companyName="" force="0" process="(?i)^defogger.*\.exe$"/>
     </tool>
     <tool name="Dr.Web LiveDisk">
-        <desktop companyName="" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
-        <desktop companyName="" pattern="(?i)^drweb-livedisk.*\.(iso|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^drweb\-livedisk.*\.(iso|exe)$" type="file"/>
+        <desktop companyName="" pattern="(?i)^drweb\-livedisk.*\.(iso|exe)$" type="file"/>
         <homeDrive companyName="" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
     </tool>
     <tool name="Easy Restore Point">
-        <desktop companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
-        <download companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy-restore-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
-        <process companyName="(?i)^kernel\-panik$" force="0" process="(?i)^(easy-restore-point|easyrestorepoint).*\.exe$"/>
+        <desktop companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy\-restore\-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <download companyName="(?i)^kernel\-panik$" pattern="(?i)^(easy\-restore\-point|easyrestorepoint).*\.(txt|exe)$" type="file"/>
+        <process companyName="(?i)^kernel\-panik$" force="0" process="(?i)^(easy\-restore\-point|easyrestorepoint).*\.exe$"/>
     </tool>
     <tool name="Emisoft Emergency Kit">
         <desktop companyName="" pattern="(?i)^EmsisoftEmergencyKit.*\.exe$" type="file"/>
@@ -344,9 +344,9 @@
     </tool>
     <tool name="ESET SysInspector">
         <desktop companyName="(?i)^ESET" pattern="(?i)^sysinspector.*\.exe$" type="file"/>
-        <desktop companyName="" pattern="(?i)^esi-eula\.rtf$" type="file"/>
+        <desktop companyName="" pattern="(?i)^esi\-eula\.rtf$" type="file"/>
         <download companyName="(?i)^ESET" pattern="(?i)^sysinspector.*\.exe$" type="file"/>
-        <download companyName="" pattern="(?i)^esi-eula\.rtf$" type="file"/>
+        <download companyName="" pattern="(?i)^esi\-eula\.rtf$" type="file"/>
     </tool>
     <tool name="ESET Mabezat Decryptor">
         <desktop companyName="(?i)^ESET" pattern="(?i)^esetmabezatadecryptor.*\.(exe|log)$" type="file"/>
@@ -480,9 +480,9 @@
     <tool name="FRST">
         <desktop companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
 		<desktop companyName="" force="0" pattern="(?i)^(Search|SearchReg)\.txt$" type="file"/>
-		<desktop companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+		<desktop companyName="" pattern="(?i)^FRST\-OlderVersion$" type="folder"/>
         <download companyName="(?i)^Farbar" force="0" pattern="(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$" type="file"/>
-        <download companyName="" pattern="(?i)^FRST-OlderVersion$" type="folder"/>
+        <download companyName="" pattern="(?i)^FRST\-OlderVersion$" type="folder"/>
 		<download companyName="" force="0" pattern="(?i)^(Search|SearchReg)\.txt$" type="file"/>
         <homeDrive companyName="" pattern="(?i)^FRST" type="folder" quarantine="1"/>
         <process companyName="(?i)^Farbar" force="0" process="(?i)^FRST.*\.exe$"/>
@@ -515,7 +515,7 @@
         <startMenu companyName="" pattern="(?i)^Fix\-Purge$" type="folder"/>
     </tool>
     <tool name="g3n-h@ckm@n tools">
-        <softwareKey pattern="(?i)^g3n-h@ckm@n$"/>
+        <softwareKey pattern="(?i)^g3n\-h@ckm@n$"/>
     </tool>
     <tool name="GetSystemInfo">
         <desktop companyName="(?i)^.*Kaspersky" pattern="(?i)^GetSystemInfo.*\.(exe|zip)$" type="file"/>
@@ -656,17 +656,17 @@
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^look(-|_)my(-|_)hardware.*\.exe$"/>
     </tool>
     <tool name="Malwarebytes Anti-Rootkit">
-        <cleanDirectory companyName="" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti-Malware\Quarantine" quarantine="1"/>
+        <cleanDirectory companyName="" path="@AppDataCommonDir\Malwarebytes\Malwarebytes Anti\-Malware\Quarantine" quarantine="1"/>
         <desktop companyName="(?i)^Malwarebytes" pattern="(?i)^mbar.*\.exe$" type="file"/>
         <desktop companyName="" pattern="(?i)^mbar" type="folder"/>
         <download companyName="(?i)^Malwarebytes" pattern="(?i)^mbar.*\.exe$" type="file"/>
         <download companyName="" pattern="(?i)^mbar" type="folder"/>
         <process companyName="(?i)^Malwarebytes" force="1" process="(?i)^mbar.*\.exe$"/>
-        <softwareKey pattern="(?i)^Malwarebytes Anti-Rootkit$"/>
+        <softwareKey pattern="(?i)^Malwarebytes Anti\-Rootkit$"/>
     </tool>
     <tool name="Malwarebytes (log)">
         <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
-        <desktopCommon companyName="" pattern="(?i)^mbst-grab-results\.zip$" type="file"/>
+        <desktopCommon companyName="" pattern="(?i)^mbst\-grab\-results\.zip$" type="file"/>
         <download companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
     </tool>
     <tool name="MbrScan">
@@ -891,13 +891,13 @@
     </tool>
     <tool name="Remediate VBS Worm">
         <desktop companyName="" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
-        <desktop companyName="" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
+        <desktop companyName="" pattern="(?i)^Rem\-VBSworm.*\.exe$" type="file"/>
         <download companyName="" pattern="(?i)^remediate.?vbs.?worm.*\.exe$" type="file"/>
-        <download companyName="" pattern="(?i)^Rem-VBSworm.*\.exe$" type="file"/>
-        <homeDrive companyName="" pattern="(?i)^Rem-VBS.*\.log$" type="file"/>
-        <homeDrive companyName="" pattern="(?i)^Rem-VBS" type="folder" quarantine="1"/>
+        <download companyName="" pattern="(?i)^Rem\-VBSworm.*\.exe$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Rem\-VBS.*\.log$" type="file"/>
+        <homeDrive companyName="" pattern="(?i)^Rem\-VBS" type="folder" quarantine="1"/>
         <process companyName="" force="0" process="(?i)^remediate.?vbs.?worm.*\.exe$"/>
-        <process companyName="" force="0" process="(?i)^Rem-VBSworm.*\.exe$"/>
+        <process companyName="" force="0" process="(?i)^Rem\-VBSworm.*\.exe$"/>
     </tool>
     <tool name="Report_Antivir">
         <desktop companyName="" pattern="(?i)^Report_Antivir.*\.(exe|txt)$" type="file"/>
@@ -981,7 +981,7 @@
         <process companyName="" force="0" process="(?i)^seaf.*\.exe$"/>
         <programFiles companyName="" pattern="(?i)^SEAF$" type="folder"/>
         <registryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF"/>
-        <uninstall folder="(?i)^SEAF$" uninstaller="(?i)^Un-SEAF\.exe$"/>
+        <uninstall folder="(?i)^SEAF$" uninstaller="(?i)^Un\-SEAF\.exe$"/>
     </tool>
     <tool name="SecurityCheck">
         <desktop companyName="" pattern="(?i)^SecurityCheck.*\.exe$" type="file"/>
@@ -1008,9 +1008,9 @@
         <process companyName="(?i)^Kaspersky" force="0" process="(?i)^ShadeDecryptor.*\.exe$"/>
     </tool>
     <tool name="Shortcut Cleaner">
-        <desktop companyName="(?i)^Bleeping" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^Bleeping" pattern="(?i)^sc-cleaner.*\.(exe|txt)$" type="file"/>
-        <process companyName="(?i)^Bleeping" force="0" process="(?i)^sc-cleaner.*\.exe$"/>
+        <desktop companyName="(?i)^Bleeping" pattern="(?i)^sc\-cleaner.*\.(exe|txt)$" type="file"/>
+        <download companyName="(?i)^Bleeping" pattern="(?i)^sc\-cleaner.*\.(exe|txt)$" type="file"/>
+        <process companyName="(?i)^Bleeping" force="0" process="(?i)^sc\-cleaner.*\.exe$"/>
     </tool>
     <tool name="SMBCheck">
         <desktop companyName="(?i).*Webroot" pattern="(?i)^smbcheck.*\.(exe|log)$" type="file"/>
@@ -1087,14 +1087,14 @@
         <process companyName="" force="0" process="(?i)^toolsdiag.*\.exe$"/>
     </tool>
     <tool name="UAC-Level">
-        <desktop companyName="" pattern="(?i)^uac-level.*\.exe$" type="file"/>
-        <download companyName="" pattern="(?i)^uac-level.*\.exe$" type="file"/>
-        <process companyName="" force="0" process="(?i)^uac-level.*\.exe$"/>
+        <desktop companyName="" pattern="(?i)^uac\-level.*\.exe$" type="file"/>
+        <download companyName="" pattern="(?i)^uac\-level.*\.exe$" type="file"/>
+        <process companyName="" force="0" process="(?i)^uac\-level.*\.exe$"/>
     </tool>
     <tool name="UAC Manager">
-        <desktop companyName="" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
-        <download companyName="" pattern="(?i)^uac-manager.*\.exe$" type="file"/>
-        <process companyName="" force="0" process="(?i)^uac-manager.*\.exe$"/>
+        <desktop companyName="" pattern="(?i)^uac\-manager.*\.exe$" type="file"/>
+        <download companyName="" pattern="(?i)^uac\-manager.*\.exe$" type="file"/>
+        <process companyName="" force="0" process="(?i)^uac\-manager.*\.exe$"/>
     </tool>
     <tool name="USB File Resc">
         <desktop companyName="(?i)^Streuner" pattern="(?i)^usb\-file\-resc.*\.exe$" type="file"/>
@@ -1111,7 +1111,7 @@
         <process companyName="" force="0" process="(?i)^UsbFix.*\.exe$"/>
         <programFiles companyName="" pattern="(?i)^UsbFix" type="folder"/>
         <softwareKey pattern="(?i)^UsbFix"/>
-        <uninstall folder="(?i)^UsbFix" uninstaller="(?i)^Un-UsbFix\.exe$"/>
+        <uninstall folder="(?i)^UsbFix" uninstaller="(?i)^Un\-UsbFix\.exe$"/>
     </tool>
     <tool name="UnHide">
         <desktop companyName="(?i)^Bleeping" pattern="(?i)^unhide.*\.(exe|txt)$" type="file"/>
