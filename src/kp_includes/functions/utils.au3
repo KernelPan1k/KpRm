@@ -216,6 +216,8 @@ Func GetHumanVersion()
 			Return "Windows 8.1"
 		Case "WIN_10"
 			Return "Windows 10"
+		Case "WIN_11"
+			Return "Windows 11"
 		Case Else
 			Return "Unsupported OS"
 	EndSwitch
