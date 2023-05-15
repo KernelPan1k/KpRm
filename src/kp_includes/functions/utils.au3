@@ -216,6 +216,8 @@ Func GetHumanVersion()
 			Return "Windows 8.1"
 		Case "WIN_10"
 			Return "Windows 10"
+		Case "WIN_11"
+			Return "Windows 11"
 		Case Else
 			Return "Unsupported OS"
 	EndSwitch
@@ -242,7 +244,7 @@ EndFunc   ;==>FormatForUseRegistryKey
 
 Func GetOsVersion()
 	; https://www.autoitscript.com/forum/topic/183139-windows-10-complete-build-numberversion/
-	$sCommand = "Powershell [System.Environment]::OSVersion.Version.tostring()"
+	$sCommand = "cmd /c ver"
 	$iPID = run($sCommand , "" , @SW_HIDE , $stdout_child)
 
 	$sOutput = ""
@@ -252,5 +254,5 @@ Func GetOsVersion()
         If @error Then ExitLoop
     WEnd
 
-	Return stringsplit($sOutput , @CRLF, 2)[0]
+	Return stringsplit($sOutput , " ]", 2)[3]
 EndFunc
