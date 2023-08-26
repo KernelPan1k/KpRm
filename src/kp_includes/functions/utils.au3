@@ -244,10 +244,10 @@ EndFunc   ;==>FormatForUseRegistryKey
 
 Func GetOsVersion()
 	; https://www.autoitscript.com/forum/topic/183139-windows-10-complete-build-numberversion/
-	$sCommand = "cmd /c ver"
-	$iPID = run($sCommand , "" , @SW_HIDE , $stdout_child)
+	Local $sCommand = "cmd /c ver"
+	Local $iPID = run($sCommand , "" , @SW_HIDE , $stdout_child)
 
-	$sOutput = ""
+	Local $sOutput = ""
 
 	While 1
         $sOutput &= StdoutRead($iPID)
