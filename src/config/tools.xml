@@ -728,6 +728,11 @@
 		<homeDrive companyName="" pattern="(?i)^MemControl.*\.txt$" type="file"/>
         <process companyName="(?i)^SosVirus" force="0" process="(?i)^MemControl.*\.exe$"/>
     </tool>
+    <tool name="Microsoft Safety Scanner">
+        <desktop companyName="(?i)^Microsoft Corporation" pattern="(?i)^MSERT.*\.exe$" type="file"/>
+        <download companyName="(?i)^Microsoft Corporation" pattern="(?i)^MSERT.*\.exe$" type="file"/>
+        <process companyName="(?i)^Microsoft Corporation" force="0" process="(?i)^MSERT.*\.exe$"/>
+    </tool>
     <tool name="MiniregTool">
         <desktop companyName="" pattern="(?i)^MiniRegTool.*\.(exe|zip)$" type="file"/>
         <desktop companyName="" pattern="(?i)^MiniRegTool" type="folder"/>
