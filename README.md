@@ -129,6 +129,7 @@
  - McAfee Tesladecrypt (McAfee)
  - MemControl (g3n-h@ckm@n)
  - MicroCop Decryptor (Michael Gillespie)
+ - Microsoft Safety Scanner (Microsoft)
  - Miniregtool (Farbar)
  - Minitoolbox (Farbar)
  - MKV (El Desaparecido & C_XX)
