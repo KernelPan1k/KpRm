@@ -5,9 +5,9 @@
 #AutoIt3Wrapper_Outfile=KpRm.exe
 #AutoIt3Wrapper_Res_Comment=Delete all removal tools
 #AutoIt3Wrapper_Res_Description=KpRm By Kernel-Panik
-#AutoIt3Wrapper_Res_Fileversion=2.0.0.14.0
+#AutoIt3Wrapper_Res_Fileversion=2.0.0.15
 #AutoIt3Wrapper_Res_ProductName=KpRm
-#AutoIt3Wrapper_Res_ProductVersion=2.14.0
+#AutoIt3Wrapper_Res_ProductVersion=2.15.0
 #AutoIt3Wrapper_Res_CompanyName=kernel-panik
 #AutoIt3Wrapper_Res_LegalCopyright=kernel-panik
 #AutoIt3Wrapper_Res_LegalTradeMarks=kernel-panik
