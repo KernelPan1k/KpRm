@@ -616,7 +616,7 @@
     <tool name="Kaspersky Virus Removal Tool">
         <desktop companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
         <download companyName="(?i).*Kaspersky" pattern="(?i)^KVRT.*\.exe$" type="file"/>
-        <homeDrive companyName="" pattern="(?i)^KVRT_([0-9]{4})?Data$" type="folder" quarantine="1"/>
+        <homeDrive companyName="" pattern="(?i)^KVRT([0-9]{4})?_Data$" type="folder" quarantine="1"/>
         <process companyName="(?i).*Kaspersky" force="0" process="(?i)^KVRT.*\.exe$"/>
     </tool>
     <tool name="KPLive">
