@@ -118,6 +118,7 @@
  - LogOnFix (Xplode)
  - Look_my_hardware (g3n-h@ckm@n)
  - Malwarebytes (log) (Malwarebytes corporation)
+ - Malwarebytes support tool (Malwarebytes corporation)
  - MBAR (Malwarebytes corporation)
  - MBRCheck (a_d_13)
  - mbr.exe (Gmer)
