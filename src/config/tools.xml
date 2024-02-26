@@ -667,7 +667,14 @@
     <tool name="Malwarebytes (log)">
         <desktop companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
         <desktopCommon companyName="" pattern="(?i)^mbst\-grab\-results\.zip$" type="file"/>
+		<desktop companyName="" pattern="(?i)^mbst\-grab\-results\.zip$" type="file"/>
         <download companyName="" pattern="(?i)^(mbam|Malwarebyte).*\.txt" type="file"/>
+		<download companyName="" pattern="(?i)^mbst\-grab\-results\.zip$" type="file"/>
+    </tool>
+	<tool name="Malwarebytes Support Tool">
+        <desktop companyName="" pattern="(?i)^mb\-support.*\.exe" type="file"/>
+		<download companyName="" pattern="(?i)^mb\-support.*\.exe" type="file"/>
+		<process companyName="(?i)^Malwarebytes" force="0" process="(?i)^mb\-support.*\.exe$"/>
     </tool>
     <tool name="MbrScan">
         <desktop companyName="(?i)^Eric_71$" pattern="(?i)^MbrScan.*\.(exe|log)$" type="file"/>
