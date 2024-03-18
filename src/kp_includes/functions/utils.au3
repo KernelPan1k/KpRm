@@ -19,6 +19,8 @@ Func FormatPathWithMacro($sPath)
 			$sPath = @HomeDrive & StringReplace($sPath, "@HomeDrive", "")
 		Case StringRegExp($sPath, "^@TempDir")
 			$sPath = @TempDir & StringReplace($sPath, "@TempDir", "")
+		Case StringRegExp($sPath, "^@UserProfileDir")
+			$sPath = @UserProfileDir & StringReplace($sPath, "@UserProfileDir", "")
 	EndSelect
 
 	Return $sPath
