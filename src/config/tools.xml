@@ -216,9 +216,13 @@
         <download companyName="" pattern="(?i)^defogger.*\.(log|exe)$" type="file"/>
         <process companyName="" force="0" process="(?i)^defogger.*\.exe$"/>
     </tool>
+	<tool name="Dr.Web Cureit">
+        <homeDrive companyName="" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
+		<folder force="1" path="@UserProfileDir\Doctor Web" quarantine="1"/>
+	</tool>
     <tool name="Dr.Web LiveDisk">
         <desktop companyName="" pattern="(?i)^drweb\-livedisk.*\.(iso|exe)$" type="file"/>
-        <desktop companyName="" pattern="(?i)^drweb\-livedisk.*\.(iso|exe)$" type="file"/>
+        <download companyName="" pattern="(?i)^drweb\-livedisk.*\.(iso|exe)$" type="file"/>
         <homeDrive companyName="" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
     </tool>
     <tool name="Easy Restore Point">
