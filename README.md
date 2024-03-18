@@ -41,6 +41,7 @@
  - DCryDecrypter (Michael Gillespie)
  - DDS (sUBs)
  - Defogger (jpshortstuff)
+ - Dr.Web CureIt!
  - Dr Web LiveCD
  - EasyRestorePoint (kernel-panik)
  - Emsisoft Emergency Kit (Emsisoft)
