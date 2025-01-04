@@ -518,6 +518,11 @@
         <searchRegistryKey key="HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" pattern="(?i)^Fix\-Purge" value="DisplayName"/>
         <startMenu companyName="" pattern="(?i)^Fix\-Purge$" type="folder"/>
     </tool>
+    <tool name="FMRS">
+        <desktop companyName="(?i)^furtivex" pattern="(?i)^FMRS.*\.(exe|txt)$" type="file"/>
+        <download companyName="(?i)^furtivex" pattern="(?i)^FMRS.*\.(exe|txt)$" type="file"/>
+        <process companyName="(?i)^furtivex" force="0" process="(?i)^FMRS.*\.exe$"/>
+    </tool>
     <tool name="g3n-h@ckm@n tools">
         <softwareKey pattern="(?i)^g3n\-h@ckm@n$"/>
     </tool>
