@@ -522,6 +522,7 @@
         <desktop companyName="(?i)^furtivex" pattern="(?i)^FMRS.*\.(exe|txt)$" type="file"/>
         <download companyName="(?i)^furtivex" pattern="(?i)^FMRS.*\.(exe|txt)$" type="file"/>
         <process companyName="(?i)^furtivex" force="0" process="(?i)^FMRS.*\.exe$"/>
+		<homeDrive companyName="" pattern="(?i)^FMRS_.*\.txt$" type="file" quarantine="0"/>
     </tool>
     <tool name="g3n-h@ckm@n tools">
         <softwareKey pattern="(?i)^g3n\-h@ckm@n$"/>
