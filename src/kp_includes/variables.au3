@@ -1,5 +1,5 @@
 Global $bKpRmDev = False
-Global $sKprmVersion = "2.19.0"
+Global $sKprmVersion = "2.20.0"
 Global $sTmpDir = @TempDir & "\KPRM"
 Global $sProgramName = "KpRm"
 Global $sCurrentTime = @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
