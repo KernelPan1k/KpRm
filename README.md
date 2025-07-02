@@ -41,6 +41,7 @@
  - DCryDecrypter (Michael Gillespie)
  - DDS (sUBs)
  - Defogger (jpshortstuff)
+ - DoesNotBelong (Furtivex)
  - Dr.Web CureIt!
  - Dr Web LiveCD
  - EasyRestorePoint (kernel-panik)
@@ -95,7 +96,6 @@
  - FilesLockerDecrypter (Michael Gillespie)
  - FixExec (BleepingComputer)
  - FixPurge (McVivien2)
- - FMRS (Furtivex)
  - FRST (Farbar)
  - FSS (Farbar)
  - GetSystemInfo (Kaspersky Labs)
