@@ -217,11 +217,12 @@
         <process companyName="" force="0" process="(?i)^defogger.*\.exe$"/>
     </tool>
 	    <tool name="DoesNotBelong">
-        <desktop companyName="(?i)^furtivex" pattern="(?i)^DoesNotBelong.*\.(exe|txt)$" type="file"/>
-        <download companyName="(?i)^furtivex" pattern="(?i)^DoesNotBelong.*\.(exe|txt)$" type="file"/>
-        <process companyName="(?i)^furtivex" force="0" process="(?i)^DoesNotBelong.*\.exe$"/>
-		<homeDrive companyName="" pattern="(?i)^DoesNotBelong_.*\.txt$" type="file" quarantine="0"/>
-    </tool>
+            <desktop companyName="(?i)^furtivex" pattern="(?i)^DoesNotBelong.*\.(exe|txt)$" type="file"/>
+            <download companyName="(?i)^furtivex" pattern="(?i)^DoesNotBelong.*\.(exe|txt)$" type="file"/>
+            <process companyName="(?i)^furtivex" force="0" process="(?i)^DoesNotBelong.*\.exe$"/>
+            <homeDrive companyName="" pattern="(?i)^DoesNotBelong_.*\.txt$" type="file" quarantine="0"/>
+            <homeDrive companyName="" pattern="(?i)^DNB_Quarantine$" type="folder" quarantine="1"/>
+        </tool>
 	<tool name="Dr.Web Cureit">
         <homeDrive companyName="" pattern="(?i)^DrWeb Quarantine$" type="folder" quarantine="1"/>
 		<folder force="1" path="@UserProfileDir\Doctor Web" quarantine="1"/>
