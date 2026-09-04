@@ -130,6 +130,15 @@ fn action_row(
         .inner_margin(Margin::symmetric(12.0, 10.0))
         .show(ui, |ui| {
             ui.set_width(width - MARGIN);
+            // Fixed content height regardless of description length, so
+            // every card in the grid lines up with its neighbors — without
+            // this, a card whose description happens to wrap to a second
+            // line ends up taller than the others in its row/column,
+            // producing the slight misalignment reported after the last
+            // round (short descriptions are also kept short on purpose so
+            // none of them actually need to wrap at the current column
+            // width; this is the safety net for if that ever changes).
+            ui.set_min_height(34.0);
             ui.horizontal(|ui| {
                 ui.checkbox(checked, "");
                 let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(BADGE_W), Sense::hover());
@@ -400,9 +409,18 @@ impl KprmApp {
         // 2-column layout, `half` computed once here (the one place that
         // legitimately knows the real available width) and threaded
         // explicitly into every `action_row` call.
-        let half = (ui.available_width() - 10.0) / 2.0;
+        // Use egui's real inter-item spacing (not a guessed constant) so the
+        // two cards exactly fill the row with no left-over slack on the
+        // right — a small contributor to the reported misalignment.
+        let gap = ui.spacing().item_spacing.x;
+        let half = (ui.available_width() - gap) / 2.0;
 
-        ui.horizontal(|ui| {
+        // `with_layout(..., Align::Min)` instead of plain `ui.horizontal`
+        // (which centers cross-axis by default): two `Frame`s of the same
+        // reported height still ended up offset by a few pixels under
+        // center alignment — forcing top alignment removes that ambiguity
+        // entirely instead of chasing egui's exact centering computation.
+        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
             action_row(
                 ui,
                 &mut self.opt_remove_tools,
@@ -410,7 +428,7 @@ impl KprmApp {
                 theme::BLUE,
                 "T",
                 "Supprimer les outils",
-                "Fichiers, clés et tâches des utilitaires détectés",
+                "Fichiers, clés et tâches détectés",
                 half,
             );
             action_row(
@@ -425,7 +443,7 @@ impl KprmApp {
             );
         });
         ui.add_space(8.0);
-        ui.horizontal(|ui| {
+        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
             action_row(
                 ui,
                 &mut self.opt_remove_restore_points,
@@ -448,7 +466,7 @@ impl KprmApp {
             );
         });
         ui.add_space(8.0);
-        ui.horizontal(|ui| {
+        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
             action_row(
                 ui,
                 &mut self.opt_restore_uac,
@@ -479,7 +497,8 @@ impl KprmApp {
                 .color(theme::TEXT_3),
         );
         ui.add_space(8.0);
-        let seg_width = (ui.available_width() - 20.0) / 3.0;
+        let seg_gap = ui.spacing().item_spacing.x;
+        let seg_width = (ui.available_width() - seg_gap * 2.0) / 3.0;
         ui.horizontal(|ui| {
             quarantine_segment(
                 ui,

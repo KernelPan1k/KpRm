@@ -71,6 +71,21 @@ comme ça a été fait ici) sont fiables.
    parfaitement côte à côte, sans chevauchement) — c'est `PrintWindow` qui
    mentait (voir l'avertissement ci-dessus). La disposition à 2 colonnes a
    donc été restaurée.
+3. **« Léger décalage entre les boutons/colonnes »** — vérifié par la même
+   technique d'instrumentation (impression des `Response.rect` réels plutôt
+   que capture d'écran) : deux causes trouvées. D'abord, une description
+   trop longue sur une carte forçait un retour à la ligne, rendant cette
+   carte plus haute que sa voisine — raccourcie. Ensuite, `ui.horizontal`
+   aligne ses enfants avec `Align::Center` par défaut, ce qui produisait un
+   décalage vertical de quelques pixels entre deux cartes pourtant de même
+   hauteur. Corrigé par : hauteur minimale explicite (`ui.set_min_height`)
+   dans `action_row` pour une hauteur de carte uniforme, calcul des largeurs
+   à partir de l'espacement réel (`ui.spacing().item_spacing.x`) plutôt que
+   de constantes devinées, et remplacement des trois `ui.horizontal` de
+   paires de cartes par `ui.with_layout(egui::Layout::left_to_right(egui::
+   Align::Min), ...)` pour forcer un alignement en haut. Revérifié : les
+   trois rangées affichent désormais des coordonnées identiques (même y,
+   même hauteur) pour les deux cartes de chaque paire.
 
 ## Migration du catalogue
 
