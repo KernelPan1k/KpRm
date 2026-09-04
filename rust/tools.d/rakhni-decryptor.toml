@@ -1,0 +1,41 @@
+name = 'Rakhni Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RakhniDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RakhniDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RakhniDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RakhniDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^RakhniDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^RakhniDecryptor'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RakhniDecryptor.*\.exe'
+company_name = '(?i)^Kaspersky'
+force = false

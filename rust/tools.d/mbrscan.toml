@@ -1,0 +1,29 @@
+name = 'MbrScan'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MbrScan.*\.(exe|log)$'
+company_name = '(?i)^Eric_71$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Dump_.*\.mbr$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MbrScan.*\.(exe|log)$'
+company_name = '(?i)^Eric_71$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Dump_.*\.mbr$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MbrScan.*\.exe$'
+company_name = '(?i)^Eric_71$'
+force = false

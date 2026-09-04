@@ -1,0 +1,19 @@
+name = 'ESET Trustezeb.A Decoder'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esettrustezebadecoder.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esettrustezebadecoder.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esettrustezebadecoder.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

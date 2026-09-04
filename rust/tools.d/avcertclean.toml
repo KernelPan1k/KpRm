@@ -1,0 +1,16 @@
+name = 'AVCertClean'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^avcertclean.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^avcertclean.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^avcertclean.*\.exe$'
+force = false

@@ -1,0 +1,11 @@
+name = 'Hosts-perm'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^hosts\-perm.*\.bat$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^hosts\-perm.*\.bat$'
+kind = 'file'

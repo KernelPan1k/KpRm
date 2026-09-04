@@ -1,0 +1,19 @@
+name = 'ESET VB.NAX Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETVBNAXCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETVBNAXCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

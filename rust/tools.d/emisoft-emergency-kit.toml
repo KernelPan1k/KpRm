@@ -1,0 +1,22 @@
+name = 'Emisoft Emergency Kit'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^EmsisoftEmergencyKit.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^EmsisoftEmergencyKit.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^EEK$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(a2emergencykit|a2cmd).*\.exe$'
+force = true

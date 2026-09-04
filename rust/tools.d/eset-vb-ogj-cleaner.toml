@@ -1,0 +1,19 @@
+name = 'ESET VB.OGJ Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETVbOgjCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETVbOgjCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

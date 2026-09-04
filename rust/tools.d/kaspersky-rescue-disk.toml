@@ -1,0 +1,11 @@
+name = 'Kaspersky Rescue Disk'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^krd\.iso$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^krd\.iso$'
+kind = 'file'

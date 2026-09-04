@@ -1,0 +1,19 @@
+name = 'CMD_Command'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^cmd\-command.*\.exe$'
+company_name = '(?i)^g3n\-h@ckm@n$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^cmd\-command.*\.exe$'
+company_name = '(?i)^g3n\-h@ckm@n$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^cmd\-command.*\.exe$'
+company_name = '(?i)^g3n\-h@ckm@n$'
+force = false

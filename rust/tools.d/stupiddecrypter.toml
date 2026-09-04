@@ -1,0 +1,26 @@
+name = 'StupidDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^StupidDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^StupidDecrypter.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^StupidDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^StupidDecrypter.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^StupidDecrypter.*\.exe$'
+force = false

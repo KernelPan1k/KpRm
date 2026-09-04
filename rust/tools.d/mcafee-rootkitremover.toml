@@ -1,0 +1,19 @@
+name = 'McAfee RootkitRemover'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RootkitRemover.*\.(exe|log)$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RootkitRemover.*\.(exe|log)$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RootkitRemover.*\.exe$'
+company_name = '(?i)^McAfee'
+force = false

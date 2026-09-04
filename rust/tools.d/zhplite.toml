@@ -1,0 +1,16 @@
+name = 'ZHPLite'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPLite.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPLite.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ZHPLite.*\.exe$'
+force = false

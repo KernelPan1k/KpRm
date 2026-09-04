@@ -1,0 +1,38 @@
+name = 'ESET Online Scanner'
+
+[[actions]]
+type = 'folder'
+path = '@LocalAppDataDir\ESET\ESETOnlineScanner'
+quarantine = true
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetonlinescanner.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESET Online Scanner\.lnk$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetonlinescanner.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetonlinescanner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SOFTWARE\ESET\ESET Online Scanner'
+
+[[actions]]
+type = 'user_start_menu'
+pattern = '(?i)^ESET Online Scanner\.lnk$'
+kind = 'file'

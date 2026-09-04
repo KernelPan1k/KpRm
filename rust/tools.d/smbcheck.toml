@@ -1,0 +1,19 @@
+name = 'SMBCheck'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^smbcheck.*\.(exe|log)$'
+company_name = '(?i).*Webroot'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^smbcheck.*\.(exe|log)$'
+company_name = '(?i).*Webroot'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^smbcheck.*\.exe$'
+company_name = '(?i).*Webroot'
+force = false

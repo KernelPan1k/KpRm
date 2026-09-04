@@ -1,0 +1,19 @@
+name = 'ESET Eternal Blue Checker'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETEternalBlueChecker.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETEternalBlueChecker.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETEternalBlueChecker.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

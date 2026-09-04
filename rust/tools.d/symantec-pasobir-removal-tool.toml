@@ -1,0 +1,16 @@
+name = 'Symantec Pasobir Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FixPaso?bi?r.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FixPaso?bi?r.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FixPasobir.*\.exe$'
+force = false

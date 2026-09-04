@@ -1,0 +1,16 @@
+name = 'ScanRapide'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ScanRapide.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ScanRapide.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ScanRapide\[R[0-9]+\]\.txt$'
+kind = 'file'

@@ -1,0 +1,21 @@
+name = 'WinCHK'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^winchk.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^winchk.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^WinChk.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^winchk.*\.exe$'
+force = false

@@ -1,0 +1,19 @@
+name = 'Easy Restore Point'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(easy\-restore\-point|easyrestorepoint).*\.(txt|exe)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(easy\-restore\-point|easyrestorepoint).*\.(txt|exe)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(easy\-restore\-point|easyrestorepoint).*\.exe$'
+company_name = '(?i)^kernel\-panik$'
+force = false

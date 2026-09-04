@@ -1,0 +1,29 @@
+name = 'DDS'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^dds.*\.com$'
+company_name = '(?i)^Swearware'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(dds|attach).*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^dds.*\.com$'
+company_name = '(?i)^Swearware'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(dds|attach).*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^dds.*\.com$'
+company_name = '(?i)^Swearware'
+force = false

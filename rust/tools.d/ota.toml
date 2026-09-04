@@ -1,0 +1,25 @@
+name = 'OTA'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^OTA.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^OTA.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^_OTA$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OTA.*\.exe$'
+company_name = '(?i)^OldTimer'
+force = false

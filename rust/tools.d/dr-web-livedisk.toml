@@ -1,0 +1,17 @@
+name = 'Dr.Web LiveDisk'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^drweb\-livedisk.*\.(iso|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^drweb\-livedisk.*\.(iso|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^DrWeb Quarantine$'
+kind = 'folder'
+quarantine = true

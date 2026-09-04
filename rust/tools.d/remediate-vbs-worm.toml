@@ -1,0 +1,42 @@
+name = 'Remediate VBS Worm'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^remediate.?vbs.?worm.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Rem\-VBSworm.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^remediate.?vbs.?worm.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Rem\-VBSworm.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Rem\-VBS.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Rem\-VBS'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^remediate.?vbs.?worm.*\.exe$'
+force = false
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Rem\-VBSworm.*\.exe$'
+force = false

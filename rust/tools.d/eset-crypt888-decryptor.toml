@@ -1,0 +1,19 @@
+name = 'ESET Crypt888 Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetcrypt888decryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetcrypt888decryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetcrypt888decryptor.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

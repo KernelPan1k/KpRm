@@ -1,0 +1,29 @@
+name = 'Rkill'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(rkill|iExplore).*\.(exe|txt|zip)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^rkill$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(rkill|iExplore).*\.(exe|txt|zip)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^rkill$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(rkill|iExplore).*\.exe$'
+company_name = '(?i)^Bleeping'
+force = false

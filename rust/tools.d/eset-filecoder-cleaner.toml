@@ -1,0 +1,19 @@
+name = 'ESET Filecoder Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^decoder.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^decoder.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^decoder.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

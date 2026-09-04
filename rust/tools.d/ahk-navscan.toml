@@ -1,0 +1,16 @@
+name = 'AHK_NavScan'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AHK_NavScan.*\.(exe|txt)'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AHK_NavScan.*\.(exe|txt)'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AHK_NavScan.*\.exe'
+force = false

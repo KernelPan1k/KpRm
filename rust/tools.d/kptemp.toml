@@ -1,0 +1,25 @@
+name = 'KPTemp'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^kptemp.*\.(exe|txt)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^kp_temp.*\.(exe|txt)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^kptemp.*\.(exe|txt)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^kp_temp.*\.(exe|txt)$'
+company_name = '(?i)^kernel\-panik$'
+kind = 'file'

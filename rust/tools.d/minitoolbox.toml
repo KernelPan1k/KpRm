@@ -1,0 +1,29 @@
+name = 'Minitoolbox'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MiniToolBox.*\.exe$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MTB\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MiniToolBox.*\.exe$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MTB\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MiniToolBox.*\.exe$'
+company_name = '(?i)^Farbar'
+force = false

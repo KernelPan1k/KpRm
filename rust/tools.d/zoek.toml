@@ -1,0 +1,32 @@
+name = 'Zoek'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^zoek.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^zoek.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^zoek.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^zoek'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^runcheck.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^zoek.*\.exe$'
+force = false

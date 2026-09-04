@@ -1,0 +1,21 @@
+name = 'LogonFix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^logonfix.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^logonfix.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^LogonFix.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^logonfix.*\.exe$'
+force = false

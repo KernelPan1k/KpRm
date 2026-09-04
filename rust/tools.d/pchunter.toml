@@ -1,0 +1,16 @@
+name = 'PCHunter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^PCHunter.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^PCHunter.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^PCHunter.*\.exe$'
+force = false

@@ -1,0 +1,12 @@
+[package]
+name = "kprm-i18n"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+fluent-bundle.workspace = true
+unic-langid.workspace = true
+include_dir.workspace = true
+thiserror.workspace = true

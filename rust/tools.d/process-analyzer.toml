@@ -1,0 +1,19 @@
+name = 'Process Analyzer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Process_Analyzer.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Process_Analyzer.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Process_Analyzer.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

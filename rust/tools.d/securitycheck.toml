@@ -1,0 +1,21 @@
+name = 'SecurityCheck'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^SecurityCheck.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^SecurityCheck.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^SecurityCheck.*\.exe$'
+force = false
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^SecurityCheck$'
+kind = 'folder'

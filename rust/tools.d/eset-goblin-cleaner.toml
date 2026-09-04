@@ -1,0 +1,19 @@
+name = 'ESET Goblin Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetgoblincleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetgoblincleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetgoblincleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

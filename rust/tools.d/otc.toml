@@ -1,0 +1,19 @@
+name = 'OTC'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^OTC.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^OTC.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OTC.*\.exe$'
+company_name = '(?i)^OldTimer'
+force = false

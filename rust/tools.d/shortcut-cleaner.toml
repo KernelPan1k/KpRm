@@ -1,0 +1,19 @@
+name = 'Shortcut Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^sc\-cleaner.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^sc\-cleaner.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^sc\-cleaner.*\.exe$'
+company_name = '(?i)^Bleeping'
+force = false

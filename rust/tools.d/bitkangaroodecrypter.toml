@@ -1,0 +1,26 @@
+name = 'BitKangarooDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BitKangarooDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BitKangarooDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BitKangarooDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BitKangarooDecrypter.*\.exe$'
+force = false

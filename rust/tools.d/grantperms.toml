@@ -1,0 +1,36 @@
+name = 'Grantperms'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GrantPerms.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Perms\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GrantPerms'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GrantPerms.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Perms\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GrantPerms'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^GrantPerms.*\.exe$'
+force = false

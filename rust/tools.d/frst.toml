@@ -1,0 +1,51 @@
+name = 'FRST'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(Search|SearchReg)\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FRST\-OlderVersion$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(EnglishFRST|FRST|fixlist|fixlog|Addition|Shortcut).*\.(exe|txt)$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FRST\-OlderVersion$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(Search|SearchReg)\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^FRST'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FRST.*\.exe$'
+company_name = '(?i)^Farbar'
+force = false
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^EnglishFRST.*\.exe$'
+company_name = '(?i)^Farbar'
+force = false

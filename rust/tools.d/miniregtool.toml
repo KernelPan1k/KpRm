@@ -1,0 +1,26 @@
+name = 'MiniregTool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MiniRegTool.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MiniRegTool'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MiniRegTool.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MiniRegTool'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MiniRegTool.*\.exe$'
+force = false

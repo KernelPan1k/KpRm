@@ -1,0 +1,19 @@
+name = 'ESET Sirefef Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetsirefefcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetsirefefcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetsirefefcleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

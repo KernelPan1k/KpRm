@@ -1,0 +1,26 @@
+name = 'ZHPDiag'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPDiag.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop_common'
+pattern = '(?i)^ZHPDiag.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPDiag.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^PhysicalDisk[0-9]_MBR\.bin$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ZHPDiag.*\.exe$'
+force = false

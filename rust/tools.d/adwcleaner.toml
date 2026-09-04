@@ -1,0 +1,25 @@
+name = 'AdwCleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AdwCleaner.*\.exe$'
+company_name = '(?i)^Malwarebytes'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AdwCleaner.*\.exe$'
+company_name = '(?i)^Malwarebytes'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^AdwCleaner'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AdwCleaner.*\.exe$'
+company_name = '(?i)^Malwarebytes'
+force = false

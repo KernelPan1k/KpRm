@@ -1,0 +1,24 @@
+name = 'ListCWall'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ListCWall.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ListCWall.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ListCWall$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ListCWall.*\.exe$'
+company_name = '(?i)^Bleeping'
+force = false

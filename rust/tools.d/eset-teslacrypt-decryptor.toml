@@ -1,0 +1,19 @@
+name = 'ESET TeslaCrypt Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetteslacryptdecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetteslacryptdecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetteslacryptdecryptor.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

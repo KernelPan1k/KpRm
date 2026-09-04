@@ -1,0 +1,27 @@
+name = 'Avenger'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^avenger.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^avenger.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^avenger'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^avenger.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^avenger.*\.exe$'
+force = false

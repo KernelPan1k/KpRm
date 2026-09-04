@@ -1,0 +1,16 @@
+name = 'Defogger'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^defogger.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^defogger.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^defogger.*\.exe$'
+force = false

@@ -1,0 +1,16 @@
+name = 'ServicesRepair'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ServicesRepair.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ServicesRepair.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ServicesRepair.*\.exe$'
+force = false

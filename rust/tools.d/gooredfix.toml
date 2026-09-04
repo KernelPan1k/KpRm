@@ -1,0 +1,29 @@
+name = 'GooredFix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GooredFix.*\.(exe|txt)$'
+company_name = '(?i)^jpshortstuff$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GooredFix.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GooredFix.*\.(exe|txt)$'
+company_name = '(?i)^jpshortstuff$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GooredFix.*'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^GooredFix.*\.exe$'
+company_name = '(?i)^jpshortstuff$'
+force = false

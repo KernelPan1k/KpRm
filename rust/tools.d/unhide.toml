@@ -1,0 +1,19 @@
+name = 'UnHide'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^unhide.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^unhide.*\.(exe|txt)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^unhide.*\.exe$'
+company_name = '(?i)^Bleeping'
+force = false

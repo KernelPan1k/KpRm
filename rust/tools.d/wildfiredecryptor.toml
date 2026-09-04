@@ -1,0 +1,34 @@
+name = 'WildfireDecryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^WildfireDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^WildfireDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^WildfireDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^WildfireDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^WildfireDecryptor.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^WildfireDecryptor.*\.exe$'
+company_name = '(?i)^Kaspersky'
+force = false

@@ -1,0 +1,26 @@
+name = 'InsaneCryptDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^InsaneCryptDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^InsaneCryptDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^InsaneCryptDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^InsaneCryptDecrypter.*\.exe$'
+force = false

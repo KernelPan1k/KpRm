@@ -1,0 +1,19 @@
+name = 'ESET Mebroot Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetmebrootcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetmebrootcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetmebrootcleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

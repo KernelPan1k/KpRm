@@ -1,0 +1,24 @@
+name = 'ESET Rogue Applications Remover'
+
+[[actions]]
+type = 'folder'
+path = '@AppDataCommonDir\ESET\ESET Rogue Applications Remover'
+quarantine = true
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^eraremover.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^eraremover.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^eraremover.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

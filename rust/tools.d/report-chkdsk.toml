@@ -1,0 +1,26 @@
+name = 'Report_CHKDSK'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Report_CHKDSK.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RapportCHK.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Report_CHKDSK.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RapportCHK.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Report_CHKDSK.*\.exe$'
+force = false

@@ -1,0 +1,19 @@
+name = 'ESET Zimuse Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETZimuseCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETZimuseCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

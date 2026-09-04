@@ -1,0 +1,19 @@
+name = 'FSS'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FSS.*\.(exe|txt|lnk)$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FSS.*\.(exe|txt|lnk)$'
+company_name = '(?i)^Farbar'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FSS.*\.exe$'
+company_name = '(?i)^Farbar'
+force = false

@@ -1,0 +1,49 @@
+name = 'McAfee Stinger'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^stinger.*\.exe$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^stinger(32|64)\-epo.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^stinger(32|64)\-epo'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^stinger.*\.exe$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^stinger(32|64)\-epo.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^stinger(32|64)\-epo'
+kind = 'folder'
+
+[[actions]]
+type = 'folder'
+path = '@HomeDrive\Quarantine\Stinger'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^stinger.*\.exe$'
+company_name = '(?i)^McAfee'
+force = false
+
+[[actions]]
+type = 'program_files'
+pattern = '(?i)^stinger$'
+kind = 'folder'

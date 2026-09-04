@@ -1,0 +1,19 @@
+name = 'ESET Filecoder.NAC Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetfilecodernaccleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetfilecodernaccleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

@@ -1,0 +1,26 @@
+name = 'BTCWareDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BTCWareDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BTCWareDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BTCWareDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BTCWareDecrypter.*\.exe$'
+force = false

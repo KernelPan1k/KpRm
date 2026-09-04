@@ -1,0 +1,21 @@
+name = 'ToolsDiag'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^toolsdiag.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^toolsdiag.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ToolsDiag$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^toolsdiag.*\.exe$'
+force = false

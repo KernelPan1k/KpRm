@@ -1,0 +1,19 @@
+name = 'ResetNavigator'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^resetnavigator.*\.exe$'
+company_name = '(?i)^Software\-Quality'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^resetnavigator.*\.exe$'
+company_name = '(?i)^Software\-Quality'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^resetnavigator.*\.exe$'
+company_name = '(?i)^Software\-Quality'
+force = false

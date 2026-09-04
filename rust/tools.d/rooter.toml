@@ -1,0 +1,25 @@
+name = 'Rooter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Rooter.*\.exe$'
+company_name = '(?i)^Eric_71$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Rooter.*\.exe$'
+company_name = '(?i)^Eric_71$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Rooter\$$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Rooter.*\.exe$'
+company_name = '(?i)^Eric_71$'
+force = false

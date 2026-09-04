@@ -1,0 +1,26 @@
+name = 'AuroraDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AuroraDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AuroraDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AuroraDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AuroraDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AuroraDecrypter.*\.exe$'
+force = false

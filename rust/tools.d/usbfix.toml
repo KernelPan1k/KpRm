@@ -1,0 +1,49 @@
+name = 'USBFix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^UsbFix.*\.(exe|lnk|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'desktop_common'
+pattern = '(?i)^UsbFix.*\.(exe|lnk|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^UsbFix.*\.(exe|lnk|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^UsbFixQuarantine$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^UsbFix'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^UsbFix.*\.exe$'
+force = false
+
+[[actions]]
+type = 'program_files'
+pattern = '(?i)^UsbFix'
+kind = 'folder'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^UsbFix'
+
+[[actions]]
+type = 'uninstall'
+folder = '(?i)^UsbFix'
+uninstaller = '(?i)^Un\-UsbFix\.exe$'

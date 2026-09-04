@@ -1,0 +1,16 @@
+name = 'Check Browsers LNK'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Check(-|_| )Browsers(-|_| )LNK.*\.exe$'
+force = false

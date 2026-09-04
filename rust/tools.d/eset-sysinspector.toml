@@ -1,0 +1,23 @@
+name = 'ESET SysInspector'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^sysinspector.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esi\-eula\.rtf$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^sysinspector.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esi\-eula\.rtf$'
+kind = 'file'

@@ -1,0 +1,26 @@
+name = 'ZHPCleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPCleaner.*\.(exe|txt|lnk|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPCleaner$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPCleaner.*\.(exe|txt|lnk|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPCleaner$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ZHPCleaner.*\.exe$'
+force = false

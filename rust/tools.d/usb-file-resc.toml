@@ -1,0 +1,24 @@
+name = 'USB File Resc'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^usb\-file\-resc.*\.exe$'
+company_name = '(?i)^Streuner'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^usb\-file\-resc.*\.exe$'
+company_name = '(?i)^Streuner'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^USB File Resc$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^usb\-file\-resc.*\.exe$'
+company_name = '(?i)^Streuner'
+force = false

@@ -1,0 +1,36 @@
+name = 'GhostCryptDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GhostCryptDecrypter.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^alphadecrypter\-log.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GhostCryptDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GhostCryptDecrypter.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^alphadecrypter\-log.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GhostCryptDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^GhostCryptDecrypter.*\.exe$'
+force = false

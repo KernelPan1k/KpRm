@@ -7,3 +7,6 @@ kpRm-dev.exe
 KpRm-dev.exe
 kpRm.exe
 KpRm.exe
+
+# Rust rewrite (rust/)
+/rust/target/

@@ -1,0 +1,26 @@
+name = 'PowerLockyDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^PowerLockyDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^PowerLockyDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^PowerLockyDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^PowerLockyDecrypter.*\.exe$'
+force = false

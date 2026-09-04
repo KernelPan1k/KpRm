@@ -1,0 +1,21 @@
+name = 'WinUpdatefix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^winupdatefix.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^winupdatefix.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^winupdatefix.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^winupdatefix.*\.exe$'
+force = false

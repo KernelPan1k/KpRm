@@ -1,0 +1,16 @@
+name = 'ResetBrowser'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ResetBrowser.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ResetBrowser*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ResetBrowser.*\.exe$'
+force = false

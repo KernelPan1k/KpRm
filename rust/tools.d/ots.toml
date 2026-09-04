@@ -1,0 +1,25 @@
+name = 'OTS'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^OTS.*\.(exe|txt)$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^OTS.*\.(exe|txt)$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^_OTS$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OTS.*\.exe$'
+company_name = '(?i)^OldTimer'
+force = false

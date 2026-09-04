@@ -1,0 +1,26 @@
+name = 'HiddenTearDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HiddenTearDecrypter.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HiddenTearDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HiddenTearDecrypter.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^HiddenTearDecrypter.*\.exe$'
+force = false

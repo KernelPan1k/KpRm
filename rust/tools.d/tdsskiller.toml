@@ -1,0 +1,40 @@
+name = 'TDSSKiller'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^tdsskiller.*\.(exe|zip)$'
+company_name = '(?i)^.*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^TDSSKiller'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^tdsskiller.*\.(exe|zip)$'
+company_name = '(?i)^.*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^TDSSKiller'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^TDSSKiller.*_log\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^TDSSKiller'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^tdsskiller.*\.exe$'
+company_name = '(?i)^.*Kaspersky'
+force = true

@@ -1,0 +1,26 @@
+name = 'Crypt38Decrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Crypt38(KeyGen|Decrypter)$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Crypt38(KeyGen|Decrypter).*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Crypt38(KeyGen|Decrypter)$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Crypt38Decrypter.*\.exe$'
+force = false

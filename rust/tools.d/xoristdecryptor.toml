@@ -1,0 +1,34 @@
+name = 'XoristDecryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^xoristDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^xoristDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^xoristDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^xoristDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^xoristDecryptor.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^xoristDecryptor.*\.exe$'
+company_name = '(?i)^Kaspersky'
+force = false

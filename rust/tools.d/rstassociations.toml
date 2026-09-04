@@ -1,0 +1,21 @@
+name = 'RstAssociations'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^rstassociations.*\.(exe|scr)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^rstassociations.*\.(exe|scr)$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^RstAssociations.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^rstassociations.*\.(exe|scr)$'
+force = false

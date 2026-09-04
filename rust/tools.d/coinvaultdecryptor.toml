@@ -1,0 +1,34 @@
+name = 'CoinVaultDecryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CoinVaultDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CoinVaultDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CoinVaultDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CoinVaultDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^CoinVaultDecryptor.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^CoinVaultDecryptor.*\.exe$'
+company_name = '(?i)^Kaspersky'
+force = false

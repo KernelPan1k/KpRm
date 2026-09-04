@@ -1,0 +1,19 @@
+name = 'Microsoft Safety Scanner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MSERT.*\.exe$'
+company_name = '(?i)^Microsoft Corporation'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MSERT.*\.exe$'
+company_name = '(?i)^Microsoft Corporation'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MSERT.*\.exe$'
+company_name = '(?i)^Microsoft Corporation'
+force = false

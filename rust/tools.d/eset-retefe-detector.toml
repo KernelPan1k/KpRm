@@ -1,0 +1,19 @@
+name = 'ESET Retefe Detector'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetretefedetector.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetretefedetector.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetretefedetector.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

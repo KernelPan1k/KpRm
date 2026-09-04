@@ -1,0 +1,19 @@
+name = 'ESET Retacino Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetretacinocleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetretacinocleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetretacinocleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

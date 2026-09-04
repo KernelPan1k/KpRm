@@ -1,0 +1,30 @@
+name = 'UnZacMe'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^UnZacMe.*\.(exe|txt|lnk)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^UnZacMe.*\.(exe|txt|lnk)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^UnZacMe.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^UnZacMe$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^UnZacMe.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

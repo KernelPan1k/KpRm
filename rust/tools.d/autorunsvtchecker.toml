@@ -1,0 +1,29 @@
+name = 'AutorunsVTChecker'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^autorunsvtchecker.*\.(exe|zip)$'
+company_name = '(?i)^regist$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^autorunsvtchecker'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^autorunsvtchecker.*\.(exe|zip)$'
+company_name = '(?i)^regist$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^autorunsvtchecker'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^autorunsvtchecker.*\.exe$'
+company_name = '(?i)^regist$'
+force = true

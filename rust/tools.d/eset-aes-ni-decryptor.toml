@@ -1,0 +1,19 @@
+name = 'ESET AES-NI Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetaesnidecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetaesnidecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetaesnidecryptor.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

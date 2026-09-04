@@ -1,0 +1,19 @@
+name = 'ESET Olmarik Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetolmarikolmascocleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetolmarikolmascocleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

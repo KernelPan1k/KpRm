@@ -1,0 +1,26 @@
+name = 'AlphaDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AlphaDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AlphaDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AlphaDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AlphaDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AlphaDecrypter.*\.exe$'
+force = false

@@ -1,0 +1,16 @@
+name = 'McAfee Tesladecrypt'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^tesladecrypt.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^tesladecrypt.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^tesladecrypt.*\.exe$'
+force = false

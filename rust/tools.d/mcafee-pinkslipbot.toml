@@ -1,0 +1,16 @@
+name = 'McAfee Pinkslipbot'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^amipinkc2.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^amipinkc2.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^amipinkc2.*\.exe$'
+force = false

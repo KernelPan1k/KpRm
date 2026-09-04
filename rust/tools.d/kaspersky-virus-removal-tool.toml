@@ -1,0 +1,25 @@
+name = 'Kaspersky Virus Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^KVRT.*\.exe$'
+company_name = '(?i).*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^KVRT.*\.exe$'
+company_name = '(?i).*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^KVRT([0-9]{4})?_Data$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^KVRT.*\.exe$'
+company_name = '(?i).*Kaspersky'
+force = false

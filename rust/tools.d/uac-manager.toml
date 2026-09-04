@@ -1,0 +1,16 @@
+name = 'UAC Manager'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^uac\-manager.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^uac\-manager.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^uac\-manager.*\.exe$'
+force = false

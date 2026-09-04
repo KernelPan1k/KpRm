@@ -1,0 +1,19 @@
+name = 'ESET GandCrab Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetgandcrabdecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetgandcrabdecryptor.*\.(exe|log)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetgandcrabdecryptor.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

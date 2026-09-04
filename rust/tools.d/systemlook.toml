@@ -1,0 +1,16 @@
+name = 'Systemlook'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^SystemLook.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^SystemLook.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^SystemLook.*\.exe$'
+force = false

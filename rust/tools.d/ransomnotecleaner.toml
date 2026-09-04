@@ -1,0 +1,26 @@
+name = 'RansomNoteCleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RansomNoteCleaner.*\.(log|exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RansomNoteCleaner$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RansomNoteCleaner.*\.(log|exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RansomNoteCleaner$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RansomNoteCleaner.*\.exe$'
+force = false

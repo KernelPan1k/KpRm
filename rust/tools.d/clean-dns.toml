@@ -1,0 +1,28 @@
+name = 'Clean_DNS'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^clean(-|_)dns.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^clean(-|_)dns.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Clean_Dns$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^clean(-|_)dns.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^Clean_Dns$'

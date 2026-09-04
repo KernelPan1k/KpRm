@@ -1,0 +1,26 @@
+name = 'Unlock92Decrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Unlock92Decrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Unlock92Decrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Unlock92Decrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Unlock92Decrypter.*\.exe$'
+force = false

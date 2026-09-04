@@ -1,0 +1,26 @@
+name = 'FilesLockerDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FilesLockerDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FilesLockerDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FilesLockerDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FilesLockerDecrypter.*\.exe$'
+force = false

@@ -1,0 +1,45 @@
+name = 'QuickDiag'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^QuickDiag.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^QuickScript.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^QuickDiag.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^QuickScript.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^QuickDiag.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^QuickScript.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^QuickDiag'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^QuickDiag.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

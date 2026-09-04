@@ -1,0 +1,26 @@
+name = 'Windows Repair All In One (portable)'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^tweaking\.com_windows_repair.*\.zip'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^tweaking\.com_windows_repair.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^tweaking\.com_windows_repair.*\.zip'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^tweaking\.com_windows_repair.*'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Repair_Windows.*\.exe$'
+force = false

@@ -1,0 +1,29 @@
+name = 'HostsXpert'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HostsXpert.*\.(exe|zip)$'
+company_name = '(?i)^funkytoad'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HostsXpert.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HostsXpert.*\.(exe|zip)$'
+company_name = '(?i)^funkytoad'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HostsXpert.*'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^HostsXpert.*\.exe$'
+company_name = '(?i)^funkytoad'
+force = false

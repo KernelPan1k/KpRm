@@ -1,0 +1,42 @@
+name = 'Pre_Scan'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^winlogon.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Pre_Scan.*\.(exe|txt|lnk|com|pif|scr)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^winlogon.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Pre_Scan.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^pre_scan$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Pre_Scan.*\.(com|pif|scr|exe)'
+company_name = '(?i)^SosVirus'
+force = false

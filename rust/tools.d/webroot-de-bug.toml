@@ -1,0 +1,25 @@
+name = 'Webroot DE-BUG'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^webrootdebug.*\.exe$'
+company_name = '(?i)^Webroot'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^webrootdebug.*\.exe$'
+company_name = '(?i)^Webroot'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^WebrootDebug$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^webrootdebug.*\.exe$'
+company_name = '(?i)^Webroot'
+force = false

@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/kprm-catalog",
+    "crates/kprm-engine",
+    "crates/kprm-i18n",
+    "crates/kprm-cli",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+authors = ["kernel-panik"]
+repository = "https://github.com/KernelPan1k/KpRm"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+toml = "0.8"
+regex = "1"
+thiserror = "1"
+anyhow = "1"
+include_dir = "0.7"
+fluent-bundle = "0.15"
+unic-langid = "0.9"
+clap = { version = "4", default-features = false, features = ["derive", "std", "help", "usage", "error-context"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

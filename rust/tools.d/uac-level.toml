@@ -1,0 +1,16 @@
+name = 'UAC-Level'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^uac\-level.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^uac\-level.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^uac\-level.*\.exe$'
+force = false

@@ -1,0 +1,19 @@
+name = 'AdminRun'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AdminRun.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AdminRun.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AdminRun.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

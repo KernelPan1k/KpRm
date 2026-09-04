@@ -1,0 +1,41 @@
+name = 'FixPurge'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Fix\-Purge.*\.(exe|lnk)$'
+company_name = '(?i)^Hacker Tool'
+kind = 'file'
+
+[[actions]]
+type = 'desktop_common'
+pattern = '(?i)^Fix\-Purge.*\.(exe|lnk)$'
+company_name = '(?i)^Hacker Tool'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Fix\-Purge.*\.(exe|lnk)$'
+company_name = '(?i)^Hacker Tool'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Fix\-Purge$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Fix\-Purge.*\.exe$'
+force = false
+
+[[actions]]
+type = 'search_registry_key'
+key = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+pattern = '(?i)^Fix\-Purge'
+value = 'DisplayName'
+
+[[actions]]
+type = 'start_menu'
+pattern = '(?i)^Fix\-Purge$'
+kind = 'folder'

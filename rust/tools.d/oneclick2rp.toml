@@ -1,0 +1,16 @@
+name = 'OneClick2RP'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)OneClick2RP.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)OneClick2RP.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OneClick2RP.*\.exe$'
+force = false

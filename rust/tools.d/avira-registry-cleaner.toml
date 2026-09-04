@@ -1,0 +1,19 @@
+name = 'Avira Registry Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$'
+company_name = '(?i)^Avira'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$'
+company_name = '(?i)^Avira'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^avira( |-|_)registry( |-|_)cleaner.*\.exe$'
+company_name = '(?i)^Avira'
+force = false

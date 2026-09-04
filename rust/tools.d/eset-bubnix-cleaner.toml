@@ -1,0 +1,19 @@
+name = 'ESET Bubnix Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETBubnixCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETBubnixCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

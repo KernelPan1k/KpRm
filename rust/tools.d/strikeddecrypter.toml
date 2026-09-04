@@ -1,0 +1,26 @@
+name = 'StrikedDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^StrikedDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^StrikedDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^StrikedDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^StrikedDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^StrikedDecrypter.*\.exe$'
+force = false

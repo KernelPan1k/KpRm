@@ -1,0 +1,19 @@
+name = 'ProcessClose'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^processclose.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^processclose.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^processclose.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

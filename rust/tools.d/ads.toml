@@ -1,0 +1,29 @@
+name = 'Ads'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ads.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Services_List\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ads.*\.exe$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Services_List\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ads.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

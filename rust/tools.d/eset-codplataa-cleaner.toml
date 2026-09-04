@@ -1,0 +1,19 @@
+name = 'ESET CodplatAA Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETCodplatAACleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETCodplatAACleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

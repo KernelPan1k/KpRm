@@ -1,0 +1,5 @@
+name = 'g3n-h@ckm@n tools'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^g3n\-h@ckm@n$'

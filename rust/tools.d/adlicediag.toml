@@ -1,0 +1,21 @@
+name = 'AdliceDiag'
+
+[[actions]]
+type = 'clean_directory'
+path = '@AppDataCommonDir\ADiag\quarantine'
+quarantine = true
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Diag_(portable|setup).*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Diag_(portable|setup).*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Diag_portable.*\.exe$'
+force = false

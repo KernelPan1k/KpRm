@@ -1,0 +1,26 @@
+name = 'CKScanner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CKScanner.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CKfiles.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CKScanner.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CKfiles.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^CKScanner.*\.exe$'
+force = false

@@ -1,0 +1,21 @@
+name = 'WinsockAnalyzer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^winsockanalyzer.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^winsockanalyzer.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^WinsockAnalyzer.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^winsockanalyzer.*\.exe$'
+force = false

@@ -1,0 +1,19 @@
+name = 'Junkware Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^JRT.*\.(exe|txt)$'
+company_name = '(?i)^Malwarebytes'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^JRT.*\.(exe|txt)$'
+company_name = '(?i)^Malwarebytes'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^JRT.*\.exe$'
+company_name = '(?i)^Malwarebytes'
+force = false

@@ -1,0 +1,16 @@
+name = 'ESET Filecoder.R Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetfilecoderrcleaner.*\.(exe|log|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetfilecoderrcleaner.*\.exe$'
+force = false

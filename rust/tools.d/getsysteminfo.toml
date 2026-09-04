@@ -1,0 +1,29 @@
+name = 'GetSystemInfo'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GetSystemInfo.*\.(exe|zip)$'
+company_name = '(?i)^.*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GetSystemInfo.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GetSystemInfo.*\.(exe|zip)$'
+company_name = '(?i)^.*Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GetSystemInfo.*$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^GetSystemInfo.*\.exe$'
+company_name = '(?i)^.*Kaspersky'
+force = false

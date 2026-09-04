@@ -1,0 +1,27 @@
+name = 'CrystalDiskInfo (portable)'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CrystalDiskInfo.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CrystalDiskInfo'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CrystalDiskInfo.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CrystalDiskInfo'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^DiskInfo(32|64)\.exe$'
+company_name = '(?i)^Crystal'
+force = false

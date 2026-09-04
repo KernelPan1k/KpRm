@@ -1,0 +1,33 @@
+name = 'ESET Log Collector'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetlogcollector.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ELC_logs\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetlogcollector.*\.exe$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ELC_logs\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetlogcollector.*\.exe$'
+company_name = '(?i)^ESET'
+force = false
+
+[[actions]]
+type = 'registry_key'
+key = 'HKCU\Software\ESET\ESET Log Collector'

@@ -1,0 +1,11 @@
+name = 'ESET SysRescue'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^eset_sysrescue_live.*\.iso$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^eset_sysrescue_live.*\.iso$'
+kind = 'file'

@@ -1,0 +1,37 @@
+name = 'SEAF'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^seaf.*\.exe$'
+company_name = '(?i)^C_XX$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^seaf.*\.exe$'
+company_name = '(?i)^C_XX$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^SeafLog.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^seaf.*\.exe$'
+force = false
+
+[[actions]]
+type = 'program_files'
+pattern = '(?i)^SEAF$'
+kind = 'folder'
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\SEAF'
+
+[[actions]]
+type = 'uninstall'
+folder = '(?i)^SEAF$'
+uninstaller = '(?i)^Un\-SEAF\.exe$'

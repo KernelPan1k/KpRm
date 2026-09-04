@@ -1,0 +1,19 @@
+name = 'ESET Conficker Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetconfickercleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetconfickercleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetconfickercleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

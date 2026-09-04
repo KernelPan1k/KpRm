@@ -1,0 +1,24 @@
+name = 'OTM'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^OTM.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^OTM.*\.exe$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^_OTM$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OTM.*\.exe$'
+company_name = '(?i)^OldTimer'
+force = false

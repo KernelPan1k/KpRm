@@ -1,0 +1,29 @@
+name = 'ZHPSuite'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPSuite.*\.(exe|txt|lnk|zip)$'
+company_name = '(?i)^Nicolas Coolman'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPSuite$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPSuite.*\.(exe|txt|lnk|zip)$'
+company_name = '(?i)^Nicolas Coolman'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPSuite$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ZHPSuite.*\.exe$'
+company_name = '(?i)^Nicolas Coolman'
+force = false

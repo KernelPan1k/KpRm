@@ -1,0 +1,16 @@
+name = 'MBRCheck'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MBRCheck.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MBRCheck.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MBRCheck.*\.exe$'
+force = false

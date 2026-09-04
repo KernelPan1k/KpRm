@@ -1,0 +1,10 @@
+name = 'ZHP Tools'
+
+[[actions]]
+type = 'app_data_local'
+pattern = '(?i)^ZHP$'
+kind = 'folder'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^ZHP$'

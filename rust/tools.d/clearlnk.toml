@@ -1,0 +1,16 @@
+name = 'ClearLNK'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^clearlnk.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^clearlnk.*\.(log|exe)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^clearlnk.*\.exe$'
+force = false

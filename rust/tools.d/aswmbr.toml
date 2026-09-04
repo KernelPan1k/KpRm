@@ -1,0 +1,32 @@
+name = 'AswMBR'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^aswmbr.*\.(exe|txt|lnk)$'
+company_name = '(?i)^avast'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MBR\.dat$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^aswmbr.*\.(exe|txt|lnk)$'
+company_name = '(?i)^avast'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MBR\.dat$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^aswmbr.*\.exe$'
+force = true
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SYSTEM\CurrentControlSet\Enum\Root\LEGACY_ASWMBR'

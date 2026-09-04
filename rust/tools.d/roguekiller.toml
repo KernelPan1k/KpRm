@@ -1,0 +1,49 @@
+name = 'RogueKiller'
+
+[[actions]]
+type = 'clean_directory'
+path = '@AppDataCommonDir\RogueKiller\quarantine'
+quarantine = true
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RogueKiller_portable.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RogueKiller.*\.(exe|txt)$'
+company_name = '(?i)^Adlice'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RogueKiller'
+kind = 'folder'
+
+[[actions]]
+type = 'desktop_common'
+pattern = '(?i)^RogueKiller.*\.(exe|txt)$'
+company_name = '(?i)^Adlice'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RogueKiller_portable.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RogueKiller.*\.(exe|txt)$'
+company_name = '(?i)^Adlice'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RogueKiller'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RogueKiller_portable.*\.exe$'
+force = false

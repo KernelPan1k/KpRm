@@ -1,0 +1,12 @@
+name = 'Dr.Web Cureit'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^DrWeb Quarantine$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'folder'
+path = '@UserProfileDir\Doctor Web'
+quarantine = true

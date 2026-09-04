@@ -1,0 +1,24 @@
+name = 'Look_my_hardware'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^look(-|_)my(-|_)hardware.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Look_my_hardware$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^look(-|_)my(-|_)hardware.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

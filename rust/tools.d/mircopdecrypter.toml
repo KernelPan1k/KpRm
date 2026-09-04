@@ -1,0 +1,26 @@
+name = 'MirCopDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MirCopDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MirCopDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MirCopDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MirCopDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MirCopDecrypter.*\.exe$'
+force = false

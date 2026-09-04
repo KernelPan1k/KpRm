@@ -1,0 +1,26 @@
+name = 'Mole02Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Mole02Decryptor.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Mole02Decryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Mole02Decryptor.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Mole02Decryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Mole02Decryptor.*\.exe$'
+force = false

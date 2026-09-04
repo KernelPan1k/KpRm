@@ -1,0 +1,30 @@
+name = 'CryptoSearch'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CryptoSearch.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CryptoSearch$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CryptoSearch.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CryptoSearch$'
+kind = 'folder'
+
+[[actions]]
+type = 'file'
+path = '@DesktopDir\cryptosearch\-definitions.bin'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^CryptoSearch.*\.exe$'
+force = false

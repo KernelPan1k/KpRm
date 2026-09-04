@@ -1,0 +1,26 @@
+name = 'BitStakDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BitStakDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BitStakDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BitStakDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BitStakDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BitStakDecrypter.*\.exe$'
+force = false

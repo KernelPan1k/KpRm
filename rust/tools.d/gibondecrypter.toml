@@ -1,0 +1,31 @@
+name = 'GibonDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GibonDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^GibonDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GibonDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^GibonDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^GibonDecrypter.*\.exe$'
+force = false
+
+[[actions]]
+type = 'start_menu'
+pattern = '(?i)^GibonDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'

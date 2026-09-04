@@ -1,0 +1,29 @@
+name = 'RootkitRevealer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RootkitRevealer.*\.(exe|zip)$'
+company_name = '(?i)^Sysinternals'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RootkitRevealer'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RootkitRevealer.*\.(exe|zip)$'
+company_name = '(?i)^Sysinternals'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RootkitRevealer'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RootkitRevealer.*\.exe$'
+company_name = '(?i)^Sysinternals'
+force = false

@@ -1,0 +1,19 @@
+name = 'FixExec'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FixExec.*\.(exe|txt|com)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FixExec.*\.(exe|txt|com)$'
+company_name = '(?i)^Bleeping'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FixExec.*\.(exe|com)$'
+company_name = '(?i)^Bleeping'
+force = false

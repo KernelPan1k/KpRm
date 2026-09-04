@@ -1,0 +1,29 @@
+name = 'MemControl'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MemControl.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MemControl.*\.(exe|txt)$'
+company_name = '(?i)^SosVirus'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^MemControl$'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^MemControl.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MemControl.*\.exe$'
+company_name = '(?i)^SosVirus'
+force = false

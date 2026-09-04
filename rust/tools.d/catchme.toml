@@ -1,0 +1,16 @@
+name = 'Catchme'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^catchme.*\.(exe|zip|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^catchme.*\.(exe|zip|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^catchme.*\.exe$'
+force = false

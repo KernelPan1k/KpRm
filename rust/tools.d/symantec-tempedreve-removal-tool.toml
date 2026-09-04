@@ -1,0 +1,24 @@
+name = 'Symantec Tempedreve Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FixTempedreve.*\.(exe|log)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FixTempedreve.*\.(exe|log)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'folder'
+path = '@TempDir\FixtoolQuarantine'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FixTempedreve.*\.exe$'
+company_name = '(?i)^Symantec'
+force = false

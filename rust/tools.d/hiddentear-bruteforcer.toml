@@ -1,0 +1,26 @@
+name = 'HiddenTear Bruteforcer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Hidden.*Tear.*Bruteforcer'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Hidden.*Tear.*Bruteforcer.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Hidden.*Tear.*Bruteforcer'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Hidden.*Tear.*Bruteforcer.*\.exe$'
+force = false

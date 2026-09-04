@@ -1,0 +1,30 @@
+name = 'OTL'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^OTL.*\.(exe|txt)$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Extras\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^OTL.*\.(exe|txt)$'
+company_name = '(?i)^OldTimer'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^_OTL$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^OTL.*\.exe$'
+company_name = '(?i)^OldTimer'
+force = false

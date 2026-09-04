@@ -1,0 +1,26 @@
+name = 'JigSawDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^JigsawDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^JigsawDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^JigsawDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^JigsawDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^JigsawDecrypter.*\.exe$'
+force = false

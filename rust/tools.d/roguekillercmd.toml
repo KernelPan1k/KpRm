@@ -1,0 +1,16 @@
+name = 'RogueKillerCMD'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RogueKillerCMD.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RogueKillerCMD.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RogueKillerCMD.*\.exe$'
+force = false

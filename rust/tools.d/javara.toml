@@ -1,0 +1,34 @@
+name = 'JavaRa'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Javara.*\.(zip|exe)$'
+company_name = '(?i)^The RaProducts Team'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Javara'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Javara.*\.(zip|exe)$'
+company_name = '(?i)^The RaProducts Team'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Javara'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Javara.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Javara.*\.exe$'
+company_name = '(?i)^The RaProducts Team'
+force = false

@@ -1,0 +1,37 @@
+name = 'System Information Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^System_Information_By_Tweaking\.com.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Tweaking\.com \- System Information.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Tweaking\.com(-|_)System(-|_)Information.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Tweaking\.com \- System Information.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^System_Information_By_Tweaking\.com.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^System_Information\.exe$'
+company_name = '(?i)^Tweaking\.com$'
+force = false

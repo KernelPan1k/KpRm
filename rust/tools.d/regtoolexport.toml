@@ -1,0 +1,26 @@
+name = 'RegtoolExport'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^regtoolexport.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Export.*\.reg$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^regtoolexport.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Export.*\.reg$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^regtoolexport.*\.exe$'
+force = false

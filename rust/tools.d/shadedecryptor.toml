@@ -1,0 +1,34 @@
+name = 'ShadeDecryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ShadeDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ShadeDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ShadeDecryptor.*\.(exe|zip)$'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ShadeDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ShadeDecryptor.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ShadeDecryptor.*\.exe$'
+company_name = '(?i)^Kaspersky'
+force = false

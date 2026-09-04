@@ -1,0 +1,5 @@
+name = 'OldTimer Tools'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^OldTimer Tools$'

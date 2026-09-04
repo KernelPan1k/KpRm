@@ -1,0 +1,19 @@
+name = 'Symantec Ramnit Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FxRamnit.*\.(exe|log)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FxRamnit.*\.(exe|log)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FxRamnit.*\.exe$'
+company_name = '(?i)^Symantec'
+force = false

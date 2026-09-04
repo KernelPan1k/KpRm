@@ -1,0 +1,24 @@
+name = 'BlitzBlank'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BlitzBlank.*\.exe$'
+company_name = '(?i)^Emsi'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BlitzBlank.*\.exe$'
+company_name = '(?i)^Emsi'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^BlitzBlank.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BlitzBlank.*\.exe$'
+company_name = '(?i)^Emsi'
+force = false

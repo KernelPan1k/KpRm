@@ -1,0 +1,31 @@
+name = 'DoesNotBelong'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^DoesNotBelong.*\.(exe|txt)$'
+company_name = '(?i)^furtivex'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^DoesNotBelong.*\.(exe|txt)$'
+company_name = '(?i)^furtivex'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^DoesNotBelong.*\.exe$'
+company_name = '(?i)^furtivex'
+force = false
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^DoesNotBelong_.*\.txt$'
+kind = 'file'
+quarantine = false
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^DNB_Quarantine$'
+kind = 'folder'
+quarantine = true

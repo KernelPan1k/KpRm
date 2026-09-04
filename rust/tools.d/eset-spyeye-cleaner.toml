@@ -1,0 +1,19 @@
+name = 'ESET SpyEye Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETSpyEyeCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETSpyEyeCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

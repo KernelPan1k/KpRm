@@ -1,0 +1,21 @@
+name = 'ESET Filecoder.AE Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetfilecoderaecleaner.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetfilecoderaecleaner'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetfilecoderaecleaner.*\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetfilecoderaecleaner'
+kind = 'folder'

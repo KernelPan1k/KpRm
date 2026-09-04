@@ -1,0 +1,21 @@
+name = 'RstHosts'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^rsthosts.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^rsthosts.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^RstHosts.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^rsthosts.*\.exe$'
+force = false

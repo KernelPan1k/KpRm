@@ -1,0 +1,16 @@
+name = 'KPLive'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^KPLive.*\.iso$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^KPLive.*\.iso$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^kprm_restore.*\.txt$'
+kind = 'file'

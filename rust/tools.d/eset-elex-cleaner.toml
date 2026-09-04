@@ -1,0 +1,19 @@
+name = 'ESET ELEX Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetelexcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetelexcleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetelexcleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

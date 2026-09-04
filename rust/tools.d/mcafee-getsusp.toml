@@ -1,0 +1,28 @@
+name = 'McAfee GetSusp'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^getsusp.*\.(exe|zip)$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^getsusp(32|64)?\-epo.*'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^getsusp.*\.(exe|zip)$'
+company_name = '(?i)^McAfee'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^getsusp(32|64)?\-epo.*'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^getsusp.*\.exe$'
+force = false

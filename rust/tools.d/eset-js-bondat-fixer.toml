@@ -1,0 +1,19 @@
+name = 'ESET JS/Bondat Fixer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^esetjsbondatfixer.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^esetjsbondatfixer.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^esetjsbondatfixer.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

@@ -1,0 +1,16 @@
+name = 'RAV'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^RAV\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^RAV\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^RAV\.exe$'
+force = false

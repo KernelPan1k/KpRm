@@ -1,0 +1,29 @@
+name = 'NetAdapter Repair All In One'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^NetAdapter.*\.exe$'
+company_name = '(?i)^Conner'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^netadapter\-log.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^NetAdapter.*\.exe$'
+company_name = '(?i)^Conner'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^netadapter\-log.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^NetAdapter.*\.exe$'
+company_name = '(?i)^Conner'
+force = false

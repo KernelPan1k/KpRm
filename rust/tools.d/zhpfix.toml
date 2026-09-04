@@ -1,0 +1,16 @@
+name = 'ZHPFix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ZHPFix.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ZHPFix.*\.(exe|txt|lnk)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ZHPFix.*\.exe$'
+force = false

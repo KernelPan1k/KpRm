@@ -1,0 +1,26 @@
+name = 'DCryDecrypter'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^DCryDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^DCryDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^DCryDecrypter.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^DCryDecrypter$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^DCryDecrypter.*\.exe$'
+force = false

@@ -1,0 +1,16 @@
+name = 'Report_Antivir'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Report_Antivir.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Report_Antivir.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Report_Antivir.*\.exe$'
+force = false

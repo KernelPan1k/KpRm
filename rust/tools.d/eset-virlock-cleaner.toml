@@ -1,0 +1,19 @@
+name = 'ESET Virlock Cleaner'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ESETVirlockCleaner.*\.(exe|log|zip)$'
+company_name = '(?i)^ESET'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ESETVirlockCleaner.*\.exe$'
+company_name = '(?i)^ESET'
+force = false

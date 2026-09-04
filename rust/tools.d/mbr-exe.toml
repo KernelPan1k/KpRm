@@ -1,0 +1,16 @@
+name = 'Mbr.exe'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^mbr.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^mbr.*\.(exe|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^mbr.*\.exe$'
+force = false

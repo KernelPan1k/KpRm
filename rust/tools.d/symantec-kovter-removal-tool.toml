@@ -1,0 +1,19 @@
+name = 'Symantec Kovter Removal Tool'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FixTool.*\.(log|exe)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FixTool.*\.(log|exe)$'
+company_name = '(?i)^Symantec'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FixTool.*\.exe$'
+company_name = '(?i)^Symantec'
+force = false

@@ -1,0 +1,16 @@
+name = 'MKV'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MKV.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MKV.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MKV\.exe$'
+force = false

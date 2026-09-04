@@ -1,0 +1,16 @@
+name = 'SFT'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^SFT.*\.(txt|exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^SFT.*\.(txt|exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^SFT.*\.exe$'
+force = false

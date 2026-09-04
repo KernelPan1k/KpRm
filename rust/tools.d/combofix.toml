@@ -1,0 +1,53 @@
+name = 'Combofix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Combofix.*\.exe$'
+company_name = '(?i)^Swearware'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CFScript\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Combofix.*\.exe$'
+company_name = '(?i)^Swearware'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CFScript\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Qoobox$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^Combofix.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Combofix.*\.exe$'
+company_name = '(?i)^Swearware'
+force = true
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\combofix.exe'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^Swearware$'
+
+[[actions]]
+type = 'windows_folder'
+pattern = '(?i)^(grep|PEV|NIRCMD|MBR|SED|SWREG|SWSC|SWXCACLS|Zip)\.exe$'
+kind = 'file'
