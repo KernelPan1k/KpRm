@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root{
+      --bg:oklch(0.150 0.018 258);
+      --bg-elevated:oklch(0.195 0.020 258);
+      --bg-panel:oklch(0.178 0.019 258);
+      --bg-hover:oklch(0.235 0.020 258);
+      --border:oklch(0.320 0.020 258 / 0.65);
+      --border-soft:oklch(0.320 0.020 258 / 0.35);
+      --text-1:oklch(0.945 0.008 258);
+      --text-2:oklch(0.680 0.018 258);
+      --text-3:oklch(0.500 0.016 258);
+      --green:oklch(0.740 0.150 150);
+      --red:oklch(0.660 0.180 27);
+      --blue:oklch(0.720 0.140 241);
+      --blue-bg:oklch(0.720 0.140 241 / 0.15);
+      --amber:oklch(0.790 0.150 85);
+      --amber-bg:oklch(0.790 0.150 85 / 0.15);
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;background:var(--bg);}
+    a{color:var(--blue);}
+    a:hover{color:oklch(0.800 0.140 241);}
+    ::-webkit-scrollbar{width:9px;height:9px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+    .kp-icon-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:var(--text-2);cursor:pointer;transition:background .12s ease,color .12s ease;}
+    .kp-icon-btn:hover{background:var(--bg-hover);color:var(--text-1);}
+    .kp-close:hover{background:oklch(0.660 0.180 27 / 0.15);color:var(--red);}
+    .kp-tab{display:flex;align-items:center;gap:7px;padding:0 14px;height:100%;cursor:pointer;position:relative;font:600 13px "Space Grotesk",sans-serif;transition:color .12s ease;}
+    .kp-tab:hover{color:var(--text-1);}
+    .kp-copy-btn{display:flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:7px;border:1px solid var(--border-soft);color:var(--text-2);cursor:pointer;flex-shrink:0;transition:border-color .12s ease,color .12s ease;}
+    .kp-copy-btn:hover{border-color:var(--border);color:var(--text-1);}
+    .kp-alt-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;transition:background .12s ease;}
+    .kp-alt-row:hover{background:var(--bg-hover);}
+  </style>
+</helmet>
+
+<div style="width:640px;height:600px;display:flex;flex-direction:column;background:var(--bg);color:var(--text-1);font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;border:1px solid var(--border-soft);border-radius:12px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.45);">
+
+  <!-- Title bar -->
+  <div style="flex-shrink:0;height:46px;display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;background:var(--bg-elevated);border-bottom:1px solid var(--border-soft);">
+    <div style="width:26px;height:26px;border-radius:8px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/><polyline points="8.5 12 11 14.5 15.5 9.5"/></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:14px;font-weight:700;">KpRm</span>
+      <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:var(--text-2);background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:999px;padding:2px 8px;">v3.0.0</span>
+    </div>
+    <span style="font-size:11px;color:var(--text-3);">by kernel-panik</span>
+    <div style="flex:1;"></div>
+    <div class="kp-icon-btn kp-min">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+    <div class="kp-icon-btn kp-close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="flex-shrink:0;height:44px;display:flex;align-items:stretch;padding:0 16px;gap:4px;border-bottom:1px solid var(--border-soft);">
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+      Automatique
+    </div>
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Personnalisé
+    </div>
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Outils +
+    </div>
+    <div class="kp-tab" style="color:var(--text-1);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-9.5-8.5C1 8.5 2.5 5 6 5c2 0 3.5 1.2 4 2.5C10.5 6.2 12 5 14 5c3.5 0 5 3.5 3.5 6.5C19 15.65 12 20 12 20z"/></svg>
+      Dons
+      <div style="position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--blue);border-radius:2px 2px 0 0;"></div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;">
+
+    <div>
+      <span style="font:700 11px 'Space Grotesk',sans-serif;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Soutenir le projet</span>
+      <p style="margin:8px 0 0 0;font-size:12px;color:var(--text-2);line-height:1.55;max-width:520px;">
+        KpRm est gratuit, open-source et le restera — usage non commercial. Si l'outil vous
+        a rendu service, un don (entièrement optionnel) aide à financer son hébergement et
+        son développement.
+      </p>
+    </div>
+
+    <!-- Primary: Bitcoin -->
+    <div style="background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:12px;padding:16px;display:flex;gap:16px;">
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:999px;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font:700 15px 'Space Grotesk',sans-serif;color:var(--amber);line-height:1;">₿</span>
+          </div>
+          <span style="font-size:13.5px;font-weight:700;">Bitcoin (BTC)</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;min-width:0;background:var(--bg-elevated);border:1px solid var(--border-soft);border-radius:8px;padding:9px 11px;font:500 12px 'IBM Plex Mono',monospace;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">[ Adresse BTC à renseigner ]</div>
+          <div class="kp-copy-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          </div>
+        </div>
+        <span style="font-size:11px;color:var(--text-3);">Adresse à fournir par le mainteneur avant publication.</span>
+      </div>
+      <div style="flex-shrink:0;width:92px;height:92px;border:1.5px dashed var(--border);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-3);">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="21"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="17.5" y1="14" x2="17.5" y2="17.5"/></svg>
+        <span style="font-size:9.5px;">QR à générer</span>
+      </div>
+    </div>
+
+    <!-- Secondary options -->
+    <div>
+      <span style="font:700 11px 'Space Grotesk',sans-serif;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Autres moyens</span>
+      <div style="margin-top:8px;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:12px;padding:6px;display:flex;flex-direction:column;gap:2px;">
+
+        <div class="kp-alt-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 19 12 12 16 5 12 12 2"/><polygon points="5 13.5 12 22 19 13.5 12 17.5 5 13.5"/></svg>
+          <span style="flex-shrink:0;font-size:12.5px;font-weight:600;width:120px;">Ethereum (ETH)</span>
+          <span style="flex:1;min-width:0;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">[ Adresse ETH à renseigner ]</span>
+        </div>
+
+        <div class="kp-alt-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 20s-7-4.35-9.5-8.5C1 8.5 2.5 5 6 5c2 0 3.5 1.2 4 2.5C10.5 6.2 12 5 14 5c3.5 0 5 3.5 3.5 6.5C19 15.65 12 20 12 20z"/></svg>
+          <span style="flex-shrink:0;font-size:12.5px;font-weight:600;width:120px;">PayPal</span>
+          <span style="flex:1;min-width:0;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">[ Lien PayPal.me à renseigner ]</span>
+        </div>
+
+        <div class="kp-alt-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg>
+          <span style="flex-shrink:0;font-size:12.5px;font-weight:600;width:120px;">GitHub Sponsors</span>
+          <span style="flex:1;min-width:0;font:500 11.5px 'IBM Plex Mono',monospace;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">[ Lien à renseigner ]</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="flex:1;"></div>
+    <p style="margin:0;text-align:center;font-size:11px;color:var(--text-3);">Aucune obligation — merci pour votre confiance.</p>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="flex-shrink:0;border-top:1px solid var(--border-soft);background:var(--bg-elevated);padding:14px 24px;display:flex;align-items:center;gap:8px;">
+    <span style="width:8px;height:8px;border-radius:999px;background:var(--text-3);flex-shrink:0;"></span>
+    <span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--text-2);">Prêt</span>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

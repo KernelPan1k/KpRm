@@ -1,0 +1,10 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 640, "h": 600 },
+    { "file": "Custom.dc.html", "x": 760, "y": 0, "w": 640, "h": 600 },
+    { "file": "Restart.dc.html", "x": 1520, "y": 0, "w": 640, "h": 600 },
+    { "file": "ExtraTools.dc.html", "x": 0, "y": 720, "w": 640, "h": 600 },
+    { "file": "Donate.dc.html", "x": 760, "y": 720, "w": 640, "h": 600 }
+  ],
+  "launch": { "view": "canvas" }
+}

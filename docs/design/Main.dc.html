@@ -1,0 +1,263 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root{
+      --bg:oklch(0.150 0.018 258);
+      --bg-elevated:oklch(0.195 0.020 258);
+      --bg-panel:oklch(0.178 0.019 258);
+      --bg-hover:oklch(0.235 0.020 258);
+      --border:oklch(0.320 0.020 258 / 0.65);
+      --border-soft:oklch(0.320 0.020 258 / 0.35);
+      --text-1:oklch(0.945 0.008 258);
+      --text-2:oklch(0.680 0.018 258);
+      --text-3:oklch(0.500 0.016 258);
+      --green:oklch(0.740 0.150 150);
+      --green-bg:oklch(0.740 0.150 150 / 0.15);
+      --red:oklch(0.660 0.180 27);
+      --red-bg:oklch(0.660 0.180 27 / 0.15);
+      --blue:oklch(0.720 0.140 241);
+      --blue-bg:oklch(0.720 0.140 241 / 0.15);
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;background:var(--bg);}
+    a{color:var(--blue);}
+    a:hover{color:oklch(0.800 0.140 241);}
+    ::-webkit-scrollbar{width:9px;height:9px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+    .kp-icon-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:var(--text-2);cursor:pointer;transition:background .12s ease,color .12s ease;}
+    .kp-icon-btn:hover{background:var(--bg-hover);color:var(--text-1);}
+    .kp-close:hover{background:var(--red-bg);color:var(--red);}
+    .kp-tab{display:flex;align-items:center;gap:7px;padding:0 14px;height:100%;cursor:pointer;position:relative;font:600 13px "Space Grotesk",sans-serif;transition:color .12s ease;}
+    .kp-tab:hover{color:var(--text-1);}
+    .kp-option{display:flex;gap:10px;align-items:flex-start;background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:10px;padding:11px 12px;cursor:pointer;transition:border-color .12s ease,background .12s ease;}
+    .kp-option:hover{border-color:var(--border);background:var(--bg-hover);}
+    .kp-seg{flex:1;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--border-soft);border-radius:9px;padding:10px 11px;cursor:pointer;transition:border-color .12s ease,background .12s ease;}
+    .kp-seg:hover{border-color:var(--border);}
+    .kp-seg.active{border-color:var(--blue);background:var(--blue-bg);}
+    .kp-run-btn{display:flex;align-items:center;gap:8px;padding:10px 22px;border-radius:9px;background:var(--green);color:oklch(0.180 0.030 150);font:700 13.5px "Space Grotesk",sans-serif;border:none;cursor:pointer;box-shadow:0 0 0 1px oklch(0.740 0.150 150 / 0.35),0 6px 16px oklch(0.740 0.150 150 / 0.20);transition:filter .12s ease;}
+    .kp-run-btn:hover{filter:brightness(1.06);}
+  </style>
+</helmet>
+
+<div style="width:640px;height:600px;display:flex;flex-direction:column;background:var(--bg);color:var(--text-1);font-family:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;border:1px solid var(--border-soft);border-radius:12px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,0.45);">
+
+  <!-- Title bar -->
+  <div style="flex-shrink:0;height:46px;display:flex;align-items:center;gap:10px;padding:0 8px 0 16px;background:var(--bg-elevated);border-bottom:1px solid var(--border-soft);">
+    <div style="width:26px;height:26px;border-radius:8px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/><polyline points="8.5 12 11 14.5 15.5 9.5"/></svg>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:14px;font-weight:700;">KpRm</span>
+      <span style="font:600 10.5px 'IBM Plex Mono',monospace;color:var(--text-2);background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:999px;padding:2px 8px;">v3.0.0</span>
+    </div>
+    <span style="font-size:11px;color:var(--text-3);">by kernel-panik</span>
+    <div style="flex:1;"></div>
+    <div class="kp-icon-btn kp-min">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+    <div class="kp-icon-btn kp-close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div style="flex-shrink:0;height:44px;display:flex;align-items:stretch;padding:0 16px;gap:4px;border-bottom:1px solid var(--border-soft);">
+    <div class="kp-tab" style="color:var(--text-1);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+      Automatique
+      <div style="position:absolute;left:14px;right:14px;bottom:-1px;height:2px;background:var(--blue);border-radius:2px 2px 0 0;"></div>
+    </div>
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Personnalisé
+    </div>
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Outils +
+    </div>
+    <div class="kp-tab" style="color:var(--text-2);">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.35-9.5-8.5C1 8.5 2.5 5 6 5c2 0 3.5 1.2 4 2.5C10.5 6.2 12 5 14 5c3.5 0 5 3.5 3.5 6.5C19 15.65 12 20 12 20z"/></svg>
+      Dons
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div style="flex:1;min-height:0;overflow-y:auto;padding:20px 24px;display:flex;gap:20px;">
+
+    <!-- Left column -->
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:18px;">
+
+      <!-- Actions section -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font:700 11px 'Space Grotesk',sans-serif;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Actions</span>
+          <span style="font-size:11px;color:var(--text-3);">6 options</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">
+
+          <!-- Delete tools (checked) -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;background:var(--green);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="oklch(0.180 0.030 150)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 6"/></svg>
+            </div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M7 7l1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Supprimer les outils</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Supprime fichiers, clés et tâches des utilitaires détectés</span>
+            </div>
+          </div>
+
+          <!-- Registry backup (checked) -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;background:var(--green);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="oklch(0.180 0.030 150)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 12 10 17 19 6"/></svg>
+            </div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Sauvegarder le registre</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Copie les ruches SOFTWARE et NTUSER.DAT avant modification</span>
+            </div>
+          </div>
+
+          <!-- Delete restore points -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;"></div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Supprimer les points de restauration</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Efface l'historique de restauration système existant</span>
+            </div>
+          </div>
+
+          <!-- Create restore point -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;"></div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--green-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Créer un point de restauration</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Ajoute un point de retour avant les suppressions</span>
+            </div>
+          </div>
+
+          <!-- Restore UAC -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;"></div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Restaurer UAC</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Réinitialise le contrôle de compte utilisateur par défaut</span>
+            </div>
+          </div>
+
+          <!-- Restore system settings -->
+          <div class="kp-option">
+            <div style="width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);flex-shrink:0;margin-top:2px;"></div>
+            <div style="width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="21" x2="5" y2="14"/><line x1="5" y1="10" x2="5" y2="3"/><circle cx="5" cy="12" r="2"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><circle cx="12" cy="10" r="2"/><line x1="19" y1="21" x2="19" y2="16"/><line x1="19" y1="12" x2="19" y2="3"/><circle cx="19" cy="14" r="2"/></svg>
+            </div>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:2px;">
+              <span style="font-size:13px;font-weight:600;">Restaurer les paramètres système</span>
+              <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">Réinitialise réseau, DNS et options d'affichage Explorer</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quarantine section -->
+      <div>
+        <div style="margin-bottom:8px;">
+          <span style="font:700 11px 'Space Grotesk',sans-serif;letter-spacing:0.08em;color:var(--text-3);text-transform:uppercase;">Quarantaine</span>
+        </div>
+        <p style="margin:0 0 10px 0;font-size:11.5px;color:var(--text-2);line-height:1.4;">Certains éléments sensibles (ex. quarantaine d'un antivirus) sont isolés avant suppression définitive.</p>
+        <div style="display:flex;gap:10px;">
+          <div class="kp-seg">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z"/></svg>
+              <span style="font-size:12.5px;font-weight:600;">Conserver</span>
+            </div>
+            <span style="font-size:10.5px;color:var(--text-3);">Aucune suppression</span>
+          </div>
+          <div class="kp-seg">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M7 7l1 12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2l1-12"/></svg>
+              <span style="font-size:12.5px;font-weight:600;">Maintenant</span>
+            </div>
+            <span style="font-size:10.5px;color:var(--text-3);">Suppression immédiate</span>
+          </div>
+          <div class="kp-seg active">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>
+              <span style="font-size:12.5px;font-weight:600;">Dans 7 jours</span>
+            </div>
+            <span style="font-size:10.5px;color:var(--text-3);">Planifié, annulable</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right sidebar -->
+    <div style="width:168px;flex-shrink:0;display:flex;flex-direction:column;gap:14px;">
+      <div style="background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:12px;padding:18px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
+        <div style="width:56px;height:56px;border-radius:999px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/><polyline points="8.5 12 11 14.5 15.5 9.5"/></svg>
+        </div>
+        <span style="font-size:13.5px;font-weight:700;">KpRm</span>
+        <span style="font-size:11px;color:var(--text-2);line-height:1.35;">Nettoyage post-désinfection</span>
+      </div>
+      <div style="background:var(--bg-panel);border:1px solid var(--border-soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <span style="font:700 10px 'Space Grotesk',sans-serif;letter-spacing:0.06em;color:var(--text-3);text-transform:uppercase;">Catalogue</span>
+          <span style="font:600 13px 'IBM Plex Mono',monospace;">202 outils</span>
+        </div>
+        <div style="height:1px;background:var(--border-soft);"></div>
+        <div style="display:flex;flex-direction:column;gap:2px;">
+          <span style="font:700 10px 'Space Grotesk',sans-serif;letter-spacing:0.06em;color:var(--text-3);text-transform:uppercase;">Dernier passage</span>
+          <span style="font:500 12px 'IBM Plex Mono',monospace;color:var(--text-2);">—</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="flex-shrink:0;border-top:1px solid var(--border-soft);background:var(--bg-elevated);padding:14px 24px;display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="width:8px;height:8px;border-radius:999px;background:var(--blue);flex-shrink:0;"></span>
+        <span style="font:500 12.5px 'IBM Plex Mono',monospace;color:var(--text-2);">Prêt</span>
+      </div>
+      <div class="kp-run-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="oklch(0.180 0.030 150)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="8 5 19 12 8 19 8 5"/></svg>
+        Exécuter
+      </div>
+    </div>
+    <div style="height:6px;border-radius:999px;background:var(--bg-panel);border:1px solid var(--border-soft);overflow:hidden;">
+      <div style="height:100%;width:0%;background:var(--blue);border-radius:999px;"></div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
