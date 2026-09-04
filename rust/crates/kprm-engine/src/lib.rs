@@ -13,6 +13,7 @@ pub mod ports;
 pub mod quarantine;
 pub mod registry;
 pub mod report;
+pub mod system_info;
 pub mod system_settings;
 pub mod uac;
 pub mod whitelist;

@@ -11,6 +11,7 @@ pub mod known_dirs;
 pub mod process;
 pub mod registry;
 pub mod report_io;
+pub mod system_info;
 pub mod timestamp;
 pub mod version_info;
 
@@ -20,4 +21,5 @@ pub use known_dirs::{is_64bit_os, EnvKnownDirs};
 pub use process::WinProcessManager;
 pub use registry::WinRegistry;
 pub use report_io::write_and_open_report;
+pub use system_info::collect as collect_system_info;
 pub use timestamp::current_timestamp;

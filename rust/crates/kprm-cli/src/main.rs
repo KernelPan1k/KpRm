@@ -204,10 +204,12 @@ fn run_engine(
     print_report(&report);
 
     if destructive {
-        let title = vec![format!(
-            "# KpRm (réécriture Rust) — rapport du {}",
+        let mut title = vec![format!(
+            "# KpRm v{} — rapport du {}",
+            env!("CARGO_PKG_VERSION"),
             kprm_windows::current_timestamp()
         )];
+        title.extend(kprm_windows::collect_system_info(&dirs).to_lines());
         kprm_windows::write_and_open_report(&report, &dirs, &title);
     }
 

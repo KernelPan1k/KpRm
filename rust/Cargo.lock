@@ -1194,7 +1194,7 @@ checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
 name = "kprm-catalog"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "include_dir",
  "regex",
@@ -1205,7 +1205,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-cli"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "clap",
  "kprm-catalog",
@@ -1216,7 +1216,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-engine"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "kprm-catalog",
  "regex",
@@ -1225,7 +1225,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-gui"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "arboard",
  "eframe",
@@ -1238,7 +1238,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-i18n"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "fluent-bundle",
  "include_dir",
@@ -1248,7 +1248,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-windows"
-version = "0.1.0"
+version = "3.0.0"
 dependencies = [
  "kprm-catalog",
  "kprm-engine",

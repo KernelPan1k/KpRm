@@ -11,13 +11,13 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | Crate | Statut | Contenu |
 |---|---|---|
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
-| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 45 tests. |
+| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 48 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
-| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`). 19 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
+| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`). 23 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
 | `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions à 2 colonnes avec badge coloré, quarantaine en 3 boutons. Disposition **vérifiée par instrumentation des coordonnées réelles** plutôt que par capture d'écran (voir plus bas — la capture d'écran s'est révélée peu fiable dans cet environnement). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
-**80 tests unitaires, tous verts** (`cargo test --workspace`), dont 20 qui
+**86 tests unitaires, tous verts** (`cargo test --workspace`), dont 23 qui
 touchent réellement le système (fichiers, registre, processus) mais toujours
 dans un bac à sable jetable — jamais contre les vraies données de
 l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
@@ -71,7 +71,24 @@ comme ça a été fait ici) sont fiables.
    parfaitement côte à côte, sans chevauchement) — c'est `PrintWindow` qui
    mentait (voir l'avertissement ci-dessus). La disposition à 2 colonnes a
    donc été restaurée.
-3. **« Léger décalage entre les boutons/colonnes »** — vérifié par la même
+3. **« Je veux des infos comme avant (nom utilisateur, machine, OS...) et le
+   nombre de passages »** — le rapport en manquait, contrairement à
+   l'original (`functions.au3` lignes 17-23 : `@UserName`, `@ComputerName`,
+   `GetHumanVersion()`, `CountKpRmPass()`). Ajouté : `kprm_engine::
+   system_info::SystemInfo` (données pures, formatées et testées sans
+   Windows) rempli par `kprm_windows::system_info::collect` — nom
+   d'utilisateur/ordinateur via les variables d'environnement `USERNAME`/
+   `COMPUTERNAME`, nom et build de l'OS via le registre
+   `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion` (avec correction du
+   nom pour les machines Windows 11 dont `ProductName` dit encore
+   « Windows 10 »), et le nombre de passages en comptant les
+   `kprm-*.txt` déjà présents dans `%HOMEDRIVE%\KPRM`. Affiché dans le
+   bandeau du rapport, sous les lignes de titre. La version de l'app
+   (`v3.0.0`, `[workspace.package].version` dans `Cargo.toml`, lue via
+   `env!("CARGO_PKG_VERSION")`) est maintenant elle aussi dans ce bandeau
+   ET dans la pastille de la barre de titre — une seule source de vérité
+   au lieu d'un `"v3.0.0"` codé en dur dans `app.rs`.
+4. **« Léger décalage entre les boutons/colonnes »** — vérifié par la même
    technique d'instrumentation (impression des `Response.rect` réels plutôt
    que capture d'écran) : deux causes trouvées. D'abord, une description
    trop longue sur une carte forçait un retour à la ligne, rendant cette

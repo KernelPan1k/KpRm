@@ -145,24 +145,27 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 system_settings::restart_explorer(&mut processes, &mut commands);
             }
 
-            kprm_windows::write_and_open_report(&report, &dirs, &report_title());
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             WorkerResponse::Done(report)
         }
 
         WorkerRequest::RemoveSelected(targets) => {
             let report = orchestrator::remove_selected_targets(&targets, &mut fs, &mut registry);
-            kprm_windows::write_and_open_report(&report, &dirs, &report_title());
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             WorkerResponse::Done(report)
         }
     }
 }
 
-fn report_title() -> Vec<String> {
-    vec![
+fn report_title(dirs: &kprm_windows::EnvKnownDirs) -> Vec<String> {
+    let mut title = vec![
         format!(
-            "# KpRm (réécriture Rust) — rapport du {}",
+            "# KpRm v{} — rapport du {}",
+            env!("CARGO_PKG_VERSION"),
             kprm_windows::current_timestamp()
         ),
         "# https://github.com/KernelPan1k/KpRm".to_string(),
-    ]
+    ];
+    title.extend(kprm_windows::collect_system_info(dirs).to_lines());
+    title
 }

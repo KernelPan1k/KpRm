@@ -286,7 +286,7 @@ impl KprmApp {
                         .inner_margin(Margin::symmetric(7.0, 2.0))
                         .show(ui, |ui| {
                             ui.label(
-                                egui::RichText::new("v3.0.0")
+                                egui::RichText::new(concat!("v", env!("CARGO_PKG_VERSION")))
                                     .monospace()
                                     .size(10.5)
                                     .color(theme::TEXT_2),
