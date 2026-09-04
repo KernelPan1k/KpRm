@@ -61,17 +61,33 @@ impl Report {
     /// the original's text log (`src/kp_includes/functions/utils.au3`'s
     /// `LogMessage`, `[OK]`/`[X]`/`[R]` prefixes) — not a byte-identical
     /// format, but the same idea: a plain-text file a technician can read
-    /// and hand to a client.
+    /// and hand to a client. Structured as a banner, a numeric summary,
+    /// one section per tool with aligned status symbols, and a dedicated
+    /// error section, so it stays legible in a plain Notepad window.
     pub fn to_text(&self, title_lines: &[String]) -> String {
+        const RULE: &str = "======================================================";
+        const THIN_RULE: &str = "------------------------------------------------------";
+
         let mut out = String::new();
+        out.push_str(RULE);
+        out.push_str("\r\n");
         for line in title_lines {
             out.push_str(line);
             out.push_str("\r\n");
         }
+        out.push_str(RULE);
+        out.push_str("\r\n");
 
         if self.events.is_empty() {
             out.push_str("\r\nAucun élément trouvé.\r\n");
             return out;
+        }
+
+        out.push_str("\r\nRésumé\r\n");
+        out.push_str(THIN_RULE);
+        out.push_str("\r\n");
+        for (label, count) in self.summary_counts() {
+            out.push_str(&format!("  {label:<32} : {count}\r\n"));
         }
 
         let mut tools: Vec<&str> = self.events.iter().map(|e| e.tool.as_str()).collect();
@@ -79,11 +95,11 @@ impl Report {
         tools.dedup();
 
         for tool in tools {
-            out.push_str(&format!("\r\n  ## {tool}\r\n"));
+            out.push_str(&format!("\r\n{tool}\r\n{THIN_RULE}\r\n"));
             for event in self.events.iter().filter(|e| e.tool == tool) {
                 let symbol = symbol_for(&event.result);
                 out.push_str(&format!(
-                    "    {symbol} {} ({})\r\n",
+                    "  {symbol:<7} {:<50} ({})\r\n",
                     event.target, event.action_type
                 ));
             }
@@ -95,18 +111,52 @@ impl Report {
             .filter(|e| matches!(e.result, EventResult::Failed(_)))
             .collect();
         if !failures.is_empty() {
-            out.push_str("\r\n- Erreurs -\r\n");
+            out.push_str(&format!("\r\n{RULE}\r\nErreurs\r\n{RULE}\r\n"));
             for event in failures {
                 if let EventResult::Failed(message) = &event.result {
                     out.push_str(&format!(
-                        "    [X] {} ({}) : {message}\r\n",
+                        "  [X] {} ({}) : {message}\r\n",
                         event.target, event.action_type
                     ));
                 }
             }
         }
 
+        out.push_str(&format!("\r\n{RULE}\r\nFin du rapport.\r\n"));
+
         out
+    }
+
+    /// Counts events per category, in display order, for the summary
+    /// block at the top of [`Report::to_text`].
+    fn summary_counts(&self) -> [(&'static str, usize); 7] {
+        let mut removed = 0;
+        let mut ran = 0;
+        let mut scheduled_on_reboot = 0;
+        let mut kept = 0;
+        let mut scheduled_in_7_days = 0;
+        let mut found = 0;
+        let mut failed = 0;
+        for event in &self.events {
+            match event.result {
+                EventResult::Removed => removed += 1,
+                EventResult::Ran => ran += 1,
+                EventResult::ScheduledOnReboot => scheduled_on_reboot += 1,
+                EventResult::Kept => kept += 1,
+                EventResult::ScheduledIn7Days => scheduled_in_7_days += 1,
+                EventResult::Found => found += 1,
+                EventResult::Failed(_) => failed += 1,
+            }
+        }
+        [
+            ("Supprimés", removed),
+            ("Programmes lancés", ran),
+            ("Suppressions au redémarrage", scheduled_on_reboot),
+            ("Conservés (quarantaine)", kept),
+            ("Suppression programmée (7 jours)", scheduled_in_7_days),
+            ("Trouvés (analyse seule)", found),
+            ("Échecs", failed),
+        ]
     }
 }
 
@@ -152,11 +202,47 @@ mod tests {
 
         let text = report.to_text(&[]);
 
-        assert!(text.contains("## AdwCleaner"));
-        assert!(text.contains("## OTL"));
-        assert!(text.contains("[OK] C:\\Desktop\\AdwCleaner.exe (desktop)"));
-        assert!(text.contains("[R] C:\\_OTL (folder)"));
-        assert!(text.contains("- Erreurs -"));
+        assert!(text.contains("Résumé"));
+        assert!(text.contains("Supprimés"));
+        assert!(text.contains("AdwCleaner\r\n"));
+        assert!(text.contains("OTL\r\n"));
+        assert!(text.contains("[OK]") && text.contains("C:\\Desktop\\AdwCleaner.exe"));
+        assert!(text.contains("[R]") && text.contains("C:\\_OTL") && text.contains("(folder)"));
+        assert!(text.contains("Erreurs"));
         assert!(text.contains("[X] AdwCleaner.exe (process) : boom"));
+        assert!(text.contains("Fin du rapport."));
+    }
+
+    #[test]
+    fn summary_counts_every_result_category() {
+        let mut report = Report::default();
+        report.push("A", "file", "a", EventResult::Removed);
+        report.push("A", "process", "b", EventResult::Ran);
+        report.push("A", "file", "c", EventResult::ScheduledOnReboot);
+        report.push("A", "quarantine", "d", EventResult::Kept);
+        report.push("A", "quarantine", "e", EventResult::ScheduledIn7Days);
+        report.push("A", "file", "f", EventResult::Found);
+        report.push("A", "file", "g", EventResult::Failed("oops".to_string()));
+
+        let text = report.to_text(&[]);
+        let normalized: Vec<String> = text
+            .lines()
+            .map(|line| line.split_whitespace().collect::<Vec<_>>().join(" "))
+            .collect();
+
+        for expected in [
+            "Supprimés : 1",
+            "Programmes lancés : 1",
+            "Suppressions au redémarrage : 1",
+            "Conservés (quarantaine) : 1",
+            "Suppression programmée (7 jours) : 1",
+            "Trouvés (analyse seule) : 1",
+            "Échecs : 1",
+        ] {
+            assert!(
+                normalized.iter().any(|line| line == expected),
+                "expected a summary line {expected:?}, got: {normalized:#?}"
+            );
+        }
     }
 }
