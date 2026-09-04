@@ -531,7 +531,7 @@ impl KprmApp {
                 theme::BLUE,
                 "P",
                 "Supprimer les points de restauration",
-                "Pas encore implémenté",
+                "Désactive puis réactive la protection système",
                 half,
             );
             action_row(
@@ -541,7 +541,7 @@ impl KprmApp {
                 theme::GREEN,
                 "+",
                 "Créer un point de restauration",
-                "Pas encore implémenté",
+                "Peut échouer si Windows en a déjà créé un aujourd'hui",
                 half,
             );
         });
@@ -608,7 +608,11 @@ impl KprmApp {
 
         ui.add_space(16.0);
         let can_run = !self.busy
-            && (self.opt_remove_tools || self.opt_restore_uac || self.opt_restore_settings);
+            && (self.opt_remove_tools
+                || self.opt_restore_uac
+                || self.opt_restore_settings
+                || self.opt_remove_restore_points
+                || self.opt_create_restore_point);
         let run_button = egui::Button::new(
             egui::RichText::new("Exécuter")
                 .strong()
@@ -623,6 +627,8 @@ impl KprmApp {
                 remove_tools: self.opt_remove_tools,
                 restore_uac: self.opt_restore_uac,
                 restore_settings: self.opt_restore_settings,
+                remove_restore_points: self.opt_remove_restore_points,
+                create_restore_point: self.opt_create_restore_point,
                 quarantine_mode: self.quarantine_choice.into(),
             });
         }

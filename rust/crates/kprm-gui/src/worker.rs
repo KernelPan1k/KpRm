@@ -9,7 +9,7 @@ use kprm_catalog::Catalog;
 use kprm_engine::orchestrator::{self, RunOptions};
 use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::Report;
-use kprm_engine::{system_settings, uac};
+use kprm_engine::{restore_point, system_settings, uac};
 
 pub enum WorkerRequest {
     /// "Analyser": search-only scan across the whole catalog.
@@ -19,6 +19,8 @@ pub enum WorkerRequest {
         remove_tools: bool,
         restore_uac: bool,
         restore_settings: bool,
+        remove_restore_points: bool,
+        create_restore_point: bool,
         quarantine_mode: QuarantineMode,
     },
     /// "Supprimer la sélection": force-delete a fixed list of previously
@@ -93,9 +95,40 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
             remove_tools,
             restore_uac,
             restore_settings,
+            remove_restore_points,
+            create_restore_point,
             quarantine_mode,
         } => {
             let mut report = Report::default();
+
+            if remove_restore_points {
+                let result = restore_point::remove_all_restore_points(&mut commands);
+                report.push(
+                    "Points de restauration",
+                    "task",
+                    result.description,
+                    if result.succeeded {
+                        kprm_engine::report::EventResult::Ran
+                    } else {
+                        kprm_engine::report::EventResult::Failed("échec".to_string())
+                    },
+                );
+            }
+
+            if create_restore_point {
+                for result in restore_point::create_restore_point(&mut commands) {
+                    report.push(
+                        "Points de restauration",
+                        "task",
+                        result.description,
+                        if result.succeeded {
+                            kprm_engine::report::EventResult::Ran
+                        } else {
+                            kprm_engine::report::EventResult::Failed("échec".to_string())
+                        },
+                    );
+                }
+            }
 
             if remove_tools {
                 let options = RunOptions {
