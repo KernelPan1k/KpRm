@@ -1,0 +1,25 @@
+[package]
+name = "kprm-gui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "kprm-gui"
+path = "src/main.rs"
+
+[dependencies]
+kprm-catalog = { path = "../kprm-catalog" }
+kprm-engine = { path = "../kprm-engine" }
+kprm-i18n = { path = "../kprm-i18n" }
+kprm-windows = { path = "../kprm-windows" }
+eframe = { version = "0.29", default-features = false, features = ["glow", "default_fonts"] }
+egui = "0.29"
+# Pinned: newer arboard versions pull clipboard-win >=5, which switched from
+# the classic `winapi` crate (prebuilt GNU import libs, works here) to
+# `windows-sys` >=0.60 (raw-dylib linking, needs a full `dlltool`+`as` this
+# minimal rustup-provided GNU toolchain doesn't ship). 3.3.0 is the newest
+# arboard still on the `winapi`-based clipboard-win 4.x line. See
+# ../README.md.
+arboard = "=3.3.0"

@@ -1,0 +1,3 @@
+[target.x86_64-pc-windows-gnu]
+linker = "C:/mingw64/bin/gcc.exe"
+ar = "C:/mingw64/bin/ar.exe"

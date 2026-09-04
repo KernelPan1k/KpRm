@@ -1,0 +1,156 @@
+//! Runs the (potentially slow, always blocking) engine calls on a background
+//! thread so the UI stays responsive — a scan/removal pass takes seconds to
+//! tens of seconds (see ../../README.md: ~13s for a full scan on the dev
+//! machine), which would otherwise freeze every egui frame.
+
+use std::sync::mpsc::{Receiver, Sender};
+
+use kprm_catalog::Catalog;
+use kprm_engine::orchestrator::{self, RunOptions};
+use kprm_engine::quarantine::QuarantineMode;
+use kprm_engine::report::Report;
+use kprm_engine::{system_settings, uac};
+
+pub enum WorkerRequest {
+    /// "Analyser": search-only scan across the whole catalog.
+    Scan,
+    /// "Exécuter": run the checked automatic-tab actions for real.
+    RunAutomatic {
+        remove_tools: bool,
+        restore_uac: bool,
+        restore_settings: bool,
+        quarantine_mode: QuarantineMode,
+    },
+    /// "Supprimer la sélection": force-delete a fixed list of previously
+    /// found `(tool, target)` pairs.
+    RemoveSelected(Vec<(String, String)>),
+}
+
+pub enum WorkerResponse {
+    Done(Report),
+    Failed(String),
+}
+
+/// Spawns the worker thread and returns the channel to send it requests on;
+/// `on_response` is called (from the worker thread) with each result — the
+/// caller is expected to forward it into a channel the UI thread polls, or
+/// otherwise trigger a repaint.
+pub fn spawn(response_tx: Sender<WorkerResponse>) -> Sender<WorkerRequest> {
+    let (request_tx, request_rx): (Sender<WorkerRequest>, Receiver<WorkerRequest>) =
+        std::sync::mpsc::channel();
+
+    std::thread::spawn(move || {
+        for request in request_rx {
+            let response = handle(request);
+            if response_tx.send(response).is_err() {
+                break;
+            }
+        }
+    });
+
+    request_tx
+}
+
+fn handle(request: WorkerRequest) -> WorkerResponse {
+    let catalog = match Catalog::embedded() {
+        Ok(c) => c,
+        Err(errors) => {
+            return WorkerResponse::Failed(format!(
+                "Catalogue invalide ({} erreur(s)) : {}",
+                errors.len(),
+                errors.first().map(|e| e.to_string()).unwrap_or_default()
+            ))
+        }
+    };
+
+    let dirs = kprm_windows::EnvKnownDirs::detect();
+    let mut fs = kprm_windows::WinFileSystem;
+    let mut registry = kprm_windows::WinRegistry;
+    let mut processes = kprm_windows::WinProcessManager;
+    let mut commands = kprm_windows::RealCommandRunner;
+    let is_64bit_os = kprm_windows::is_64bit_os();
+
+    match request {
+        WorkerRequest::Scan => {
+            let options = RunOptions {
+                quarantine_mode: QuarantineMode::Keep,
+                search_only: true,
+                is_64bit_os,
+            };
+            let report = orchestrator::run_tool_actions(
+                &catalog,
+                &mut fs,
+                &mut registry,
+                &mut processes,
+                &mut commands,
+                &dirs,
+                &options,
+            );
+            WorkerResponse::Done(report)
+        }
+
+        WorkerRequest::RunAutomatic {
+            remove_tools,
+            restore_uac,
+            restore_settings,
+            quarantine_mode,
+        } => {
+            let mut report = Report::default();
+
+            if remove_tools {
+                let options = RunOptions {
+                    quarantine_mode,
+                    search_only: false,
+                    is_64bit_os,
+                };
+                report.merge(orchestrator::run_tool_actions(
+                    &catalog,
+                    &mut fs,
+                    &mut registry,
+                    &mut processes,
+                    &mut commands,
+                    &dirs,
+                    &options,
+                ));
+            }
+
+            if restore_uac {
+                for result in uac::restore_uac(&mut registry, is_64bit_os) {
+                    report.push(
+                        "UAC",
+                        "registry_key",
+                        result.value_name,
+                        if result.succeeded {
+                            kprm_engine::report::EventResult::Removed
+                        } else {
+                            kprm_engine::report::EventResult::Failed("écriture échouée".to_string())
+                        },
+                    );
+                }
+            }
+
+            if restore_settings {
+                for result in system_settings::restore_defaults(&mut registry, &mut commands) {
+                    report.push(
+                        "Paramètres système",
+                        "task",
+                        result.description,
+                        if result.succeeded {
+                            kprm_engine::report::EventResult::Ran
+                        } else {
+                            kprm_engine::report::EventResult::Failed("échec".to_string())
+                        },
+                    );
+                }
+                system_settings::restart_explorer(&mut processes, &mut commands);
+            }
+
+            WorkerResponse::Done(report)
+        }
+
+        WorkerRequest::RemoveSelected(targets) => {
+            let report = orchestrator::remove_selected_targets(&targets, &mut fs, &mut registry);
+            WorkerResponse::Done(report)
+        }
+    }
+}

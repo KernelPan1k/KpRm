@@ -67,6 +67,56 @@ pub fn run_tool_actions(
     report
 }
 
+/// Force-deletes a fixed list of previously-found `(tool, target)` pairs —
+/// the Rust equivalent of `RemoveAllSelectedLineSearch`, used by the
+/// "Analyse personnalisée" tab's "Supprimer la sélection" button. Unlike
+/// [`run_tool_actions`], this never consults the catalog or quarantine
+/// rules: every target the caller passes in is deleted unconditionally,
+/// exactly like the original's custom-selection removal. A target starting
+/// with `HK` is treated as a registry key; otherwise its real kind (file or
+/// folder) decides how it's removed.
+pub fn remove_selected_targets(
+    targets: &[(String, String)],
+    fs: &mut dyn FileSystem,
+    registry: &mut dyn Registry,
+) -> Report {
+    let mut report = Report::default();
+
+    for (tool, target) in targets {
+        if target.starts_with("HK") {
+            let result = if registry.delete_key(target) {
+                EventResult::Removed
+            } else {
+                EventResult::Failed("registry key could not be deleted".to_string())
+            };
+            report.push(tool.clone(), "registry_key", target.clone(), result);
+            continue;
+        }
+
+        match fs.kind(target) {
+            Some(EntryKind::File) => {
+                let result = removal_to_event(fs.remove_file(target));
+                report.push(tool.clone(), "file", target.clone(), result);
+            }
+            Some(EntryKind::Folder) => {
+                let result = removal_to_event(fs.remove_dir(target));
+                report.push(tool.clone(), "folder", target.clone(), result);
+            }
+            None => {}
+        }
+    }
+
+    report
+}
+
+fn removal_to_event(removal: Removal) -> EventResult {
+    match removal {
+        Removal::Deleted => EventResult::Removed,
+        Removal::ScheduledOnReboot => EventResult::ScheduledOnReboot,
+        Removal::NotFound => EventResult::Failed("target no longer exists".to_string()),
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 fn handle_action(
     tool: &str,
@@ -1043,5 +1093,44 @@ mod tests {
 
         assert_eq!(report.events[0].result, EventResult::Ran);
         assert_eq!(commands.calls[0].0, r"C:\Program Files\SEAF\Un-SEAF.exe");
+    }
+
+    #[test]
+    fn remove_selected_targets_deletes_files_folders_and_registry_keys_unconditionally() {
+        let mut fs = FakeFileSystem::new();
+        fs.add_file(r"C:\FRST\FRST.txt", None);
+        fs.add_folder(r"C:\_OTL");
+        let mut registry = FakeRegistry::new();
+        registry.add_value(r"HKCU\Software\Foo", "V", "1");
+
+        let targets = vec![
+            ("FRST".to_string(), r"C:\FRST\FRST.txt".to_string()),
+            ("OTL".to_string(), r"C:\_OTL".to_string()),
+            ("Foo".to_string(), r"HKCU\Software\Foo".to_string()),
+        ];
+
+        let report = remove_selected_targets(&targets, &mut fs, &mut registry);
+
+        assert_eq!(report.events.len(), 3);
+        assert!(report
+            .events
+            .iter()
+            .all(|e| e.result == EventResult::Removed));
+        assert!(fs.removed.contains(&r"C:\FRST\FRST.txt".to_string()));
+        assert!(fs.removed.contains(&r"C:\_OTL".to_string()));
+        assert!(registry
+            .deleted_keys
+            .contains(&r"HKCU\Software\Foo".to_string()));
+    }
+
+    #[test]
+    fn remove_selected_targets_skips_a_target_that_no_longer_exists() {
+        let mut fs = FakeFileSystem::new();
+        let mut registry = FakeRegistry::new();
+
+        let targets = vec![("Ghost".to_string(), r"C:\already\gone.txt".to_string())];
+        let report = remove_selected_targets(&targets, &mut fs, &mut registry);
+
+        assert!(report.events.is_empty());
     }
 }

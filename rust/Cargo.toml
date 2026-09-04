@@ -6,6 +6,7 @@ members = [
     "crates/kprm-i18n",
     "crates/kprm-cli",
     "crates/kprm-windows",
+    "crates/kprm-gui",
 ]
 
 [workspace.package]
