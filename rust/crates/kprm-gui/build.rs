@@ -12,5 +12,18 @@ fn main() {
                  (windres from a MinGW toolchain must be on PATH)"
             ),
         }
+
+        // MinGW's gcc spec unconditionally links an `asInvoker` default
+        // manifest (`default-manifest.o`, found via its `-B` search
+        // path) into every non-shared link, which collides with the
+        // `requireAdministrator` manifest embedded above (linker warning:
+        // "multiple non-default manifests") and silently wins, leaving
+        // the .exe running unelevated. `nodefaultmanifest/` shadows it
+        // with an empty object (no `.rsrc` section) by coming first on
+        // the search path, so ours is the only manifest left.
+        println!(
+            "cargo:rustc-link-arg-bins=-B{}/nodefaultmanifest",
+            env!("CARGO_MANIFEST_DIR")
+        );
     }
 }

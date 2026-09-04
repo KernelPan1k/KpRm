@@ -94,6 +94,15 @@ fn main() -> std::process::ExitCode {
                 );
                 return std::process::ExitCode::FAILURE;
             }
+            if !kprm_windows::is_elevated() {
+                eprintln!(
+                    "Refusing to run: not elevated. Most of what --confirm does (deleting \
+                     files under Program Files, writing HKLM, killing other users' \
+                     processes, restore points) silently fails without admin rights.\n\
+                     Re-run this from an elevated (Run as administrator) terminal."
+                );
+                return std::process::ExitCode::FAILURE;
+            }
             run_engine(quarantine.into(), false, true)
         }
     }

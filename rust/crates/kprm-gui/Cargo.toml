@@ -8,6 +8,11 @@ authors.workspace = true
 [[bin]]
 name = "kprm-gui"
 path = "src/main.rs"
+# No #[cfg(test)] code in this crate (all logic lives in kprm-engine/
+# kprm-windows and is tested there) — and cargo's test harness for this
+# bin would otherwise inherit the requireAdministrator manifest embedded
+# by build.rs, refusing to even launch under `cargo test` (os error 740).
+test = false
 
 [dependencies]
 kprm-catalog = { path = "../kprm-catalog" }

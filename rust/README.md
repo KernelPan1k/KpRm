@@ -13,7 +13,7 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
 | `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur), détection du besoin de redémarrage (`Report::needs_restart`), création/suppression des points de restauration système (`restore_point`, via `CommandRunner`) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 52 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
-| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine). 23 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
+| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine), détection d'élévation (`elevation::is_elevated`, `GetTokenInformation(TokenElevation)`, utilisé par `kprm-cli`). 23 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
 | `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions à 2 colonnes avec badge coloré, quarantaine en 3 boutons. Disposition **vérifiée par instrumentation des coordonnées réelles** plutôt que par capture d'écran (voir plus bas — la capture d'écran s'est révélée peu fiable dans cet environnement). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
@@ -156,6 +156,44 @@ comme ça a été fait ici) sont fiables.
    toujours refuser la création (limite d'un point automatique par 24h,
    protection système désactivée par stratégie de groupe) : dans ce cas
    le rapport affiche `[X]` au lieu de rester silencieux.
+8. **Suite du point 7 : les trois actions échouaient systématiquement**
+   (`[X] supprimer les points de restauration`, `[X] activer la
+   protection du système`, `[X] créer le point de restauration`) — « ça
+   marchait à tous les coups avec l'ancien outil ». Cause racine : l'exe
+   Rust ne s'exécutait jamais élevé, contrairement à l'original qui a
+   `#RequireAdmin` en toute première ligne de `kpRm.au3` (élévation UAC
+   systématique au lancement) — sans droits admin, `Enable-
+   ComputerRestore`/`Checkpoint-Computer`/`Disable-ComputerRestore`
+   échouent tous, comme d'ailleurs la suppression de fichiers sous
+   Program Files, l'écriture dans HKLM ou l'arrêt de processus d'autres
+   utilisateurs. Corrigé en embarquant un vrai manifeste Win32
+   (`assets/app.manifest`, `requestedExecutionLevel=
+   "requireAdministrator"`) dans `kprm-gui.exe` via `build.rs` +
+   `embed-resource` — Windows demande maintenant l'élévation UAC au
+   lancement, comme l'original. Piège rencontré en cours de route : le
+   spec `gcc` de MinGW lie *toujours* un `default-manifest.o`
+   (`asInvoker`) à tout exécutable, ce qui entrait en conflit avec notre
+   manifeste (`ld: .rsrc merge failure: multiple non-default manifests`)
+   et le nôtre perdait silencieusement — vérifié en extrayant la
+   vraie ressource `RT_MANIFEST` lue par Windows (`FindResource`/
+   `LoadResource`), pas en supposant que l'avertissement du linker était
+   sans conséquence. Contourné en pointant `-B` vers un
+   `default-manifest.o` vide (`nodefaultmanifest/`, aucune section
+   `.rsrc`) qui prend le pas sur celui de MinGW dans la recherche de
+   `gcc`, laissant notre manifeste seul survivant — reconfirmé après
+   coup sur le binaire debug et le binaire release. `kprm-cli` n'a
+   volontairement pas ce manifeste (forcer l'UAC sur `catalog stats`
+   serait pire que l'ancien comportement) ; à la place,
+   `kprm_windows::is_elevated()` (jeton du process,
+   `GetTokenInformation(TokenElevation)`) fait refuser `remove --confirm`
+   avec un message clair si le terminal n'est pas déjà lancé en
+   administrateur. Effet de bord découvert et corrigé au passage : le
+   manifeste s'appliquant à tous les binaires du crate, le harnais de
+   test généré par `cargo test` pour `kprm-gui` refusait lui aussi de
+   démarrer (erreur Windows 740, élévation requise) — réglé en mettant
+   `test = false` sur son `[[bin]]` (ce crate n'a de toute façon aucun
+   `#[cfg(test)]`, toute la logique testée vit dans `kprm-engine`/
+   `kprm-windows`).
 
 ## Migration du catalogue
 

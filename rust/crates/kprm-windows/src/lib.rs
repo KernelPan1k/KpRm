@@ -6,6 +6,7 @@
 //! suite spawned itself. See docs/RUST-REWRITE-SPEC.md §3.
 
 pub mod command;
+pub mod elevation;
 pub mod filesystem;
 pub mod known_dirs;
 pub mod process;
@@ -17,6 +18,7 @@ pub mod timestamp;
 pub mod version_info;
 
 pub use command::RealCommandRunner;
+pub use elevation::is_elevated;
 pub use filesystem::WinFileSystem;
 pub use known_dirs::{is_64bit_os, EnvKnownDirs};
 pub use process::WinProcessManager;
