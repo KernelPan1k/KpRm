@@ -122,6 +122,19 @@ comme ça a été fait ici) sont fiables.
    commande (`[o/N]`) — un choix explicite plutôt qu'un redémarrage
    forcé. `reboot_machine()` n'a, pour des raisons évidentes, jamais été
    appelé pendant le développement/les tests sur cette machine.
+6. **« Un 'e' comme logo dans la barre des tâches »** — le binaire n'avait
+   jamais eu d'icône : ni ressource PE embarquée, ni icône de fenêtre
+   fournie à `eframe`, donc Windows retombait sur une icône par défaut.
+   Ajouté : `assets/icon.ico` (multi-résolutions 16 à 256px, généré à
+   partir du même symbole que le badge de la barre de titre — coche
+   blanche sur fond bleu arrondi) embarqué comme icône de l'exécutable via
+   `build.rs` + `embed-resource` (qui invoque `windres` du toolchain
+   MinGW), et `assets/icon.png` chargé au runtime via
+   `eframe::icon_data::from_png_bytes` + `ViewportBuilder::with_icon` pour
+   l'icône de fenêtre/barre des tâches/Alt+Tab pendant que l'appli tourne.
+   Vérifié en extrayant l'icône réelle du `.exe` compilé
+   (`System.Drawing.Icon::ExtractAssociatedIcon`) plutôt qu'en supposant
+   que l'embarquement a marché.
 
 ## Migration du catalogue
 

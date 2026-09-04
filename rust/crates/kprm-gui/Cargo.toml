@@ -23,3 +23,6 @@ egui = "0.29"
 # arboard still on the `winapi`-based clipboard-win 4.x line. See
 # ../README.md.
 arboard = "=3.3.0"
+
+[build-dependencies]
+embed-resource = "3"

@@ -11,12 +11,20 @@ mod worker;
 use eframe::egui;
 
 fn main() -> eframe::Result<()> {
+    // The PE resource icon (build.rs + assets/icon.rc) is what Explorer and
+    // the taskbar show before the window even exists; this sets the same
+    // icon for the window/title-bar/Alt+Tab once it's running, since a
+    // borderless viewport doesn't pick one up from OS decorations.
+    let icon = eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png"))
+        .expect("embedded icon.png must decode");
+
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([820.0, 680.0])
             .with_min_inner_size([720.0, 480.0])
             .with_decorations(false)
-            .with_transparent(false),
+            .with_transparent(false)
+            .with_icon(icon),
         ..Default::default()
     };
 
