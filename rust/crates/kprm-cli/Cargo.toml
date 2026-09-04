@@ -13,4 +13,5 @@ path = "src/main.rs"
 kprm-catalog = { path = "../kprm-catalog" }
 kprm-engine = { path = "../kprm-engine" }
 kprm-i18n = { path = "../kprm-i18n" }
+kprm-windows = { path = "../kprm-windows" }
 clap.workspace = true

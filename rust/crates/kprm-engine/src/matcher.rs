@@ -48,7 +48,7 @@ pub struct Match<'a> {
     pub quarantine: bool,
 }
 
-fn has_exe_or_com_extension(file_name: &str) -> bool {
+pub(crate) fn has_exe_or_com_extension(file_name: &str) -> bool {
     let lower = file_name.to_ascii_lowercase();
     lower.ends_with(".exe") || lower.ends_with(".com")
 }

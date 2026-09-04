@@ -17,6 +17,16 @@ pub trait KnownDirs {
     fn home_drive(&self) -> &str;
     fn temp_dir(&self) -> &str;
     fn user_profile(&self) -> &str;
+
+    /// Roaming `%APPDATA%` — not one of `FormatPathWithMacro`'s six original
+    /// macros (no catalog `path=` value ever needed it), but required as a
+    /// directory-walk root for the `app_data`/`user_start_menu` action types
+    /// (see [`crate::orchestrator`]).
+    fn app_data(&self) -> &str;
+    /// The all-users Desktop (`desktop_common` action type's walk root).
+    fn desktop_common(&self) -> &str;
+    /// `%WINDIR%` (the `windows_folder` action type's walk root).
+    fn windows_dir(&self) -> &str;
 }
 
 /// A macro's resolver function: given the known directories, returns the
@@ -70,6 +80,15 @@ mod tests {
         }
         fn user_profile(&self) -> &str {
             r"C:\Users\bob"
+        }
+        fn app_data(&self) -> &str {
+            r"C:\Users\bob\AppData\Roaming"
+        }
+        fn desktop_common(&self) -> &str {
+            r"C:\Users\Public\Desktop"
+        }
+        fn windows_dir(&self) -> &str {
+            r"C:\Windows"
         }
     }
 

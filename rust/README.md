@@ -6,22 +6,24 @@ un workspace Cargo autonome, indépendant du code AutoIt historique (`../src`).
 
 ## État d'avancement
 
-Correspond au début des phases 1 et 2 de la feuille de route (§11 de la
-spec) :
+Correspond aux phases 1 à 3 de la feuille de route (§11 de la spec), plus
+une partie de la 4 :
 
 | Crate | Statut | Contenu |
 |---|---|---|
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
-| `kprm-engine` | ✅ (noyau pur) | Liste blanche, résolution des macros de chemin, formatage des clés 32/64 bits, décision de quarantaine, moteur de correspondance règle/élément. 23 tests. Pas encore d'accès disque/registre réel (`kprm-windows` à venir). |
+| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 41 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
-| `kprm-cli` | ✅ (utilitaire) | Binaire headless : `catalog stats/list/validate`, `translate <locale> <clé>`, `locales`. Pas encore de suppression réelle. |
-| `kprm-windows` | ❌ à faire | Adaptateurs Windows réels (ACL, registre, VSS, Task Scheduler, process) — §3 de la spec. |
+| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`). 19 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
+| `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
 | `kprm-gui` | ❌ à faire | Interface egui reprenant la maquette (voir le canvas de design partagé plus tôt dans la conversation). |
 
-**38 tests unitaires, tous verts** (`cargo test --workspace`). Aucune
-fonctionnalité de suppression réelle n'est encore branchée : ce qui existe
-aujourd'hui est le socle métier testable indépendamment de Windows, condition
-posée dans la spec (§9.0) avant d'écrire les adaptateurs Windows eux-mêmes.
+**75 tests unitaires, tous verts** (`cargo test --workspace`), dont 19 qui
+touchent réellement le système (fichiers, registre, processus) mais toujours
+dans un bac à sable jetable — jamais contre les vraies données de
+l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
+(lecture seule) ; `kprm-cli remove` ne l'a volontairement pas été, pour ne
+provoquer aucune suppression réelle pendant le développement.
 
 ## Migration du catalogue
 
