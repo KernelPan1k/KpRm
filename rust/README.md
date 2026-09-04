@@ -15,7 +15,7 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
 | `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`). 19 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
-| `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions avec badge coloré, quarantaine en 3 boutons. Rendu **vérifié par capture d'écran réelle** (voir plus bas pour la technique employée). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
+| `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions à 2 colonnes avec badge coloré, quarantaine en 3 boutons. Disposition **vérifiée par instrumentation des coordonnées réelles** plutôt que par capture d'écran (voir plus bas — la capture d'écran s'est révélée peu fiable dans cet environnement). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
 **80 tests unitaires, tous verts** (`cargo test --workspace`), dont 20 qui
 touchent réellement le système (fichiers, registre, processus) mais toujours
@@ -25,20 +25,28 @@ l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
 sélection" de la GUI n'ont volontairement pas été déclenchés, pour ne
 provoquer aucune suppression réelle pendant le développement.
 
-### Capturer une vraie capture d'écran de la GUI dans cet environnement
+### ⚠️ `PrintWindow` n'est pas fiable dans cet environnement
 
 Une capture d'écran classique (`CopyFromScreen`) ne montre pas la fenêtre
 dans cette session (pas de bureau interactif composé normalement affiché).
-Ce qui fonctionne : `PrintWindow(hwnd, hdc, PW_RENDERFULLCONTENT)` — mais le
-premier essai après un lancement/rebuild renvoie souvent une image figée
-(un frame mis en cache par le compositeur, pas le rendu actuel). Forcer un
-`MoveWindow` (un redimensionnement, même d'un pixel) juste avant la capture
-déclenche un vrai repaint et règle le problème. C'est ce qui a permis de
-vérifier visuellement les correctifs ci-dessous.
+`PrintWindow(hwnd, hdc, PW_RENDERFULLCONTENT)` + un `MoveWindow` forcé juste
+avant (pour déclencher un vrai repaint) semblait fonctionner et a été utilisé
+pour "vérifier" plusieurs correctifs visuels de suite — **à tort** : après
+un mauvais diagnostic de mise en page (voir point 2 ci-dessous), le code a
+été instrumenté pour imprimer les rectangles réellement calculés par egui
+(coordonnées exactes de chaque carte), et ces coordonnées se sont révélées
+parfaitement correctes alors que la capture `PrintWindow` continuait
+d'afficher une disposition visiblement fausse — même après un rebuild propre
+et plusieurs cycles de redimensionnement. Conclusion : `PrintWindow` renvoie
+ici un contenu qui ne correspond pas au rendu réel de la fenêtre, pour une
+raison non identifiée (probablement liée à l'absence de compositeur DWM actif
+dans cette session). **Ne pas se fier aux captures d'écran prises depuis
+cette session pour juger du rendu de `kprm-gui`** — seule une vérification
+sur une vraie session Windows interactive, ou une instrumentation directe
+des coordonnées (`ui.cursor()`/`response.rect` imprimés via `eprintln!`,
+comme ça a été fait ici) sont fiables.
 
-### Corrections apportées suite à un premier retour utilisateur
-
-Deux problèmes remontés après un premier lancement réel par l'utilisateur :
+### Corrections apportées suite à des retours utilisateur
 
 1. **« Le rapport ne s'ouvre pas à la fin »** — vrai manque : rien n'écrivait
    ni n'ouvrait de rapport après "Exécuter". Corrigé : `kprm-windows::
@@ -51,15 +59,18 @@ Deux problèmes remontés après un premier lancement réel par l'utilisateur :
    Space Grotesk/IBM Plex Mono embarquées (`assets/fonts/`), palette sombre
    reprenant les couleurs de la maquette, fenêtre sans bordure avec barre de
    titre custom (icône, pastille de version, glisser-déplacer, boutons
-   réduire/fermer), soulignement d'onglet, cartes d'action avec badge
-   coloré. Une disposition en 2 colonnes pour les 6 actions a été tentée
-   puis abandonnée : `egui::Grid`, puis `ui.columns`, puis `ui.scope` +
-   `set_width` ont chacun laissé la première carte déborder sur toute la
-   largeur (`set_width`/les colonnes de Grid ne contraignent pas le
-   `max_rect` réel d'un `Frame` enfant — seul `ui.allocate_ui`/`add_sized`
-   le font vraiment). Plutôt que de continuer à lutter avec ça, les 6
-   actions sont en liste à une seule colonne — moins dense que la maquette
-   mais fiable et sans chevauchement.
+   réduire/fermer), soulignement d'onglet, cartes d'action à 2 colonnes avec
+   badge coloré. La disposition en 2 colonnes a d'abord semblé ne pas
+   fonctionner (`egui::Grid`, `ui.columns`, `ui.scope`+`set_width` ont tous
+   été essayés, chacun donnant — à l'écran — une première carte débordant
+   sur toute la largeur), au point de passer temporairement en liste à une
+   seule colonne. En creusant via une largeur explicite passée en paramètre
+   plutôt que déduite de `ui.available_width()` imbriqué, puis en imprimant
+   les coordonnées réelles calculées par egui, il s'est avéré que **la mise
+   en page était correcte depuis le début** (deux rectangles de 385px
+   parfaitement côte à côte, sans chevauchement) — c'est `PrintWindow` qui
+   mentait (voir l'avertissement ci-dessus). La disposition à 2 colonnes a
+   donc été restaurée.
 
 ## Migration du catalogue
 

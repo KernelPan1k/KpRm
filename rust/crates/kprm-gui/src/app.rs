@@ -99,6 +99,14 @@ fn icon_button(ui: &mut egui::Ui, glyph: &str, hover_bg: Color32) -> egui::Respo
 /// One "card" row in the Actions section: checkbox + colored icon badge +
 /// bold title + muted one-line description, matching the mockup's row
 /// pattern (docs/design/Main.dc.html).
+///
+/// `width` is computed once by the caller and threaded straight down,
+/// rather than re-derived from `ui.available_width()` inside nested
+/// closures — simpler to reason about, and confirmed correct by measuring
+/// the actual laid-out rects (see rust/README.md: this session's
+/// screenshot tooling turned out to be unreliable and was giving false
+/// negatives during development — the layout itself was fine).
+#[allow(clippy::too_many_arguments)]
 fn action_row(
     ui: &mut egui::Ui,
     checked: &mut bool,
@@ -107,19 +115,24 @@ fn action_row(
     glyph: &str,
     title: &str,
     description: &str,
+    width: f32,
 ) {
+    const CHECKBOX_W: f32 = 22.0;
+    const BADGE_W: f32 = 26.0;
+    const MARGIN: f32 = 12.0 * 2.0;
+    const GAPS: f32 = 8.0 * 2.0;
+    let text_width = (width - CHECKBOX_W - BADGE_W - MARGIN - GAPS).max(60.0);
+
     Frame::none()
         .fill(theme::BG_PANEL)
         .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
         .rounding(theme::RADIUS)
         .inner_margin(Margin::symmetric(12.0, 10.0))
         .show(ui, |ui| {
-            let w = ui.available_width();
-            ui.set_min_width(w);
-            ui.set_max_width(w);
+            ui.set_width(width - MARGIN);
             ui.horizontal(|ui| {
                 ui.checkbox(checked, "");
-                let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
+                let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(BADGE_W), Sense::hover());
                 ui.painter().rect_filled(badge_rect, 7.0, badge_bg);
                 ui.painter().text(
                     badge_rect.center(),
@@ -128,16 +141,8 @@ fn action_row(
                     FontId::proportional(13.0),
                     badge_fg,
                 );
-                // The remaining width after checkbox+badge is what the
-                // title/description text must actually wrap to — a plain
-                // `ui.label` inside a horizontal layout ignores the parent's
-                // `set_max_width` and happily overflows to its natural
-                // unwrapped width otherwise, which is what was blowing the
-                // whole row (and the window) out wide enough to clip the
-                // "Dons" tab and the grid's second column.
-                let text_width = ui.available_width();
                 ui.vertical(|ui| {
-                    ui.set_max_width(text_width);
+                    ui.set_width(text_width);
                     ui.add(
                         egui::Label::new(
                             egui::RichText::new(title)
@@ -161,11 +166,9 @@ fn action_row(
 }
 
 /// One segment of the 3-way quarantine choice (Conserver / Maintenant /
-/// Dans 7 jours). Uses `ui.add_sized` for the button's footprint — the one
-/// sizing approach in this file that reliably constrains width without the
-/// overflow bugs `Frame`+manual-width-hints ran into elsewhere (see
-/// `ui_automatic`'s single-column fallback); the description is a hover
-/// tooltip instead of a second line, keeping this a plain `Button`.
+/// Dans 7 jours). Uses `ui.add_sized` for the button's footprint; the
+/// description is a hover tooltip instead of a second line, keeping this a
+/// plain `Button`.
 fn quarantine_segment(
     ui: &mut egui::Ui,
     choice: &mut QuarantineChoice,
@@ -394,69 +397,79 @@ impl KprmApp {
         );
         ui.add_space(8.0);
 
-        // A single column of full-width cards — simpler and more robust
-        // than the 2-column layout attempted earlier (egui's `ui.columns`/
-        // `ui.scope`+`set_width` did not reliably constrain a nested
-        // `Frame`'s width here; not worth fighting further for a v1).
-        action_row(
-            ui,
-            &mut self.opt_remove_tools,
-            theme::BLUE_BG,
-            theme::BLUE,
-            "T",
-            "Supprimer les outils",
-            "Fichiers, clés et tâches des utilitaires détectés",
-        );
-        ui.add_space(6.0);
-        action_row(
-            ui,
-            &mut self.opt_backup_registry,
-            theme::GREEN_BG,
-            theme::GREEN,
-            "R",
-            "Sauvegarder le registre",
-            "Pas encore implémenté",
-        );
-        ui.add_space(6.0);
-        action_row(
-            ui,
-            &mut self.opt_remove_restore_points,
-            theme::BLUE_BG,
-            theme::BLUE,
-            "P",
-            "Supprimer les points de restauration",
-            "Pas encore implémenté",
-        );
-        ui.add_space(6.0);
-        action_row(
-            ui,
-            &mut self.opt_create_restore_point,
-            theme::GREEN_BG,
-            theme::GREEN,
-            "+",
-            "Créer un point de restauration",
-            "Pas encore implémenté",
-        );
-        ui.add_space(6.0);
-        action_row(
-            ui,
-            &mut self.opt_restore_uac,
-            theme::BLUE_BG,
-            theme::BLUE,
-            "U",
-            "Restaurer UAC",
-            "Valeurs par défaut Windows",
-        );
-        ui.add_space(6.0);
-        action_row(
-            ui,
-            &mut self.opt_restore_settings,
-            theme::BLUE_BG,
-            theme::BLUE,
-            "S",
-            "Restaurer les paramètres système",
-            "Réseau, DNS, options Explorer",
-        );
+        // 2-column layout, `half` computed once here (the one place that
+        // legitimately knows the real available width) and threaded
+        // explicitly into every `action_row` call.
+        let half = (ui.available_width() - 10.0) / 2.0;
+
+        ui.horizontal(|ui| {
+            action_row(
+                ui,
+                &mut self.opt_remove_tools,
+                theme::BLUE_BG,
+                theme::BLUE,
+                "T",
+                "Supprimer les outils",
+                "Fichiers, clés et tâches des utilitaires détectés",
+                half,
+            );
+            action_row(
+                ui,
+                &mut self.opt_backup_registry,
+                theme::GREEN_BG,
+                theme::GREEN,
+                "R",
+                "Sauvegarder le registre",
+                "Pas encore implémenté",
+                half,
+            );
+        });
+        ui.add_space(8.0);
+        ui.horizontal(|ui| {
+            action_row(
+                ui,
+                &mut self.opt_remove_restore_points,
+                theme::BLUE_BG,
+                theme::BLUE,
+                "P",
+                "Supprimer les points de restauration",
+                "Pas encore implémenté",
+                half,
+            );
+            action_row(
+                ui,
+                &mut self.opt_create_restore_point,
+                theme::GREEN_BG,
+                theme::GREEN,
+                "+",
+                "Créer un point de restauration",
+                "Pas encore implémenté",
+                half,
+            );
+        });
+        ui.add_space(8.0);
+        ui.horizontal(|ui| {
+            action_row(
+                ui,
+                &mut self.opt_restore_uac,
+                theme::BLUE_BG,
+                theme::BLUE,
+                "U",
+                "Restaurer UAC",
+                "Valeurs par défaut Windows",
+                half,
+            );
+            action_row(
+                ui,
+                &mut self.opt_restore_settings,
+                theme::BLUE_BG,
+                theme::BLUE,
+                "S",
+                "Restaurer les paramètres système",
+                "Réseau, DNS, options Explorer",
+                half,
+            );
+        });
 
         ui.add_space(14.0);
         ui.label(
