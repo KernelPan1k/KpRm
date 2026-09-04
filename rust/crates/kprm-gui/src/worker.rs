@@ -145,12 +145,24 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 system_settings::restart_explorer(&mut processes, &mut commands);
             }
 
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title());
             WorkerResponse::Done(report)
         }
 
         WorkerRequest::RemoveSelected(targets) => {
             let report = orchestrator::remove_selected_targets(&targets, &mut fs, &mut registry);
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title());
             WorkerResponse::Done(report)
         }
     }
+}
+
+fn report_title() -> Vec<String> {
+    vec![
+        format!(
+            "# KpRm (réécriture Rust) — rapport du {}",
+            kprm_windows::current_timestamp()
+        ),
+        "# https://github.com/KernelPan1k/KpRm".to_string(),
+    ]
 }

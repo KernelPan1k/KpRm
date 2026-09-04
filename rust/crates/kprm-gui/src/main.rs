@@ -1,8 +1,11 @@
 //! KpRm's GUI front-end. Same `kprm_engine::orchestrator`/`kprm_windows`
 //! plumbing as `kprm-cli`, wired to an egui/eframe window instead of a
-//! terminal.
+//! terminal. Borderless window with a hand-drawn title bar, matching the
+//! shared design mockup (docs/design/*.dc.html) more closely than a stock
+//! OS-decorated window would.
 
 mod app;
+mod theme;
 mod worker;
 
 use eframe::egui;
@@ -10,8 +13,10 @@ use eframe::egui;
 fn main() -> eframe::Result<()> {
     let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
-            .with_inner_size([640.0, 620.0])
-            .with_min_inner_size([480.0, 420.0]),
+            .with_inner_size([820.0, 680.0])
+            .with_min_inner_size([720.0, 480.0])
+            .with_decorations(false)
+            .with_transparent(false),
         ..Default::default()
     };
 
@@ -19,7 +24,8 @@ fn main() -> eframe::Result<()> {
         "KpRm",
         options,
         Box::new(|cc| {
-            cc.egui_ctx.set_visuals(egui::Visuals::dark());
+            theme::install_fonts(&cc.egui_ctx);
+            theme::install_visuals(&cc.egui_ctx);
             Ok(Box::<app::KprmApp>::default())
         }),
     )

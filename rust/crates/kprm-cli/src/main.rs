@@ -202,6 +202,15 @@ fn run_engine(
     );
 
     print_report(&report);
+
+    if destructive {
+        let title = vec![format!(
+            "# KpRm (réécriture Rust) — rapport du {}",
+            kprm_windows::current_timestamp()
+        )];
+        kprm_windows::write_and_open_report(&report, &dirs, &title);
+    }
+
     std::process::ExitCode::SUCCESS
 }
 

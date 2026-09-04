@@ -6,13 +6,14 @@
 use std::collections::HashSet;
 use std::sync::mpsc::{Receiver, Sender};
 
-use eframe::egui;
+use eframe::egui::{self, Align2, Color32, FontId, Frame, Margin, Sense, Stroke, Vec2};
 use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::{Event, EventResult, Report};
 
+use crate::theme;
 use crate::worker::{self, WorkerRequest, WorkerResponse};
 
-#[derive(PartialEq, Clone, Copy)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 enum Tab {
     Automatic,
     Custom,
@@ -79,6 +80,124 @@ impl Default for KprmApp {
     }
 }
 
+/// A small square glyph button (minimize/close), used only in the title bar.
+fn icon_button(ui: &mut egui::Ui, glyph: &str, hover_bg: Color32) -> egui::Response {
+    let (rect, response) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::click());
+    if response.hovered() {
+        ui.painter().rect_filled(rect, 6.0, hover_bg);
+    }
+    ui.painter().text(
+        rect.center(),
+        Align2::CENTER_CENTER,
+        glyph,
+        FontId::proportional(14.0),
+        theme::TEXT_2,
+    );
+    response
+}
+
+/// One "card" row in the Actions section: checkbox + colored icon badge +
+/// bold title + muted one-line description, matching the mockup's row
+/// pattern (docs/design/Main.dc.html).
+fn action_row(
+    ui: &mut egui::Ui,
+    checked: &mut bool,
+    badge_bg: Color32,
+    badge_fg: Color32,
+    glyph: &str,
+    title: &str,
+    description: &str,
+) {
+    Frame::none()
+        .fill(theme::BG_PANEL)
+        .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+        .rounding(theme::RADIUS)
+        .inner_margin(Margin::symmetric(12.0, 10.0))
+        .show(ui, |ui| {
+            let w = ui.available_width();
+            ui.set_min_width(w);
+            ui.set_max_width(w);
+            ui.horizontal(|ui| {
+                ui.checkbox(checked, "");
+                let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
+                ui.painter().rect_filled(badge_rect, 7.0, badge_bg);
+                ui.painter().text(
+                    badge_rect.center(),
+                    Align2::CENTER_CENTER,
+                    glyph,
+                    FontId::proportional(13.0),
+                    badge_fg,
+                );
+                // The remaining width after checkbox+badge is what the
+                // title/description text must actually wrap to — a plain
+                // `ui.label` inside a horizontal layout ignores the parent's
+                // `set_max_width` and happily overflows to its natural
+                // unwrapped width otherwise, which is what was blowing the
+                // whole row (and the window) out wide enough to clip the
+                // "Dons" tab and the grid's second column.
+                let text_width = ui.available_width();
+                ui.vertical(|ui| {
+                    ui.set_max_width(text_width);
+                    ui.add(
+                        egui::Label::new(
+                            egui::RichText::new(title)
+                                .size(13.0)
+                                .strong()
+                                .color(theme::TEXT_1),
+                        )
+                        .wrap(),
+                    );
+                    ui.add(
+                        egui::Label::new(
+                            egui::RichText::new(description)
+                                .size(10.5)
+                                .color(theme::TEXT_2),
+                        )
+                        .wrap(),
+                    );
+                });
+            });
+        });
+}
+
+/// One segment of the 3-way quarantine choice (Conserver / Maintenant /
+/// Dans 7 jours). Uses `ui.add_sized` for the button's footprint — the one
+/// sizing approach in this file that reliably constrains width without the
+/// overflow bugs `Frame`+manual-width-hints ran into elsewhere (see
+/// `ui_automatic`'s single-column fallback); the description is a hover
+/// tooltip instead of a second line, keeping this a plain `Button`.
+fn quarantine_segment(
+    ui: &mut egui::Ui,
+    choice: &mut QuarantineChoice,
+    value: QuarantineChoice,
+    title: &str,
+    subtitle: &str,
+    width: f32,
+) {
+    let selected = *choice == value;
+    let (bg, border, text_color) = if selected {
+        (theme::BLUE_BG, theme::BLUE, theme::TEXT_1)
+    } else {
+        (theme::BG_PANEL, theme::BORDER_SOFT, theme::TEXT_2)
+    };
+
+    let button = egui::Button::new(
+        egui::RichText::new(title)
+            .size(12.5)
+            .strong()
+            .color(text_color),
+    )
+    .fill(bg)
+    .stroke(Stroke::new(1.5_f32, border))
+    .rounding(theme::RADIUS);
+    let response = ui
+        .add_sized(Vec2::new(width, 36.0), button)
+        .on_hover_text(subtitle);
+    if response.clicked() {
+        *choice = value;
+    }
+}
+
 impl KprmApp {
     fn poll_worker(&mut self) {
         if let Ok(response) = self.response_rx.try_recv() {
@@ -121,53 +240,270 @@ impl KprmApp {
         }
     }
 
+    fn title_bar(&mut self, ctx: &egui::Context) {
+        egui::TopBottomPanel::top("titlebar")
+            .frame(
+                Frame::none()
+                    .fill(theme::BG_ELEVATED)
+                    .inner_margin(Margin::symmetric(12.0, 8.0)),
+            )
+            .exact_height(46.0)
+            .show(ctx, |ui| {
+                ui.horizontal(|ui| {
+                    let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
+                    ui.painter().rect_filled(badge_rect, 8.0, theme::BLUE_BG);
+                    let c = badge_rect.center();
+                    let stroke = Stroke::new(1.8_f32, theme::BLUE);
+                    ui.painter()
+                        .line_segment([c + Vec2::new(-6.0, 0.0), c + Vec2::new(-2.0, 4.0)], stroke);
+                    ui.painter()
+                        .line_segment([c + Vec2::new(-2.0, 4.0), c + Vec2::new(6.0, -5.0)], stroke);
+
+                    ui.add_space(8.0);
+                    ui.label(
+                        egui::RichText::new("KpRm")
+                            .strong()
+                            .size(15.0)
+                            .color(theme::TEXT_1),
+                    );
+                    ui.add_space(6.0);
+                    Frame::none()
+                        .fill(theme::BG_PANEL)
+                        .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+                        .rounding(999.0)
+                        .inner_margin(Margin::symmetric(7.0, 2.0))
+                        .show(ui, |ui| {
+                            ui.label(
+                                egui::RichText::new("v3.0.0")
+                                    .monospace()
+                                    .size(10.5)
+                                    .color(theme::TEXT_2),
+                            );
+                        });
+                    ui.add_space(10.0);
+                    ui.label(
+                        egui::RichText::new("by kernel-panik")
+                            .size(10.5)
+                            .color(theme::TEXT_3),
+                    );
+
+                    let remaining = ui.available_width() - 60.0;
+                    let (drag_rect, drag_response) = ui.allocate_exact_size(
+                        Vec2::new(remaining.max(0.0), 26.0),
+                        Sense::click_and_drag(),
+                    );
+                    if drag_response.drag_started() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
+                    }
+                    let _ = drag_rect;
+
+                    if icon_button(ui, "—", theme::BG_HOVER).clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Minimized(true));
+                    }
+                    if icon_button(ui, "×", theme::RED_BG).clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                });
+            });
+    }
+
+    fn tab_bar(&mut self, ctx: &egui::Context) {
+        egui::TopBottomPanel::top("tabs")
+            .frame(
+                Frame::none()
+                    .fill(theme::BG)
+                    .inner_margin(Margin::symmetric(16.0, 10.0)),
+            )
+            .show(ctx, |ui| {
+                let mut selected_rect = None;
+                ui.horizontal(|ui| {
+                    for (tab, label) in [
+                        (Tab::Automatic, "Automatique"),
+                        (Tab::Custom, "Analyse personnalisée"),
+                        (Tab::ExtraTools, "Outils +"),
+                        (Tab::Donate, "Dons"),
+                    ] {
+                        let selected = self.tab == tab;
+                        let color = if selected {
+                            theme::TEXT_1
+                        } else {
+                            theme::TEXT_2
+                        };
+                        let resp = ui.add(
+                            egui::Button::new(egui::RichText::new(label).size(13.0).color(color))
+                                .frame(false),
+                        );
+                        if resp.clicked() {
+                            self.tab = tab;
+                        }
+                        if selected {
+                            selected_rect = Some(resp.rect);
+                        }
+                        ui.add_space(10.0);
+                    }
+                });
+                let bottom = ui.min_rect().bottom() + 8.0;
+                ui.painter().hline(
+                    ui.max_rect().x_range(),
+                    bottom,
+                    Stroke::new(1.0_f32, theme::BORDER_SOFT),
+                );
+                if let Some(rect) = selected_rect {
+                    ui.painter()
+                        .hline(rect.x_range(), bottom, Stroke::new(2.0_f32, theme::BLUE));
+                }
+            });
+    }
+
+    fn footer(&mut self, ctx: &egui::Context) {
+        egui::TopBottomPanel::bottom("status")
+            .frame(
+                Frame::none()
+                    .fill(theme::BG_ELEVATED)
+                    .inner_margin(Margin::symmetric(20.0, 12.0)),
+            )
+            .show(ctx, |ui| {
+                ui.horizontal(|ui| {
+                    let dot_color = if self.busy {
+                        theme::BLUE
+                    } else {
+                        theme::TEXT_3
+                    };
+                    let (rect, _) = ui.allocate_exact_size(Vec2::splat(8.0), Sense::hover());
+                    ui.painter().circle_filled(rect.center(), 4.0, dot_color);
+                    ui.add_space(4.0);
+                    if self.busy {
+                        ui.spinner();
+                    }
+                    ui.monospace(
+                        egui::RichText::new(&self.status)
+                            .size(12.0)
+                            .color(theme::TEXT_2),
+                    );
+                });
+            });
+    }
+
     fn ui_automatic(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
-        ui.heading("Actions");
-        ui.checkbox(&mut self.opt_remove_tools, "Supprimer les outils");
-        ui.checkbox(
+        ui.label(
+            egui::RichText::new("ACTIONS")
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(8.0);
+
+        // A single column of full-width cards — simpler and more robust
+        // than the 2-column layout attempted earlier (egui's `ui.columns`/
+        // `ui.scope`+`set_width` did not reliably constrain a nested
+        // `Frame`'s width here; not worth fighting further for a v1).
+        action_row(
+            ui,
+            &mut self.opt_remove_tools,
+            theme::BLUE_BG,
+            theme::BLUE,
+            "T",
+            "Supprimer les outils",
+            "Fichiers, clés et tâches des utilitaires détectés",
+        );
+        ui.add_space(6.0);
+        action_row(
+            ui,
             &mut self.opt_backup_registry,
-            "Sauvegarder le registre (pas encore implémenté)",
+            theme::GREEN_BG,
+            theme::GREEN,
+            "R",
+            "Sauvegarder le registre",
+            "Pas encore implémenté",
         );
-        ui.checkbox(
+        ui.add_space(6.0);
+        action_row(
+            ui,
             &mut self.opt_remove_restore_points,
-            "Supprimer les points de restauration (pas encore implémenté)",
+            theme::BLUE_BG,
+            theme::BLUE,
+            "P",
+            "Supprimer les points de restauration",
+            "Pas encore implémenté",
         );
-        ui.checkbox(
+        ui.add_space(6.0);
+        action_row(
+            ui,
             &mut self.opt_create_restore_point,
-            "Créer un point de restauration (pas encore implémenté)",
+            theme::GREEN_BG,
+            theme::GREEN,
+            "+",
+            "Créer un point de restauration",
+            "Pas encore implémenté",
         );
-        ui.checkbox(&mut self.opt_restore_uac, "Restaurer UAC");
-        ui.checkbox(
+        ui.add_space(6.0);
+        action_row(
+            ui,
+            &mut self.opt_restore_uac,
+            theme::BLUE_BG,
+            theme::BLUE,
+            "U",
+            "Restaurer UAC",
+            "Valeurs par défaut Windows",
+        );
+        ui.add_space(6.0);
+        action_row(
+            ui,
             &mut self.opt_restore_settings,
+            theme::BLUE_BG,
+            theme::BLUE,
+            "S",
             "Restaurer les paramètres système",
+            "Réseau, DNS, options Explorer",
         );
 
+        ui.add_space(14.0);
+        ui.label(
+            egui::RichText::new("QUARANTAINE")
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
         ui.add_space(8.0);
-        ui.heading("Quarantaine");
+        let seg_width = (ui.available_width() - 20.0) / 3.0;
         ui.horizontal(|ui| {
-            ui.selectable_value(
+            quarantine_segment(
+                ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::Keep,
                 "Conserver",
+                "Aucune suppression",
+                seg_width,
             );
-            ui.selectable_value(
+            quarantine_segment(
+                ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::Now,
                 "Maintenant",
+                "Suppression immédiate",
+                seg_width,
             );
-            ui.selectable_value(
+            quarantine_segment(
+                ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::In7Days,
                 "Dans 7 jours",
+                "Planifié, annulable",
+                seg_width,
             );
         });
 
-        ui.add_space(12.0);
+        ui.add_space(16.0);
         let can_run = !self.busy
             && (self.opt_remove_tools || self.opt_restore_uac || self.opt_restore_settings);
-        let run_button = egui::Button::new(egui::RichText::new("Exécuter").strong())
-            .fill(egui::Color32::from_rgb(0x5c, 0xc7, 0x6a));
+        let run_button = egui::Button::new(
+            egui::RichText::new("Exécuter")
+                .strong()
+                .color(Color32::from_rgb(0x10, 0x2a, 0x1c)),
+        )
+        .fill(theme::GREEN)
+        .min_size(Vec2::new(120.0, 34.0));
         if ui.add_enabled(can_run, run_button).clicked() {
             self.busy = true;
             self.status = "Exécution en cours...".to_string();
@@ -179,7 +515,14 @@ impl KprmApp {
             });
         }
         if !can_run {
-            ui.weak("Cochez au moins une action implémentée pour activer ce bouton.");
+            ui.add_space(4.0);
+            ui.label(
+                egui::RichText::new(
+                    "Cochez au moins une action implémentée pour activer ce bouton.",
+                )
+                .size(10.5)
+                .color(theme::TEXT_3),
+            );
         }
     }
 
@@ -192,8 +535,12 @@ impl KprmApp {
                 .iter()
                 .filter(|(_, checked)| *checked)
                 .count();
-            ui.label(format!("{found} détecté(s) · {selected} sélectionné(s)"));
-            ui.separator();
+            ui.label(
+                egui::RichText::new(format!("{found} détecté(s) · {selected} sélectionné(s)"))
+                    .size(13.0)
+                    .color(theme::TEXT_1),
+            );
+            ui.add_space(8.0);
             if ui.button("Tout").clicked() {
                 for (_, checked) in &mut self.scan_results {
                     *checked = true;
@@ -209,21 +556,63 @@ impl KprmApp {
             }
         });
 
-        ui.add_space(6.0);
-        egui::ScrollArea::vertical().show(ui, |ui| {
-            for (event, checked) in &mut self.scan_results {
-                ui.horizontal(|ui| {
-                    ui.checkbox(checked, "");
-                    ui.monospace(&event.target);
-                    ui.weak(format!("[{}] {}", event.tool, event.action_type));
-                });
-            }
-        });
-
         ui.add_space(8.0);
+        Frame::none()
+            .fill(theme::BG_PANEL)
+            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+            .rounding(theme::RADIUS)
+            .inner_margin(Margin::same(6.0))
+            .show(ui, |ui| {
+                let w = ui.available_width();
+                ui.set_min_width(w);
+                ui.set_max_width(w);
+                egui::ScrollArea::vertical()
+                    .max_height(280.0)
+                    .show(ui, |ui| {
+                        if self.scan_results.is_empty() {
+                            ui.add_space(20.0);
+                            ui.vertical_centered(|ui| {
+                                ui.label(
+                                    egui::RichText::new("Aucun résultat — cliquez sur Analyser.")
+                                        .color(theme::TEXT_3),
+                                );
+                            });
+                            ui.add_space(20.0);
+                        }
+                        for (event, checked) in &mut self.scan_results {
+                            ui.horizontal(|ui| {
+                                ui.checkbox(checked, "");
+                                ui.label(
+                                    egui::RichText::new(&event.target)
+                                        .monospace()
+                                        .size(12.0)
+                                        .color(theme::TEXT_1),
+                                );
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        ui.label(
+                                            egui::RichText::new(format!(
+                                                "{} · {}",
+                                                event.tool, event.action_type
+                                            ))
+                                            .size(10.0)
+                                            .color(theme::TEXT_3),
+                                        );
+                                    },
+                                );
+                            });
+                        }
+                    });
+            });
+
+        ui.add_space(10.0);
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(!self.busy, egui::Button::new("Analyser"))
+                .add_enabled(
+                    !self.busy,
+                    egui::Button::new("Analyser").min_size(Vec2::new(0.0, 32.0)),
+                )
                 .clicked()
             {
                 self.busy = true;
@@ -238,9 +627,12 @@ impl KprmApp {
                 .map(|(e, _)| (e.tool.clone(), e.target.clone()))
                 .collect();
             let can_remove = !self.busy && !selected.is_empty();
-            let remove_button =
-                egui::Button::new(format!("Supprimer la sélection ({})", selected.len()))
-                    .fill(egui::Color32::from_rgb(0xd9, 0x4f, 0x4f));
+            let remove_button = egui::Button::new(
+                egui::RichText::new(format!("Supprimer la sélection ({})", selected.len()))
+                    .color(Color32::WHITE),
+            )
+            .fill(theme::RED)
+            .min_size(Vec2::new(0.0, 32.0));
             if ui.add_enabled(can_remove, remove_button).clicked() {
                 self.busy = true;
                 self.status = "Suppression en cours...".to_string();
@@ -253,16 +645,38 @@ impl KprmApp {
 
     fn ui_extra_tools(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
-        ui.heading("Outils supplémentaires");
-        ui.label("Aucun outil configuré pour le moment — liste à définir.");
+        ui.label(
+            egui::RichText::new("OUTILS SUPPLÉMENTAIRES")
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new("Aucun outil configuré pour le moment — liste à définir.")
+                .size(12.0)
+                .color(theme::TEXT_2),
+        );
     }
 
     fn ui_donate(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
-        ui.heading("Soutenir le projet");
-        ui.label("KpRm est gratuit, open-source, et le restera.");
-        ui.add_space(6.0);
-        ui.monospace("Bitcoin (BTC) : [ adresse à renseigner ]");
+        ui.label(
+            egui::RichText::new("SOUTENIR LE PROJET")
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new("KpRm est gratuit, open-source, et le restera.")
+                .size(12.0)
+                .color(theme::TEXT_2),
+        );
+        ui.add_space(8.0);
+        ui.monospace(
+            egui::RichText::new("Bitcoin (BTC) : [ adresse à renseigner ]").color(theme::TEXT_1),
+        );
     }
 }
 
@@ -273,31 +687,21 @@ impl eframe::App for KprmApp {
             ctx.request_repaint();
         }
 
-        egui::TopBottomPanel::top("tabs").show(ctx, |ui| {
-            ui.add_space(4.0);
-            ui.horizontal(|ui| {
-                ui.selectable_value(&mut self.tab, Tab::Automatic, "Automatique");
-                ui.selectable_value(&mut self.tab, Tab::Custom, "Analyse personnalisée");
-                ui.selectable_value(&mut self.tab, Tab::ExtraTools, "Outils +");
-                ui.selectable_value(&mut self.tab, Tab::Donate, "Dons");
-            });
-            ui.add_space(4.0);
-        });
+        self.title_bar(ctx);
+        self.tab_bar(ctx);
+        self.footer(ctx);
 
-        egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
-            ui.horizontal(|ui| {
-                if self.busy {
-                    ui.spinner();
-                }
-                ui.label(&self.status);
+        egui::CentralPanel::default()
+            .frame(
+                Frame::none()
+                    .fill(theme::BG)
+                    .inner_margin(Margin::symmetric(20.0, 4.0)),
+            )
+            .show(ctx, |ui| match self.tab {
+                Tab::Automatic => self.ui_automatic(ui),
+                Tab::Custom => self.ui_custom(ui),
+                Tab::ExtraTools => self.ui_extra_tools(ui),
+                Tab::Donate => self.ui_donate(ui),
             });
-        });
-
-        egui::CentralPanel::default().show(ctx, |ui| match self.tab {
-            Tab::Automatic => self.ui_automatic(ui),
-            Tab::Custom => self.ui_custom(ui),
-            Tab::ExtraTools => self.ui_extra_tools(ui),
-            Tab::Donate => self.ui_donate(ui),
-        });
     }
 }

@@ -11,13 +11,13 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | Crate | Statut | Contenu |
 |---|---|---|
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
-| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 43 tests. |
+| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 45 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
 | `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`). 19 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
-| `kprm-gui` | ✅ | Interface egui/eframe reprenant la structure de la maquette (voir le canvas de design partagé plus tôt) : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Compile et se lance (processus stable, `MainWindowHandle` valide) ; **le rendu visuel n'a pas pu être vérifié par capture d'écran dans cet environnement** (session sans bureau interactif accessible en capture — voir plus bas), donc à valider visuellement sur une vraie session Windows avant de considérer l'UI elle-même finalisée. Aucun bouton destructif n'a été cliqué pendant le développement. |
+| `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions avec badge coloré, quarantaine en 3 boutons. Rendu **vérifié par capture d'écran réelle** (voir plus bas pour la technique employée). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
-**77 tests unitaires, tous verts** (`cargo test --workspace`), dont 19 qui
+**80 tests unitaires, tous verts** (`cargo test --workspace`), dont 20 qui
 touchent réellement le système (fichiers, registre, processus) mais toujours
 dans un bac à sable jetable — jamais contre les vraies données de
 l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
@@ -25,17 +25,41 @@ l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
 sélection" de la GUI n'ont volontairement pas été déclenchés, pour ne
 provoquer aucune suppression réelle pendant le développement.
 
-### Limite connue : vérification visuelle de la GUI
+### Capturer une vraie capture d'écran de la GUI dans cet environnement
 
-`kprm-gui.exe` a été lancé pour de vrai (processus stable plusieurs secondes,
-`user32!GetWindowLong` renvoie un `MainWindowHandle` non nul — Windows a bien
-créé une fenêtre), mais une capture d'écran prise depuis cette session ne
-montre pas la fenêtre (elle affiche le bureau/une autre fenêtre déjà à
-l'écran). Signe probable que cette session n'a pas de accès en capture au
-bureau interactif sur lequel la fenêtre est réellement dessinée. Donc :
-compilation ✅, démarrage sans crash ✅, rendu visuel non confirmé ❌ — à
-vérifier par vous sur une session Windows normale avant de considérer
-l'écran conforme à la maquette.
+Une capture d'écran classique (`CopyFromScreen`) ne montre pas la fenêtre
+dans cette session (pas de bureau interactif composé normalement affiché).
+Ce qui fonctionne : `PrintWindow(hwnd, hdc, PW_RENDERFULLCONTENT)` — mais le
+premier essai après un lancement/rebuild renvoie souvent une image figée
+(un frame mis en cache par le compositeur, pas le rendu actuel). Forcer un
+`MoveWindow` (un redimensionnement, même d'un pixel) juste avant la capture
+déclenche un vrai repaint et règle le problème. C'est ce qui a permis de
+vérifier visuellement les correctifs ci-dessous.
+
+### Corrections apportées suite à un premier retour utilisateur
+
+Deux problèmes remontés après un premier lancement réel par l'utilisateur :
+
+1. **« Le rapport ne s'ouvre pas à la fin »** — vrai manque : rien n'écrivait
+   ni n'ouvrait de rapport après "Exécuter". Corrigé : `kprm-windows::
+   write_and_open_report` (nouveau, partagé par `kprm-cli` et `kprm-gui`)
+   écrit le texte du rapport (`Report::to_text`, nouveau dans `kprm-engine`)
+   dans `%HOMEDRIVE%\KPRM\kprm-<horodatage>.txt` + une copie sur le Bureau,
+   puis lance `notepad.exe` dessus — après "Exécuter" et "Supprimer la
+   sélection" uniquement, jamais après un simple scan (comme l'original).
+2. **« Il ne ressemble pas à la maquette »** — refonte visuelle : polices
+   Space Grotesk/IBM Plex Mono embarquées (`assets/fonts/`), palette sombre
+   reprenant les couleurs de la maquette, fenêtre sans bordure avec barre de
+   titre custom (icône, pastille de version, glisser-déplacer, boutons
+   réduire/fermer), soulignement d'onglet, cartes d'action avec badge
+   coloré. Une disposition en 2 colonnes pour les 6 actions a été tentée
+   puis abandonnée : `egui::Grid`, puis `ui.columns`, puis `ui.scope` +
+   `set_width` ont chacun laissé la première carte déborder sur toute la
+   largeur (`set_width`/les colonnes de Grid ne contraignent pas le
+   `max_rect` réel d'un `Frame` enfant — seul `ui.allocate_ui`/`add_sized`
+   le font vraiment). Plutôt que de continuer à lutter avec ça, les 6
+   actions sont en liste à une seule colonne — moins dense que la maquette
+   mais fiable et sans chevauchement.
 
 ## Migration du catalogue
 
