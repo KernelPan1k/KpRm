@@ -57,6 +57,16 @@ impl Report {
         self.events.iter().filter(|e| &e.result == result).count()
     }
 
+    /// `true` when at least one element could not be deleted immediately
+    /// and was scheduled for deletion on next boot (`MOVEFILE_DELAY_UNTIL_REBOOT`)
+    /// — the front-end must then offer to restart the machine, mirroring
+    /// the original's `RestartIfNeeded` (`functions.au3`).
+    pub fn needs_restart(&self) -> bool {
+        self.events
+            .iter()
+            .any(|e| e.result == EventResult::ScheduledOnReboot)
+    }
+
     /// Renders a human-readable report, grouped by tool, in the spirit of
     /// the original's text log (`src/kp_includes/functions/utils.au3`'s
     /// `LogMessage`, `[OK]`/`[X]`/`[R]` prefixes) — not a byte-identical
@@ -174,6 +184,16 @@ fn symbol_for(result: &EventResult) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn needs_restart_only_when_something_is_scheduled_on_reboot() {
+        let mut report = Report::default();
+        report.push("A", "file", "a", EventResult::Removed);
+        assert!(!report.needs_restart());
+
+        report.push("A", "file", "b", EventResult::ScheduledOnReboot);
+        assert!(report.needs_restart());
+    }
 
     #[test]
     fn empty_report_says_so() {

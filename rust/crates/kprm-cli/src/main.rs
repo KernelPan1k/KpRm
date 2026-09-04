@@ -211,9 +211,43 @@ fn run_engine(
         )];
         title.extend(kprm_windows::collect_system_info(&dirs).to_lines());
         kprm_windows::write_and_open_report(&report, &dirs, &title);
+
+        if report.needs_restart() {
+            prompt_for_restart();
+        }
     }
 
     std::process::ExitCode::SUCCESS
+}
+
+/// Some elements could only be scheduled for deletion on next boot
+/// (`MOVEFILE_DELAY_UNTIL_REBOOT`) — ask before actually restarting the
+/// machine, mirroring the original's `RestartIfNeeded`, but as an
+/// explicit yes/no instead of an unconditional forced reboot.
+fn prompt_for_restart() {
+    use std::io::Write;
+
+    println!();
+    println!("- Redémarrage nécessaire -");
+    println!("Certains éléments n'ont pu être supprimés qu'au prochain démarrage de Windows.");
+    print!("Redémarrer maintenant ? [o/N] ");
+    let _ = std::io::stdout().flush();
+
+    let mut answer = String::new();
+    if std::io::stdin().read_line(&mut answer).is_err() {
+        return;
+    }
+
+    if matches!(
+        answer.trim().to_lowercase().as_str(),
+        "o" | "oui" | "y" | "yes"
+    ) {
+        if let Err(err) = kprm_windows::reboot_machine() {
+            eprintln!("Échec du redémarrage : {err}");
+        }
+    } else {
+        println!("Redémarrage reporté — pensez à redémarrer manuellement.");
+    }
 }
 
 fn print_report(report: &Report) {

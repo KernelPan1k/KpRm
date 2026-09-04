@@ -23,7 +23,6 @@ pub const RED: Color32 = Color32::from_rgb(0xe0, 0x52, 0x4a);
 pub const RED_BG: Color32 = Color32::from_rgba_premultiplied(0x2e, 0x16, 0x15, 255);
 pub const BLUE: Color32 = Color32::from_rgb(0x5b, 0x9e, 0xf5);
 pub const BLUE_BG: Color32 = Color32::from_rgba_premultiplied(0x14, 0x22, 0x33, 255);
-#[allow(dead_code)] // reserved for a future "caution" state (e.g. restart-required prompt)
 pub const AMBER: Color32 = Color32::from_rgb(0xe0, 0xb6, 0x4a);
 
 pub const RADIUS: f32 = 8.0;

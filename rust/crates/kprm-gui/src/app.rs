@@ -54,6 +54,11 @@ pub struct KprmApp {
 
     scan_results: Vec<(Event, bool)>,
 
+    /// Set when the last real run left something scheduled for deletion
+    /// on next boot — prompts the "Redémarrage nécessaire" dialog instead
+    /// of restarting unconditionally like the original did.
+    show_restart_dialog: bool,
+
     request_tx: Sender<WorkerRequest>,
     response_rx: Receiver<WorkerResponse>,
 }
@@ -74,6 +79,7 @@ impl Default for KprmApp {
             status: "Prêt".to_string(),
             busy: false,
             scan_results: Vec::new(),
+            show_restart_dialog: false,
             request_tx,
             response_rx,
         }
@@ -236,6 +242,9 @@ impl KprmApp {
         if is_scan_result {
             self.scan_results = report.events.into_iter().map(|e| (e, true)).collect();
         } else {
+            if report.needs_restart() {
+                self.show_restart_dialog = true;
+            }
             let handled: HashSet<String> = report
                 .events
                 .iter()
@@ -250,6 +259,77 @@ impl KprmApp {
             self.scan_results
                 .retain(|(e, _)| !handled.contains(&e.target));
         }
+    }
+
+    /// The "Redémarrage nécessaire" prompt — shown after a real run left
+    /// something scheduled for deletion on next boot (see
+    /// [`Report::needs_restart`]). Mirrors `docs/design/Restart.dc.html`;
+    /// unlike the original AutoIt tool, restarting is an explicit choice,
+    /// never automatic.
+    fn restart_dialog(&mut self, ctx: &egui::Context) {
+        if !self.show_restart_dialog {
+            return;
+        }
+
+        egui::Window::new("restart_dialog")
+            .title_bar(false)
+            .collapsible(false)
+            .resizable(false)
+            .anchor(egui::Align2::CENTER_CENTER, Vec2::ZERO)
+            .frame(
+                Frame::none()
+                    .fill(theme::BG_ELEVATED)
+                    .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+                    .rounding(theme::RADIUS)
+                    .inner_margin(Margin::same(20.0)),
+            )
+            .show(ctx, |ui| {
+                ui.set_width(340.0);
+                ui.label(
+                    egui::RichText::new("Redémarrage nécessaire")
+                        .size(15.0)
+                        .strong()
+                        .color(theme::TEXT_1),
+                );
+                ui.add_space(8.0);
+                ui.add(
+                    egui::Label::new(
+                        egui::RichText::new(
+                            "Certains éléments n'ont pu être supprimés qu'au prochain \
+                             démarrage de Windows. Redémarrer maintenant pour terminer \
+                             le nettoyage ?",
+                        )
+                        .size(12.0)
+                        .color(theme::TEXT_2),
+                    )
+                    .wrap(),
+                );
+                ui.add_space(16.0);
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    let restart_button = egui::Button::new(
+                        egui::RichText::new("Redémarrer maintenant")
+                            .strong()
+                            .color(Color32::from_rgb(0x2a, 0x1a, 0x08)),
+                    )
+                    .fill(theme::AMBER)
+                    .min_size(Vec2::new(170.0, 32.0));
+                    if ui.add(restart_button).clicked() {
+                        self.show_restart_dialog = false;
+                        if let Err(err) = kprm_windows::reboot_machine() {
+                            self.status = format!("Échec du redémarrage : {err}");
+                        }
+                    }
+                    ui.add_space(8.0);
+                    let later_button =
+                        egui::Button::new(egui::RichText::new("Plus tard").color(theme::TEXT_2))
+                            .fill(theme::BG_PANEL)
+                            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+                            .min_size(Vec2::new(90.0, 32.0));
+                    if ui.add(later_button).clicked() {
+                        self.show_restart_dialog = false;
+                    }
+                });
+            });
     }
 
     fn title_bar(&mut self, ctx: &egui::Context) {
@@ -735,5 +815,7 @@ impl eframe::App for KprmApp {
                 Tab::ExtraTools => self.ui_extra_tools(ui),
                 Tab::Donate => self.ui_donate(ui),
             });
+
+        self.restart_dialog(ctx);
     }
 }
