@@ -22,6 +22,18 @@ impl CommandRunner for RealCommandRunner {
             .map(|status| status.success())
             .unwrap_or(false)
     }
+
+    fn run_capture(&mut self, program: &str, args: &[&str]) -> Option<String> {
+        let output = std::process::Command::new(program)
+            .args(args)
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+            .ok()?;
+        output
+            .status
+            .success()
+            .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
+    }
 }
 
 #[cfg(test)]
@@ -44,5 +56,18 @@ mod tests {
     fn reports_failure_for_a_program_that_does_not_exist() {
         let mut runner = RealCommandRunner;
         assert!(!runner.run("this-program-does-not-exist.exe", &[]));
+    }
+
+    #[test]
+    fn run_capture_returns_real_stdout_on_success() {
+        let mut runner = RealCommandRunner;
+        let output = runner.run_capture("cmd.exe", &["/c", "echo hello-kprm"]);
+        assert!(output.unwrap().contains("hello-kprm"));
+    }
+
+    #[test]
+    fn run_capture_returns_none_for_a_nonzero_exit_code() {
+        let mut runner = RealCommandRunner;
+        assert!(runner.run_capture("cmd.exe", &["/c", "exit 1"]).is_none());
     }
 }

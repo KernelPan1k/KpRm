@@ -130,6 +130,30 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 }
             }
 
+            if remove_restore_points || create_restore_point {
+                let points = restore_point::list_restore_points(&mut commands);
+                if points.is_empty() {
+                    report.push(
+                        "Points de restauration",
+                        "restore_point",
+                        "Aucun point de restauration trouvé",
+                        kprm_engine::report::EventResult::Found,
+                    );
+                } else {
+                    for point in points {
+                        report.push(
+                            "Points de restauration",
+                            "restore_point",
+                            format!(
+                                "n°{} \"{}\" ({})",
+                                point.sequence_number, point.description, point.created_at
+                            ),
+                            kprm_engine::report::EventResult::Found,
+                        );
+                    }
+                }
+            }
+
             if remove_tools {
                 let options = RunOptions {
                     quarantine_mode,

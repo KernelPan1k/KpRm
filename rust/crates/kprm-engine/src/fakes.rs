@@ -212,6 +212,9 @@ impl ProcessManager for FakeProcessManager {
 pub struct FakeCommandRunner {
     pub calls: Vec<(String, Vec<String>)>,
     pub always_succeeds: bool,
+    /// What [`FakeCommandRunner::run_capture`] returns when
+    /// `always_succeeds` — every call gets the same canned output.
+    pub captured_stdout: Option<String>,
 }
 
 impl FakeCommandRunner {
@@ -230,6 +233,16 @@ impl CommandRunner for FakeCommandRunner {
             args.iter().map(|s| s.to_string()).collect(),
         ));
         self.always_succeeds
+    }
+
+    fn run_capture(&mut self, program: &str, args: &[&str]) -> Option<String> {
+        self.calls.push((
+            program.to_string(),
+            args.iter().map(|s| s.to_string()).collect(),
+        ));
+        self.always_succeeds
+            .then(|| self.captured_stdout.clone())
+            .flatten()
     }
 }
 

@@ -62,4 +62,11 @@ pub trait ProcessManager {
 /// uninstaller, ...) and reports whether it exited successfully.
 pub trait CommandRunner {
     fn run(&mut self, program: &str, args: &[&str]) -> bool;
+
+    /// Like [`CommandRunner::run`], but returns the program's captured
+    /// stdout on success instead of a bare bool — for the rare case where
+    /// the caller needs the output (e.g. enumerating existing restore
+    /// points via PowerShell). `None` on a non-zero exit or a program
+    /// that couldn't even be launched.
+    fn run_capture(&mut self, program: &str, args: &[&str]) -> Option<String>;
 }
