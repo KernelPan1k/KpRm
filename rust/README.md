@@ -19,10 +19,12 @@ full design rationale.
 
 - Detects and removes 202 known cleanup/diagnostic/decryption tools
   (files, folders, registry keys, scheduled tasks, running processes —
-  see the [full list](#supported-tools) below)
+  see the [full list](#supported-tools) below), killing any matching
+  running process before deleting its files
 - Three quarantine modes: keep flagged items in place, delete them
   immediately, or delete them after 7 days (a real Windows Scheduled
-  Task performs the deferred deletion)
+  Task performs the deferred deletion); picking "immediately" or "in 7
+  days" automatically enables tool removal too
 - Registry backup (`SOFTWARE` and `NTUSER.DAT` hives) before making
   changes
 - System Restore point management: create one, or clear existing ones
@@ -30,9 +32,20 @@ full design rationale.
   display options) to their Windows defaults
 - Writes a plain-text report after every real run, including machine
   info (username, computer name, OS build, how many times the tool has
-  run on this machine before)
+  run on this machine before), plus a machine-readable JSON copy
+  alongside it
+- A numeric progress bar during a scan or a real run, instead of just a
+  busy spinner
 - Offers to restart the machine when a locked file could only be
   scheduled for deletion on next boot
+- Deletes itself after a successful real run (matching the original's
+  behavior — see the [Usage](#graphical-interface) note below)
+- A GUI available in 8 languages (French, English, German, Italian,
+  Portuguese, Russian, Spanish, Dutch), auto-selected from the Windows
+  UI language
+- A single-instance guard: launching a second copy while one is
+  already running shows a message instead of opening twice
+- A startup disclaimer/EULA screen, matching the original
 - A single ~5 MB portable executable — no installer, no bundled
   runtime, no third-party DLL to ship alongside it
 - Also usable headlessly from the command line, for scripting or
@@ -53,8 +66,10 @@ tool's own always-elevated behavior.
 
 ### Graphical interface
 
-Launching `kprm.exe` with no arguments opens the GUI — currently
-French-only (see the note below) — with four tabs:
+Launching `kprm.exe` with no arguments shows a disclaimer/EULA screen
+first (matching the original's own startup warning), then opens the
+GUI in the system's UI language (falling back to English if it isn't
+one of the 8 embedded languages) with four tabs:
 
 - **Automatique** ("Automatic"): a set of independent, individually
   optional actions, run together by the "Exécuter" ("Execute") button:
@@ -80,11 +95,19 @@ French-only (see the note below) — with four tabs:
   populated
 - **Dons** ("Donate"): a Bitcoin address for supporting the project, with a one-click copy button
 
-> **Note on language**: the GUI's own text is French-only right now.
-> `kprm-i18n` embeds translations for 8 languages (French, English,
-> German, Italian, Portuguese, Russian, Spanish, Dutch), but the GUI
-> doesn't read from them yet — today only the CLI's `translate`/
-> `locales` subcommands touch that data, for inspecting what's embedded.
+(Tab and action names above are shown in French — the language this
+project is developed in — but every label is translated; the screen
+you actually see is in your Windows UI language if it's one of the 8
+`kprm-i18n` embeds, English otherwise.)
+
+> **Note on self-deletion**: matching the original tool's own
+> behavior, `kprm.exe` deletes itself after a successful real run
+> (`RunAutomatic`/`RemoveSelected` — not after a read-only scan). If a
+> deletion had to be deferred to next boot, the self-deletion is folded
+> into that same reboot instead of happening immediately. This means a
+> release build used for manual testing needs to be rebuilt between
+> runs; there's no flag to disable it, to stay faithful to the
+> original.
 
 ### Command line
 
@@ -213,9 +236,9 @@ Five crates:
 | Crate | Role |
 |---|---|
 | [`kprm-catalog`](crates/kprm-catalog) | Data model, loader, and validator for the 202-tool catalog (`tools.d/*.toml`), embedded into the binary at compile time. |
-| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent removal logic: pattern matching, quarantine decisions, the action-type orchestrator, UAC/system-settings restoration, registry-backup planning, restore-point and deferred-quarantine scheduling, report formatting. No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
-| [`kprm-i18n`](crates/kprm-i18n) | Fluent-based translations for 8 locales; not yet wired into the GUI (see [Usage](#graphical-interface) above). |
-| [`kprm-windows`](crates/kprm-windows) | Real Windows adapters implementing `kprm-engine`'s abstractions: filesystem, registry, processes, external commands, elevation, machine restart, registry-hive export, and the quarantine-scheduling agent. |
+| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent removal logic: pattern matching, quarantine decisions, the action-type orchestrator (kills matching running processes before deleting a selected target), UAC/system-settings restoration, registry-backup planning, restore-point and deferred-quarantine scheduling, report formatting (plain text and JSON). No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
+| [`kprm-i18n`](crates/kprm-i18n) | Fluent-based translations for 8 locales, with variable substitution (`get_fmt`); powers every label in the GUI (see [Usage](#graphical-interface) above), auto-selected from the Windows UI language. |
+| [`kprm-windows`](crates/kprm-windows) | Real Windows adapters implementing `kprm-engine`'s abstractions: filesystem, registry, processes, external commands, elevation, machine restart, registry-hive export, quarantine-scheduling agent, UI locale detection, single-instance mutex/message box, and delayed self-deletion. |
 | [`kprm`](crates/kprm) | The single binary: the GUI (egui/eframe) with no arguments, the CLI with a subcommand. |
 
 See [`BUILDING.md`](BUILDING.md) for how to build it from source
@@ -225,7 +248,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 112 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 117 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry
