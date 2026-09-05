@@ -1,11 +1,14 @@
-//! Headless entry point for KpRm. Two families of commands:
+//! The headless side of the single `kprm` binary. Two families of
+//! commands:
 //! - `catalog`/`translate`/`locales`: inspect the embedded data, no I/O.
 //! - `scan`/`remove`: run the real removal engine (`kprm-windows` adapters)
 //!   against this machine. `scan` never touches anything (search-only);
 //!   `remove` performs real deletions and requires `--confirm`.
 //!
-//! The GUI (`kprm-gui`, not built yet) will be a second front-end over the
-//! same `kprm_engine::orchestrator` call.
+//! `Cli::command` is optional — running `kprm` with no arguments (a
+//! double-click, or a bare invocation) falls through to `main.rs`'s GUI
+//! path instead of erroring here; `Cli::parse()` is still what validates
+//! and reports genuinely bad CLI arguments.
 
 use clap::{Parser, Subcommand, ValueEnum};
 use kprm_catalog::Catalog;
@@ -14,14 +17,18 @@ use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::{EventResult, Report};
 
 #[derive(Parser)]
-#[command(name = "kprm-cli", version, about = "KpRm headless utilities")]
-struct Cli {
+#[command(
+    name = "kprm",
+    version,
+    about = "KpRm — automatic cleanup tool and headless utilities"
+)]
+pub struct Cli {
     #[command(subcommand)]
-    command: Command,
+    pub command: Option<Command>,
 }
 
 #[derive(Subcommand)]
-enum Command {
+pub enum Command {
     /// Catalog inspection and validation.
     Catalog {
         #[command(subcommand)]
@@ -47,14 +54,14 @@ enum Command {
 }
 
 #[derive(Subcommand)]
-enum CatalogAction {
+pub enum CatalogAction {
     Stats,
     List,
     Validate,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
-enum QuarantineArg {
+pub enum QuarantineArg {
     Keep,
     Now,
     Sevendays,
@@ -70,20 +77,11 @@ impl From<QuarantineArg> for QuarantineMode {
     }
 }
 
-fn main() -> std::process::ExitCode {
-    // Headless mode: the copied "quarantine agent" exe
-    // (kprm_windows::quarantine_agent) launches itself this way when a
-    // "Dans 7 jours" schtasks.exe entry fires, 7 days after being
-    // scheduled — do the real deletions and exit, bypassing clap
-    // entirely (this isn't a documented user-facing subcommand).
-    if let Some(list_file) = quarantine_cleanup_arg() {
-        kprm_windows::run_quarantine_cleanup(&list_file);
-        return std::process::ExitCode::SUCCESS;
-    }
-
-    let cli = Cli::parse();
-
-    match cli.command {
+/// Dispatches an already-parsed subcommand. Called from `main.rs` once it
+/// knows `Cli::command` is `Some` (a bare `kprm` with no subcommand goes
+/// to the GUI instead, never here).
+pub fn run(command: Command) -> std::process::ExitCode {
+    match command {
         Command::Catalog { action } => run_catalog_command(action),
         Command::Translate { locale, key } => run_translate_command(&locale, &key),
         Command::Locales => {
@@ -116,12 +114,6 @@ fn main() -> std::process::ExitCode {
             run_engine(quarantine.into(), false, true)
         }
     }
-}
-
-fn quarantine_cleanup_arg() -> Option<String> {
-    let args: Vec<String> = std::env::args().collect();
-    let pos = args.iter().position(|a| a == "--quarantine-cleanup")?;
-    args.get(pos + 1).cloned()
 }
 
 fn load_catalog_or_exit() -> Catalog {

@@ -1,12 +1,12 @@
 [package]
-name = "kprm-gui"
+name = "kprm"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 authors.workspace = true
 
 [[bin]]
-name = "kprm-gui"
+name = "kprm"
 path = "src/main.rs"
 # No #[cfg(test)] code in this crate (all logic lives in kprm-engine/
 # kprm-windows and is tested there) — and cargo's test harness for this
@@ -19,6 +19,7 @@ kprm-catalog = { path = "../kprm-catalog" }
 kprm-engine = { path = "../kprm-engine" }
 kprm-i18n = { path = "../kprm-i18n" }
 kprm-windows = { path = "../kprm-windows" }
+clap.workspace = true
 eframe = { version = "0.29", default-features = false, features = ["glow", "default_fonts"] }
 egui = "0.29"
 # Pinned: newer arboard versions pull clipboard-win >=5, which switched from

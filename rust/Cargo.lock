@@ -1207,6 +1207,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2db585e1d738fc771bf08a151420d3ed193d9d895a36df7f6f8a9456b911ddc"
 
 [[package]]
+name = "kprm"
+version = "3.0.0"
+dependencies = [
+ "arboard",
+ "clap",
+ "eframe",
+ "egui",
+ "embed-resource",
+ "kprm-catalog",
+ "kprm-engine",
+ "kprm-i18n",
+ "kprm-windows",
+]
+
+[[package]]
 name = "kprm-catalog"
 version = "3.0.0"
 dependencies = [
@@ -1218,37 +1233,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "kprm-cli"
-version = "3.0.0"
-dependencies = [
- "clap",
- "kprm-catalog",
- "kprm-engine",
- "kprm-i18n",
- "kprm-windows",
-]
-
-[[package]]
 name = "kprm-engine"
 version = "3.0.0"
 dependencies = [
  "kprm-catalog",
  "regex",
  "thiserror 1.0.69",
-]
-
-[[package]]
-name = "kprm-gui"
-version = "3.0.0"
-dependencies = [
- "arboard",
- "eframe",
- "egui",
- "embed-resource",
- "kprm-catalog",
- "kprm-engine",
- "kprm-i18n",
- "kprm-windows",
 ]
 
 [[package]]

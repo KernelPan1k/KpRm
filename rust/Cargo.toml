@@ -4,9 +4,8 @@ members = [
     "crates/kprm-catalog",
     "crates/kprm-engine",
     "crates/kprm-i18n",
-    "crates/kprm-cli",
     "crates/kprm-windows",
-    "crates/kprm-gui",
+    "crates/kprm",
 ]
 
 [workspace.package]
