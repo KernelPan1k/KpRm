@@ -116,11 +116,16 @@ pub struct FakeRegistry {
     keys: BTreeMap<String, BTreeMap<String, String>>,
     pub deleted_keys: Vec<String>,
     pub written_dwords: Vec<(String, String, u32)>,
+    pub saved_keys: Vec<(String, String)>,
+    pub save_key_to_file_succeeds: bool,
 }
 
 impl FakeRegistry {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            save_key_to_file_succeeds: true,
+            ..Self::default()
+        }
     }
 
     pub fn add_key(&mut self, key: &str) -> &mut Self {
@@ -172,6 +177,12 @@ impl Registry for FakeRegistry {
             .or_default()
             .insert(value_name.to_string(), value.to_string());
         true
+    }
+
+    fn save_key_to_file(&mut self, key: &str, file_path: &str) -> bool {
+        self.saved_keys
+            .push((key.to_string(), file_path.to_string()));
+        self.save_key_to_file_succeeds
     }
 }
 

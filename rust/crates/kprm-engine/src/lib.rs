@@ -5,6 +5,7 @@
 //! real filesystem/registry/process adapters ([`ports`]) that
 //! [`orchestrator::run_tool_actions`] runs against.
 
+pub mod backup;
 pub mod fakes;
 pub mod matcher;
 pub mod orchestrator;

@@ -44,6 +44,13 @@ pub trait Registry {
     fn has_any_value(&self, key: &str) -> bool;
     fn delete_key(&mut self, key: &str) -> bool;
     fn write_dword(&mut self, key: &str, value_name: &str, value: u32) -> bool;
+
+    /// Exports the live `key` hive to `file_path` in the native binary
+    /// registry-hive format (as produced by `RegSaveKeyExW`/`reg save`),
+    /// working even while the hive is in active use. `file_path`'s parent
+    /// directory must already exist; an existing file at `file_path` is
+    /// replaced.
+    fn save_key_to_file(&mut self, key: &str, file_path: &str) -> bool;
 }
 
 #[derive(Debug, Clone)]

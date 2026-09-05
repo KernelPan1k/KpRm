@@ -9,6 +9,7 @@ pub mod command;
 pub mod elevation;
 pub mod filesystem;
 pub mod known_dirs;
+pub mod privilege;
 pub mod process;
 pub mod reboot;
 pub mod registry;

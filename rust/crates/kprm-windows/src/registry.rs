@@ -7,6 +7,8 @@ use kprm_engine::ports::Registry;
 use winreg::enums::*;
 use winreg::RegKey;
 
+use crate::privilege::enable_privilege;
+
 fn split_hive(key: &str) -> Option<(winreg::HKEY, &str, u32)> {
     let (hive_part, rest) = key.split_once('\\').unwrap_or((key, ""));
     let (hive_name, wow64_flag) = match hive_part.strip_suffix("64") {
@@ -88,6 +90,33 @@ impl Registry for WinRegistry {
             Err(_) => false,
         }
     }
+
+    fn save_key_to_file(&mut self, key: &str, file_path: &str) -> bool {
+        use windows::core::PCWSTR;
+        use windows::Win32::Foundation::ERROR_SUCCESS;
+        use windows::Win32::Security::SE_BACKUP_NAME;
+        use windows::Win32::System::Registry::{RegSaveKeyExW, HKEY as WinHKEY, REG_LATEST_FORMAT};
+
+        // Needed to read protected subtrees of e.g. HKLM\SOFTWARE in full;
+        // a normal (even administrator) token doesn't hold it by default.
+        let _ = enable_privilege(SE_BACKUP_NAME);
+
+        let Some(reg_key) = open(key, KEY_READ) else {
+            return false;
+        };
+
+        // RegSaveKeyExW fails outright if the destination file already
+        // exists — this is meant to overwrite a previous backup attempt.
+        let _ = std::fs::remove_file(file_path);
+
+        let hkey = WinHKEY(reg_key.raw_handle() as *mut core::ffi::c_void);
+        let wide_path: Vec<u16> = file_path.encode_utf16().chain(std::iter::once(0)).collect();
+
+        let result =
+            unsafe { RegSaveKeyExW(hkey, PCWSTR(wide_path.as_ptr()), None, REG_LATEST_FORMAT) };
+
+        result == ERROR_SUCCESS
+    }
 }
 
 #[cfg(test)]
@@ -159,5 +188,41 @@ mod tests {
         cleanup();
         let registry = WinRegistry;
         assert!(!registry.has_any_value(&format!("{TEST_ROOT}\\DoesNotExist")));
+    }
+
+    #[test]
+    fn save_key_to_file_writes_a_real_hive_file() {
+        // RegSaveKeyExW needs SeBackupPrivilege actually *held* by the
+        // token, not just an administrator account — a standard (non-
+        // elevated) token doesn't carry it at all, so AdjustTokenPrivileges
+        // reports success while silently granting nothing. Skip rather
+        // than fail when this test itself isn't running elevated.
+        if !crate::elevation::is_elevated() {
+            eprintln!("skipping: not elevated (RegSaveKeyExW needs SeBackupPrivilege)");
+            return;
+        }
+
+        cleanup();
+        let mut registry = WinRegistry;
+        let key = format!("{TEST_ROOT}\\ToBackup");
+        registry.write_dword(&key, "V", 7);
+
+        let temp_dir = std::env::temp_dir().join(format!("kprm-test-hive-{}", std::process::id()));
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        let file_path = temp_dir.join("backup.hiv");
+
+        let succeeded = registry.save_key_to_file(&key, file_path.to_str().unwrap());
+        let bytes = std::fs::read(&file_path).unwrap_or_default();
+
+        std::fs::remove_dir_all(&temp_dir).ok();
+        cleanup();
+
+        assert!(succeeded);
+        assert!(bytes.len() > 4);
+        assert_eq!(
+            &bytes[0..4],
+            b"regf",
+            "missing registry hive file magic header"
+        );
     }
 }

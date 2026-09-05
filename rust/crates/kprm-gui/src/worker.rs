@@ -7,15 +7,17 @@ use std::sync::mpsc::{Receiver, Sender};
 
 use kprm_catalog::Catalog;
 use kprm_engine::orchestrator::{self, RunOptions};
+use kprm_engine::paths::KnownDirs;
 use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::Report;
-use kprm_engine::{restore_point, system_settings, uac};
+use kprm_engine::{backup, restore_point, system_settings, uac};
 
 pub enum WorkerRequest {
     /// "Analyser": search-only scan across the whole catalog.
     Scan,
     /// "Exécuter": run the checked automatic-tab actions for real.
     RunAutomatic {
+        backup_registry: bool,
         remove_tools: bool,
         restore_uac: bool,
         restore_settings: bool,
@@ -92,6 +94,7 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
         }
 
         WorkerRequest::RunAutomatic {
+            backup_registry,
             remove_tools,
             restore_uac,
             restore_settings,
@@ -100,6 +103,31 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
             quarantine_mode,
         } => {
             let mut report = Report::default();
+
+            if backup_registry {
+                let dir = backup::backup_dir(dirs.home_drive(), &kprm_windows::current_timestamp());
+                if std::fs::create_dir_all(&dir).is_err() {
+                    report.push(
+                        "Sauvegarde du registre",
+                        "task",
+                        format!("créer le dossier {dir}"),
+                        kprm_engine::report::EventResult::Failed("échec".to_string()),
+                    );
+                } else {
+                    for result in backup::backup_registry(&mut registry, &dir) {
+                        report.push(
+                            "Sauvegarde du registre",
+                            "task",
+                            result.description,
+                            if result.succeeded {
+                                kprm_engine::report::EventResult::Ran
+                            } else {
+                                kprm_engine::report::EventResult::Failed("échec".to_string())
+                            },
+                        );
+                    }
+                }
+            }
 
             if remove_restore_points {
                 let result = restore_point::remove_all_restore_points(&mut commands);

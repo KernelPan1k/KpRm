@@ -518,7 +518,7 @@ impl KprmApp {
                 theme::GREEN,
                 "R",
                 "Sauvegarder le registre",
-                "Pas encore implémenté",
+                "SOFTWARE et NTUSER.DAT vers %HOMEDRIVE%\\KPRM\\backup",
                 half,
             );
         });
@@ -612,7 +612,8 @@ impl KprmApp {
                 || self.opt_restore_uac
                 || self.opt_restore_settings
                 || self.opt_remove_restore_points
-                || self.opt_create_restore_point);
+                || self.opt_create_restore_point
+                || self.opt_backup_registry);
         let run_button = egui::Button::new(
             egui::RichText::new("Exécuter")
                 .strong()
@@ -624,6 +625,7 @@ impl KprmApp {
             self.busy = true;
             self.status = "Exécution en cours...".to_string();
             let _ = self.request_tx.send(WorkerRequest::RunAutomatic {
+                backup_registry: self.opt_backup_registry,
                 remove_tools: self.opt_remove_tools,
                 restore_uac: self.opt_restore_uac,
                 restore_settings: self.opt_restore_settings,

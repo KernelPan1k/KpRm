@@ -11,13 +11,13 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | Crate | Statut | Contenu |
 |---|---|---|
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
-| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur), détection du besoin de redémarrage (`Report::needs_restart`), création/suppression/liste des points de restauration système (`restore_point`, via `CommandRunner`) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 55 tests. |
+| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur), détection du besoin de redémarrage (`Report::needs_restart`), création/suppression/liste des points de restauration système (`restore_point`, via `CommandRunner`), sauvegarde du registre (`backup`, via la nouvelle méthode `Registry::save_key_to_file`) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 58 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
-| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine), détection d'élévation (`elevation::is_elevated`, `GetTokenInformation(TokenElevation)`, utilisé par `kprm-cli`), `run_capture` sur `RealCommandRunner` (capture réelle de stdout). 25 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
+| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine), détection d'élévation (`elevation::is_elevated`, `GetTokenInformation(TokenElevation)`, utilisé par `kprm-cli`), `run_capture` sur `RealCommandRunner` (capture réelle de stdout), export d'une ruche vers un fichier (`registry::WinRegistry::save_key_to_file`, `RegSaveKeyExW`), activation de privilège factorisée (`privilege::enable_privilege`, partagée par `reboot` et `registry`). 26 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
 | `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions à 2 colonnes avec badge coloré, quarantaine en 3 boutons. Disposition **vérifiée par instrumentation des coordonnées réelles** plutôt que par capture d'écran (voir plus bas — la capture d'écran s'est révélée peu fiable dans cet environnement). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
-**95 tests unitaires, tous verts** (`cargo test --workspace`), dont 25 qui
+**99 tests unitaires, tous verts** (`cargo test --workspace`), dont 26 qui
 touchent réellement le système (fichiers, registre, processus) mais toujours
 dans un bac à sable jetable — jamais contre les vraies données de
 l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
@@ -223,6 +223,33 @@ comme ça a été fait ici) sont fiables.
     `Checkpoint-Computer`, donc un point est créé à chaque exécution quel
     que soit l'historique du jour, sans jamais toucher (encore moins
     supprimer) les points déjà présents.
+11. **« Sauvegarder le registre » implémenté** — comme les points de
+    restauration, la case existait mais n'était branchée nulle part
+    (« Pas encore implémenté »). L'original crée une copie shadow VSS du
+    disque système, lui assigne une lettre de lecteur via un `dosdev.exe`
+    embarqué en hexadécimal dans le script, copie les hives `SOFTWARE` et
+    `NTUSER.dat` depuis cette copie, et retombe sur `HoboCopy.exe`
+    (binaire tiers embarqué) si la copie VSS échoue — exactement le genre
+    de hack que la spec de réécriture (`docs/RUST-REWRITE-SPEC.md`)
+    proposait de remplacer. Remplacé par `RegSaveKeyExW`, l'API Win32
+    native conçue précisément pour exporter une ruche vivante vers un
+    fichier — aucune copie shadow, aucun binaire tiers. Ajouté au passage
+    `Registry::save_key_to_file` (nouvelle méthode du port),
+    `kprm_engine::backup` (calcule quoi sauvegarder et où : `HKLM\
+    SOFTWARE` → `SOFTWARE`, `HKCU` → `NTUSER.DAT`, sous
+    `%HOMEDRIVE%\KPRM\backup\<horodatage>`, mêmes noms de fichiers que
+    l'original pour rester restaurable de la même façon) et
+    `kprm-windows::privilege` (factorisé depuis `reboot.rs` : activer un
+    privilège du token du process — ici `SeBackupPrivilege`, nécessaire
+    pour lire `HKLM\SOFTWARE` en entier). Le test réel de
+    `save_key_to_file` (vérifie l'en-tête magique `regf` d'un vrai
+    fichier de ruche) se saute proprement au lieu d'échouer quand il
+    tourne sans élévation : `RegSaveKeyExW` a besoin que
+    `SeBackupPrivilege` soit réellement *présent* dans le token, pas
+    seulement d'un compte administrateur — un token standard (non élevé)
+    ne l'a pas du tout, donc `AdjustTokenPrivileges` réussit sans rien
+    activer, découvert en instrumentant le code réel plutôt qu'en
+    devinant la cause d'un premier échec silencieux.
 
 ## Migration du catalogue
 
