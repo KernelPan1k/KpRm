@@ -91,8 +91,10 @@ one of the 8 embedded languages) with four tabs:
 - **Analyse personnalisée** ("Custom scan"): runs a read-only scan of
   the whole catalog, lists everything it found with a checkbox next to
   each item, and deletes only what you select
-- **Outils +** ("Extra Tools"): reserved for additional tools, not yet
-  populated
+- **Outils +** ("Extra Tools"): restore a previous registry backup
+  (created from a "Sauvegarder le registre" run) back over the live
+  `SOFTWARE`/`NTUSER.DAT` hives — a new feature the original never had,
+  see the note below
 - **Dons** ("Donate"): a Bitcoin address for supporting the project, with a one-click copy button
 
 (Tab and action names above are shown in French — the language this
@@ -108,6 +110,17 @@ you actually see is in your Windows UI language if it's one of the 8
 > release build used for manual testing needs to be rebuilt between
 > runs; there's no flag to disable it, to stay faithful to the
 > original.
+
+> **Note on registry restore**: both `HKLM\SOFTWARE` and the current
+> user's `NTUSER.DAT` are always open while Windows is running, so this
+> can't call `RegRestoreKeyW` live against them — instead it schedules
+> the backup file to replace the live hive file at next boot
+> (`MOVEFILE_DELAY_UNTIL_REBOOT | MOVEFILE_REPLACE_EXISTING`, the same
+> mechanism tools like ERUNT have used for decades). A restart is
+> required for it to take effect, and — unlike every other destructive
+> action in this app — it's gated behind an explicit "are you sure?"
+> confirmation on top of the button click, since it overwrites live
+> system state wholesale with no undo.
 
 ### Command line
 
@@ -236,9 +249,9 @@ Five crates:
 | Crate | Role |
 |---|---|
 | [`kprm-catalog`](crates/kprm-catalog) | Data model, loader, and validator for the 202-tool catalog (`tools.d/*.toml`), embedded into the binary at compile time. |
-| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent removal logic: pattern matching, quarantine decisions, the action-type orchestrator (kills matching running processes before deleting a selected target), UAC/system-settings restoration, registry-backup planning, restore-point and deferred-quarantine scheduling, report formatting (plain text and JSON). No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
+| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent removal logic: pattern matching, quarantine decisions, the action-type orchestrator (kills matching running processes before deleting a selected target), UAC/system-settings restoration, registry-backup planning and restore planning, restore-point and deferred-quarantine scheduling, report formatting (plain text and JSON). No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
 | [`kprm-i18n`](crates/kprm-i18n) | Fluent-based translations for 8 locales, with variable substitution (`get_fmt`); powers every label in the GUI (see [Usage](#graphical-interface) above), auto-selected from the Windows UI language. |
-| [`kprm-windows`](crates/kprm-windows) | Real Windows adapters implementing `kprm-engine`'s abstractions: filesystem, registry, processes, external commands, elevation, machine restart, registry-hive export, quarantine-scheduling agent, UI locale detection, single-instance mutex/message box, and delayed self-deletion. |
+| [`kprm-windows`](crates/kprm-windows) | Real Windows adapters implementing `kprm-engine`'s abstractions: filesystem, registry, processes, external commands, elevation, machine restart, registry-hive export/restore, quarantine-scheduling agent, UI locale detection, single-instance mutex/message box, and delayed self-deletion. |
 | [`kprm`](crates/kprm) | The single binary: the GUI (egui/eframe) with no arguments, the CLI with a subcommand. |
 
 See [`BUILDING.md`](BUILDING.md) for how to build it from source
@@ -248,7 +261,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 117 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 121 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry
