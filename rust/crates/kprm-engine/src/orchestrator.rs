@@ -50,21 +50,41 @@ pub fn run_tool_actions(
 ) -> Report {
     let mut report = Report::default();
     for tool in catalog.tools() {
-        for action in &tool.actions {
-            handle_action(
-                &tool.name,
-                action,
-                fs,
-                registry,
-                processes,
-                commands,
-                dirs,
-                options,
-                &mut report,
-            );
-        }
+        run_tool(
+            tool,
+            fs,
+            registry,
+            processes,
+            commands,
+            dirs,
+            options,
+            &mut report,
+        );
     }
     report
+}
+
+/// Runs every action of a single `tool`, appending results into `report` —
+/// the per-tool unit [`run_tool_actions`] loops over the whole catalog
+/// with. Exposed separately so a caller (the GUI's worker thread) can
+/// report progress between tools instead of only getting one result at
+/// the very end of a ~200-tool, several-second pass.
+#[allow(clippy::too_many_arguments)]
+pub fn run_tool(
+    tool: &kprm_catalog::Tool,
+    fs: &mut dyn FileSystem,
+    registry: &mut dyn Registry,
+    processes: &mut dyn ProcessManager,
+    commands: &mut dyn CommandRunner,
+    dirs: &dyn KnownDirs,
+    options: &RunOptions,
+    report: &mut Report,
+) {
+    for action in &tool.actions {
+        handle_action(
+            &tool.name, action, fs, registry, processes, commands, dirs, options, report,
+        );
+    }
 }
 
 /// Force-deletes a fixed list of previously-found `(tool, target)` pairs —
@@ -75,12 +95,29 @@ pub fn run_tool_actions(
 /// exactly like the original's custom-selection removal. A target starting
 /// with `HK` is treated as a registry key; otherwise its real kind (file or
 /// folder) decides how it's removed.
+///
+/// Closes any running process whose executable is one of the selected
+/// targets first — mirrors the original closing the processes associated
+/// with the checked rows before deleting them; without this, a selected
+/// target that's currently a running `.exe` would fail to delete as locked.
 pub fn remove_selected_targets(
     targets: &[(String, String)],
     fs: &mut dyn FileSystem,
     registry: &mut dyn Registry,
+    processes: &mut dyn ProcessManager,
 ) -> Report {
     let mut report = Report::default();
+
+    let running = processes.list();
+    for (_, target) in targets {
+        for process in running.iter().filter(|p| {
+            p.exe_path
+                .as_deref()
+                .is_some_and(|p| p.eq_ignore_ascii_case(target))
+        }) {
+            processes.kill(process.pid);
+        }
+    }
 
     for (tool, target) in targets {
         if target.starts_with("HK") {
@@ -1102,6 +1139,7 @@ mod tests {
         fs.add_folder(r"C:\_OTL");
         let mut registry = FakeRegistry::new();
         registry.add_value(r"HKCU\Software\Foo", "V", "1");
+        let mut processes = FakeProcessManager::new();
 
         let targets = vec![
             ("FRST".to_string(), r"C:\FRST\FRST.txt".to_string()),
@@ -1109,7 +1147,7 @@ mod tests {
             ("Foo".to_string(), r"HKCU\Software\Foo".to_string()),
         ];
 
-        let report = remove_selected_targets(&targets, &mut fs, &mut registry);
+        let report = remove_selected_targets(&targets, &mut fs, &mut registry, &mut processes);
 
         assert_eq!(report.events.len(), 3);
         assert!(report
@@ -1127,10 +1165,27 @@ mod tests {
     fn remove_selected_targets_skips_a_target_that_no_longer_exists() {
         let mut fs = FakeFileSystem::new();
         let mut registry = FakeRegistry::new();
+        let mut processes = FakeProcessManager::new();
 
         let targets = vec![("Ghost".to_string(), r"C:\already\gone.txt".to_string())];
-        let report = remove_selected_targets(&targets, &mut fs, &mut registry);
+        let report = remove_selected_targets(&targets, &mut fs, &mut registry, &mut processes);
 
         assert!(report.events.is_empty());
+    }
+
+    #[test]
+    fn remove_selected_targets_kills_a_running_process_matching_a_selected_target() {
+        let mut fs = FakeFileSystem::new();
+        fs.add_file(r"C:\FRST\FRST.exe", None);
+        let mut registry = FakeRegistry::new();
+        let mut processes = FakeProcessManager::new();
+        processes.add(1234, "FRST.exe", Some(r"C:\FRST\FRST.exe"));
+        processes.add(999, "notepad.exe", Some(r"C:\Windows\notepad.exe"));
+
+        let targets = vec![("FRST".to_string(), r"C:\FRST\FRST.exe".to_string())];
+        remove_selected_targets(&targets, &mut fs, &mut registry, &mut processes);
+
+        assert!(processes.killed.contains(&1234));
+        assert!(!processes.killed.contains(&999));
     }
 }
