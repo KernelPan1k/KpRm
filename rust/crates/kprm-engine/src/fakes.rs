@@ -255,6 +255,17 @@ impl CommandRunner for FakeCommandRunner {
             .then(|| self.captured_stdout.clone())
             .flatten()
     }
+
+    fn run_with_output(&mut self, program: &str, args: &[&str]) -> (bool, String) {
+        self.calls.push((
+            program.to_string(),
+            args.iter().map(|s| s.to_string()).collect(),
+        ));
+        (
+            self.always_succeeds,
+            self.captured_stdout.clone().unwrap_or_default(),
+        )
+    }
 }
 
 pub struct FakeKnownDirs {

@@ -5,23 +5,77 @@
 
 use crate::ports::{CommandRunner, ProcessManager, Registry};
 
-const NETSH_COMMANDS: &[&[&str]] = &[
-    &["winsock", "reset"],
-    &["winhttp", "reset", "proxy"],
-    &["winhttp", "reset", "tracing"],
-    &["winsock", "reset", "catalog"],
-    &["int", "ip", "reset", "all"],
-    &["int", "ipv4", "reset", "catalog"],
-    &["int", "ipv6", "reset", "catalog"],
+struct NetshCommand {
+    args: &'static [&'static str],
+    label: &'static str,
+}
+
+/// `netsh interface ip/ipv4/ipv6 reset` iterate over many independent
+/// sub-items (routing, neighbor cache, WFP filters, ...); it's normal —
+/// even fully elevated — for exactly one of them to refuse with "the
+/// requested operation requires elevation" while the rest succeed, a
+/// known Windows quirk unrelated to how this process was launched. The
+/// overall exit code still goes non-zero when that happens, so this is
+/// still reported as a failure, but with `netsh`'s own real output
+/// attached instead of a bare unexplained "[X]".
+const NETSH_COMMANDS: &[NetshCommand] = &[
+    NetshCommand {
+        args: &["winsock", "reset"],
+        label: "netsh winsock reset",
+    },
+    NetshCommand {
+        args: &["winhttp", "reset", "proxy"],
+        label: "netsh winhttp reset proxy",
+    },
+    NetshCommand {
+        args: &["winhttp", "reset", "tracing"],
+        label: "netsh winhttp reset tracing",
+    },
+    NetshCommand {
+        args: &["winsock", "reset", "catalog"],
+        label: "netsh winsock reset catalog",
+    },
+    NetshCommand {
+        args: &["int", "ip", "reset", "all"],
+        label: "netsh interface ip reset",
+    },
+    NetshCommand {
+        args: &["int", "ipv4", "reset", "catalog"],
+        label: "netsh interface ipv4 reset",
+    },
+    NetshCommand {
+        args: &["int", "ipv6", "reset", "catalog"],
+        label: "netsh interface ipv6 reset",
+    },
 ];
+
+/// How much of `netsh`'s own (possibly long, multi-line) output to keep
+/// in a failure's description.
+const FAILURE_SNIPPET_MAX_CHARS: usize = 200;
 
 const EXPLORER_ADVANCED_KEY: &str =
     r"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SettingsRestoreResult {
-    pub description: &'static str,
+    pub description: String,
     pub succeeded: bool,
+}
+
+/// Flattens `output` to one line and truncates it, so a `netsh` failure's
+/// real reason fits in a report row without breaking its formatting or
+/// running on for a whole multi-line per-item reset log.
+fn failure_snippet(output: &str) -> Option<String> {
+    let flat: String = output.split_whitespace().collect::<Vec<_>>().join(" ");
+    if flat.is_empty() {
+        return None;
+    }
+    if flat.chars().count() > FAILURE_SNIPPET_MAX_CHARS {
+        let truncated: String = flat.chars().take(FAILURE_SNIPPET_MAX_CHARS).collect();
+        Some(format!("{truncated}…"))
+    } else {
+        Some(flat)
+    }
 }
 
 /// Runs the `netsh`/`ipconfig` resets and rewrites the three Explorer
@@ -35,27 +89,36 @@ pub fn restore_defaults(
 ) -> Vec<SettingsRestoreResult> {
     let mut results = Vec::new();
 
-    for args in NETSH_COMMANDS {
+    for cmd in NETSH_COMMANDS {
+        let (succeeded, output) = commands.run_with_output("netsh.exe", cmd.args);
+        let description = if succeeded {
+            cmd.label.to_string()
+        } else {
+            match failure_snippet(&output) {
+                Some(snippet) => format!("{} : {snippet}", cmd.label),
+                None => cmd.label.to_string(),
+            }
+        };
         results.push(SettingsRestoreResult {
-            description: "netsh reset",
-            succeeded: commands.run("netsh.exe", args),
+            description,
+            succeeded,
         });
     }
     results.push(SettingsRestoreResult {
-        description: "flush DNS",
+        description: "flush DNS".to_string(),
         succeeded: commands.run("ipconfig.exe", &["/flushdns"]),
     });
 
     results.push(SettingsRestoreResult {
-        description: "hide hidden files",
+        description: "hide hidden files".to_string(),
         succeeded: registry.write_dword(EXPLORER_ADVANCED_KEY, "Hidden", 2),
     });
     results.push(SettingsRestoreResult {
-        description: "show known file extensions",
+        description: "show known file extensions".to_string(),
         succeeded: registry.write_dword(EXPLORER_ADVANCED_KEY, "HideFileExt", 0),
     });
     results.push(SettingsRestoreResult {
-        description: "hide protected operating system files",
+        description: "hide protected operating system files".to_string(),
         succeeded: registry.write_dword(EXPLORER_ADVANCED_KEY, "ShowSuperHidden", 0),
     });
 
@@ -123,6 +186,37 @@ mod tests {
             registry.read_value(EXPLORER_ADVANCED_KEY, "ShowSuperHidden"),
             Some("0".to_string())
         );
+    }
+
+    #[test]
+    fn netsh_descriptions_name_the_actual_command_when_successful() {
+        let mut registry = FakeRegistry::new();
+        let mut commands = FakeCommandRunner::new();
+
+        let results = restore_defaults(&mut registry, &mut commands);
+
+        assert!(results
+            .iter()
+            .any(|r| r.description == "netsh winsock reset" && r.succeeded));
+        assert!(results
+            .iter()
+            .any(|r| r.description == "netsh interface ipv6 reset" && r.succeeded));
+    }
+
+    #[test]
+    fn netsh_descriptions_include_the_real_failure_reason() {
+        let mut registry = FakeRegistry::new();
+        let mut commands = FakeCommandRunner::new();
+        commands.always_succeeds = false;
+        commands.captured_stdout = Some("L'opération demandée requiert une élévation".to_string());
+
+        let results = restore_defaults(&mut registry, &mut commands);
+
+        assert!(results.iter().any(|r| {
+            !r.succeeded
+                && r.description.starts_with("netsh winsock reset :")
+                && r.description.contains("requiert une élévation")
+        }));
     }
 
     #[test]

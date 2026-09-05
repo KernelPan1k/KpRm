@@ -225,7 +225,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 108 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 112 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry

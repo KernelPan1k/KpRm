@@ -34,6 +34,20 @@ impl CommandRunner for RealCommandRunner {
             .success()
             .then(|| String::from_utf8_lossy(&output.stdout).into_owned())
     }
+
+    fn run_with_output(&mut self, program: &str, args: &[&str]) -> (bool, String) {
+        match std::process::Command::new(program)
+            .args(args)
+            .creation_flags(CREATE_NO_WINDOW)
+            .output()
+        {
+            Ok(output) => (
+                output.status.success(),
+                String::from_utf8_lossy(&output.stdout).into_owned(),
+            ),
+            Err(_) => (false, String::new()),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -69,5 +83,22 @@ mod tests {
     fn run_capture_returns_none_for_a_nonzero_exit_code() {
         let mut runner = RealCommandRunner;
         assert!(runner.run_capture("cmd.exe", &["/c", "exit 1"]).is_none());
+    }
+
+    #[test]
+    fn run_with_output_returns_stdout_even_on_a_nonzero_exit_code() {
+        let mut runner = RealCommandRunner;
+        let (succeeded, output) =
+            runner.run_with_output("cmd.exe", &["/c", "echo failing-kprm && exit 1"]);
+        assert!(!succeeded);
+        assert!(output.contains("failing-kprm"));
+    }
+
+    #[test]
+    fn run_with_output_reports_success_and_stdout_together() {
+        let mut runner = RealCommandRunner;
+        let (succeeded, output) = runner.run_with_output("cmd.exe", &["/c", "echo ok-kprm"]);
+        assert!(succeeded);
+        assert!(output.contains("ok-kprm"));
     }
 }

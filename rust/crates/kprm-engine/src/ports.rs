@@ -76,4 +76,10 @@ pub trait CommandRunner {
     /// points via PowerShell). `None` on a non-zero exit or a program
     /// that couldn't even be launched.
     fn run_capture(&mut self, program: &str, args: &[&str]) -> Option<String>;
+
+    /// Like [`CommandRunner::run`], but also returns the captured stdout
+    /// regardless of whether the program succeeded — for surfacing
+    /// *why* a command failed in a report (`netsh` prints its actual
+    /// failure reason to stdout, not just a bare exit code).
+    fn run_with_output(&mut self, program: &str, args: &[&str]) -> (bool, String);
 }
