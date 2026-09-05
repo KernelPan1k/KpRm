@@ -11,13 +11,13 @@ Correspond aux phases 1 à 5 de la feuille de route (§11 de la spec) :
 | Crate | Statut | Contenu |
 |---|---|---|
 | `kprm-catalog` | ✅ | Modèle de données + chargement/validation du catalogue (202 outils migrés depuis `tools.xml`, embarqués dans le binaire). 7 tests. |
-| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur), détection du besoin de redémarrage (`Report::needs_restart`), création/suppression/liste des points de restauration système (`restore_point`, via `CommandRunner`), sauvegarde du registre (`backup`, via la nouvelle méthode `Registry::save_key_to_file`) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 58 tests. |
+| `kprm-engine` | ✅ (noyau + orchestrateur) | Liste blanche, macros de chemin, clés 32/64 bits, décision de quarantaine, moteur de correspondance, **orchestrateur des 20 types d'action** (`orchestrator::run_tool_actions`, le pendant de `RunRemoveTools`), restauration UAC et paramètres système, infos système pour l'en-tête du rapport (`system_info::SystemInfo`, formatage pur), détection du besoin de redémarrage (`Report::needs_restart`), création/suppression/liste des points de restauration système (`restore_point`, via `CommandRunner`), sauvegarde du registre (`backup`, via la nouvelle méthode `Registry::save_key_to_file`), planification pure de la suppression différée à 7 jours (`quarantine_schedule` : arithmétique de calendrier, arguments `schtasks.exe`, format du fichier liste, suppression réelle via `FileSystem`) — tout exprimé sur des traits (`ports`) et testé avec des fakes en mémoire (`fakes`), zéro dépendance Windows. 66 tests. |
 | `kprm-i18n` | ✅ | 8 langues (FR/EN/DE/IT/PT/RU/ES/NL) portées en Fluent, avec test de parité des clés entre langues. 8 tests. |
-| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine), détection d'élévation (`elevation::is_elevated`, `GetTokenInformation(TokenElevation)`, utilisé par `kprm-cli`), `run_capture` sur `RealCommandRunner` (capture réelle de stdout), export d'une ruche vers un fichier (`registry::WinRegistry::save_key_to_file`, `RegSaveKeyExW`), activation de privilège factorisée (`privilege::enable_privilege`, partagée par `reboot` et `registry`). 26 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
+| `kprm-windows` | ✅ | Implémentations réelles des `ports` de `kprm-engine` : fichiers/dossiers (attributs, `icacls`, suppression différée au redémarrage), registre (`winreg`, vue 32/64 bits), process (Toolhelp32 natif), commandes externes, dossiers connus (variables d'environnement), lecture du `CompanyName` d'un PE (`pelite`), infos système réelles pour le rapport (utilisateur/machine/OS via variables d'environnement + registre, nombre de passages via `%HOMEDRIVE%\KPRM`), redémarrage réel de la machine (`reboot::reboot_machine`, `SeShutdownPrivilege` + `ExitWindowsEx` — non testé unitairement pour une raison évidente : l'appeler redémarre la machine), détection d'élévation (`elevation::is_elevated`, `GetTokenInformation(TokenElevation)`, utilisé par `kprm-cli`), `run_capture` sur `RealCommandRunner` (capture réelle de stdout), export d'une ruche vers un fichier (`registry::WinRegistry::save_key_to_file`, `RegSaveKeyExW`), activation de privilège factorisée (`privilege::enable_privilege`, partagée par `reboot` et `registry`), copie/planification/nettoyage réels de la suppression différée à 7 jours (`quarantine_agent`, via `schtasks.exe` et une copie autonome de l'exe courant). 27 tests, **tous exécutés pour de vrai** (fichiers temporaires jetables, sous-arbre de registre `HKCU\Software\KpRmRustTests` dédié et auto-nettoyé, process que le test lance lui-même — jamais le vrai Bureau/Program Files/HKLM de la machine). |
 | `kprm-cli` | ✅ | Binaire headless : `catalog stats/list/validate`, `translate`, `locales`, **`scan`** (lecture seule, réellement exécuté sur cette machine : ~13s, 202 outils, rien trouvé — poste de dev propre) et **`remove --confirm`** (suppression réelle, jamais lancé sur cette machine de dev pour ne rien casser). |
 | `kprm-gui` | ✅ | Interface egui/eframe : onglets Automatique / Analyse personnalisée / Outils + / Dons, actions lancées sur un thread de fond pour ne jamais geler l'UI. Barre de titre custom dessinée à la main (icône, pastille de version, glisser-déplacer, réduire/fermer), polices réelles embarquées (Space Grotesk + IBM Plex Mono), palette sombre reprenant les tokens de la maquette, cartes d'actions à 2 colonnes avec badge coloré, quarantaine en 3 boutons. Disposition **vérifiée par instrumentation des coordonnées réelles** plutôt que par capture d'écran (voir plus bas — la capture d'écran s'est révélée peu fiable dans cet environnement). Le rapport texte est écrit dans `%HOMEDRIVE%\KPRM` + le Bureau et ouvert dans le Bloc-notes après "Exécuter"/"Supprimer la sélection" (jamais après un simple scan). Aucun bouton destructif n'a été cliqué pendant le développement. |
 
-**99 tests unitaires, tous verts** (`cargo test --workspace`), dont 26 qui
+**108 tests unitaires, tous verts** (`cargo test --workspace`), dont 27 qui
 touchent réellement le système (fichiers, registre, processus) mais toujours
 dans un bac à sable jetable — jamais contre les vraies données de
 l'utilisateur. `kprm-cli scan` a été exécuté pour de vrai sur cette machine
@@ -250,6 +250,35 @@ comme ça a été fait ici) sont fiables.
     ne l'a pas du tout, donc `AdjustTokenPrivileges` réussit sans rien
     activer, découvert en instrumentant le code réel plutôt qu'en
     devinant la cause d'un premier échec silencieux.
+12. **« Il y a d'autres options qui ne font rien ? »** — oui, la
+    quarantaine « Dans 7 jours » : le rapport affichait `[7J]` mais rien
+    n'était réellement planifié, le fichier restait indéfiniment.
+    L'original copie son propre exe dans `%HOMEDRIVE%\KPRM\
+    tasks-quarantines\`, écrit la liste des éléments dans le registre
+    (`HKLM\Software\KPRM\quarantines\<horodatage>`), et crée une vraie
+    tâche planifiée (API COM Task Scheduler) qui relance cette copie 7
+    jours plus tard pour supprimer les fichiers et se nettoyer
+    elle-même. Remplacé par : `schtasks.exe` (déjà utilisé ailleurs via
+    `CommandRunner`, pas de liaison COM) pour la tâche planifiée, et un
+    fichier liste en texte brut (chemin du rapport + `outil|cible` par
+    ligne) au lieu du registre. Ajouté `kprm_engine::quarantine_schedule`
+    (pur, testé sans Windows : arithmétique de calendrier `add_days`
+    gérant les changements de mois/année bissextile, construction des
+    arguments `schtasks.exe`, format du fichier liste, suppression réelle
+    via le port `FileSystem`) et `kprm-windows::quarantine_agent` (copie
+    l'exe courant comme agent autonome via `std::env::current_exe`,
+    écrit le fichier liste, crée la tâche ; et le point d'entrée headless
+    `--quarantine-cleanup <fichier>`, vérifié tout en haut de `main()`
+    dans `kprm-gui` et `kprm-cli` avant même de créer une fenêtre ou de
+    parser les arguments clap, pour que l'agent planifié puisse relancer
+    n'importe lequel des deux exécutables sans jamais afficher d'UI).
+    `write_and_open_report` renvoie maintenant le chemin réel du rapport
+    écrit, pour que la suppression différée puisse y ajouter son résultat
+    une fois exécutée. Contrairement à l'original qui se supprime
+    lui-même (`HaraKiri`) une fois la dernière tâche traitée, la copie de
+    l'agent sous `tasks-quarantines` n'est jamais nettoyée — quelques
+    kilo-octets de trop plutôt qu'un bricolage de suppression-pendant-
+    exécution sur un exe qui tourne encore.
 
 ## Migration du catalogue
 

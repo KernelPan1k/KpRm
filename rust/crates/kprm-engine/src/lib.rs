@@ -12,6 +12,7 @@ pub mod orchestrator;
 pub mod paths;
 pub mod ports;
 pub mod quarantine;
+pub mod quarantine_schedule;
 pub mod registry;
 pub mod report;
 pub mod restore_point;

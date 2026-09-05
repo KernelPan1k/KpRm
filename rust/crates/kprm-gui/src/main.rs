@@ -11,6 +11,16 @@ mod worker;
 use eframe::egui;
 
 fn main() -> eframe::Result<()> {
+    // Headless mode: the copied "quarantine agent" exe
+    // (kprm_windows::quarantine_agent) launches itself this way when a
+    // "Dans 7 jours" schtasks.exe entry fires, 7 days after being
+    // scheduled — do the real deletions and exit, never creating a
+    // window (see rust/README.md).
+    if let Some(list_file) = quarantine_cleanup_arg() {
+        kprm_windows::run_quarantine_cleanup(&list_file);
+        return Ok(());
+    }
+
     // The PE resource icon (build.rs + assets/icon.rc) is what Explorer and
     // the taskbar show before the window even exists; this sets the same
     // icon for the window/title-bar/Alt+Tab once it's running, since a
@@ -37,4 +47,10 @@ fn main() -> eframe::Result<()> {
             Ok(Box::<app::KprmApp>::default())
         }),
     )
+}
+
+fn quarantine_cleanup_arg() -> Option<String> {
+    let args: Vec<String> = std::env::args().collect();
+    let pos = args.iter().position(|a| a == "--quarantine-cleanup")?;
+    args.get(pos + 1).cloned()
 }

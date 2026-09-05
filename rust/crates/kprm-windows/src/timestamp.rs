@@ -14,6 +14,21 @@ pub fn current_timestamp() -> String {
     )
 }
 
+/// `(year, month, day, hour, minute)`, local time — the raw fields
+/// [`kprm_engine::quarantine_schedule::add_days`] needs to compute a
+/// `schtasks.exe` start date/time for the "Dans 7 jours" quarantine
+/// schedule.
+pub fn current_local_datetime_fields() -> (u32, u32, u32, u32, u32) {
+    let st = unsafe { GetLocalTime() };
+    (
+        st.wYear as u32,
+        st.wMonth as u32,
+        st.wDay as u32,
+        st.wHour as u32,
+        st.wMinute as u32,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -23,5 +38,15 @@ mod tests {
         let ts = current_timestamp();
         assert_eq!(ts.len(), 14);
         assert!(ts.chars().all(|c| c.is_ascii_digit()));
+    }
+
+    #[test]
+    fn datetime_fields_are_plausible() {
+        let (year, month, day, hour, minute) = current_local_datetime_fields();
+        assert!((2020..2100).contains(&year));
+        assert!((1..=12).contains(&month));
+        assert!((1..=31).contains(&day));
+        assert!(hour < 24);
+        assert!(minute < 60);
     }
 }

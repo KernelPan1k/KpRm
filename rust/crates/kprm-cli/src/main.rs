@@ -71,6 +71,16 @@ impl From<QuarantineArg> for QuarantineMode {
 }
 
 fn main() -> std::process::ExitCode {
+    // Headless mode: the copied "quarantine agent" exe
+    // (kprm_windows::quarantine_agent) launches itself this way when a
+    // "Dans 7 jours" schtasks.exe entry fires, 7 days after being
+    // scheduled — do the real deletions and exit, bypassing clap
+    // entirely (this isn't a documented user-facing subcommand).
+    if let Some(list_file) = quarantine_cleanup_arg() {
+        kprm_windows::run_quarantine_cleanup(&list_file);
+        return std::process::ExitCode::SUCCESS;
+    }
+
     let cli = Cli::parse();
 
     match cli.command {
@@ -106,6 +116,12 @@ fn main() -> std::process::ExitCode {
             run_engine(quarantine.into(), false, true)
         }
     }
+}
+
+fn quarantine_cleanup_arg() -> Option<String> {
+    let args: Vec<String> = std::env::args().collect();
+    let pos = args.iter().position(|a| a == "--quarantine-cleanup")?;
+    args.get(pos + 1).cloned()
 }
 
 fn load_catalog_or_exit() -> Catalog {
@@ -219,7 +235,26 @@ fn run_engine(
             kprm_windows::current_timestamp()
         )];
         title.extend(kprm_windows::collect_system_info(&dirs).to_lines());
-        kprm_windows::write_and_open_report(&report, &dirs, &title);
+
+        let deferred_items: Vec<(String, String)> = report
+            .events
+            .iter()
+            .filter(|e| e.result == EventResult::ScheduledIn7Days)
+            .map(|e| (e.tool.clone(), e.target.clone()))
+            .collect();
+
+        let report_path = kprm_windows::write_and_open_report(&report, &dirs, &title);
+
+        if !deferred_items.is_empty()
+            && !kprm_windows::schedule_deferred_deletion(
+                &mut commands,
+                &dirs,
+                report_path.as_deref(),
+                &deferred_items,
+            )
+        {
+            eprintln!("Échec de la planification de la suppression différée (7 jours).");
+        }
 
         if report.needs_restart() {
             prompt_for_restart();

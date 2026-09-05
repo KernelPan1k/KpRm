@@ -230,7 +230,45 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 system_settings::restart_explorer(&mut processes, &mut commands);
             }
 
-            kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
+            let deferred_items: Vec<(String, String)> = report
+                .events
+                .iter()
+                .filter(|e| e.result == kprm_engine::report::EventResult::ScheduledIn7Days)
+                .map(|e| (e.tool.clone(), e.target.clone()))
+                .collect();
+
+            let report_path =
+                kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
+
+            if !deferred_items.is_empty() {
+                let scheduled = kprm_windows::schedule_deferred_deletion(
+                    &mut commands,
+                    &dirs,
+                    report_path.as_deref(),
+                    &deferred_items,
+                );
+                // Silent on success, matching the original's own
+                // SetDeleteQuarantinesIn7DaysIfNeeded (only logs on
+                // failure) — the report is already written/opened by
+                // this point, so a failure gets appended to it directly
+                // rather than losing the information entirely.
+                if !scheduled {
+                    if let Some(path) = &report_path {
+                        let _ = std::fs::OpenOptions::new()
+                            .append(true)
+                            .open(path)
+                            .and_then(|mut file| {
+                                use std::io::Write as _;
+                                file.write_all(
+                                    "\r\n- Erreurs -\r\n    [X] Échec de la planification de \
+                                     la suppression différée (7 jours)\r\n"
+                                        .as_bytes(),
+                                )
+                            });
+                    }
+                }
+            }
+
             WorkerResponse::Done(report)
         }
 

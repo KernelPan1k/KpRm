@@ -13,13 +13,21 @@ use crate::known_dirs::EnvKnownDirs;
 /// the Desktop, then opens the first one that was written in Notepad.
 /// Intended for a real run (`RunAutomatic`/`remove`/"Supprimer la
 /// sélection") — a search-only scan should not call this, matching the
-/// original's `KpSearch` never opening a report either.
-pub fn write_and_open_report(report: &Report, dirs: &EnvKnownDirs, title_lines: &[String]) {
+/// original's `KpSearch` never opening a report either. Returns the path
+/// actually opened (the Desktop one falls back for the caller if the
+/// `%HOMEDRIVE%\KPRM` write failed), so a "Dans 7 jours" quarantine
+/// schedule can append its own outcome to the same file once it runs
+/// (see [`crate::quarantine_agent`]) — `None` if both writes failed.
+pub fn write_and_open_report(
+    report: &Report,
+    dirs: &EnvKnownDirs,
+    title_lines: &[String],
+) -> Option<String> {
     let text = report.to_text(title_lines);
 
     let kprm_dir = format!("{}\\KPRM", dirs.home_drive());
     if std::fs::create_dir_all(&kprm_dir).is_err() {
-        return;
+        return None;
     }
 
     let filename = format!("kprm-{}.txt", crate::timestamp::current_timestamp());
@@ -27,14 +35,19 @@ pub fn write_and_open_report(report: &Report, dirs: &EnvKnownDirs, title_lines: 
     let desktop_report = format!("{}\\{filename}", dirs.desktop());
 
     let wrote_home = std::fs::write(&home_report, &text).is_ok();
-    let _ = std::fs::write(&desktop_report, &text);
+    let wrote_desktop = std::fs::write(&desktop_report, &text).is_ok();
 
     let report_to_open = if wrote_home {
-        &home_report
+        Some(home_report)
+    } else if wrote_desktop {
+        Some(desktop_report)
     } else {
-        &desktop_report
+        None
     };
-    let _ = std::process::Command::new("notepad.exe")
-        .arg(report_to_open)
-        .spawn();
+
+    if let Some(path) = &report_to_open {
+        let _ = std::process::Command::new("notepad.exe").arg(path).spawn();
+    }
+
+    report_to_open
 }
