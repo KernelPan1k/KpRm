@@ -1,8 +1,12 @@
 //! The result of one orchestrator run: a flat list of per-element events,
 //! independent of how a front-end chooses to render them (plain text list
-//! for the CLI, a checkable list for the GUI's "Analyse personnalisée" tab).
+//! for the CLI, a checkable list for the GUI's "Analyse personnalisée" tab,
+//! or JSON via [`Report::to_json`] for machine consumption).
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+use serde::Serialize;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(tag = "status", content = "reason", rename_all = "snake_case")]
 pub enum EventResult {
     Removed,
     ScheduledOnReboot,
@@ -18,7 +22,7 @@ pub enum EventResult {
     Failed(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Event {
     pub tool: String,
     pub action_type: &'static str,
@@ -28,7 +32,7 @@ pub struct Event {
     pub result: EventResult,
 }
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, Default, Serialize)]
 pub struct Report {
     pub events: Vec<Event>,
 }
@@ -168,6 +172,15 @@ impl Report {
             ("Échecs", failed),
         ]
     }
+
+    /// Serializes the raw event list as pretty-printed JSON, for scripts
+    /// or other tools to consume instead of parsing the plain-text report
+    /// — spec §7's "JSON optionnel". `title_lines` (machine info, version,
+    /// timestamp) isn't included here since it's meant for a human reading
+    /// a text file, not structured data.
+    pub fn to_json(&self) -> String {
+        serde_json::to_string_pretty(self).expect("Report only contains plain strings and enums")
+    }
 }
 
 fn symbol_for(result: &EventResult) -> &'static str {
@@ -184,6 +197,33 @@ fn symbol_for(result: &EventResult) -> &'static str {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn to_json_round_trips_through_serde_json_value() {
+        let mut report = Report::default();
+        report.push(
+            "AdwCleaner",
+            "desktop",
+            r"C:\Desktop\AdwCleaner.exe",
+            EventResult::Removed,
+        );
+        report.push(
+            "AdwCleaner",
+            "process",
+            "AdwCleaner.exe",
+            EventResult::Failed("boom".to_string()),
+        );
+
+        let json = report.to_json();
+        let value: serde_json::Value = serde_json::from_str(&json).unwrap();
+        let events = value["events"].as_array().unwrap();
+
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0]["tool"], "AdwCleaner");
+        assert_eq!(events[0]["result"]["status"], "removed");
+        assert_eq!(events[1]["result"]["status"], "failed");
+        assert_eq!(events[1]["result"]["reason"], "boom");
+    }
 
     #[test]
     fn needs_restart_only_when_something_is_scheduled_on_reboot() {

@@ -9,3 +9,5 @@ authors.workspace = true
 kprm-catalog = { path = "../kprm-catalog" }
 regex.workspace = true
 thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
