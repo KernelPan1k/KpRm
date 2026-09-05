@@ -17,7 +17,7 @@ use windows::core::PCWSTR;
 use windows::Win32::Storage::FileSystem::{
     GetFileAttributesW, MoveFileExW, SetFileAttributesW, FILE_ATTRIBUTE_HIDDEN,
     FILE_ATTRIBUTE_READONLY, FILE_ATTRIBUTE_SYSTEM, FILE_FLAGS_AND_ATTRIBUTES,
-    MOVEFILE_DELAY_UNTIL_REBOOT,
+    MOVEFILE_DELAY_UNTIL_REBOOT, MOVEFILE_REPLACE_EXISTING,
 };
 
 const INVALID_FILE_ATTRIBUTES: u32 = u32::MAX;
@@ -57,6 +57,27 @@ pub(crate) fn schedule_delete_on_reboot(path: &str) {
             PCWSTR::null(),
             MOVEFILE_DELAY_UNTIL_REBOOT,
         );
+    }
+}
+
+/// Schedules `source` to replace `dest` at next boot, via
+/// `MoveFileEx(..., MOVEFILE_DELAY_UNTIL_REBOOT | MOVEFILE_REPLACE_EXISTING)`
+/// — the same "pending file rename operation" mechanism Windows' own
+/// Session Manager (`smss.exe`) processes very early at startup, before
+/// `SOFTWARE`/`NTUSER.DAT` get (re)loaded for the session. Used to restore
+/// a previous registry-hive backup: both hives are always open while
+/// Windows is running, so there's no way to replace them live. Returns
+/// `false` if the OS refused to even schedule the operation.
+pub(crate) fn schedule_replace_on_reboot(source: &str, dest: &str) -> bool {
+    let source_w = wide(source);
+    let dest_w = wide(dest);
+    unsafe {
+        MoveFileExW(
+            PCWSTR(source_w.as_ptr()),
+            PCWSTR(dest_w.as_ptr()),
+            MOVEFILE_DELAY_UNTIL_REBOOT | MOVEFILE_REPLACE_EXISTING,
+        )
+        .is_ok()
     }
 }
 
