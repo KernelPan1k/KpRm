@@ -116,7 +116,7 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
             }
 
             if create_restore_point {
-                for result in restore_point::create_restore_point(&mut commands) {
+                for result in restore_point::create_restore_point(&mut commands, &mut registry) {
                     report.push(
                         "Points de restauration",
                         "task",

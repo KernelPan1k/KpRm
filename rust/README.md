@@ -209,6 +209,20 @@ comme ça a été fait ici) sont fiables.
    « Supprimer » et/ou « Créer », qu'il y en ait ou non (une ligne « Aucun
    point de restauration trouvé » sinon) — visible dans le rapport
    qu'importe si l'action a réussi ou échoué.
+10. **« Il n'a pas créé un nouveau point de restauration lorsque je l'ai
+    lancé »** — malgré l'élévation corrigée au point 8, `Checkpoint-
+    Computer` ne fait *rien* silencieusement (ni erreur, ni nouveau point)
+    s'il en existe déjà un créé il y a moins de ~24h (`SystemRestore
+    PointCreationFrequency`, en minutes, sous `HKLM\SOFTWARE\Microsoft\
+    Windows NT\CurrentVersion\SystemRestore`, 1440 par défaut) — que ce
+    point vienne de Windows Update, d'un pilote, ou d'un essai précédent
+    de l'outil. L'original contournait ça en supprimant les points du
+    jour avant de réessayer (`ClearDailyRestorePoint`) ; plus simple ici :
+    `create_restore_point` écrit `SystemRestorePointCreationFrequency = 0`
+    (via le port `Registry`, déjà utilisé ailleurs) juste avant d'appeler
+    `Checkpoint-Computer`, donc un point est créé à chaque exécution quel
+    que soit l'historique du jour, sans jamais toucher (encore moins
+    supprimer) les points déjà présents.
 
 ## Migration du catalogue
 
