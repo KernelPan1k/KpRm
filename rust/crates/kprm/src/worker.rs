@@ -31,39 +31,45 @@ pub enum WorkerRequest {
 }
 
 pub enum WorkerResponse {
+    /// How many of the catalog's tools have been processed so far, out of
+    /// how many total — sent between tools during a scan or a real
+    /// "Supprimer les outils" pass (by far the slowest, most numerous
+    /// step), so the UI can show real progress instead of just a spinner.
+    Progress {
+        current: usize,
+        total: usize,
+    },
     Done(Report),
     Failed(String),
 }
 
-/// Spawns the worker thread and returns the channel to send it requests on;
-/// `on_response` is called (from the worker thread) with each result — the
-/// caller is expected to forward it into a channel the UI thread polls, or
-/// otherwise trigger a repaint.
+/// Spawns the worker thread and returns the channel to send it requests on.
+/// Every [`WorkerResponse`] — zero or more [`WorkerResponse::Progress`]
+/// followed by exactly one [`WorkerResponse::Done`]/[`WorkerResponse::Failed`]
+/// — is sent on `response_tx`, which the caller polls from the UI thread.
 pub fn spawn(response_tx: Sender<WorkerResponse>) -> Sender<WorkerRequest> {
     let (request_tx, request_rx): (Sender<WorkerRequest>, Receiver<WorkerRequest>) =
         std::sync::mpsc::channel();
 
     std::thread::spawn(move || {
         for request in request_rx {
-            let response = handle(request);
-            if response_tx.send(response).is_err() {
-                break;
-            }
+            handle(request, &response_tx);
         }
     });
 
     request_tx
 }
 
-fn handle(request: WorkerRequest) -> WorkerResponse {
+fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
     let catalog = match Catalog::embedded() {
         Ok(c) => c,
         Err(errors) => {
-            return WorkerResponse::Failed(format!(
+            let _ = response_tx.send(WorkerResponse::Failed(format!(
                 "Catalogue invalide ({} erreur(s)) : {}",
                 errors.len(),
                 errors.first().map(|e| e.to_string()).unwrap_or_default()
-            ))
+            )));
+            return;
         }
     };
 
@@ -81,7 +87,7 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 search_only: true,
                 is_64bit_os,
             };
-            let report = orchestrator::run_tool_actions(
+            let report = run_tools_with_progress(
                 &catalog,
                 &mut fs,
                 &mut registry,
@@ -89,8 +95,9 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 &mut commands,
                 &dirs,
                 &options,
+                response_tx,
             );
-            WorkerResponse::Done(report)
+            let _ = response_tx.send(WorkerResponse::Done(report));
         }
 
         WorkerRequest::RunAutomatic {
@@ -188,7 +195,7 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                     search_only: false,
                     is_64bit_os,
                 };
-                report.merge(orchestrator::run_tool_actions(
+                report.merge(run_tools_with_progress(
                     &catalog,
                     &mut fs,
                     &mut registry,
@@ -196,6 +203,7 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                     &mut commands,
                     &dirs,
                     &options,
+                    response_tx,
                 ));
             }
 
@@ -269,15 +277,64 @@ fn handle(request: WorkerRequest) -> WorkerResponse {
                 }
             }
 
-            WorkerResponse::Done(report)
+            // Confirmed explicitly with the user before adding this: the
+            // original deletes itself after a successful automatic run
+            // (spec §2.2/§2.3) — a delayed `del` via `cmd.exe`, or folded
+            // into the restart-on-reboot cleanup if one is pending.
+            kprm_windows::schedule_self_deletion(report.needs_restart());
+
+            let _ = response_tx.send(WorkerResponse::Done(report));
         }
 
         WorkerRequest::RemoveSelected(targets) => {
-            let report = orchestrator::remove_selected_targets(&targets, &mut fs, &mut registry);
+            let report = orchestrator::remove_selected_targets(
+                &targets,
+                &mut fs,
+                &mut registry,
+                &mut processes,
+            );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
-            WorkerResponse::Done(report)
+            kprm_windows::schedule_self_deletion(report.needs_restart());
+            let _ = response_tx.send(WorkerResponse::Done(report));
         }
     }
+}
+
+/// Runs every tool in `catalog`, sending a [`WorkerResponse::Progress`]
+/// after each one — the same overall effect as
+/// `orchestrator::run_tool_actions`, just with progress reporting woven
+/// through the loop instead of only returning a result at the very end.
+#[allow(clippy::too_many_arguments)]
+fn run_tools_with_progress(
+    catalog: &Catalog,
+    fs: &mut dyn kprm_engine::ports::FileSystem,
+    registry: &mut dyn kprm_engine::ports::Registry,
+    processes: &mut dyn kprm_engine::ports::ProcessManager,
+    commands: &mut dyn kprm_engine::ports::CommandRunner,
+    dirs: &dyn KnownDirs,
+    options: &RunOptions,
+    response_tx: &Sender<WorkerResponse>,
+) -> Report {
+    let mut report = Report::default();
+    let tools = catalog.tools();
+    let total = tools.len();
+    for (index, tool) in tools.iter().enumerate() {
+        orchestrator::run_tool(
+            tool,
+            fs,
+            registry,
+            processes,
+            commands,
+            dirs,
+            options,
+            &mut report,
+        );
+        let _ = response_tx.send(WorkerResponse::Progress {
+            current: index + 1,
+            total,
+        });
+    }
+    report
 }
 
 fn report_title(dirs: &kprm_windows::EnvKnownDirs) -> Vec<String> {

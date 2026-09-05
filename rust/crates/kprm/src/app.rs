@@ -51,6 +51,11 @@ pub struct KprmApp {
 
     status: String,
     busy: bool,
+    /// `(processed, total)` tools, updated during a scan or a real
+    /// "Supprimer les outils" pass — `None` while busy with a step that
+    /// doesn't report fine-grained progress (backup, restore points, UAC,
+    /// settings), or while idle.
+    progress: Option<(usize, usize)>,
 
     scan_results: Vec<(Event, bool)>,
 
@@ -59,14 +64,27 @@ pub struct KprmApp {
     /// of restarting unconditionally like the original did.
     show_restart_dialog: bool,
 
+    /// Gates the whole app behind the startup disclaimer (see
+    /// [`KprmApp::ui_disclaimer`]) until accepted, matching the original.
+    disclaimer_accepted: bool,
+
+    /// Loaded once at startup from the detected OS locale (see
+    /// `main.rs`) — every UI string except the "KpRm"/"by kernel-panik"
+    /// brand text and the crypto addresses goes through [`KprmApp::t`]/
+    /// [`KprmApp::tf`] instead of a hardcoded literal.
+    t: kprm_i18n::Translations,
+
     request_tx: Sender<WorkerRequest>,
     response_rx: Receiver<WorkerResponse>,
 }
 
-impl Default for KprmApp {
-    fn default() -> Self {
+impl KprmApp {
+    pub fn new(translations: kprm_i18n::Translations) -> Self {
         let (response_tx, response_rx) = std::sync::mpsc::channel();
         let request_tx = worker::spawn(response_tx);
+        let status = translations
+            .get("status-ready")
+            .unwrap_or_else(|_| "Ready".to_string());
         Self {
             tab: Tab::Automatic,
             opt_remove_tools: true,
@@ -76,13 +94,31 @@ impl Default for KprmApp {
             opt_restore_uac: false,
             opt_restore_settings: false,
             quarantine_choice: QuarantineChoice::Keep,
-            status: "Prêt".to_string(),
+            status,
             busy: false,
+            progress: None,
             scan_results: Vec::new(),
             show_restart_dialog: false,
+            disclaimer_accepted: false,
+            t: translations,
             request_tx,
             response_rx,
         }
+    }
+
+    /// Looks up `key` in the current locale, falling back to the raw key
+    /// itself if somehow missing — this must never panic, even if a key
+    /// was mistyped somewhere, since it runs on every frame.
+    fn t(&self, key: &str) -> String {
+        self.t.get(key).unwrap_or_else(|_| key.to_string())
+    }
+
+    /// Like [`KprmApp::t`], with `{ $name }` placeables filled in from
+    /// `args`.
+    fn tf(&self, key: &str, args: &[(&str, &str)]) -> String {
+        self.t
+            .get_fmt(key, args)
+            .unwrap_or_else(|_| key.to_string())
     }
 }
 
@@ -184,6 +220,12 @@ fn action_row(
 /// Dans 7 jours). Uses `ui.add_sized` for the button's footprint; the
 /// description is a hover tooltip instead of a second line, keeping this a
 /// plain `Button`.
+/// Returns `true` when this click just changed `choice` to `value` — the
+/// caller uses this to auto-check "Supprimer les outils" when a quarantine
+/// mode other than "Conserver" is picked (original spec §2.2: each of
+/// "Supprimer maintenant"/"Dans 7 jours" auto-selects it, since quarantine
+/// only has any effect inside tool removal in the first place — picking
+/// one without it silently did nothing before this).
 fn quarantine_segment(
     ui: &mut egui::Ui,
     choice: &mut QuarantineChoice,
@@ -191,7 +233,7 @@ fn quarantine_segment(
     title: &str,
     subtitle: &str,
     width: f32,
-) {
+) -> bool {
     let selected = *choice == value;
     let (bg, border, text_color) = if selected {
         (theme::BLUE_BG, theme::BLUE, theme::TEXT_1)
@@ -213,20 +255,35 @@ fn quarantine_segment(
         .on_hover_text(subtitle);
     if response.clicked() {
         *choice = value;
+        true
+    } else {
+        false
     }
 }
 
 impl KprmApp {
     fn poll_worker(&mut self) {
-        if let Ok(response) = self.response_rx.try_recv() {
-            self.busy = false;
+        // Drained in a loop rather than once: progress messages can arrive
+        // faster than this is polled, and the final Done/Failed must never
+        // be missed behind a backlog of Progress ones.
+        while let Ok(response) = self.response_rx.try_recv() {
             match response {
+                WorkerResponse::Progress { current, total } => {
+                    self.progress = Some((current, total));
+                }
                 WorkerResponse::Done(report) => {
-                    self.status = format!("Terminé — {} événement(s)", report.events.len());
+                    self.busy = false;
+                    self.progress = None;
+                    self.status = self.tf(
+                        "status-done",
+                        &[("count", &report.events.len().to_string())],
+                    );
                     self.handle_report(report);
                 }
                 WorkerResponse::Failed(message) => {
-                    self.status = format!("Échec : {message}");
+                    self.busy = false;
+                    self.progress = None;
+                    self.status = format!("{} : {message}", self.t("fail"));
                 }
             }
         }
@@ -261,6 +318,50 @@ impl KprmApp {
         }
     }
 
+    /// The startup "AS IS, no warranty, no commercial use" disclaimer —
+    /// see [`KprmApp::disclaimer_accepted`]. Declining closes the window
+    /// immediately, matching the original's `Exit` on "No".
+    fn ui_disclaimer(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        let title = self.t("eula-title");
+        let body = self.t("eula-body");
+        let accept_label = self.t("eula-accept");
+        let decline_label = self.t("eula-decline");
+        ui.vertical_centered(|ui| {
+            ui.add_space(20.0);
+            ui.label(
+                egui::RichText::new(title)
+                    .size(17.0)
+                    .strong()
+                    .color(theme::TEXT_1),
+            );
+            ui.add_space(16.0);
+            ui.add(
+                egui::Label::new(egui::RichText::new(body).size(13.0).color(theme::TEXT_2)).wrap(),
+            );
+            ui.add_space(24.0);
+            ui.horizontal(|ui| {
+                let accept = egui::Button::new(
+                    egui::RichText::new(accept_label)
+                        .strong()
+                        .color(Color32::from_rgb(0x10, 0x2a, 0x1c)),
+                )
+                .fill(theme::GREEN)
+                .min_size(Vec2::new(90.0, 32.0));
+                if ui.add(accept).clicked() {
+                    self.disclaimer_accepted = true;
+                }
+                ui.add_space(8.0);
+                let decline =
+                    egui::Button::new(egui::RichText::new(decline_label).color(Color32::WHITE))
+                        .fill(theme::RED)
+                        .min_size(Vec2::new(90.0, 32.0));
+                if ui.add(decline).clicked() {
+                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                }
+            });
+        });
+    }
+
     /// The "Redémarrage nécessaire" prompt — shown after a real run left
     /// something scheduled for deletion on next boot (see
     /// [`Report::needs_restart`]). Mirrors `docs/design/Restart.dc.html`;
@@ -270,6 +371,12 @@ impl KprmApp {
         if !self.show_restart_dialog {
             return;
         }
+
+        let title = self.t("restart-dialog-title");
+        let body = self.t("restart-dialog-body");
+        let restart_label = self.t("restart-now-button");
+        let later_label = self.t("restart-later-button");
+        let fail_label = self.t("fail");
 
         egui::Window::new("restart_dialog")
             .title_bar(false)
@@ -286,28 +393,20 @@ impl KprmApp {
             .show(ctx, |ui| {
                 ui.set_width(340.0);
                 ui.label(
-                    egui::RichText::new("Redémarrage nécessaire")
+                    egui::RichText::new(title)
                         .size(15.0)
                         .strong()
                         .color(theme::TEXT_1),
                 );
                 ui.add_space(8.0);
                 ui.add(
-                    egui::Label::new(
-                        egui::RichText::new(
-                            "Certains éléments n'ont pu être supprimés qu'au prochain \
-                             démarrage de Windows. Redémarrer maintenant pour terminer \
-                             le nettoyage ?",
-                        )
-                        .size(12.0)
-                        .color(theme::TEXT_2),
-                    )
-                    .wrap(),
+                    egui::Label::new(egui::RichText::new(body).size(12.0).color(theme::TEXT_2))
+                        .wrap(),
                 );
                 ui.add_space(16.0);
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let restart_button = egui::Button::new(
-                        egui::RichText::new("Redémarrer maintenant")
+                        egui::RichText::new(restart_label)
                             .strong()
                             .color(Color32::from_rgb(0x2a, 0x1a, 0x08)),
                     )
@@ -316,12 +415,12 @@ impl KprmApp {
                     if ui.add(restart_button).clicked() {
                         self.show_restart_dialog = false;
                         if let Err(err) = kprm_windows::reboot_machine() {
-                            self.status = format!("Échec du redémarrage : {err}");
+                            self.status = format!("{fail_label} : {err}");
                         }
                     }
                     ui.add_space(8.0);
                     let later_button =
-                        egui::Button::new(egui::RichText::new("Plus tard").color(theme::TEXT_2))
+                        egui::Button::new(egui::RichText::new(later_label).color(theme::TEXT_2))
                             .fill(theme::BG_PANEL)
                             .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
                             .min_size(Vec2::new(90.0, 32.0));
@@ -407,14 +506,15 @@ impl KprmApp {
                     .inner_margin(Margin::symmetric(16.0, 10.0)),
             )
             .show(ctx, |ui| {
+                let tabs = [
+                    (Tab::Automatic, self.t("auto")),
+                    (Tab::Custom, self.t("custom")),
+                    (Tab::ExtraTools, self.t("tab-extra-tools")),
+                    (Tab::Donate, self.t("tab-donate")),
+                ];
                 let mut selected_rect = None;
                 ui.horizontal(|ui| {
-                    for (tab, label) in [
-                        (Tab::Automatic, "Automatique"),
-                        (Tab::Custom, "Analyse personnalisée"),
-                        (Tab::ExtraTools, "Outils +"),
-                        (Tab::Donate, "Dons"),
-                    ] {
+                    for (tab, label) in tabs {
                         let selected = self.tab == tab;
                         let color = if selected {
                             theme::TEXT_1
@@ -464,7 +564,7 @@ impl KprmApp {
                     let (rect, _) = ui.allocate_exact_size(Vec2::splat(8.0), Sense::hover());
                     ui.painter().circle_filled(rect.center(), 4.0, dot_color);
                     ui.add_space(4.0);
-                    if self.busy {
+                    if self.busy && self.progress.is_none() {
                         ui.spinner();
                     }
                     ui.monospace(
@@ -472,6 +572,20 @@ impl KprmApp {
                             .size(12.0)
                             .color(theme::TEXT_2),
                     );
+
+                    if let Some((current, total)) = self.progress {
+                        ui.add_space(10.0);
+                        let fraction = if total == 0 {
+                            0.0
+                        } else {
+                            current as f32 / total as f32
+                        };
+                        ui.add(
+                            egui::ProgressBar::new(fraction)
+                                .desired_width(160.0)
+                                .text(format!("{current}/{total}")),
+                        );
+                    }
                 });
             });
     }
@@ -479,12 +593,29 @@ impl KprmApp {
     fn ui_automatic(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
         ui.label(
-            egui::RichText::new("ACTIONS")
+            egui::RichText::new(self.t("actions").to_uppercase())
                 .size(11.0)
                 .strong()
                 .color(theme::TEXT_3),
         );
         ui.add_space(8.0);
+
+        // Every row's title/description is resolved to an owned String up
+        // front: the `with_layout` closures below need `&mut self.opt_*`
+        // (a field borrow), so nothing inside them can also call
+        // `self.t(...)` (a whole-`self` borrow) without conflicting.
+        let remove_tools_title = self.t("delete-tools");
+        let remove_tools_desc = self.t("action-remove-tools-desc");
+        let backup_registry_title = self.t("save-registry");
+        let backup_registry_desc = self.t("action-backup-registry-desc");
+        let remove_restore_points_title = self.t("delete-system-restore-points");
+        let remove_restore_points_desc = self.t("action-remove-restore-points-desc");
+        let create_restore_point_title = self.t("create-restore-point");
+        let create_restore_point_desc = self.t("action-create-restore-point-desc");
+        let restore_uac_title = self.t("restore-uac");
+        let restore_uac_desc = self.t("action-restore-uac-desc");
+        let restore_settings_title = self.t("restore-settings");
+        let restore_settings_desc = self.t("action-restore-settings-desc");
 
         // 2-column layout, `half` computed once here (the one place that
         // legitimately knows the real available width) and threaded
@@ -507,8 +638,8 @@ impl KprmApp {
                 theme::BLUE_BG,
                 theme::BLUE,
                 "T",
-                "Supprimer les outils",
-                "Fichiers, clés et tâches détectés",
+                &remove_tools_title,
+                &remove_tools_desc,
                 half,
             );
             action_row(
@@ -517,8 +648,8 @@ impl KprmApp {
                 theme::GREEN_BG,
                 theme::GREEN,
                 "R",
-                "Sauvegarder le registre",
-                "SOFTWARE et NTUSER.DAT vers %HOMEDRIVE%\\KPRM\\backup",
+                &backup_registry_title,
+                &backup_registry_desc,
                 half,
             );
         });
@@ -530,8 +661,8 @@ impl KprmApp {
                 theme::BLUE_BG,
                 theme::BLUE,
                 "P",
-                "Supprimer les points de restauration",
-                "Désactive puis réactive la protection système",
+                &remove_restore_points_title,
+                &remove_restore_points_desc,
                 half,
             );
             action_row(
@@ -540,8 +671,8 @@ impl KprmApp {
                 theme::GREEN_BG,
                 theme::GREEN,
                 "+",
-                "Créer un point de restauration",
-                "Peut échouer si Windows en a déjà créé un aujourd'hui",
+                &create_restore_point_title,
+                &create_restore_point_desc,
                 half,
             );
         });
@@ -553,8 +684,8 @@ impl KprmApp {
                 theme::BLUE_BG,
                 theme::BLUE,
                 "U",
-                "Restaurer UAC",
-                "Valeurs par défaut Windows",
+                &restore_uac_title,
+                &restore_uac_desc,
                 half,
             );
             action_row(
@@ -563,20 +694,26 @@ impl KprmApp {
                 theme::BLUE_BG,
                 theme::BLUE,
                 "S",
-                "Restaurer les paramètres système",
-                "Réseau, DNS, options Explorer",
+                &restore_settings_title,
+                &restore_settings_desc,
                 half,
             );
         });
 
         ui.add_space(14.0);
         ui.label(
-            egui::RichText::new("QUARANTAINE")
+            egui::RichText::new(self.t("quarantine-section-title"))
                 .size(11.0)
                 .strong()
                 .color(theme::TEXT_3),
         );
         ui.add_space(8.0);
+        let keep_title = self.t("quarantine-keep");
+        let keep_desc = self.t("quarantine-keep-desc");
+        let now_title = self.t("remove-now");
+        let now_desc = self.t("quarantine-now-desc");
+        let seven_days_title = self.t("quarantine-7-days");
+        let seven_days_desc = self.t("quarantine-7-days-desc");
         let seg_gap = ui.spacing().item_spacing.x;
         let seg_width = (ui.available_width() - seg_gap * 2.0) / 3.0;
         ui.horizontal(|ui| {
@@ -584,26 +721,30 @@ impl KprmApp {
                 ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::Keep,
-                "Conserver",
-                "Aucune suppression",
+                &keep_title,
+                &keep_desc,
                 seg_width,
             );
-            quarantine_segment(
+            if quarantine_segment(
                 ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::Now,
-                "Maintenant",
-                "Suppression immédiate",
+                &now_title,
+                &now_desc,
                 seg_width,
-            );
-            quarantine_segment(
+            ) {
+                self.opt_remove_tools = true;
+            }
+            if quarantine_segment(
                 ui,
                 &mut self.quarantine_choice,
                 QuarantineChoice::In7Days,
-                "Dans 7 jours",
-                "Planifié, annulable",
+                &seven_days_title,
+                &seven_days_desc,
                 seg_width,
-            );
+            ) {
+                self.opt_remove_tools = true;
+            }
         });
 
         ui.add_space(16.0);
@@ -615,7 +756,7 @@ impl KprmApp {
                 || self.opt_create_restore_point
                 || self.opt_backup_registry);
         let run_button = egui::Button::new(
-            egui::RichText::new("Exécuter")
+            egui::RichText::new(self.t("run"))
                 .strong()
                 .color(Color32::from_rgb(0x10, 0x2a, 0x1c)),
         )
@@ -623,7 +764,7 @@ impl KprmApp {
         .min_size(Vec2::new(120.0, 34.0));
         if ui.add_enabled(can_run, run_button).clicked() {
             self.busy = true;
-            self.status = "Exécution en cours...".to_string();
+            self.status = self.t("status-running");
             let _ = self.request_tx.send(WorkerRequest::RunAutomatic {
                 backup_registry: self.opt_backup_registry,
                 remove_tools: self.opt_remove_tools,
@@ -637,46 +778,55 @@ impl KprmApp {
         if !can_run {
             ui.add_space(4.0);
             ui.label(
-                egui::RichText::new(
-                    "Cochez au moins une action implémentée pour activer ce bouton.",
-                )
-                .size(10.5)
-                .color(theme::TEXT_3),
+                egui::RichText::new(self.t("no-option-selected"))
+                    .size(10.5)
+                    .color(theme::TEXT_3),
             );
         }
     }
 
     fn ui_custom(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
+        let found = self.scan_results.len();
+        let selected_count = self
+            .scan_results
+            .iter()
+            .filter(|(_, checked)| *checked)
+            .count();
+        let counts_label = self.tf(
+            "custom-counts",
+            &[
+                ("found", &found.to_string()),
+                ("selected", &selected_count.to_string()),
+            ],
+        );
+        let select_all_label = self.t("all");
+        let select_none_label = self.t("no-element");
+        let clear_label = self.t("empty");
         ui.horizontal(|ui| {
-            let found = self.scan_results.len();
-            let selected = self
-                .scan_results
-                .iter()
-                .filter(|(_, checked)| *checked)
-                .count();
             ui.label(
-                egui::RichText::new(format!("{found} détecté(s) · {selected} sélectionné(s)"))
+                egui::RichText::new(counts_label)
                     .size(13.0)
                     .color(theme::TEXT_1),
             );
             ui.add_space(8.0);
-            if ui.button("Tout").clicked() {
+            if ui.button(select_all_label).clicked() {
                 for (_, checked) in &mut self.scan_results {
                     *checked = true;
                 }
             }
-            if ui.button("Aucun").clicked() {
+            if ui.button(select_none_label).clicked() {
                 for (_, checked) in &mut self.scan_results {
                     *checked = false;
                 }
             }
-            if ui.button("Vider").clicked() {
+            if ui.button(clear_label).clicked() {
                 self.scan_results.clear();
             }
         });
 
         ui.add_space(8.0);
+        let empty_hint = self.t("custom-empty-hint");
         Frame::none()
             .fill(theme::BG_PANEL)
             .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
@@ -692,10 +842,7 @@ impl KprmApp {
                         if self.scan_results.is_empty() {
                             ui.add_space(20.0);
                             ui.vertical_centered(|ui| {
-                                ui.label(
-                                    egui::RichText::new("Aucun résultat — cliquez sur Analyser.")
-                                        .color(theme::TEXT_3),
-                                );
+                                ui.label(egui::RichText::new(empty_hint).color(theme::TEXT_3));
                             });
                             ui.add_space(20.0);
                         }
@@ -727,35 +874,41 @@ impl KprmApp {
             });
 
         ui.add_space(10.0);
+        let search_label = self.t("search");
+        let selected: Vec<(String, String)> = self
+            .scan_results
+            .iter()
+            .filter(|(_, checked)| *checked)
+            .map(|(e, _)| (e.tool.clone(), e.target.clone()))
+            .collect();
+        let remove_selection_label = self.tf(
+            "remove-selection-button",
+            &[("count", &selected.len().to_string())],
+        );
+        let scanning_status = self.t("status-scanning");
+        let removing_status = self.t("status-removing");
         ui.horizontal(|ui| {
             if ui
                 .add_enabled(
                     !self.busy,
-                    egui::Button::new("Analyser").min_size(Vec2::new(0.0, 32.0)),
+                    egui::Button::new(search_label).min_size(Vec2::new(0.0, 32.0)),
                 )
                 .clicked()
             {
                 self.busy = true;
-                self.status = "Analyse en cours...".to_string();
+                self.status = scanning_status;
                 let _ = self.request_tx.send(WorkerRequest::Scan);
             }
 
-            let selected: Vec<(String, String)> = self
-                .scan_results
-                .iter()
-                .filter(|(_, checked)| *checked)
-                .map(|(e, _)| (e.tool.clone(), e.target.clone()))
-                .collect();
             let can_remove = !self.busy && !selected.is_empty();
             let remove_button = egui::Button::new(
-                egui::RichText::new(format!("Supprimer la sélection ({})", selected.len()))
-                    .color(Color32::WHITE),
+                egui::RichText::new(remove_selection_label).color(Color32::WHITE),
             )
             .fill(theme::RED)
             .min_size(Vec2::new(0.0, 32.0));
             if ui.add_enabled(can_remove, remove_button).clicked() {
                 self.busy = true;
-                self.status = "Suppression en cours...".to_string();
+                self.status = removing_status;
                 let _ = self
                     .request_tx
                     .send(WorkerRequest::RemoveSelected(selected));
@@ -766,14 +919,14 @@ impl KprmApp {
     fn ui_extra_tools(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
         ui.label(
-            egui::RichText::new("OUTILS SUPPLÉMENTAIRES")
+            egui::RichText::new(self.t("tab-extra-tools").to_uppercase())
                 .size(11.0)
                 .strong()
                 .color(theme::TEXT_3),
         );
         ui.add_space(10.0);
         ui.label(
-            egui::RichText::new("Aucun outil configuré pour le moment — liste à définir.")
+            egui::RichText::new(self.t("extra-tools-empty"))
                 .size(12.0)
                 .color(theme::TEXT_2),
         );
@@ -782,26 +935,27 @@ impl KprmApp {
     fn ui_donate(&mut self, ui: &mut egui::Ui) {
         ui.add_space(4.0);
         ui.label(
-            egui::RichText::new("SOUTENIR LE PROJET")
+            egui::RichText::new(self.t("tab-donate").to_uppercase())
                 .size(11.0)
                 .strong()
                 .color(theme::TEXT_3),
         );
         ui.add_space(10.0);
         ui.label(
-            egui::RichText::new("KpRm est gratuit, open-source, et le restera.")
+            egui::RichText::new(self.t("donate-body"))
                 .size(12.0)
                 .color(theme::TEXT_2),
         );
         ui.add_space(8.0);
-        donation_address_row(ui, "Bitcoin (BTC)", BTC_ADDRESS);
+        let copy_label = self.t("copy-button");
+        donation_address_row(ui, "Bitcoin (BTC)", BTC_ADDRESS, &copy_label);
         ui.add_space(10.0);
-        donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS);
+        donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS, &copy_label);
     }
 }
 
 /// One "label + monospace address + copy button" row in the Donate tab.
-fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str) {
+fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str, copy_label: &str) {
     ui.label(
         egui::RichText::new(label)
             .size(11.0)
@@ -811,7 +965,7 @@ fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str) {
     ui.add_space(4.0);
     ui.horizontal(|ui| {
         ui.monospace(egui::RichText::new(address).color(theme::TEXT_1));
-        if ui.small_button("Copier").clicked() {
+        if ui.small_button(copy_label).clicked() {
             if let Ok(mut clipboard) = arboard::Clipboard::new() {
                 let _ = clipboard.set_text(address);
             }
@@ -830,6 +984,23 @@ impl eframe::App for KprmApp {
         }
 
         self.title_bar(ctx);
+
+        // Gates everything else — the original shows this "AS IS, no
+        // commercial use" disclaimer before any UI, exiting immediately on
+        // "No" (spec §2.1.5); this is the one screen it never localized
+        // even in the original (English-only regardless of @OSLang), so
+        // it's translated properly here instead.
+        if !self.disclaimer_accepted {
+            egui::CentralPanel::default()
+                .frame(
+                    Frame::none()
+                        .fill(theme::BG)
+                        .inner_margin(Margin::symmetric(30.0, 24.0)),
+                )
+                .show(ctx, |ui| self.ui_disclaimer(ui, ctx));
+            return;
+        }
+
         self.tab_bar(ctx);
         self.footer(ctx);
 

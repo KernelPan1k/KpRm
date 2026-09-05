@@ -30,12 +30,31 @@ fn main() -> std::process::ExitCode {
         return std::process::ExitCode::SUCCESS;
     }
 
+    // Detected once, early, so both the "already running" message box and
+    // the GUI itself use the same locale — the real counterpart of the
+    // original's @OSLang-based Lang_XX() selection (kp_languages.au3).
+    let translations =
+        kprm_i18n::Translations::for_system_locale(&kprm_windows::user_locale_name());
+
+    // Single-instance guard (original: kprm_is_running.au3's named mutex),
+    // for the interactive paths only — deliberately not applied above to
+    // --quarantine-cleanup, unlike the original: that would block the
+    // unattended 7-day scheduled task from ever running its one job just
+    // because the interactive GUI happens to be open at the same time.
+    if kprm_windows::another_instance_is_running() {
+        let message = translations
+            .get("already-running")
+            .unwrap_or_else(|_| "KpRm is already running!".to_string());
+        kprm_windows::show_message_box("KpRm", &message);
+        return std::process::ExitCode::FAILURE;
+    }
+
     let cli = cli::Cli::parse();
     if let Some(command) = cli.command {
         return cli::run(command);
     }
 
-    match run_gui() {
+    match run_gui(translations) {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("GUI error: {err}");
@@ -50,7 +69,7 @@ fn quarantine_cleanup_arg() -> Option<String> {
     args.get(pos + 1).cloned()
 }
 
-fn run_gui() -> eframe::Result<()> {
+fn run_gui(translations: kprm_i18n::Translations) -> eframe::Result<()> {
     // The PE resource icon (build.rs + assets/icon.rc) is what Explorer and
     // the taskbar show before the window even exists; this sets the same
     // icon for the window/title-bar/Alt+Tab once it's running, since a
@@ -74,7 +93,7 @@ fn run_gui() -> eframe::Result<()> {
         Box::new(|cc| {
             theme::install_fonts(&cc.egui_ctx);
             theme::install_visuals(&cc.egui_ctx);
-            Ok(Box::<app::KprmApp>::default())
+            Ok(Box::new(app::KprmApp::new(translations)))
         }),
     )
 }
