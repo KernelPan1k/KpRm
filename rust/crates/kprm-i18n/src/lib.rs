@@ -71,6 +71,12 @@ impl Translations {
             .map_err(|e| I18nError::InvalidLanguageTag(locale.to_string(), e))?;
 
         let mut bundle = FluentBundle::new(vec![langid]);
+        // None of the 8 locales this ships are right-to-left, so the Unicode
+        // bidi-isolation marks Fluent wraps substituted variables in by
+        // default (U+2068/U+2069) would only be invisible clutter here —
+        // disabled rather than asserting on/stripping them everywhere a
+        // formatted string is compared or displayed.
+        bundle.set_use_isolating(false);
         bundle
             .add_resource(resource)
             .expect("each locale file is a single resource with no duplicate message ids");
@@ -86,9 +92,17 @@ impl Translations {
         Self::load(code).expect("resolve_locale only ever returns a supported, embedded locale")
     }
 
-    /// Looks up `key` and formats it (no arguments — every KpRm UI string is
-    /// a plain literal, ported as-is from the original `$lXxx` constants).
+    /// Looks up `key` and formats it (no arguments — every ported-as-is
+    /// original `$lXxx` string is a plain literal).
     pub fn get(&self, key: &str) -> Result<String, I18nError> {
+        self.get_fmt(key, &[])
+    }
+
+    /// Like [`Translations::get`], but with `{ $name }` placeables filled
+    /// in from `args` — for the handful of new (not ported from the
+    /// original) messages that embed a live count, e.g. `Terminé — { $count
+    /// } événement(s)`.
+    pub fn get_fmt(&self, key: &str, args: &[(&str, &str)]) -> Result<String, I18nError> {
         let message = self
             .bundle
             .get_message(key)
@@ -96,8 +110,14 @@ impl Translations {
         let pattern = message
             .value()
             .ok_or_else(|| I18nError::MissingKey(key.to_string()))?;
+        let mut fluent_args = fluent_bundle::FluentArgs::new();
+        for (name, value) in args {
+            fluent_args.set(*name, *value);
+        }
         let mut errors = Vec::new();
-        let value = self.bundle.format_pattern(pattern, None, &mut errors);
+        let value = self
+            .bundle
+            .format_pattern(pattern, Some(&fluent_args), &mut errors);
         Ok(value.into_owned())
     }
 }
@@ -183,6 +203,27 @@ mod tests {
         let fr = Translations::load("fr").unwrap();
         assert_eq!(fr.get("run").unwrap(), "Exécuter");
         assert_eq!(fr.get("no-tool").unwrap(), "Aucun outil trouvé");
+    }
+
+    #[test]
+    fn get_fmt_substitutes_variables_into_the_pattern() {
+        let fr = Translations::load("fr").unwrap();
+        assert_eq!(
+            fr.get_fmt("status-done", &[("count", "3")]).unwrap(),
+            "Terminé — 3 événement(s)"
+        );
+        assert_eq!(
+            fr.get_fmt("custom-counts", &[("found", "5"), ("selected", "2")])
+                .unwrap(),
+            "5 détecté(s) · 2 sélectionné(s)"
+        );
+
+        let en = Translations::load("en").unwrap();
+        assert_eq!(
+            en.get_fmt("remove-selection-button", &[("count", "4")])
+                .unwrap(),
+            "Remove selection (4)"
+        );
     }
 
     #[test]
