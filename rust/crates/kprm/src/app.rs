@@ -21,6 +21,16 @@ enum Tab {
     Donate,
 }
 
+/// Which body text [`KprmApp::restart_dialog`] shows — the same dialog is
+/// reused for a locked-file cleanup pass and for a registry restore, and
+/// the two deserve different wording (spec-free: registry restore is a
+/// new feature the original never had).
+#[derive(PartialEq, Eq, Clone, Copy)]
+enum RestartReason {
+    LockedFiles,
+    RegistryRestore,
+}
+
 #[derive(PartialEq, Clone, Copy)]
 enum QuarantineChoice {
     Keep,
@@ -63,6 +73,20 @@ pub struct KprmApp {
     /// on next boot — prompts the "Redémarrage nécessaire" dialog instead
     /// of restarting unconditionally like the original did.
     show_restart_dialog: bool,
+    /// Which wording [`KprmApp::restart_dialog`] shows — only meaningful
+    /// while `show_restart_dialog` is `true`.
+    restart_reason: RestartReason,
+
+    /// Previous registry backups found under `<home_drive>\KPRM\backup\`
+    /// (Extra Tools tab), refreshed on startup and via its "Rafraîchir"
+    /// button.
+    available_backups: Vec<kprm_engine::backup::AvailableBackup>,
+    selected_backup: Option<kprm_engine::backup::AvailableBackup>,
+    /// Set while the "are you sure?" dialog for restoring `selected_backup`
+    /// is open — restoring a hive is destructive and needs an explicit
+    /// confirmation on top of the button click, unlike every other action
+    /// here.
+    confirm_restore: Option<kprm_engine::backup::AvailableBackup>,
 
     /// Gates the whole app behind the startup disclaimer (see
     /// [`KprmApp::ui_disclaimer`]) until accepted, matching the original.
@@ -99,6 +123,12 @@ impl KprmApp {
             progress: None,
             scan_results: Vec::new(),
             show_restart_dialog: false,
+            restart_reason: RestartReason::LockedFiles,
+            available_backups: kprm_windows::list_registry_backups(
+                &kprm_windows::EnvKnownDirs::detect(),
+            ),
+            selected_backup: None,
+            confirm_restore: None,
             disclaimer_accepted: false,
             t: translations,
             request_tx,
@@ -300,6 +330,15 @@ impl KprmApp {
             self.scan_results = report.events.into_iter().map(|e| (e, true)).collect();
         } else {
             if report.needs_restart() {
+                self.restart_reason = if report
+                    .events
+                    .iter()
+                    .any(|e| e.action_type == "registry_restore")
+                {
+                    RestartReason::RegistryRestore
+                } else {
+                    RestartReason::LockedFiles
+                };
                 self.show_restart_dialog = true;
             }
             let handled: HashSet<String> = report
@@ -373,7 +412,10 @@ impl KprmApp {
         }
 
         let title = self.t("restart-dialog-title");
-        let body = self.t("restart-dialog-body");
+        let body = match self.restart_reason {
+            RestartReason::LockedFiles => self.t("restart-dialog-body"),
+            RestartReason::RegistryRestore => self.t("restore-restart-dialog-body"),
+        };
         let restart_label = self.t("restart-now-button");
         let later_label = self.t("restart-later-button");
         let fail_label = self.t("fail");
@@ -925,11 +967,180 @@ impl KprmApp {
                 .color(theme::TEXT_3),
         );
         ui.add_space(10.0);
+
+        ui.label(
+            egui::RichText::new(self.t("restore-registry-title"))
+                .size(13.0)
+                .strong()
+                .color(theme::TEXT_1),
+        );
+        ui.add_space(4.0);
+        ui.add(
+            egui::Label::new(
+                egui::RichText::new(self.t("restore-registry-intro"))
+                    .size(11.0)
+                    .color(theme::TEXT_3),
+            )
+            .wrap(),
+        );
+        ui.add_space(8.0);
+
+        let refresh_label = self.t("restore-registry-refresh");
+        if ui.button(refresh_label).clicked() {
+            self.available_backups =
+                kprm_windows::list_registry_backups(&kprm_windows::EnvKnownDirs::detect());
+        }
+
+        ui.add_space(8.0);
+        let empty_hint = self.t("restore-registry-empty");
+        // Precomputed rather than borrowed from self, since the loop below
+        // both reads it and needs to mutate self.selected_backup — see
+        // the same pattern in ui_custom/ui_automatic.
+        let backups = self.available_backups.clone();
+        Frame::none()
+            .fill(theme::BG_PANEL)
+            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+            .rounding(theme::RADIUS)
+            .inner_margin(Margin::same(6.0))
+            .show(ui, |ui| {
+                let w = ui.available_width();
+                ui.set_min_width(w);
+                ui.set_max_width(w);
+                egui::ScrollArea::vertical()
+                    .max_height(200.0)
+                    .show(ui, |ui| {
+                        if backups.is_empty() {
+                            ui.add_space(20.0);
+                            ui.vertical_centered(|ui| {
+                                ui.label(egui::RichText::new(&empty_hint).color(theme::TEXT_3));
+                            });
+                            ui.add_space(20.0);
+                        }
+                        for backup in &backups {
+                            ui.horizontal(|ui| {
+                                let is_selected = self.selected_backup.as_ref() == Some(backup);
+                                if ui
+                                    .radio(is_selected, format_backup_timestamp(&backup.timestamp))
+                                    .clicked()
+                                {
+                                    self.selected_backup = Some(backup.clone());
+                                }
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Center),
+                                    |ui| {
+                                        if backup.has_software {
+                                            ui.label(
+                                                egui::RichText::new("SOFTWARE")
+                                                    .size(10.0)
+                                                    .color(theme::TEXT_3),
+                                            );
+                                        }
+                                        if backup.has_ntuser {
+                                            ui.label(
+                                                egui::RichText::new("NTUSER.DAT")
+                                                    .size(10.0)
+                                                    .color(theme::TEXT_3),
+                                            );
+                                        }
+                                    },
+                                );
+                            });
+                        }
+                    });
+            });
+
+        ui.add_space(10.0);
+        let restore_label = self.t("restore-registry-button");
+        let can_restore = !self.busy && self.selected_backup.is_some();
+        let restore_button =
+            egui::Button::new(egui::RichText::new(restore_label).color(Color32::WHITE))
+                .fill(theme::RED)
+                .min_size(Vec2::new(0.0, 32.0));
+        if ui.add_enabled(can_restore, restore_button).clicked() {
+            self.confirm_restore.clone_from(&self.selected_backup);
+        }
+
+        ui.add_space(16.0);
+        ui.separator();
+        ui.add_space(8.0);
         ui.label(
             egui::RichText::new(self.t("extra-tools-empty"))
-                .size(12.0)
-                .color(theme::TEXT_2),
+                .size(11.0)
+                .color(theme::TEXT_3),
         );
+    }
+
+    /// The "are you sure?" gate in front of a registry restore — this is
+    /// the one action in the whole app that overwrites live system state
+    /// wholesale and can't be undone, so it gets an explicit confirmation
+    /// on top of the button click, unlike every other action here.
+    fn restore_confirm_dialog(&mut self, ctx: &egui::Context) {
+        let Some(backup) = self.confirm_restore.clone() else {
+            return;
+        };
+
+        let title = self.t("restore-registry-confirm-title");
+        let body = self.tf(
+            "restore-registry-confirm-body",
+            &[("date", &format_backup_timestamp(&backup.timestamp))],
+        );
+        let confirm_label = self.t("restore-registry-confirm-button");
+        let cancel_label = self.t("restore-registry-cancel-button");
+        let restoring_status = self.t("status-restoring");
+
+        egui::Window::new("restore_confirm_dialog")
+            .title_bar(false)
+            .collapsible(false)
+            .resizable(false)
+            .anchor(egui::Align2::CENTER_CENTER, Vec2::ZERO)
+            .frame(
+                Frame::none()
+                    .fill(theme::BG_ELEVATED)
+                    .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+                    .rounding(theme::RADIUS)
+                    .inner_margin(Margin::same(20.0)),
+            )
+            .show(ctx, |ui| {
+                ui.set_width(360.0);
+                ui.label(
+                    egui::RichText::new(title)
+                        .size(15.0)
+                        .strong()
+                        .color(theme::TEXT_1),
+                );
+                ui.add_space(8.0);
+                ui.add(
+                    egui::Label::new(egui::RichText::new(body).size(12.0).color(theme::TEXT_2))
+                        .wrap(),
+                );
+                ui.add_space(16.0);
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    let confirm_button = egui::Button::new(
+                        egui::RichText::new(confirm_label)
+                            .strong()
+                            .color(Color32::WHITE),
+                    )
+                    .fill(theme::RED)
+                    .min_size(Vec2::new(120.0, 32.0));
+                    if ui.add(confirm_button).clicked() {
+                        self.confirm_restore = None;
+                        self.busy = true;
+                        self.status = restoring_status;
+                        let _ = self
+                            .request_tx
+                            .send(WorkerRequest::RestoreRegistryBackup(backup.clone()));
+                    }
+                    ui.add_space(8.0);
+                    let cancel_button =
+                        egui::Button::new(egui::RichText::new(cancel_label).color(theme::TEXT_2))
+                            .fill(theme::BG_PANEL)
+                            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
+                            .min_size(Vec2::new(90.0, 32.0));
+                    if ui.add(cancel_button).clicked() {
+                        self.confirm_restore = None;
+                    }
+                });
+            });
     }
 
     fn ui_donate(&mut self, ui: &mut egui::Ui) {
@@ -952,6 +1163,28 @@ impl KprmApp {
         ui.add_space(10.0);
         donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS, &copy_label);
     }
+}
+
+/// Turns a `current_timestamp()`-style value (`YYYYMMDDHHMMSS`) into a
+/// readable `YYYY-MM-DD HH:MM:SS` string for display — kept in this
+/// unpunctuated, locale-agnostic form rather than routed through
+/// `kprm-i18n`, since a plain sortable date needs no translation. Falls
+/// back to the raw value if it isn't exactly 14 digits (should never
+/// happen — backup folder names are always written by
+/// `kprm_windows::current_timestamp()`).
+fn format_backup_timestamp(timestamp: &str) -> String {
+    if timestamp.len() != 14 || !timestamp.bytes().all(|b| b.is_ascii_digit()) {
+        return timestamp.to_string();
+    }
+    format!(
+        "{}-{}-{} {}:{}:{}",
+        &timestamp[0..4],
+        &timestamp[4..6],
+        &timestamp[6..8],
+        &timestamp[8..10],
+        &timestamp[10..12],
+        &timestamp[12..14],
+    )
 }
 
 /// One "label + monospace address + copy button" row in the Donate tab.
@@ -1018,5 +1251,6 @@ impl eframe::App for KprmApp {
             });
 
         self.restart_dialog(ctx);
+        self.restore_confirm_dialog(ctx);
     }
 }

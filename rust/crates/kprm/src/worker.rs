@@ -28,6 +28,9 @@ pub enum WorkerRequest {
     /// "Supprimer la sélection": force-delete a fixed list of previously
     /// found `(tool, target)` pairs.
     RemoveSelected(Vec<(String, String)>),
+    /// "Restaurer" (Extra Tools tab): schedules a previous registry
+    /// backup's hive files to replace the live ones at next boot.
+    RestoreRegistryBackup(kprm_engine::backup::AvailableBackup),
 }
 
 pub enum WorkerResponse {
@@ -295,6 +298,35 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             kprm_windows::schedule_self_deletion(report.needs_restart());
+            let _ = response_tx.send(WorkerResponse::Done(report));
+        }
+
+        WorkerRequest::RestoreRegistryBackup(backup) => {
+            let targets = backup::restore_plan(&backup, &dirs);
+            let outcomes = kprm_windows::schedule_registry_restore(&targets);
+
+            let mut report = Report::default();
+            for outcome in outcomes {
+                report.push(
+                    "Restauration du registre",
+                    "registry_restore",
+                    outcome.description,
+                    if outcome.scheduled {
+                        kprm_engine::report::EventResult::ScheduledOnReboot
+                    } else {
+                        kprm_engine::report::EventResult::Failed(
+                            "fichier de sauvegarde introuvable, ou échec de la planification"
+                                .to_string(),
+                        )
+                    },
+                );
+            }
+            // A technician restoring a client's registry wants a paper
+            // trail like any other real action — but this never triggers
+            // schedule_self_deletion(), unlike RunAutomatic/RemoveSelected:
+            // that behavior is specific to an actual cleanup run, and this
+            // is a new, unrelated administrative feature.
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             let _ = response_tx.send(WorkerResponse::Done(report));
         }
     }
