@@ -794,11 +794,25 @@ impl KprmApp {
                 .color(theme::TEXT_2),
         );
         ui.add_space(8.0);
-        ui.monospace(
-            egui::RichText::new("Bitcoin (BTC) : [ adresse à renseigner ]").color(theme::TEXT_1),
+        ui.label(
+            egui::RichText::new("Bitcoin (BTC)")
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
         );
+        ui.add_space(4.0);
+        ui.horizontal(|ui| {
+            ui.monospace(egui::RichText::new(BTC_ADDRESS).color(theme::TEXT_1));
+            if ui.small_button("Copier").clicked() {
+                if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                    let _ = clipboard.set_text(BTC_ADDRESS);
+                }
+            }
+        });
     }
 }
+
+const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
 
 impl eframe::App for KprmApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {

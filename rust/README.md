@@ -78,7 +78,7 @@ French-only (see the note below) — with four tabs:
   each item, and deletes only what you select
 - **Outils +** ("Extra Tools"): reserved for additional tools, not yet
   populated
-- **Dons** ("Donate"): a placeholder for supporting the project
+- **Dons** ("Donate"): a Bitcoin address for supporting the project, with a one-click copy button
 
 > **Note on language**: the GUI's own text is French-only right now.
 > `kprm-i18n` embeds translations for 8 languages (French, English,
