@@ -21,4 +21,6 @@ windows = { version = "0.58", features = [
     "Win32_System_Shutdown",
     "Win32_System_Registry",
     "Win32_Security",
+    "Win32_Globalization",
+    "Win32_UI_WindowsAndMessaging",
 ] }

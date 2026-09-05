@@ -49,7 +49,7 @@ fn clear_attributes(path: &str) {
 /// Schedules `path` for deletion at next boot via
 /// `MoveFileEx(..., MOVEFILE_DELAY_UNTIL_REBOOT)` — the same mechanism the
 /// original used as a last resort for locked files.
-fn schedule_delete_on_reboot(path: &str) {
+pub(crate) fn schedule_delete_on_reboot(path: &str) {
     let w = wide(path);
     unsafe {
         let _ = MoveFileExW(
