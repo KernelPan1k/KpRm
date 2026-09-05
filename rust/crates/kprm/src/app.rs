@@ -794,25 +794,33 @@ impl KprmApp {
                 .color(theme::TEXT_2),
         );
         ui.add_space(8.0);
-        ui.label(
-            egui::RichText::new("Bitcoin (BTC)")
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(4.0);
-        ui.horizontal(|ui| {
-            ui.monospace(egui::RichText::new(BTC_ADDRESS).color(theme::TEXT_1));
-            if ui.small_button("Copier").clicked() {
-                if let Ok(mut clipboard) = arboard::Clipboard::new() {
-                    let _ = clipboard.set_text(BTC_ADDRESS);
-                }
-            }
-        });
+        donation_address_row(ui, "Bitcoin (BTC)", BTC_ADDRESS);
+        ui.add_space(10.0);
+        donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS);
     }
 }
 
+/// One "label + monospace address + copy button" row in the Donate tab.
+fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str) {
+    ui.label(
+        egui::RichText::new(label)
+            .size(11.0)
+            .strong()
+            .color(theme::TEXT_3),
+    );
+    ui.add_space(4.0);
+    ui.horizontal(|ui| {
+        ui.monospace(egui::RichText::new(address).color(theme::TEXT_1));
+        if ui.small_button("Copier").clicked() {
+            if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                let _ = clipboard.set_text(address);
+            }
+        }
+    });
+}
+
 const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
+const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
 
 impl eframe::App for KprmApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
