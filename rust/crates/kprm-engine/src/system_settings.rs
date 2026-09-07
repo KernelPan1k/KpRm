@@ -65,14 +65,26 @@ pub struct SettingsRestoreResult {
 /// Flattens `output` to one line and truncates it, so a `netsh` failure's
 /// real reason fits in a report row without breaking its formatting or
 /// running on for a whole multi-line per-item reset log.
+///
+/// `netsh int ip/ipv4/ipv6 reset` prints one line per sub-item it resets, in
+/// order, so a run where only one sub-item actually fails reads as a long
+/// run of "... reset successful" lines followed by the one line that
+/// explains what went wrong. Keeping the *start* of that text (as this used
+/// to do) shows nothing but the boilerplate successes and cuts off right
+/// before the actual reason — which is exactly the confusing report a user
+/// sees. Keep the *end* instead, so the real failure survives truncation.
 fn failure_snippet(output: &str) -> Option<String> {
     let flat: String = output.split_whitespace().collect::<Vec<_>>().join(" ");
     if flat.is_empty() {
         return None;
     }
-    if flat.chars().count() > FAILURE_SNIPPET_MAX_CHARS {
-        let truncated: String = flat.chars().take(FAILURE_SNIPPET_MAX_CHARS).collect();
-        Some(format!("{truncated}…"))
+    let total_chars = flat.chars().count();
+    if total_chars > FAILURE_SNIPPET_MAX_CHARS {
+        let skip = total_chars - FAILURE_SNIPPET_MAX_CHARS;
+        let tail: String = flat.chars().skip(skip).collect();
+        // Drop a partial leading word so the snippet starts cleanly.
+        let tail = tail.split_once(' ').map_or(tail.as_str(), |(_, rest)| rest);
+        Some(format!("…{tail}"))
     } else {
         Some(flat)
     }
@@ -216,6 +228,26 @@ mod tests {
             !r.succeeded
                 && r.description.starts_with("netsh winsock reset :")
                 && r.description.contains("requiert une élévation")
+        }));
+    }
+
+    #[test]
+    fn netsh_descriptions_keep_the_real_reason_past_a_long_run_of_successes() {
+        let mut registry = FakeRegistry::new();
+        let mut commands = FakeCommandRunner::new();
+        commands.always_succeeds = false;
+        let leading_successes = "Réinitialisation de Transfert de compartiment réussie. "
+            .repeat(20);
+        commands.captured_stdout = Some(format!(
+            "{leading_successes}Impossible de réinitialiser Fournisseur : accès refusé."
+        ));
+
+        let results = restore_defaults(&mut registry, &mut commands);
+
+        assert!(results.iter().any(|r| {
+            !r.succeeded
+                && r.description.contains("Fournisseur")
+                && r.description.contains("accès refusé")
         }));
     }
 
