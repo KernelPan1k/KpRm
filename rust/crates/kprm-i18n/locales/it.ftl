@@ -58,6 +58,7 @@ copy-button = Copia
 extra-tools-empty = Altri strumenti saranno aggiunti qui in futuro.
 restore-registry-title = Ripristina un backup del registro
 restore-registry-intro = Ripristina un backup SOFTWARE/NTUSER.DAT creato dalla scheda Automatico. È necessario un riavvio perché abbia effetto.
+restore-registry-warning = ⚠ Questa operazione deve essere eseguita solo se si sa cosa si sta facendo. Un ripristino errato può rendere il sistema instabile o inutilizzabile.
 restore-registry-empty = Nessun backup trovato. Seleziona "Salva backup del registro" nella scheda Automatico per crearne uno.
 restore-registry-refresh = Aggiorna
 restore-registry-button = Ripristina

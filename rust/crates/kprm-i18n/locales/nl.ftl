@@ -58,6 +58,7 @@ copy-button = Kopiëren
 extra-tools-empty = Hier komen in de toekomst meer hulpmiddelen.
 restore-registry-title = Een registerback-up herstellen
 restore-registry-intro = Herstelt een SOFTWARE/NTUSER.DAT-back-up die is gemaakt via het tabblad Automatisch. Een herstart is vereist om dit door te voeren.
+restore-registry-warning = ⚠ Deze bewerking mag alleen worden uitgevoerd als u weet wat u doet. Een onjuist herstel kan het systeem onstabiel of onbruikbaar maken.
 restore-registry-empty = Geen back-up gevonden. Vink "Register back-uppen" aan in het tabblad Automatisch om er een te maken.
 restore-registry-refresh = Vernieuwen
 restore-registry-button = Herstellen

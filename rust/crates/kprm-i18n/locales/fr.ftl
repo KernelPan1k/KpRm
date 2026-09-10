@@ -58,6 +58,7 @@ copy-button = Copier
 extra-tools-empty = D'autres outils seront ajoutés ici prochainement.
 restore-registry-title = Restaurer une sauvegarde du registre
 restore-registry-intro = Restaure une sauvegarde SOFTWARE/NTUSER.DAT créée depuis l'onglet Automatique. Un redémarrage est nécessaire pour l'appliquer.
+restore-registry-warning = ⚠ Cette opération doit uniquement être effectuée si vous savez ce que vous faites. Une mauvaise restauration peut rendre le système instable ou inutilisable.
 restore-registry-empty = Aucune sauvegarde trouvée. Cochez « Sauvegarder le registre » dans l'onglet Automatique pour en créer une.
 restore-registry-refresh = Rafraîchir
 restore-registry-button = Restaurer

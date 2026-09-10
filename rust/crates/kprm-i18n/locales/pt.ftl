@@ -58,6 +58,7 @@ copy-button = Copiar
 extra-tools-empty = Mais ferramentas serão adicionadas aqui futuramente.
 restore-registry-title = Restaurar uma cópia de segurança do registo
 restore-registry-intro = Restaura uma cópia de segurança SOFTWARE/NTUSER.DAT criada no separador Automático. É necessário reiniciar para que tenha efeito.
+restore-registry-warning = ⚠ Esta operação só deve ser realizada se souber o que está a fazer. Uma restauração incorreta pode tornar o sistema instável ou inutilizável.
 restore-registry-empty = Nenhuma cópia de segurança encontrada. Marque "Fazer cópia de segurança do registo" no separador Automático para criar uma.
 restore-registry-refresh = Atualizar
 restore-registry-button = Restaurar

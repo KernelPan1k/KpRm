@@ -58,6 +58,7 @@ copy-button = Kopieren
 extra-tools-empty = Weitere Werkzeuge werden hier in Zukunft hinzugefügt.
 restore-registry-title = Registrierungssicherung wiederherstellen
 restore-registry-intro = Stellt eine SOFTWARE/NTUSER.DAT-Sicherung wieder her, die im Reiter Automatisch erstellt wurde. Ein Neustart ist erforderlich, damit dies wirksam wird.
+restore-registry-warning = ⚠ Dieser Vorgang sollte nur durchgeführt werden, wenn Sie wissen, was Sie tun. Eine falsche Wiederherstellung kann das System instabil oder unbrauchbar machen.
 restore-registry-empty = Keine Sicherung gefunden. Aktivieren Sie „Registrierung sichern" im Reiter Automatisch, um eine zu erstellen.
 restore-registry-refresh = Aktualisieren
 restore-registry-button = Wiederherstellen

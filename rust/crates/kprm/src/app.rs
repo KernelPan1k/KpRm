@@ -983,6 +983,15 @@ impl KprmApp {
             )
             .wrap(),
         );
+        ui.add_space(6.0);
+        ui.add(
+            egui::Label::new(
+                egui::RichText::new(self.t("restore-registry-warning"))
+                    .size(11.0)
+                    .color(theme::AMBER),
+            )
+            .wrap(),
+        );
         ui.add_space(8.0);
 
         let refresh_label = self.t("restore-registry-refresh");

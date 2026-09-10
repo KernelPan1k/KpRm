@@ -58,6 +58,7 @@ copy-button = Copy
 extra-tools-empty = More tools will be added here in the future.
 restore-registry-title = Restore a registry backup
 restore-registry-intro = Restores a SOFTWARE/NTUSER.DAT backup created from the Automatic tab. A restart is required for it to take effect.
+restore-registry-warning = ⚠ This operation should only be performed if you know what you are doing. An incorrect restore may make the system unstable or unusable.
 restore-registry-empty = No backup found. Check "Back up registry" in the Automatic tab to create one.
 restore-registry-refresh = Refresh
 restore-registry-button = Restore
