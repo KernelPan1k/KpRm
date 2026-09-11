@@ -1,0 +1,26 @@
+name = 'UnHackMe'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^UnHackMe.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^UnHackMe$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^UnHackMe.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^UnHackMe$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^UnHackMe.*\.exe$'
+force = false

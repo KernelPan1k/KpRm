@@ -1,0 +1,16 @@
+name = 'LockBit 3.0 Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(LockBit3?|lockbit3).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(LockBit3?|lockbit3).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(LockBit3?|lockbit3).*\.exe$'
+force = false

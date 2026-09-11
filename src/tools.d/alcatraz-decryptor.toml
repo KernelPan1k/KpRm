@@ -1,0 +1,16 @@
+name = 'Alcatraz Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^AlcatrazDecryptor.*\.(exe|log|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^AlcatrazDecryptor.*\.(exe|log|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^AlcatrazDecryptor.*\.exe$'
+force = false

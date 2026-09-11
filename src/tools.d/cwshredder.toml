@@ -1,0 +1,16 @@
+name = 'CWShredder'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^CWShredder.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^CWShredder.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^CWShredder.*\.exe$'
+force = false

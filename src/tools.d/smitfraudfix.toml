@@ -1,0 +1,26 @@
+name = 'SmitFraudFix'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^SmitfraudFix.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^SmitfraudFix$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^SmitfraudFix.*\.(exe|zip|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^SmitfraudFix$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^SmitfraudFix.*\.exe$'
+force = false

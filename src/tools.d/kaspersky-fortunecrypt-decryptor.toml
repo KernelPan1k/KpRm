@@ -1,0 +1,41 @@
+name = 'Kaspersky FortuneCrypt Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FortuneCryptDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FortuneCryptDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FortuneCryptDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FortuneCryptDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^FortuneCryptDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^FortuneCryptDecryptor'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FortuneCryptDecryptor.*\.exe'
+company_name = '(?i)^Kaspersky'
+force = false

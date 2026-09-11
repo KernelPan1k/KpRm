@@ -1,0 +1,19 @@
+name = 'Bitdefender GandCrab Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDGandCrab.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDGandCrab.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDGandCrab.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

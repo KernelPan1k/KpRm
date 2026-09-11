@@ -1,0 +1,19 @@
+name = 'Emsisoft Decryptor Philadelphia'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^decrypt_Philadelphia.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^decrypt_Philadelphia.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^decrypt_Philadelphia.*\.exe$'
+company_name = '(?i)^Emsisoft'
+force = false

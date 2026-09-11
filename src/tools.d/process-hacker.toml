@@ -1,0 +1,26 @@
+name = 'Process Hacker'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(ProcessHacker|processhacker).*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(ProcessHacker|process-hacker)$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(ProcessHacker|processhacker).*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(ProcessHacker|process-hacker)$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ProcessHacker.*\.exe$'
+force = false

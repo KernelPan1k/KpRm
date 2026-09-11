@@ -1,0 +1,32 @@
+name = 'Autoruns'
+
+# Outil Sysinternals (Microsoft). Purement portable, aucun dossier
+# ni clé de registre créés. CompanyName : "Sysinternals - www.sysinternals.com".
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Autoruns(64|C|C64)?\.exe$'
+company_name = '(?i)^Sysinternals'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Autoruns(64|C|C64)?\.exe$'
+company_name = '(?i)^Sysinternals'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^autoruns\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^autoruns\.zip$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Autoruns(64)?\.exe$'
+company_name = '(?i)^Sysinternals'
+force = false

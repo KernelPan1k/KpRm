@@ -1,0 +1,19 @@
+name = 'Trend Micro Ransomware Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(RansomwareFileDecryptor|RansomDecryptor).*\.(exe|log|txt)$'
+company_name = '(?i)^Trend Micro'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(RansomwareFileDecryptor|RansomDecryptor).*\.(exe|log|txt)$'
+company_name = '(?i)^Trend Micro'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(RansomwareFileDecryptor|RansomDecryptor).*\.exe$'
+company_name = '(?i)^Trend Micro'
+force = false

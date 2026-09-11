@@ -1,0 +1,19 @@
+name = 'Bitdefender MegaCortex Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDMegaCortex.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDMegaCortex.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDMegaCortex.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

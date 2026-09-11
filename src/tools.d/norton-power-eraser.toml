@@ -1,0 +1,22 @@
+name = 'Norton Power Eraser'
+
+# CompanyName a changé au fil du temps :
+# "Symantec Corporation" → "NortonLifeLock Inc." → "Gen Digital Inc." (actuel).
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^NPE\.exe$'
+company_name = '(?i)^(Symantec|NortonLifeLock|Gen Digital)'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^NPE\.exe$'
+company_name = '(?i)^(Symantec|NortonLifeLock|Gen Digital)'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^NPE\.exe$'
+company_name = '(?i)^(Symantec|NortonLifeLock|Gen Digital)'
+force = false

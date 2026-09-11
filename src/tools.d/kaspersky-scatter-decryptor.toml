@@ -1,0 +1,41 @@
+name = 'Kaspersky Scatter Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ScatterDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^ScatterDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ScatterDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^ScatterDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ScatterDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^ScatterDecryptor'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^ScatterDecryptor.*\.exe'
+company_name = '(?i)^Kaspersky'
+force = false

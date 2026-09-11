@@ -1,0 +1,14 @@
+name = 'KpRm Rapport diagnostic'
+
+# Supprime les rapports diagnostics générés par KpRm (kprm-diag-*.txt)
+# laissés sur le bureau ou dans le dossier Téléchargements après analyse.
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^kprm-diag-.*\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^kprm-diag-.*\.txt$'
+kind = 'file'

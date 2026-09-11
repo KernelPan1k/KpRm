@@ -1,0 +1,26 @@
+name = 'System Informer'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^systeminformer.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^systeminformer$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^systeminformer.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^systeminformer$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(SystemInformer|SystemInformer64).*\.exe$'
+force = false

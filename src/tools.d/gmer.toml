@@ -1,0 +1,31 @@
+name = 'GMER'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^gmer.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^gmer.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^gmer.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^gmer.*\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^gmer\.log$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^gmer.*\.exe$'
+force = false

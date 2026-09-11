@@ -424,9 +424,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn embedded_catalog_loads_and_has_202_tools() {
+    fn embedded_catalog_loads_and_has_267_tools() {
         let catalog = Catalog::embedded().expect("embedded catalog must be valid");
-        assert_eq!(catalog.tool_count(), 202);
+        assert_eq!(catalog.tool_count(), 267);
         assert!(catalog.action_count() > 800);
     }
 

@@ -1,0 +1,46 @@
+name = 'HitmanPro'
+
+# CompanyName: "SurfRight B.V." (versions pre-rachat Sophos 2015),
+# "Sophos Limited" (versions actuelles).
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HitmanPro.*\.exe$'
+company_name = '(?i)^(SurfRight|Sophos)'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HitmanPro.*\.exe$'
+company_name = '(?i)^(SurfRight|Sophos)'
+kind = 'file'
+
+[[actions]]
+type = 'app_data_common'
+pattern = '(?i)^HitmanPro$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'app_data_common'
+pattern = '(?i)^HitmanPro\.Alert$'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SOFTWARE\HitmanPro'
+
+[[actions]]
+type = 'registry_key'
+key = 'HKLM\SOFTWARE\HitmanPro.Alert'
+
+[[actions]]
+type = 'registry_key'
+key = 'HKCU\Software\HitmanPro'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^HitmanPro.*\.exe$'
+company_name = '(?i)^(SurfRight|Sophos)'
+force = false

@@ -1,0 +1,26 @@
+name = 'Farbar Mini Toolz'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(FMT|farbar.?mini.?tool).*\.(exe|txt|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Farbar.?Mini.?Tool'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(FMT|farbar.?mini.?tool).*\.(exe|txt|log)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Farbar.?Mini.?Tool'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(FMT|farbar.?mini.?tool).*\.exe$'
+force = false

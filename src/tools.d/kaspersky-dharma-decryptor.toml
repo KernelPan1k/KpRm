@@ -1,0 +1,41 @@
+name = 'Kaspersky Dharma Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^dharma_?Decryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^dharma_?Decryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^dharma_?Decryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^dharma_?Decryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^dharma_?Decryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^dharma_?Decryptor'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^dharma_?Decryptor.*\.exe'
+company_name = '(?i)^Kaspersky'
+force = false

@@ -1,0 +1,26 @@
+name = 'Regshot'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Regshot.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Regshot$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Regshot.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Regshot$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^Regshot.*\.exe$'
+force = false

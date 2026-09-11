@@ -1,0 +1,25 @@
+name = 'FixWin'
+
+# Outil de réparation Windows par The Windows Club (Anand Khanse).
+# Purement portable, aucun dossier ni clé de registre créés.
+# CompanyName : "The Windows Club".
+# Noms connus : FixWin10.exe, FixWin11.exe, "FixWin for Windows 10.exe",
+# "FixWin for Windows 11.exe".
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^FixWin.*\.exe$'
+company_name = '(?i)^The Windows Club'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^FixWin.*\.exe$'
+company_name = '(?i)^The Windows Club'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^FixWin.*\.exe$'
+company_name = '(?i)^The Windows Club'
+force = false

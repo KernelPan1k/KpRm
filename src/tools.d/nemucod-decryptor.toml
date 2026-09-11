@@ -1,0 +1,26 @@
+name = 'Nemucod / NemucodAES Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(Nemucod|NemucodAES).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(Nemucod|NemucodAES)Decryptor$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(Nemucod|NemucodAES).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(Nemucod|NemucodAES)Decryptor$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(Nemucod|NemucodAES).*\.exe$'
+force = false

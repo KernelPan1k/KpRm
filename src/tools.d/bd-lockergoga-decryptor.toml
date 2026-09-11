@@ -1,0 +1,19 @@
+name = 'Bitdefender LockerGoga Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDLockerGoga.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDLockerGoga.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDLockerGoga.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

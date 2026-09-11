@@ -1,0 +1,19 @@
+name = 'Bitdefender DarkSide Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDDarkSide.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDDarkSide.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDDarkSide.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

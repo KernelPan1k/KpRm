@@ -1,0 +1,16 @@
+name = 'Maze / Sekhmet / Egregor Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(Maze|Sekhmet|Egregor).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(Maze|Sekhmet|Egregor).*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(Maze|Sekhmet|Egregor).*\.exe$'
+force = false

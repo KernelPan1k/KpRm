@@ -1,0 +1,19 @@
+name = 'Trend Micro HouseCall'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(HouseCall|housecall).*\.(exe|zip)$'
+company_name = '(?i)^Trend Micro'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(HouseCall|housecall).*\.(exe|zip)$'
+company_name = '(?i)^Trend Micro'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(HouseCall|housecall).*\.exe$'
+company_name = '(?i)^Trend Micro'
+force = false

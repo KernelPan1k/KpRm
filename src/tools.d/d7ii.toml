@@ -1,0 +1,26 @@
+name = 'D7II'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^D7(II|-II).*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^D7(II|-II)$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^D7(II|-II).*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^D7(II|-II)$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^D7(II|-II).*\.exe$'
+force = false

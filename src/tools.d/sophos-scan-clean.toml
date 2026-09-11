@@ -1,0 +1,28 @@
+name = 'Sophos Scan and Clean'
+
+# Outil portable sans installation. CompanyName : "Sophos Limited".
+# Le nom de l'exe téléchargé depuis sophos.com est "sophos-clean.exe"
+# mais peut varier selon les versions.
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^sophos.*(clean|scan).*\.exe$'
+company_name = '(?i)^Sophos'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^sophos.*(clean|scan).*\.exe$'
+company_name = '(?i)^Sophos'
+kind = 'file'
+
+[[actions]]
+type = 'app_data_common'
+pattern = '(?i)^Sophos$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^sophos.*(clean|scan).*\.exe$'
+company_name = '(?i)^Sophos'
+force = false

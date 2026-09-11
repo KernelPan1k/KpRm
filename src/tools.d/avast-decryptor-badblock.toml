@@ -1,0 +1,19 @@
+name = 'Avast Decryptor BadBlock'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^avast_decryptor_badblock.*\.exe$'
+company_name = '(?i)^Avast'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^avast_decryptor_badblock.*\.exe$'
+company_name = '(?i)^Avast'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^avast_decryptor_badblock.*\.exe$'
+company_name = '(?i)^Avast'
+force = false

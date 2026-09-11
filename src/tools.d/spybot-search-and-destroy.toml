@@ -1,0 +1,26 @@
+name = 'Spybot Search & Destroy'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Spybot.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^Spybot'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Spybot.*\.(exe|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^Spybot'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(SpybotSD|Spybot-S&D|Spybot).*\.exe$'
+force = false

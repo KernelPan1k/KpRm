@@ -1,0 +1,34 @@
+name = 'SUPERAntiSpyware'
+
+# CompanyName : "SUPERAntiSpyware" (versions historiques),
+# peut varier suite au rachat par Support.com — filtre non appliqué
+# sur l'exe pour éviter les faux négatifs.
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(SUPERAntiSpyware|SAS).*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(SUPERAntiSpyware|SAS).*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'program_files'
+pattern = '(?i)^SUPERAntiSpyware$'
+kind = 'folder'
+
+[[actions]]
+type = 'app_data'
+pattern = '(?i)^SUPERAntiSpyware$'
+kind = 'folder'
+
+[[actions]]
+type = 'software_key'
+pattern = '(?i)^SUPERAntiSpyware'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(SUPERAntiSpyware|SASCORE).*\.exe$'
+force = false

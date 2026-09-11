@@ -1,0 +1,25 @@
+name = 'DelFix'
+
+# Outil de nettoyage post-désinfection par Xplode.
+# Compilé avec AutoIt — le CompanyName du PE est générique,
+# filtre non appliqué.
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^DelFix.*\.(exe|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^DelFix.*\.exe$'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^DelFix$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^DelFix.*\.exe$'
+force = false

@@ -1,0 +1,16 @@
+name = 'Black Basta Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(BlackBasta|black_basta).*\.(exe|py|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(BlackBasta|black_basta).*\.(exe|py|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(BlackBasta|black_basta).*\.exe$'
+force = false

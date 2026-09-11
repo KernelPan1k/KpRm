@@ -1,0 +1,19 @@
+name = 'Bitdefender Annabelle Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDAnnabelle.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDAnnabelle.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDAnnabelle.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

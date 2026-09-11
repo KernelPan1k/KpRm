@@ -1,0 +1,19 @@
+name = 'Emsisoft Decryptor Apocalypse'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^decrypt_Apocalypse.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^decrypt_Apocalypse.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^decrypt_Apocalypse.*\.exe$'
+company_name = '(?i)^Emsisoft'
+force = false

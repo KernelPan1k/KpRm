@@ -1,0 +1,41 @@
+name = 'Kaspersky MarsJoke Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MarsJokeDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MarsJokeDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MarsJokeDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MarsJokeDecryptor'
+kind = 'folder'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^MarsJokeDecryptor.*\.(exe|txt|zip)'
+company_name = '(?i)^Kaspersky'
+kind = 'file'
+
+[[actions]]
+type = 'home_drive'
+pattern = '(?i)^MarsJokeDecryptor'
+kind = 'folder'
+quarantine = true
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MarsJokeDecryptor.*\.exe'
+company_name = '(?i)^Kaspersky'
+force = false

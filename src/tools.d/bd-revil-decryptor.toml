@@ -1,0 +1,19 @@
+name = 'Bitdefender REvil Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^BDREvil.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^BDREvil.*\.(exe|log)$'
+company_name = '(?i)^Bitdefender'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^BDREvil.*\.exe$'
+company_name = '(?i)^Bitdefender'
+force = false

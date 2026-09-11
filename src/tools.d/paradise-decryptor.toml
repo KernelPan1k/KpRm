@@ -1,0 +1,16 @@
+name = 'Paradise Decryptor'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^(Paradise|ParadiseDecryptor).*\.(exe|log|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^(Paradise|ParadiseDecryptor).*\.(exe|log|txt)$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^(Paradise|ParadiseDecryptor).*\.exe$'
+force = false

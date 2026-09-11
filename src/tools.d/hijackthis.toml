@@ -1,0 +1,26 @@
+name = 'HijackThis'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HijackThis.*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^HijackThis$'
+kind = 'folder'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HijackThis.*\.(exe|log|txt|zip)$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^HijackThis$'
+kind = 'folder'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^HijackThis.*\.exe$'
+force = false

@@ -1,0 +1,19 @@
+name = 'Emsisoft Decryptor BadBlock'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^decrypt_BadBlock.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^decrypt_BadBlock.*\.(exe|log|txt)$'
+company_name = '(?i)^Emsisoft'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^decrypt_BadBlock.*\.exe$'
+company_name = '(?i)^Emsisoft'
+force = false
