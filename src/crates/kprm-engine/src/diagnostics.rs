@@ -82,6 +82,7 @@ pub fn collect(
             section_security_tools(commands),
             section_processes(processes, commands),
             section_services(commands),
+            section_drivers(commands),
             section_startup(commands),
             section_scheduled_tasks(commands),
             section_installed_software(commands),
@@ -372,6 +373,69 @@ Get-CimInstance Win32_Service |
     }
 "#;
     section("SERVICES (Auto / Manuel)", ps(commands, script))
+}
+
+fn section_drivers(commands: &mut dyn CommandRunner) -> DiagSection {
+    // Kernel drivers are the classic rootkit persistence vector. Listing all
+    // ~200 stock Windows drivers is noise, so this section gives a total
+    // count and then details only the ones NOT signed by Microsoft — signed
+    // third-party drivers (GPU, storage, security tools) plus anything
+    // unsigned or tampered with, which is what actually warrants a look.
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+function Resolve-DriverPath($raw) {
+    if (!$raw) { return $null }
+    if ($raw -match '^\\SystemRoot\\(.*)$') { return "$env:SystemRoot\$($matches[1])" }
+    if ($raw -match '^\\\?\?\\(.*)$') { return $matches[1] }
+    if ($raw -match '^[A-Za-z]:\\') { return $raw }
+    return "$env:SystemRoot\System32\drivers\$raw"
+}
+function Get-FileData($p) {
+    if (!$p -or !(Test-Path $p)) { return $null }
+    $fi  = Get-Item $p
+    $sig = Get-AuthenticodeSignature $p
+    $vi  = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($p)
+    [PSCustomObject]@{
+        SHA256   = (Get-FileHash $p -Algorithm SHA256).Hash
+        SigStatus= $sig.Status
+        Signer   = if ($sig.SignerCertificate) { $sig.SignerCertificate.Subject } else { $null }
+        Company  = $vi.CompanyName
+        FileVer  = $vi.FileVersion
+        Modified = $fi.LastWriteTime.ToString('yyyy-MM-dd HH:mm')
+    }
+}
+$drivers = Get-CimInstance Win32_SystemDriver |
+    Where-Object { $_.State -eq 'Running' -or $_.StartMode -in 'Boot','System','Auto' }
+"Total pilotes actifs/automatiques : $($drivers.Count)"
+""
+"--- Pilotes non signés Microsoft (ou non signés) ---"
+$suspect = foreach ($drv in $drivers) {
+    $path = Resolve-DriverPath $drv.PathName
+    $d = Get-FileData $path
+    if (!($d -and $d.Company -match 'Microsoft')) {
+        [PSCustomObject]@{ Drv = $drv; Path = $path; Data = $d }
+    }
+}
+if (!$suspect) { "  (aucun — tous les pilotes actifs sont signés Microsoft)" }
+foreach ($s in $suspect) {
+    $drv = $s.Drv
+    $d = $s.Data
+    "  [$($drv.State)/$($drv.StartMode)] $($drv.Name) — $($drv.DisplayName)"
+    if ($s.Path) { "    Path      : $($s.Path)" }
+    if ($d) {
+        $signer = if ($d.Signer) { " — $($d.Signer)" } else { "" }
+        "    Signature : $($d.SigStatus)$signer"
+        "    Editeur   : $($d.Company) | Ver: $($d.FileVer) | Modifie: $($d.Modified)"
+        "    SHA256    : $($d.SHA256)"
+    } else {
+        "    (fichier introuvable ou inaccessible)"
+    }
+}
+"#;
+    section(
+        "PILOTES (non-Microsoft mis en évidence)",
+        ps(commands, script),
+    )
 }
 
 fn section_startup(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -698,13 +762,13 @@ mod tests {
     use crate::fakes::{FakeCommandRunner, FakeKnownDirs, FakeProcessManager, FakeRegistry};
 
     #[test]
-    fn collect_returns_fifteen_sections() {
+    fn collect_returns_sixteen_sections() {
         let registry = FakeRegistry::new();
         let processes = FakeProcessManager::new();
         let mut commands = FakeCommandRunner::new();
         let dirs = FakeKnownDirs::default();
         let report = collect(&registry, &processes, &mut commands, &dirs, "2024-01-01 00:00:00");
-        assert_eq!(report.sections.len(), 15);
+        assert_eq!(report.sections.len(), 16);
     }
 
     #[test]
@@ -733,6 +797,7 @@ mod tests {
         assert!(text.contains("OUTILS DE"));
         assert!(text.contains("PROCESSUS EN COURS"));
         assert!(text.contains("SERVICES"));
+        assert!(text.contains("PILOTES"));
         assert!(text.contains("DEMARRAGE AUTOMATIQUE"));
         assert!(text.contains("TACHES PLANIFIEES"));
         assert!(text.contains("LOGICIELS INSTALLES"));
@@ -771,6 +836,15 @@ mod tests {
         let sec = section_browser_policies(&registry);
         let chrome = sec.lines.iter().find(|l| l.contains("Chrome") && l.contains("HKLM")).unwrap();
         assert!(chrome.contains("PRESENT"));
+    }
+
+    #[test]
+    fn drivers_section_calls_powershell_with_win32_systemdriver() {
+        let mut commands = FakeCommandRunner::new();
+        section_drivers(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe" && a.iter().any(|s| s.contains("Win32_SystemDriver"))
+        }));
     }
 
     #[test]
