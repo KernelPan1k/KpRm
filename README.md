@@ -128,7 +128,7 @@ one of the 8 embedded languages) with four tabs:
   - *Restauration du registre*: restore a `SOFTWARE`/`NTUSER.DAT`
     backup created from a "Sauvegarder le registre" run back over the
     live hives at next boot — see note below
-- **Dons** ("Donate"): a Bitcoin address for supporting the project, with a one-click copy button
+- **Dons** ("Donate"): Bitcoin, Ethereum, Litecoin, and Monero addresses for supporting the project, each with a one-click copy button
 
 (Tab and action names above are shown in French — the language this
 project is developed in — but every label is translated; the screen

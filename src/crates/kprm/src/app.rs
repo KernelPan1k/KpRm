@@ -1411,6 +1411,10 @@ impl KprmApp {
         donation_address_row(ui, "Bitcoin (BTC)", BTC_ADDRESS, &copy_label);
         ui.add_space(10.0);
         donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS, &copy_label);
+        ui.add_space(10.0);
+        donation_address_row(ui, "Litecoin (LTC)", LTC_ADDRESS, &copy_label);
+        ui.add_space(10.0);
+        donation_address_row(ui, "Monero (XMR)", XMR_ADDRESS, &copy_label);
     }
 }
 
@@ -1457,6 +1461,8 @@ fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str, c
 
 const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
 const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
+const LTC_ADDRESS: &str = "Lh3p9yoDzJrYKHDm3TaW55B49q2uMVZaj5";
+const XMR_ADDRESS: &str = "BUsMZ3KoHcPvUAKCuFL8dsgUQAuWBJbaRxda6sQ8ND53";
 
 impl eframe::App for KprmApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
