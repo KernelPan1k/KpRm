@@ -48,7 +48,7 @@ full design rationale.
   - **Network**: reset Winsock, reset hosts file, remove system proxy
   - **Browsers**: reset browser group policies (Chrome/Edge/Firefox), restore file associations (.exe, .bat, .com, .lnk)
   - **Registry restore**: restore a previous `SOFTWARE`/`NTUSER.DAT` backup over the live hives at next boot
-  - **Diagnostic report**: generate a comprehensive `kprm-diag-*.txt` report (processes with MD5/SHA256/signature/ACL, services, startup entries, scheduled tasks, installed software, browser extensions, recently modified files, Windows activation status, security tools, hosts file, network, proxy, browser policies) — saved under `%HOMEDRIVE%\KPRM\` and copied to the Desktop
+  - **Diagnostic report**: generate a comprehensive `kprm-diag-*.txt` report (processes with MD5/SHA256/signature/ACL, services, startup entries, scheduled tasks, installed software, browser extensions, recently modified files, Windows activation status, security tools, recent Application/System event-log errors, hosts file, network, proxy, browser policies) — saved under `%HOMEDRIVE%\KPRM\` and copied to the Desktop
 - A GUI available in 8 languages (French, English, German, Italian,
   Portuguese, Russian, Spanish, Dutch), auto-selected from the Windows
   UI language
@@ -120,9 +120,10 @@ one of the 8 embedded languages) with four tabs:
     ACL warnings), services, startup entries, scheduled tasks, installed
     software, browser extensions (Chrome/Edge/Firefox), files modified
     in the last 90 days, Windows activation status, registered security
-    products, hosts file, network configuration, proxy settings and
-    browser policies — saved to `%HOMEDRIVE%\KPRM\` and copied to the
-    Desktop for easy sharing
+    products, recent Application/System event-log errors (last 7 days),
+    hosts file, network configuration, proxy settings and browser
+    policies — saved to `%HOMEDRIVE%\KPRM\` and copied to the Desktop
+    for easy sharing
   - *Restauration du registre*: restore a `SOFTWARE`/`NTUSER.DAT`
     backup created from a "Sauvegarder le registre" run back over the
     live hives at next boot — see note below
@@ -309,7 +310,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 142 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 143 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry

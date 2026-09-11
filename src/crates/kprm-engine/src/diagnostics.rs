@@ -78,6 +78,7 @@ pub fn collect(
         sections: vec![
             section_windows_activation(commands),
             section_system_info(commands),
+            section_windows_events(commands),
             section_security_tools(commands),
             section_processes(processes, commands),
             section_services(commands),
@@ -195,6 +196,26 @@ $u = Get-CimInstance Win32_UserAccount -Filter "LocalAccount=True AND Disabled=F
 "UAC         : $(try{(Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).EnableLUA}catch{'N/A'})"
 "#;
     section("INFORMATIONS SYSTÈME", ps(commands, script))
+}
+
+fn section_windows_events(commands: &mut dyn CommandRunner) -> DiagSection {
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+$since = (Get-Date).AddDays(-7)
+$events = Get-WinEvent -FilterHashtable @{LogName='Application','System'; Level=1,2; StartTime=$since} -MaxEvents 100 -EA SilentlyContinue |
+    Sort-Object TimeCreated -Descending
+if (!$events) { "Aucune erreur/critique dans les journaux Application et Système (7 derniers jours)."; return }
+foreach ($e in $events) {
+    $msg = ($e.Message -split "`r?`n")[0]
+    if ($msg.Length -gt 300) { $msg = $msg.Substring(0,300) + '…' }
+    "[$($e.TimeCreated.ToString('yyyy-MM-dd HH:mm'))] $($e.LogName) — $($e.ProviderName) (ID $($e.Id)) — $($e.LevelDisplayName)"
+    "    $msg"
+}
+"#;
+    section(
+        "ERREURS WINDOWS (Journaux Application/Système, 7 derniers jours)",
+        ps(commands, script),
+    )
 }
 
 fn section_security_tools(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -677,13 +698,13 @@ mod tests {
     use crate::fakes::{FakeCommandRunner, FakeKnownDirs, FakeProcessManager, FakeRegistry};
 
     #[test]
-    fn collect_returns_fourteen_sections() {
+    fn collect_returns_fifteen_sections() {
         let registry = FakeRegistry::new();
         let processes = FakeProcessManager::new();
         let mut commands = FakeCommandRunner::new();
         let dirs = FakeKnownDirs::default();
         let report = collect(&registry, &processes, &mut commands, &dirs, "2024-01-01 00:00:00");
-        assert_eq!(report.sections.len(), 14);
+        assert_eq!(report.sections.len(), 15);
     }
 
     #[test]
@@ -708,6 +729,7 @@ mod tests {
         assert!(text.contains("KpRm"));
         assert!(text.contains("ACTIVATION WINDOWS"));
         assert!(text.contains("INFORMATIONS"));
+        assert!(text.contains("ERREURS WINDOWS"));
         assert!(text.contains("OUTILS DE"));
         assert!(text.contains("PROCESSUS EN COURS"));
         assert!(text.contains("SERVICES"));
@@ -749,6 +771,15 @@ mod tests {
         let sec = section_browser_policies(&registry);
         let chrome = sec.lines.iter().find(|l| l.contains("Chrome") && l.contains("HKLM")).unwrap();
         assert!(chrome.contains("PRESENT"));
+    }
+
+    #[test]
+    fn windows_events_section_calls_powershell_with_geteventlog() {
+        let mut commands = FakeCommandRunner::new();
+        section_windows_events(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe" && a.iter().any(|s| s.contains("Get-WinEvent"))
+        }));
     }
 
     #[test]
