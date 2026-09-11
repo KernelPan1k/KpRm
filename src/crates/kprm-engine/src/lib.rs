@@ -6,7 +6,9 @@
 //! [`orchestrator::run_tool_actions`] runs against.
 
 pub mod backup;
+pub mod diagnostics;
 pub mod fakes;
+pub mod maintenance;
 pub mod matcher;
 pub mod orchestrator;
 pub mod paths;
