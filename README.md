@@ -4,9 +4,11 @@ A free, open-source cleanup tool for Windows: it detects and removes
 the third-party removal, diagnostic, and decryption tools a technician
 typically runs (and forgets to clean up afterward) during a malware
 removal session — AdwCleaner, FRST, the ESET/McAfee/Symantec/Kaspersky
-one-off cleaners, ransomware decryptors, and more (202 tools known so
+one-off cleaners, ransomware decryptors, and more (267 tools known so
 far). It also restores Windows defaults (UAC, system settings), manages
-System Restore points, and backs up the registry before making changes.
+System Restore points, backs up the registry before making changes, and
+includes an extended set of post-disinfection maintenance tools and a
+full system diagnostic report.
 
 This is a Rust rewrite of the original AutoIt3 KpRm by
 [kernel-panik](https://kernel-panik.me/), rebuilt from scratch to
@@ -17,7 +19,7 @@ full design rationale.
 
 ## Features
 
-- Detects and removes 202 known cleanup/diagnostic/decryption tools
+- Detects and removes 267 known cleanup/diagnostic/decryption tools
   (files, folders, registry keys, scheduled tasks, running processes —
   see the [full list](#supported-tools) below), killing any matching
   running process before deleting its files
@@ -26,7 +28,7 @@ full design rationale.
   Task performs the deferred deletion); picking "immediately" or "in 7
   days" automatically enables tool removal too
 - Registry backup (`SOFTWARE` and `NTUSER.DAT` hives) before making
-  changes
+  changes, with the ability to restore a previous backup at next boot
 - System Restore point management: create one, or clear existing ones
 - Restores UAC and a handful of system settings (network, DNS, Explorer
   display options) to their Windows defaults
@@ -40,6 +42,13 @@ full design rationale.
   scheduled for deletion on next boot
 - Deletes itself after a successful real run (matching the original's
   behavior — see the [Usage](#graphical-interface) note below)
+- An **Extra Tools** tab with post-disinfection maintenance actions:
+  - **Quick actions**: flush DNS cache, clean temp folders, empty Recycle Bin
+  - **Windows repair**: reset firewall, run SFC, run DISM
+  - **Network**: reset Winsock, reset hosts file, remove system proxy
+  - **Browsers**: reset browser group policies (Chrome/Edge/Firefox), restore file associations (.exe, .bat, .com, .lnk)
+  - **Registry restore**: restore a previous `SOFTWARE`/`NTUSER.DAT` backup over the live hives at next boot
+  - **Diagnostic report**: generate a comprehensive `kprm-diag-*.txt` report (processes with MD5/SHA256/signature/ACL, services, startup entries, scheduled tasks, installed software, browser extensions, recently modified files, Windows activation status, security tools, hosts file, network, proxy, browser policies) — saved under `%HOMEDRIVE%\KPRM\` and copied to the Desktop
 - A GUI available in 8 languages (French, English, German, Italian,
   Portuguese, Russian, Spanish, Dutch), auto-selected from the Windows
   UI language
@@ -74,7 +83,8 @@ one of the 8 embedded languages) with four tabs:
 - **Automatique** ("Automatic"): a set of independent, individually
   optional actions, run together by the "Exécuter" ("Execute") button:
   - **Supprimer les outils** — remove every tool the catalog finds on
-    this machine
+    this machine (also deletes any `kprm-diag-*.txt` diagnostic reports
+    left on the Desktop or in Downloads)
   - **Sauvegarder le registre** — back up the `SOFTWARE` and
     `NTUSER.DAT` registry hives first
   - **Supprimer les points de restauration** — clear every existing
@@ -91,10 +101,31 @@ one of the 8 embedded languages) with four tabs:
 - **Analyse personnalisée** ("Custom scan"): runs a read-only scan of
   the whole catalog, lists everything it found with a checkbox next to
   each item, and deletes only what you select
-- **Outils +** ("Extra Tools"): restore a previous registry backup
-  (created from a "Sauvegarder le registre" run) back over the live
-  `SOFTWARE`/`NTUSER.DAT` hives — a new feature the original never had,
-  see the note below
+- **Outils +** ("Extra Tools"): post-disinfection maintenance tools
+  organized into sections:
+  - *Actions rapides*: flush DNS cache (`ipconfig /flushdns`), clean
+    `%TEMP%` / `C:\Windows\Temp`, empty the Recycle Bin
+  - *Réparation Windows*: reset firewall rules (`netsh advfirewall
+    reset`), scan system files (`sfc /scannow`), repair the Windows
+    image (`DISM /RestoreHealth`)
+  - *Réseau*: reset the Winsock catalog (`netsh winsock reset`), reset
+    the hosts file to its default content, remove any configured system
+    proxy (HKCU Internet Settings + `netsh winhttp reset proxy`)
+  - *Navigateurs*: delete browser group-policy registry keys for
+    Chrome, Edge and Firefox (used by adware to lock settings); restore
+    default file associations for `.exe`, `.bat`, `.com`, `.lnk`
+    (HKCR + UserChoice removal)
+  - *Rapport diagnostic*: generate a `kprm-diag-<timestamp>.txt`
+    containing processes (with MD5, SHA256, digital signature, company,
+    ACL warnings), services, startup entries, scheduled tasks, installed
+    software, browser extensions (Chrome/Edge/Firefox), files modified
+    in the last 90 days, Windows activation status, registered security
+    products, hosts file, network configuration, proxy settings and
+    browser policies — saved to `%HOMEDRIVE%\KPRM\` and copied to the
+    Desktop for easy sharing
+  - *Restauration du registre*: restore a `SOFTWARE`/`NTUSER.DAT`
+    backup created from a "Sauvegarder le registre" run back over the
+    live hives at next boot — see note below
 - **Dons** ("Donate"): a Bitcoin address for supporting the project, with a one-click copy button
 
 (Tab and action names above are shown in French — the language this
@@ -172,67 +203,84 @@ kprm.exe catalog validate
 
 ## Supported tools
 
-KpRm's catalog currently knows how to detect and clean up after 202
+KpRm's catalog currently knows how to detect and clean up after 267
 tools: third-party cleanup/removal utilities, rootkit scanners,
 ransomware decryptors, and diagnostic tools commonly run (and left
-behind) during a malware-removal session.
+behind) during a malware-removal session — plus KpRm's own diagnostic
+reports.
 
 <details>
-<summary><strong>Show all 202 tools</strong></summary>
+<summary><strong>Show all 267 tools</strong></summary>
 
 | | | | |
 |---|---|---|---|
 | AdliceDiag | AdminRun | Ads | AdsFix |
-| AdwCleaner | AHK_NavScan | AlphaDecrypter | AswMBR |
-| AuroraDecrypter | AutorunsVTChecker | Avast Decryptor Cryptomix | AVCertClean |
-| Avenger | Avira Registry Cleaner | BitKangarooDecrypter | BitStakDecrypter |
-| BlitzBlank | BTCWareDecrypter | Catchme | Check Browsers LNK |
-| CKScanner | Clean_DNS | ClearLNK | CMD_Command |
-| CoinVaultDecryptor | Combofix | Crypt38Decrypter | CryptoSearch |
-| CrystalDiskInfo (portable) | DCryDecrypter | DDS | Decrypt CryptON |
-| Defogger | DoesNotBelong | Dr.Web Cureit | Dr.Web LiveDisk |
-| Easy Restore Point | Emisoft Emergency Kit | ESET AES-NI Decryptor | ESET Bedep Cleaner |
-| ESET Bubnix Cleaner | ESET CodplatAA Cleaner | ESET Conficker Cleaner | ESET Crypt888 Decryptor |
-| ESET Crysis Decryptor | ESET Daonol Cleaner | ESET Dorkbot Cleaner | ESET ELEX Cleaner |
-| ESET Eternal Blue Checker | ESET Filecoder Cleaner | ESET Filecoder.AA Cleaner | ESET Filecoder.AE Cleaner |
-| ESET Filecoder.AR Cleaner | ESET Filecoder.NAC Cleaner | ESET Filecoder.R Cleaner | ESET GandCrab Decryptor |
-| ESET Goblin Cleaner | ESET JS/Bondat Fixer | ESET Log Collector | ESET Mabezat Decryptor |
-| ESET Mebroot Cleaner | ESET Medre Cleaner | ESET Necurs.A Cleaner | ESET Olmarik Cleaner |
-| ESET Online Scanner | ESET Poweliks Cleaner | ESET Quervar.C Cleaner | ESET Retacino Cleaner |
-| ESET Retefe Detector | ESET Rogue Applications Remover | ESET Rovnix.A Cleaner | ESET Simda Cleaner |
-| ESET Sirefef Cleaner | ESET Spy.Tuscas Cleaner | ESET Spy.Zbot.ZR Cleaner | ESET SpyEye Cleaner |
-| ESET Superfish Cleaner | ESET SysInspector | ESET SysRescue | ESET TeslaCrypt Decryptor |
-| ESET Trustezeb.A Decoder | ESET VB.NAX Cleaner | ESET VB.OGJ Cleaner | ESET Virlock Cleaner |
-| ESET Zimuse Cleaner | FilesLockerDecrypter | FixExec | FixPurge |
-| FRST | FSS | g3n-h@ckm@n tools | GetSystemInfo |
-| GhostCryptDecrypter | GibonDecrypter | GooredFix | Grantperms |
-| HiddenTear Bruteforcer | HiddenTearDecrypter | Hosts-perm | HostsXpert |
-| InsaneCryptDecrypter | JavaRa | JigSawDecrypter | Junkware Removal Tool |
-| Kaspersky Rescue Disk | Kaspersky Virus Removal Tool | KPLive | KPTemp |
-| ListCWall | ListParts | LogonFix | Look_my_hardware |
-| Malwarebytes (log) | Malwarebytes Anti-Rootkit | Malwarebytes Support Tool | Mbr.exe |
-| MBRCheck | MbrScan | McAfee GetSusp | McAfee Pinkslipbot |
-| McAfee RootkitRemover | McAfee Stinger | McAfee Tesladecrypt | MemControl |
-| Microsoft Safety Scanner | MiniregTool | Minitoolbox | MirCopDecrypter |
-| MKV | Mole02Decryptor | NetAdapter Repair All In One | OldTimer Tools |
+| AdwCleaner | AHK_NavScan | Alcatraz Decryptor | AlphaDecrypter |
+| AswMBR | AuroraDecrypter | Autoruns | AutorunsVTChecker |
+| Avast Decryptor Akira | Avast Decryptor AtomSilo / LockFile | Avast Decryptor Babuk | Avast Decryptor BadBlock |
+| Avast Decryptor Bart | Avast Decryptor BigBobRoss | Avast Decryptor Cryptomix | Avast Decryptor LambdaLocker |
+| Avast Decryptor Prometheus | Avast Decryptor Rhysida | Avast Decryptor Yanluowang | AVCertClean |
+| Avenger | Avira Registry Cleaner | Bitdefender Annabelle Decryptor | Bitdefender DarkSide Decryptor |
+| Bitdefender FONIX Decryptor | Bitdefender GandCrab Decryptor | Bitdefender LockerGoga Decryptor | Bitdefender MegaCortex Decryptor |
+| Bitdefender Ouroboros Decryptor | Bitdefender REvil Decryptor | BitKangarooDecrypter | BitStakDecrypter |
+| Black Basta Decryptor | BlitzBlank | BTCWareDecrypter | Catchme |
+| Check Browsers LNK | CKScanner | Clean_DNS | ClearLNK |
+| CMD_Command | CoinVaultDecryptor | Combofix | Crypt38Decrypter |
+| CryptoSearch | CrystalDiskInfo (portable) | CWShredder | D7II |
+| DCryDecrypter | DDS | Decrypt CryptON | Defogger |
+| DelFix | DoesNotBelong | Dr.Web Cureit | Dr.Web LiveDisk |
+| Easy Restore Point | Emisoft Emergency Kit | Emsisoft Decryptor Amnesia | Emsisoft Decryptor Apocalypse |
+| Emsisoft Decryptor BadBlock | Emsisoft Decryptor Bart | Emsisoft Decryptor Globe / GlobeImposter | Emsisoft Decryptor NMoreira |
+| Emsisoft Decryptor Philadelphia | Emsisoft Decryptor Phobos | Emsisoft Decryptor Stampado | Emsisoft Decryptor STOP Djvu |
+| Emsisoft Decryptor SZFLocker | ESET AES-NI Decryptor | ESET Bedep Cleaner | ESET Bubnix Cleaner |
+| ESET CodplatAA Cleaner | ESET Conficker Cleaner | ESET Crypt888 Decryptor | ESET Crysis Decryptor |
+| ESET Daonol Cleaner | ESET Dorkbot Cleaner | ESET ELEX Cleaner | ESET Eternal Blue Checker |
+| ESET Filecoder Cleaner | ESET Filecoder.AA Cleaner | ESET Filecoder.AE Cleaner | ESET Filecoder.AR Cleaner |
+| ESET Filecoder.NAC Cleaner | ESET Filecoder.R Cleaner | ESET GandCrab Decryptor | ESET Goblin Cleaner |
+| ESET JS/Bondat Fixer | ESET Log Collector | ESET Mabezat Decryptor | ESET Mebroot Cleaner |
+| ESET Medre Cleaner | ESET Necurs.A Cleaner | ESET Olmarik Cleaner | ESET Online Scanner |
+| ESET Poweliks Cleaner | ESET Quervar.C Cleaner | ESET Retacino Cleaner | ESET Retefe Detector |
+| ESET Rogue Applications Remover | ESET Rovnix.A Cleaner | ESET Simda Cleaner | ESET Sirefef Cleaner |
+| ESET Spy.Tuscas Cleaner | ESET Spy.Zbot.ZR Cleaner | ESET SpyEye Cleaner | ESET Superfish Cleaner |
+| ESET SysInspector | ESET SysRescue | ESET TeslaCrypt Decryptor | ESET Trustezeb.A Decoder |
+| ESET VB.NAX Cleaner | ESET VB.OGJ Cleaner | ESET Virlock Cleaner | ESET Zimuse Cleaner |
+| Farbar Mini Toolz | FilesLockerDecrypter | FixExec | FixPurge |
+| FixWin | FRST | FSS | g3n-h@ckm@n tools |
+| GetSystemInfo | GhostCryptDecrypter | GibonDecrypter | GMER |
+| GooredFix | Grantperms | GridinSoft Anti-Malware | HiddenTear Bruteforcer |
+| HiddenTearDecrypter | HijackThis | HitmanPro | Hosts-perm |
+| HostsXpert | InsaneCryptDecrypter | JavaRa | JigSawDecrypter |
+| Junkware Removal Tool | Kaspersky CryptXXX Decryptor | Kaspersky Dharma Decryptor | Kaspersky FortuneCrypt Decryptor |
+| Kaspersky MarsJoke Decryptor | Kaspersky Rescue Disk | Kaspersky Scatter Decryptor | Kaspersky Virus Removal Tool |
+| Kaspersky Yatron Decryptor | KPLive | KpRm Rapport diagnostic | KPTemp |
+| ListCWall | ListParts | LockBit 3.0 Decryptor | LogonFix |
+| Look_my_hardware | Malwarebytes (log) | Malwarebytes Anti-Rootkit | Malwarebytes Support Tool |
+| Maze / Sekhmet / Egregor Decryptor | Mbr.exe | MBRCheck | MbrScan |
+| McAfee GetSusp | McAfee Pinkslipbot | McAfee RootkitRemover | McAfee Stinger |
+| McAfee Tesladecrypt | MemControl | Microsoft Safety Scanner | MiniregTool |
+| Minitoolbox | MirCopDecrypter | MKV | Mole02Decryptor |
+| Nemucod / NemucodAES Decryptor | NetAdapter Repair All In One | Norton Power Eraser | OldTimer Tools |
 | OneClick2RP | OTA | OTC | OTH |
-| OTL | OTM | OTS | PCHunter |
-| PowerLockyDecrypter | Pre_Scan | Process Analyzer | ProcessClose |
-| QuickDiag | Rakhni Decryptor | Rannoh Decryptor | RansomNoteCleaner |
-| RAV | RegtoolExport | Remediate VBS Worm | Report_Antivir |
+| OTL | OTM | OTS | Paradise Decryptor |
+| PCHunter | PowerLockyDecrypter | Pre_Scan | Process Analyzer |
+| Process Hacker | ProcessClose | PyLocky Decryptor | QuickDiag |
+| Rakhni Decryptor | Rannoh Decryptor | RansomNoteCleaner | RAV |
+| Regshot | RegtoolExport | Remediate VBS Worm | Report_Antivir |
 | Report_CHKDSK | ResetBrowser | ResetNavigator | Rkill |
 | RogueKiller | RogueKillerCMD | Rooter | RootkitRevealer |
 | RstAssociations | RstHosts | ScanRapide | SEAF |
 | SecurityCheck | ServicesRepair | SFT | ShadeDecryptor |
-| Shortcut Cleaner | SMBCheck | StrikedDecrypter | StupidDecrypter |
+| Shortcut Cleaner | SMBCheck | SmitFraudFix | Sophos Scan & Clean |
+| Spybot Search & Destroy | StrikedDecrypter | StupidDecrypter | SUPERAntiSpyware |
 | Symantec Kovter Removal Tool | Symantec Pasobir Removal Tool | Symantec Ramnit Removal Tool | Symantec Tempedreve Removal Tool |
-| System Information Tool | Systemlook | TDSSKiller | TFC |
-| ToolsDiag | UAC Manager | UAC-Level | UnHide |
+| System Information Tool | System Informer | Systemlook | TDSSKiller |
+| TFC | ToolsDiag | Trend Micro HouseCall | Trend Micro Ransomware Decryptor |
+| UAC Manager | UAC-Level | UnHackMe | UnHide |
 | Unlock92Decrypter | UnZacMe | USB File Resc | USBFix |
 | Webroot DE-BUG | WildfireDecryptor | WinCHK | Windows Repair All In One (portable) |
-| WinsockAnalyzer | WinUpdatefix | XoristDecryptor | ZHP Tools |
-| ZHPCleaner | ZHPDiag | ZHPFix | ZHPLite |
-| ZHPSuite | Zoek | | |
+| WinsockAnalyzer | WinUpdatefix | XoristDecryptor | Zemana AntiMalware |
+| ZHP Tools | ZHPCleaner | ZHPDiag | ZHPFix |
+| ZHPLite | ZHPSuite | Zoek | |
 
 </details>
 
@@ -248,8 +296,8 @@ Five crates:
 
 | Crate | Role |
 |---|---|
-| [`kprm-catalog`](crates/kprm-catalog) | Data model, loader, and validator for the 202-tool catalog (`tools.d/*.toml`), embedded into the binary at compile time. |
-| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent removal logic: pattern matching, quarantine decisions, the action-type orchestrator (kills matching running processes before deleting a selected target), UAC/system-settings restoration, registry-backup planning and restore planning, restore-point and deferred-quarantine scheduling, report formatting (plain text and JSON). No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
+| [`kprm-catalog`](crates/kprm-catalog) | Data model, loader, and validator for the 267-entry catalog (`tools.d/*.toml`), embedded into the binary at compile time. |
+| [`kprm-engine`](crates/kprm-engine) | Pure, platform-independent logic: pattern matching, quarantine decisions, the action-type orchestrator (kills matching running processes before deleting a selected target), UAC/system-settings restoration, registry-backup planning and restore planning, restore-point and deferred-quarantine scheduling, post-disinfection maintenance actions, system diagnostic report generation, report formatting (plain text and JSON). No Windows dependency — fully unit-tested on any OS with in-memory fakes. |
 | [`kprm-i18n`](crates/kprm-i18n) | Fluent-based translations for 8 locales, with variable substitution (`get_fmt`); powers every label in the GUI (see [Usage](#graphical-interface) above), auto-selected from the Windows UI language. |
 | [`kprm-windows`](crates/kprm-windows) | Real Windows adapters implementing `kprm-engine`'s abstractions: filesystem, registry, processes, external commands, elevation, machine restart, registry-hive export/restore, quarantine-scheduling agent, UI locale detection, single-instance mutex/message box, and delayed self-deletion. |
 | [`kprm`](crates/kprm) | The single binary: the GUI (egui/eframe) with no arguments, the CLI with a subcommand. |
@@ -261,7 +309,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 121 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 142 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry
