@@ -11,7 +11,7 @@ use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::{Event, EventResult, Report};
 
 use crate::theme;
-use crate::worker::{self, WorkerRequest, WorkerResponse};
+use crate::worker::{self, MaintenanceTask, WorkerRequest, WorkerResponse};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Tab {
@@ -50,6 +50,7 @@ impl From<QuarantineChoice> for QuarantineMode {
 
 pub struct KprmApp {
     tab: Tab,
+    logo_texture: Option<egui::TextureHandle>,
 
     opt_remove_tools: bool,
     opt_backup_registry: bool,
@@ -111,6 +112,7 @@ impl KprmApp {
             .unwrap_or_else(|_| "Ready".to_string());
         Self {
             tab: Tab::Automatic,
+            logo_texture: None,
             opt_remove_tools: true,
             opt_backup_registry: false,
             opt_remove_restore_points: false,
@@ -310,6 +312,11 @@ impl KprmApp {
                     );
                     self.handle_report(report);
                 }
+                WorkerResponse::DiagnosticDone(path) => {
+                    self.busy = false;
+                    self.progress = None;
+                    self.status = self.tf("diag-status-done", &[("path", &path)]);
+                }
                 WorkerResponse::Failed(message) => {
                     self.busy = false;
                     self.progress = None;
@@ -483,14 +490,35 @@ impl KprmApp {
             .exact_height(46.0)
             .show(ctx, |ui| {
                 ui.horizontal(|ui| {
-                    let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
-                    ui.painter().rect_filled(badge_rect, 8.0, theme::BLUE_BG);
-                    let c = badge_rect.center();
-                    let stroke = Stroke::new(1.8_f32, theme::BLUE);
-                    ui.painter()
-                        .line_segment([c + Vec2::new(-6.0, 0.0), c + Vec2::new(-2.0, 4.0)], stroke);
-                    ui.painter()
-                        .line_segment([c + Vec2::new(-2.0, 4.0), c + Vec2::new(6.0, -5.0)], stroke);
+                    // KpRm bug logo (original icon from the AutoIt version).
+                    if let Some(tex) = &self.logo_texture {
+                        let logo_size = Vec2::splat(30.0);
+                        let (logo_rect, _) =
+                            ui.allocate_exact_size(logo_size, Sense::hover());
+                        ui.painter().image(
+                            tex.id(),
+                            logo_rect,
+                            egui::Rect::from_min_max(
+                                egui::Pos2::ZERO,
+                                egui::Pos2::new(1.0, 1.0),
+                            ),
+                            Color32::WHITE,
+                        );
+                    } else {
+                        let (badge_rect, _) =
+                            ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
+                        ui.painter().rect_filled(badge_rect, 8.0, theme::BLUE_BG);
+                        let c = badge_rect.center();
+                        let stroke = Stroke::new(1.8_f32, theme::BLUE);
+                        ui.painter().line_segment(
+                            [c + Vec2::new(-6.0, 0.0), c + Vec2::new(-2.0, 4.0)],
+                            stroke,
+                        );
+                        ui.painter().line_segment(
+                            [c + Vec2::new(-2.0, 4.0), c + Vec2::new(6.0, -5.0)],
+                            stroke,
+                        );
+                    }
 
                     ui.add_space(8.0);
                     ui.label(
@@ -959,6 +987,7 @@ impl KprmApp {
     }
 
     fn ui_extra_tools(&mut self, ui: &mut egui::Ui) {
+        egui::ScrollArea::vertical().show(ui, |ui| {
         ui.add_space(4.0);
         ui.label(
             egui::RichText::new(self.t("tab-extra-tools").to_uppercase())
@@ -1069,14 +1098,225 @@ impl KprmApp {
             self.confirm_restore.clone_from(&self.selected_backup);
         }
 
+        // --- Actions rapides ---
         ui.add_space(16.0);
         ui.separator();
-        ui.add_space(8.0);
+        ui.add_space(10.0);
         ui.label(
-            egui::RichText::new(self.t("extra-tools-empty"))
+            egui::RichText::new(self.t("quick-actions-title").to_uppercase())
                 .size(11.0)
+                .strong()
                 .color(theme::TEXT_3),
         );
+        ui.add_space(8.0);
+
+        self.ui_maintenance_row(
+            ui,
+            "quick-actions-flush-dns",
+            "quick-actions-flush-dns-desc",
+            MaintenanceTask::FlushDns,
+            "status-running",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "quick-actions-clean-temp",
+            "quick-actions-clean-temp-desc",
+            MaintenanceTask::CleanTempDirs,
+            "status-running",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "quick-actions-empty-recycle",
+            "quick-actions-empty-recycle-desc",
+            MaintenanceTask::EmptyRecycleBin,
+            "status-running",
+            false,
+        );
+
+        // --- Réseau ---
+        ui.add_space(16.0);
+        ui.separator();
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new(self.t("network-section-title").to_uppercase())
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(8.0);
+
+        self.ui_maintenance_row(
+            ui,
+            "network-winsock-reset",
+            "network-winsock-reset-desc",
+            MaintenanceTask::ResetWinsock,
+            "status-running",
+            true, // amber: requires restart
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "network-hosts-reset",
+            "network-hosts-reset-desc",
+            MaintenanceTask::ResetHostsFile,
+            "status-running",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "network-proxy-remove",
+            "network-proxy-remove-desc",
+            MaintenanceTask::RemoveProxy,
+            "status-running",
+            false,
+        );
+
+        // --- Navigateurs ---
+        ui.add_space(16.0);
+        ui.separator();
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new(self.t("browsers-section-title").to_uppercase())
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(8.0);
+
+        self.ui_maintenance_row(
+            ui,
+            "browsers-policies-reset",
+            "browsers-policies-reset-desc",
+            MaintenanceTask::ResetBrowserPolicies,
+            "status-running",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "browsers-file-assoc",
+            "browsers-file-assoc-desc",
+            MaintenanceTask::RestoreFileAssociations,
+            "status-running",
+            false,
+        );
+
+        // --- Réparation Windows ---
+        ui.add_space(16.0);
+        ui.separator();
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new(self.t("windows-repair-title").to_uppercase())
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(8.0);
+
+        self.ui_maintenance_row(
+            ui,
+            "windows-repair-firewall",
+            "windows-repair-firewall-desc",
+            MaintenanceTask::ResetFirewall,
+            "status-running",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "windows-repair-sfc",
+            "windows-repair-sfc-desc",
+            MaintenanceTask::RunSfc,
+            "status-sfc",
+            false,
+        );
+        ui.add_space(6.0);
+        self.ui_maintenance_row(
+            ui,
+            "windows-repair-dism",
+            "windows-repair-dism-desc",
+            MaintenanceTask::RunDism,
+            "status-dism",
+            true, // amber description (warning about duration)
+        );
+
+        // --- Rapport diagnostic ---
+        ui.add_space(16.0);
+        ui.separator();
+        ui.add_space(10.0);
+        ui.label(
+            egui::RichText::new(self.t("diag-section-title").to_uppercase())
+                .size(11.0)
+                .strong()
+                .color(theme::TEXT_3),
+        );
+        ui.add_space(8.0);
+        self.ui_maintenance_row(
+            ui,
+            "diag-button",
+            "diag-button-desc",
+            MaintenanceTask::GenerateDiagnosticReport,
+            "diag-status-running",
+            false,
+        );
+        ui.add_space(8.0);
+        }); // ScrollArea
+    }
+
+    /// Renders one maintenance action row: title + description on the left,
+    /// "Exécuter" button on the right. `amber_desc` tints the description in
+    /// [`theme::AMBER`] for actions that warrant extra attention (DISM).
+    fn ui_maintenance_row(
+        &mut self,
+        ui: &mut egui::Ui,
+        title_key: &str,
+        desc_key: &str,
+        task: MaintenanceTask,
+        status_key: &str,
+        amber_desc: bool,
+    ) {
+        let title = self.t(title_key);
+        let desc = self.t(desc_key);
+        let run_label = self.t("run");
+        let status = self.t(status_key);
+        let desc_color = if amber_desc { theme::AMBER } else { theme::TEXT_3 };
+
+        ui.horizontal(|ui| {
+            ui.vertical(|ui| {
+                ui.set_max_width(ui.available_width() - 110.0);
+                ui.label(
+                    egui::RichText::new(title)
+                        .size(12.0)
+                        .strong()
+                        .color(theme::TEXT_1),
+                );
+                ui.add(
+                    egui::Label::new(
+                        egui::RichText::new(desc).size(11.0).color(desc_color),
+                    )
+                    .wrap(),
+                );
+            });
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                let btn = egui::Button::new(
+                    egui::RichText::new(run_label).color(Color32::WHITE),
+                )
+                .fill(theme::BLUE)
+                .min_size(Vec2::new(90.0, 28.0));
+                if ui.add_enabled(!self.busy, btn).clicked() {
+                    self.busy = true;
+                    self.status = status;
+                    let _ = self
+                        .request_tx
+                        .send(WorkerRequest::RunMaintenanceTask(task));
+                }
+            });
+        });
     }
 
     /// The "are you sure?" gate in front of a registry restore — this is
@@ -1220,6 +1460,31 @@ const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
 
 impl eframe::App for KprmApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Load the bug logo texture once on first frame.
+        // The raw ICO-derived PNG has opaque black shapes on a transparent
+        // background — force every non-transparent pixel to white so the
+        // silhouette is visible on the dark title bar.
+        if self.logo_texture.is_none() {
+            if let Ok(icon) = eframe::icon_data::from_png_bytes(
+                include_bytes!("../assets/bug.png"),
+            ) {
+                let mut rgba = icon.rgba;
+                for chunk in rgba.chunks_mut(4) {
+                    if chunk[3] > 0 {
+                        chunk[0] = 255;
+                        chunk[1] = 255;
+                        chunk[2] = 255;
+                    }
+                }
+                let img = egui::ColorImage::from_rgba_unmultiplied(
+                    [icon.width as usize, icon.height as usize],
+                    &rgba,
+                );
+                self.logo_texture =
+                    Some(ctx.load_texture("kprm-logo", img, egui::TextureOptions::LINEAR));
+            }
+        }
+
         self.poll_worker();
         if self.busy {
             ctx.request_repaint();

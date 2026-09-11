@@ -10,7 +10,24 @@ use kprm_engine::orchestrator::{self, RunOptions};
 use kprm_engine::paths::KnownDirs;
 use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::Report;
-use kprm_engine::{backup, restore_point, system_settings, uac};
+use kprm_engine::{backup, maintenance, restore_point, system_settings, uac};
+
+/// One-off maintenance task launched from the Extra Tools tab.
+#[derive(Debug, Clone, Copy)]
+pub enum MaintenanceTask {
+    FlushDns,
+    ResetFirewall,
+    RunSfc,
+    RunDism,
+    CleanTempDirs,
+    EmptyRecycleBin,
+    ResetWinsock,
+    ResetHostsFile,
+    RemoveProxy,
+    ResetBrowserPolicies,
+    RestoreFileAssociations,
+    GenerateDiagnosticReport,
+}
 
 pub enum WorkerRequest {
     /// "Analyser": search-only scan across the whole catalog.
@@ -31,6 +48,8 @@ pub enum WorkerRequest {
     /// "Restaurer" (Extra Tools tab): schedules a previous registry
     /// backup's hive files to replace the live ones at next boot.
     RestoreRegistryBackup(kprm_engine::backup::AvailableBackup),
+    /// One-off maintenance action from the Extra Tools tab.
+    RunMaintenanceTask(MaintenanceTask),
 }
 
 pub enum WorkerResponse {
@@ -43,6 +62,9 @@ pub enum WorkerResponse {
         total: usize,
     },
     Done(Report),
+    /// Diagnostic report was written and opened; the path is shown in the
+    /// status bar. No [`Report`] is produced — the file *is* the output.
+    DiagnosticDone(String),
     Failed(String),
 }
 
@@ -298,6 +320,78 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             kprm_windows::schedule_self_deletion(report.needs_restart());
+            let _ = response_tx.send(WorkerResponse::Done(report));
+        }
+
+        WorkerRequest::RunMaintenanceTask(task) => {
+            let result = match task {
+                MaintenanceTask::FlushDns => maintenance::flush_dns(&mut commands),
+                MaintenanceTask::ResetFirewall => maintenance::reset_firewall(&mut commands),
+                MaintenanceTask::RunSfc => maintenance::run_sfc(&mut commands),
+                MaintenanceTask::RunDism => maintenance::run_dism(&mut commands),
+                MaintenanceTask::CleanTempDirs => {
+                    maintenance::clean_temp_dirs(&mut fs, &dirs)
+                }
+                MaintenanceTask::EmptyRecycleBin => maintenance::empty_recycle_bin(&mut commands),
+                MaintenanceTask::ResetWinsock => maintenance::reset_winsock(&mut commands),
+                MaintenanceTask::ResetHostsFile => {
+                    maintenance::reset_hosts_file(&mut commands, &dirs)
+                }
+                MaintenanceTask::RemoveProxy => {
+                    maintenance::remove_proxy(&mut registry, &mut commands)
+                }
+                MaintenanceTask::ResetBrowserPolicies => {
+                    maintenance::reset_browser_policies(&mut registry)
+                }
+                MaintenanceTask::RestoreFileAssociations => {
+                    maintenance::restore_file_associations(&mut commands)
+                }
+                MaintenanceTask::GenerateDiagnosticReport => {
+                    let ts = kprm_windows::current_timestamp();
+                    let diag = kprm_engine::diagnostics::collect(
+                        &mut registry,
+                        &mut processes,
+                        &mut commands,
+                        &dirs,
+                        &ts,
+                    );
+                    let text = diag.to_text();
+                    let safe_ts = ts.replace(':', "-").replace(' ', "_");
+                    let dir = format!("{}\\KPRM", dirs.home_drive());
+                    let filename = format!("kprm-diag-{safe_ts}.txt");
+                    let path = format!("{dir}\\{filename}");
+                    let ok = std::fs::create_dir_all(&dir).is_ok()
+                        && std::fs::write(&path, text.as_bytes()).is_ok();
+                    if ok {
+                        // Also drop a copy on the desktop so the user can
+                        // easily share it with the helper on the forum.
+                        let desktop_path = format!("{}\\{filename}", dirs.desktop());
+                        let _ = std::fs::copy(&path, &desktop_path);
+                        let _ = std::process::Command::new("notepad.exe").arg(&path).spawn();
+                    }
+                    // Return early — use DiagnosticDone instead of the usual
+                    // maintenance report so the UI can show the right status.
+                    let msg = if ok {
+                        path.clone()
+                    } else {
+                        "Échec de la génération du rapport".to_string()
+                    };
+                    let _ = response_tx.send(WorkerResponse::DiagnosticDone(msg));
+                    return;
+                }
+            };
+            let mut report = Report::default();
+            report.push(
+                "Maintenance",
+                "task",
+                result.description,
+                if result.succeeded {
+                    kprm_engine::report::EventResult::Ran
+                } else {
+                    kprm_engine::report::EventResult::Failed("échec".to_string())
+                },
+            );
+            kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             let _ = response_tx.send(WorkerResponse::Done(report));
         }
 
