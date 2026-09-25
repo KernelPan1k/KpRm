@@ -93,11 +93,11 @@ impl Report {
         out.push_str("\r\n");
 
         if self.events.is_empty() {
-            out.push_str("\r\nAucun élément trouvé.\r\n");
+            out.push_str("\r\nNo items found.\r\n");
             return out;
         }
 
-        out.push_str("\r\nRésumé\r\n");
+        out.push_str("\r\nSummary\r\n");
         out.push_str(THIN_RULE);
         out.push_str("\r\n");
         for (label, count) in self.summary_counts() {
@@ -125,7 +125,7 @@ impl Report {
             .filter(|e| matches!(e.result, EventResult::Failed(_)))
             .collect();
         if !failures.is_empty() {
-            out.push_str(&format!("\r\n{RULE}\r\nErreurs\r\n{RULE}\r\n"));
+            out.push_str(&format!("\r\n{RULE}\r\nErrors\r\n{RULE}\r\n"));
             for event in failures {
                 if let EventResult::Failed(message) = &event.result {
                     out.push_str(&format!(
@@ -136,7 +136,7 @@ impl Report {
             }
         }
 
-        out.push_str(&format!("\r\n{RULE}\r\nFin du rapport.\r\n"));
+        out.push_str(&format!("\r\n{RULE}\r\nEnd of report.\r\n"));
 
         out
     }
@@ -163,13 +163,13 @@ impl Report {
             }
         }
         [
-            ("Supprimés", removed),
-            ("Programmes lancés", ran),
-            ("Suppressions au redémarrage", scheduled_on_reboot),
-            ("Conservés (quarantaine)", kept),
-            ("Suppression programmée (7 jours)", scheduled_in_7_days),
-            ("Trouvés (analyse seule)", found),
-            ("Échecs", failed),
+            ("Removed", removed),
+            ("Programs launched", ran),
+            ("Scheduled for removal on reboot", scheduled_on_reboot),
+            ("Kept (quarantine)", kept),
+            ("Removal scheduled (7 days)", scheduled_in_7_days),
+            ("Found (scan only)", found),
+            ("Failed", failed),
         ]
     }
 
@@ -240,7 +240,7 @@ mod tests {
         let report = Report::default();
         let text = report.to_text(&["KpRm report".to_string()]);
         assert!(text.contains("KpRm report"));
-        assert!(text.contains("Aucun élément trouvé"));
+        assert!(text.contains("No items found"));
     }
 
     #[test]
@@ -262,15 +262,15 @@ mod tests {
 
         let text = report.to_text(&[]);
 
-        assert!(text.contains("Résumé"));
-        assert!(text.contains("Supprimés"));
+        assert!(text.contains("Summary"));
+        assert!(text.contains("Removed"));
         assert!(text.contains("AdwCleaner\r\n"));
         assert!(text.contains("OTL\r\n"));
         assert!(text.contains("[OK]") && text.contains("C:\\Desktop\\AdwCleaner.exe"));
         assert!(text.contains("[R]") && text.contains("C:\\_OTL") && text.contains("(folder)"));
-        assert!(text.contains("Erreurs"));
+        assert!(text.contains("Errors"));
         assert!(text.contains("[X] AdwCleaner.exe (process) : boom"));
-        assert!(text.contains("Fin du rapport."));
+        assert!(text.contains("End of report."));
     }
 
     #[test]
@@ -291,13 +291,13 @@ mod tests {
             .collect();
 
         for expected in [
-            "Supprimés : 1",
-            "Programmes lancés : 1",
-            "Suppressions au redémarrage : 1",
-            "Conservés (quarantaine) : 1",
-            "Suppression programmée (7 jours) : 1",
-            "Trouvés (analyse seule) : 1",
-            "Échecs : 1",
+            "Removed : 1",
+            "Programs launched : 1",
+            "Scheduled for removal on reboot : 1",
+            "Kept (quarantine) : 1",
+            "Removal scheduled (7 days) : 1",
+            "Found (scan only) : 1",
+            "Failed : 1",
         ] {
             assert!(
                 normalized.iter().any(|line| line == expected),

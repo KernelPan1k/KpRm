@@ -58,6 +58,22 @@ pub const SLIDERS: Icon = Icon(&[
 pub const BOX: Icon = Icon(&[Element::Path("M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z")]);
 pub const CLOCK: Icon = Icon(&[Element::Circle { cx: 12.0, cy: 12.0, r: 9.0 }, Element::Polyline(&[(12.0, 7.0), (12.0, 12.0), (16.0, 14.0)])]);
 
+/// The registry-restore confirmation dialog's badge — this is the one
+/// action in the whole app that overwrites live system state wholesale
+/// and can't be undone, so it gets its own warning glyph rather than
+/// reusing [`TRASH`]/[`UNDO`].
+pub const ALERT: Icon = Icon(&[
+    Element::Path("M12 9v4"),
+    Element::Path(
+        "M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z",
+    ),
+    // The exclamation mark's dot: SVG draws this as a zero-length
+    // "h.01" segment relying on a round line cap, but our pens are flat-
+    // capped (see `Icon::draw`), which would render nothing — a tiny
+    // stroked circle stands in for it instead.
+    Element::Circle { cx: 12.0, cy: 17.0, r: 0.4 },
+]);
+
 /// The shield/logo glyph (title bar + sidebar brand card + tab icon).
 pub const SHIELD: Icon = Icon(&[
     Element::Path("M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"),

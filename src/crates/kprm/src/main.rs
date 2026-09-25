@@ -16,6 +16,19 @@
 //! (see `build.rs`) — matching the original's own unconditional
 //! `#RequireAdmin`, including for read-only CLI subcommands; see
 //! `../../README.md` for the trade-off that was chosen deliberately.
+//!
+//! `windows_subsystem = "windows"` below means launching `kprm.exe` never
+//! shows a console window of its own — the historical reason it was
+//! *console* (so a launch failure printed a message instead of a silent
+//! vanishing flash) no longer applies now that the GUI is native Win32/
+//! GDI+ rather than `eframe`/OpenGL (see `../../BUILDING.md`). The CLI
+//! subcommands are unaffected: run from an existing terminal, their
+//! `println!`/`eprintln!` output still goes to that terminal, since a
+//! GUI-subsystem process launched from one inherits its console handles
+//! exactly like a console-subsystem one would — the attribute only
+//! controls whether Windows auto-allocates a *new* console when the
+//! process is started without one (a double-click, a shortcut, Explorer).
+#![windows_subsystem = "windows"]
 
 mod app;
 mod app_icons;

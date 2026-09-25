@@ -222,7 +222,7 @@ fn run_engine(
 
     if destructive {
         let mut title = vec![format!(
-            "# KpRm v{} — rapport du {}",
+            "# KpRm v{} — Report — {}",
             env!("CARGO_PKG_VERSION"),
             kprm_windows::current_timestamp()
         )];
@@ -245,7 +245,7 @@ fn run_engine(
                 &deferred_items,
             )
         {
-            eprintln!("Échec de la planification de la suppression différée (7 jours).");
+            eprintln!("Failed to schedule the deferred deletion (7 days).");
         }
 
         if report.needs_restart() {
@@ -264,9 +264,9 @@ fn prompt_for_restart() {
     use std::io::Write;
 
     println!();
-    println!("- Redémarrage nécessaire -");
-    println!("Certains éléments n'ont pu être supprimés qu'au prochain démarrage de Windows.");
-    print!("Redémarrer maintenant ? [o/N] ");
+    println!("- Restart required -");
+    println!("Some items could only be removed on the next Windows restart.");
+    print!("Restart now? [y/N] ");
     let _ = std::io::stdout().flush();
 
     let mut answer = String::new();
@@ -274,15 +274,12 @@ fn prompt_for_restart() {
         return;
     }
 
-    if matches!(
-        answer.trim().to_lowercase().as_str(),
-        "o" | "oui" | "y" | "yes"
-    ) {
+    if matches!(answer.trim().to_lowercase().as_str(), "y" | "yes") {
         if let Err(err) = kprm_windows::reboot_machine() {
-            eprintln!("Échec du redémarrage : {err}");
+            eprintln!("Failed to restart: {err}");
         }
     } else {
-        println!("Redémarrage reporté — pensez à redémarrer manuellement.");
+        println!("Restart postponed — remember to restart manually.");
     }
 }
 

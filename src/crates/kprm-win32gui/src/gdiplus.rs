@@ -309,6 +309,14 @@ impl StringFormat {
     pub fn set_align(&self, align: gp::StringAlignment) -> Result<(), GdiplusError> {
         unsafe { check(gp::GdipSetStringFormatAlign(self.0, align)) }
     }
+
+    /// The vertical counterpart of [`Self::set_align`] — GDI+ defaults
+    /// this to `Near` (top), so a single-line label drawn into a rect
+    /// taller than the text (any button/tab/pill) sits at the top of it
+    /// unless this is also set to `Center`.
+    pub fn set_line_align(&self, align: gp::StringAlignment) -> Result<(), GdiplusError> {
+        unsafe { check(gp::GdipSetStringFormatLineAlign(self.0, align)) }
+    }
 }
 
 impl Drop for StringFormat {

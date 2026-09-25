@@ -28,6 +28,7 @@ pub const RED_BG: Color = Color::rgb(0x2e, 0x16, 0x15);
 pub const BLUE: Color = Color::rgb(0x5b, 0x9e, 0xf5);
 pub const BLUE_BG: Color = Color::rgb(0x14, 0x22, 0x33);
 pub const AMBER: Color = Color::rgb(0xe0, 0xb6, 0x4a);
+pub const AMBER_BG: Color = Color::rgb(0x33, 0x2a, 0x14);
 
 pub const RADIUS: f32 = 8.0;
 

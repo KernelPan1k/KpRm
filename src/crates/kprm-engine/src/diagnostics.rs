@@ -5,9 +5,15 @@
 //! Everything here is read-only: no files are modified, no registry keys are
 //! written. Individual sections are gathered independently so a failure in one
 //! (PowerShell unavailable, access denied) never aborts the whole scan.
+//!
+//! The report text is always English, regardless of the app's own display
+//! language (`kprm-i18n`/the GUI's language setting) — it's meant to be
+//! pasted into an English-language support forum thread or handed to a
+//! technician who may not read the operator's language, so it deliberately
+//! does not go through `kprm-i18n` at all.
 
 use crate::paths::KnownDirs;
-use crate::ports::{CommandRunner, ProcessManager, Registry};
+use crate::ports::{CommandRunner, ProcessManager};
 
 // ── Public types ─────────────────────────────────────────────────────────────
 
@@ -39,7 +45,7 @@ impl DiagnosticReport {
         out.push_str(&sep);
         out.push('\n');
         out.push_str(&format!(
-            "KpRm v{} — Rapport diagnostic — {}\n",
+            "KpRm v{} — Diagnostic Report — {}\n",
             env!("CARGO_PKG_VERSION"),
             self.generated_at
         ));
@@ -51,7 +57,7 @@ impl DiagnosticReport {
             out.push('\n');
             out.push_str(&format!("--- {} ---\n", s.title));
             if s.lines.is_empty() {
-                out.push_str("(aucune entrée)\n");
+                out.push_str("(no entries)\n");
             } else {
                 for line in &s.lines {
                     out.push_str(line);
@@ -67,7 +73,6 @@ impl DiagnosticReport {
 
 /// Collects all diagnostic sections and returns the assembled report.
 pub fn collect(
-    registry: &dyn Registry,
     processes: &dyn ProcessManager,
     commands: &mut dyn CommandRunner,
     dirs: &dyn KnownDirs,
@@ -80,6 +85,7 @@ pub fn collect(
             section_system_info(commands),
             section_windows_events(commands),
             section_security_tools(commands),
+            section_firewall_profiles(commands),
             section_processes(processes, commands),
             section_services(commands),
             section_drivers(commands),
@@ -90,8 +96,11 @@ pub fn collect(
             section_recent_files(commands),
             section_hosts_file(commands, dirs),
             section_network(commands),
+            section_winsock_catalog(commands),
             section_proxy(commands),
-            section_browser_policies(registry),
+            section_browser_policies(commands),
+            section_file_associations(commands),
+            section_explorer_settings(commands),
         ],
     }
 }
@@ -132,29 +141,29 @@ fn section_windows_activation(commands: &mut dyn CommandRunner) -> DiagSection {
 $ErrorActionPreference='SilentlyContinue'
 $products = Get-CimInstance SoftwareLicensingProduct -EA SilentlyContinue |
     Where-Object { $_.Name -like '*Windows*' -and $_.PartialProductKey }
-if (!$products) { "Impossible de récupérer les informations de licence."; return }
+if (!$products) { "Unable to retrieve license information."; return }
 foreach ($s in $products) {
     $statusText = switch ($s.LicenseStatus) {
-        0 { "[NON LICENCIÉ] Aucune licence valide détectée" }
-        1 { "[ACTIVÉ] Licence valide" }
-        2 { "[GRACE] Période de grâce initiale (OOB)" }
-        3 { "[GRACE] Hors tolérance" }
-        4 { "[SUSPECT] Activation non conforme détectée — KMS/crack probable" }
-        5 { "[NOTIFICATION] Notification requise" }
-        6 { "[GRACE ÉTENDUE] Période de grâce étendue" }
-        default { "[INCONNU ($($s.LicenseStatus))]" }
+        0 { "[NOT LICENSED] No valid license detected" }
+        1 { "[ACTIVATED] Valid license" }
+        2 { "[GRACE] Initial grace period (OOB)" }
+        3 { "[GRACE] Out of tolerance" }
+        4 { "[SUSPECT] Non-compliant activation detected — likely KMS/crack" }
+        5 { "[NOTIFICATION] Notification required" }
+        6 { "[EXTENDED GRACE] Extended grace period" }
+        default { "[UNKNOWN ($($s.LicenseStatus))]" }
     }
-    "Produit      : $($s.Name)"
-    "Statut       : $statusText"
+    "Product      : $($s.Name)"
+    "Status       : $statusText"
     if ($s.Description) { "Description  : $($s.Description)" }
     # KMS indicators
     if ($s.DiscoveredKeyManagementServiceMachineName) {
         "KMS Server   : $($s.DiscoveredKeyManagementServiceMachineName):$($s.DiscoveredKeyManagementServiceMachinePort)"
-        "⚠ Activation KMS détectée — vérifiez que ce serveur est légitime (entreprise/école) ou suspect (crack/outil tiers)"
+        "⚠ KMS activation detected — verify whether this server is legitimate (company/school) or suspicious (crack/third-party tool)"
     }
     if ($s.GracePeriodRemaining -gt 0) {
         $days = [math]::Round($s.GracePeriodRemaining / 1440, 1)
-        "Grâce        : $days jour(s) restant(s)"
+        "Grace        : $days day(s) remaining"
     }
     # Check for known illegitimate activation tools via running processes
     $suspectProcs = @('KMSAuto','KMSpico','AAct','MAS','AutoKMS','Re-Loader','KMS_VL_ALL')
@@ -163,12 +172,12 @@ foreach ($s in $products) {
         $suspectProcs | Where-Object { $name -like "*$_*" }
     }
     if ($found) {
-        "⚠ Processus suspect détecté : $($found.Name -join ', ') — outil d'activation tiers actif"
+        "⚠ Suspicious process detected: $($found.Name -join ', ') — third-party activation tool running"
     }
     ""
 }
 "#;
-    section("ACTIVATION WINDOWS", ps(commands, script))
+    section("WINDOWS ACTIVATION", ps(commands, script))
 }
 
 fn section_system_info(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -183,20 +192,20 @@ $u = Get-CimInstance Win32_UserAccount -Filter "LocalAccount=True AND Disabled=F
 "Build       : $($o.BuildNumber) — $($o.OSArchitecture)"
 "Install     : $($o.InstallDate.ToString('yyyy-MM-dd'))"
 "Boot        : $($o.LastBootUpTime.ToString('yyyy-MM-dd HH:mm'))"
-"CPU         : $($p.Name) ($($p.NumberOfCores) coeurs / $($p.NumberOfLogicalProcessors) threads)"
-"RAM         : $([math]::Round($c.TotalPhysicalMemory/1GB,2)) Go"
+"CPU         : $($p.Name) ($($p.NumberOfCores) cores / $($p.NumberOfLogicalProcessors) threads)"
+"RAM         : $([math]::Round($c.TotalPhysicalMemory/1GB,2)) GB"
 "Machine     : $($c.Name)"
-"Fabricant   : $($c.Manufacturer) — $($c.Model)"
+"Manufacturer: $($c.Manufacturer) — $($c.Model)"
 "BIOS        : $($b.Manufacturer) $($b.SMBIOSBIOSVersion) ($($b.ReleaseDate.ToString('yyyy-MM-dd')))"
-"Domaine     : $($c.Domain)"
-"Utilisateur : $env:USERNAME ($env:USERDOMAIN)"
-"Comptes locaux actifs : $($u -join ', ')"
+"Domain      : $($c.Domain)"
+"User        : $env:USERNAME ($env:USERDOMAIN)"
+"Active local accounts : $($u -join ', ')"
 "PowerShell  : $($PSVersionTable.PSVersion)"
 "CLR         : $([System.Runtime.InteropServices.RuntimeEnvironment]::GetSystemVersion())"
 "Secure Boot : $((Confirm-SecureBootUEFI -EA SilentlyContinue))"
 "UAC         : $(try{(Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).EnableLUA}catch{'N/A'})"
 "#;
-    section("INFORMATIONS SYSTÈME", ps(commands, script))
+    section("SYSTEM INFORMATION", ps(commands, script))
 }
 
 fn section_windows_events(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -205,7 +214,7 @@ $ErrorActionPreference='SilentlyContinue'
 $since = (Get-Date).AddDays(-7)
 $events = Get-WinEvent -FilterHashtable @{LogName='Application','System'; Level=1,2; StartTime=$since} -MaxEvents 100 -EA SilentlyContinue |
     Sort-Object TimeCreated -Descending
-if (!$events) { "Aucune erreur/critique dans les journaux Application et Système (7 derniers jours)."; return }
+if (!$events) { "No error/critical entries in the Application and System logs (last 7 days)."; return }
 foreach ($e in $events) {
     $msg = ($e.Message -split "`r?`n")[0]
     if ($msg.Length -gt 300) { $msg = $msg.Substring(0,300) + '…' }
@@ -214,7 +223,7 @@ foreach ($e in $events) {
 }
 "#;
     section(
-        "ERREURS WINDOWS (Journaux Application/Système, 7 derniers jours)",
+        "WINDOWS ERRORS (Application/System logs, last 7 days)",
         ps(commands, script),
     )
 }
@@ -230,9 +239,9 @@ if ($av) {
         # productState bits: 0x10 = enabled, 0x12 = enabled+up-to-date
         $enabled = ($state -band 0x1000) -ne 0
         $upToDate = ($state -band 0x0010) -eq 0
-        "  $($_.displayName) — Actif: $enabled | A jour: $upToDate | GUID: $($_.instanceGuid)"
+        "  $($_.displayName) — Enabled: $enabled | Up to date: $upToDate | GUID: $($_.instanceGuid)"
     }
-} else { "  (aucun enregistré dans Security Center)" }
+} else { "  (none registered in Security Center)" }
 ""
 "--- Anti-spyware (Windows Security Center) ---"
 $as = Get-CimInstance -Namespace root/SecurityCenter2 -ClassName AntiSpywareProduct -EA SilentlyContinue
@@ -240,19 +249,19 @@ if ($as) {
     $as | Sort-Object displayName | ForEach-Object {
         $state = $_.productState
         $enabled = ($state -band 0x1000) -ne 0
-        "  $($_.displayName) — Actif: $enabled | GUID: $($_.instanceGuid)"
+        "  $($_.displayName) — Enabled: $enabled | GUID: $($_.instanceGuid)"
     }
-} else { "  (aucun enregistré dans Security Center)" }
+} else { "  (none registered in Security Center)" }
 ""
-"--- Pare-feu (Windows Security Center) ---"
+"--- Firewall (Windows Security Center) ---"
 $fw = Get-CimInstance -Namespace root/SecurityCenter2 -ClassName FirewallProduct -EA SilentlyContinue
 if ($fw) {
     $fw | Sort-Object displayName | ForEach-Object {
         $state = $_.productState
         $enabled = ($state -band 0x1000) -ne 0
-        "  $($_.displayName) — Actif: $enabled | GUID: $($_.instanceGuid)"
+        "  $($_.displayName) — Enabled: $enabled | GUID: $($_.instanceGuid)"
     }
-} else { "  (aucun enregistré, pare-feu Windows par défaut)" }
+} else { "  (none registered, default Windows firewall)" }
 ""
 "--- Windows Defender ---"
 $wdPrefs = Get-MpPreference -EA SilentlyContinue
@@ -262,9 +271,25 @@ if ($wdPrefs) {
     "  AntivirusEnabled   : $($wdStatus.AntivirusEnabled)"
     "  SignatureDate      : $($wdStatus.AntivirusSignatureLastUpdated)"
     "  AMRunningMode      : $($wdStatus.AMRunningMode)"
-} else { "  Windows Defender : information non disponible" }
+} else { "  Windows Defender : information not available" }
 "#;
-    section("OUTILS DE SÉCURITÉ (Antivirus / Antimalware / Pare-feu)", ps(commands, script))
+    section("SECURITY TOOLS (Antivirus / Antimalware / Firewall)", ps(commands, script))
+}
+
+fn section_firewall_profiles(commands: &mut dyn CommandRunner) -> DiagSection {
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+Get-NetFirewallProfile -EA SilentlyContinue | Sort-Object Name | ForEach-Object {
+    "$($_.Name)"
+    "  Enabled           : $($_.Enabled)"
+    "  Inbound action    : $($_.DefaultInboundAction)"
+    "  Outbound action   : $($_.DefaultOutboundAction)"
+    "  Notification      : $($_.NotifyOnListen)"
+    "  Log (blocked)     : $($_.LogBlocked)"
+    ""
+}
+"#;
+    section("FIREWALL (Domain / Private / Public profiles)", ps(commands, script))
 }
 
 fn section_processes(processes: &dyn ProcessManager, commands: &mut dyn CommandRunner) -> DiagSection {
@@ -299,14 +324,14 @@ function Get-FileData($p) {
 Get-Process | Sort-Object Name,Id | ForEach-Object {
     $path = $null
     try { $path = $_.MainModule.FileName } catch {}
-    "[$($_.Id)] $($_.Name) — $(if($path){$path}else{'(chemin inaccessible)'})"
+    "[$($_.Id)] $($_.Name) — $(if($path){$path}else{'(path unavailable)'})"
     if ($path) {
         $d = Get-FileData $path
         if ($d) {
             "    MD5    : $($d.MD5)"
             "    SHA256 : $($d.SHA256)"
-            "    Sig    : $($d.Sig) | Editeur: $($d.Company) | Ver: $($d.FileVer)"
-            "    Taille : $($d.Size) octets | Cree: $($d.Created) | Modifie: $($d.Modified)"
+            "    Sig    : $($d.Sig) | Publisher: $($d.Company) | Ver: $($d.FileVer)"
+            "    Size   : $($d.Size) bytes | Created: $($d.Created) | Modified: $($d.Modified)"
             if ($d.AclWarn) { "    !! ACL : $($d.AclWarn)" }
         }
     }
@@ -314,7 +339,7 @@ Get-Process | Sort-Object Name,Id | ForEach-Object {
 "#;
     let ps_lines = ps(commands, script);
     if !ps_lines.is_empty() {
-        return section("PROCESSUS EN COURS", ps_lines);
+        return section("RUNNING PROCESSES", ps_lines);
     }
     // Fallback: ProcessManager (for tests / environments without PowerShell)
     let list = processes.list();
@@ -327,7 +352,7 @@ Get-Process | Sort-Object Name,Id | ForEach-Object {
         })
         .collect();
     lines.sort();
-    section(&format!("PROCESSUS EN COURS ({count})"), lines)
+    section(&format!("RUNNING PROCESSES ({count})"), lines)
 }
 
 fn section_services(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -366,13 +391,13 @@ Get-CimInstance Win32_Service |
             if ($d) {
                 "    MD5    : $($d.MD5)"
                 "    SHA256 : $($d.SHA256)"
-                "    Sig    : $($d.Sig) | Editeur: $($d.Company) | Ver: $($d.FileVer)"
-                "    Taille : $($d.Size) octets | Modifie: $($d.Modified)"
+                "    Sig    : $($d.Sig) | Publisher: $($d.Company) | Ver: $($d.FileVer)"
+                "    Size   : $($d.Size) bytes | Modified: $($d.Modified)"
             }
         }
     }
 "#;
-    section("SERVICES (Auto / Manuel)", ps(commands, script))
+    section("SERVICES (Automatic / Manual)", ps(commands, script))
 }
 
 fn section_drivers(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -406,9 +431,9 @@ function Get-FileData($p) {
 }
 $drivers = Get-CimInstance Win32_SystemDriver |
     Where-Object { $_.State -eq 'Running' -or $_.StartMode -in 'Boot','System','Auto' }
-"Total pilotes actifs/automatiques : $($drivers.Count)"
+"Total active/automatic drivers : $($drivers.Count)"
 ""
-"--- Pilotes non signés Microsoft (ou non signés) ---"
+"--- Drivers not signed by Microsoft (or unsigned) ---"
 $suspect = foreach ($drv in $drivers) {
     $path = Resolve-DriverPath $drv.PathName
     $d = Get-FileData $path
@@ -416,7 +441,7 @@ $suspect = foreach ($drv in $drivers) {
         [PSCustomObject]@{ Drv = $drv; Path = $path; Data = $d }
     }
 }
-if (!$suspect) { "  (aucun — tous les pilotes actifs sont signés Microsoft)" }
+if (!$suspect) { "  (none — every active driver is signed by Microsoft)" }
 foreach ($s in $suspect) {
     $drv = $s.Drv
     $d = $s.Data
@@ -425,15 +450,15 @@ foreach ($s in $suspect) {
     if ($d) {
         $signer = if ($d.Signer) { " — $($d.Signer)" } else { "" }
         "    Signature : $($d.SigStatus)$signer"
-        "    Editeur   : $($d.Company) | Ver: $($d.FileVer) | Modifie: $($d.Modified)"
+        "    Publisher : $($d.Company) | Ver: $($d.FileVer) | Modified: $($d.Modified)"
         "    SHA256    : $($d.SHA256)"
     } else {
-        "    (fichier introuvable ou inaccessible)"
+        "    (file not found or inaccessible)"
     }
 }
 "#;
     section(
-        "PILOTES (non-Microsoft mis en évidence)",
+        "DRIVERS (non-Microsoft highlighted)",
         ps(commands, script),
     )
 }
@@ -487,8 +512,8 @@ foreach ($k in $keys) {
                 if ($d) {
                     "    MD5    : $($d.MD5)"
                     "    SHA256 : $($d.SHA256)"
-                    "    Sig    : $($d.Sig) | Editeur: $($d.Company) | Ver: $($d.FileVer)"
-                    "    Taille : $($d.Size) octets | Cree: $($d.Created) | Modifie: $($d.Modified)"
+                    "    Sig    : $($d.Sig) | Publisher: $($d.Company) | Ver: $($d.FileVer)"
+                    "    Size   : $($d.Size) bytes | Created: $($d.Created) | Modified: $($d.Modified)"
                     if ($d.AclWarn) { "    !! ACL : $($d.AclWarn)" }
                 }
             }
@@ -496,7 +521,7 @@ foreach ($k in $keys) {
     }
 }
 "#;
-    section("DEMARRAGE AUTOMATIQUE (Run / RunOnce)", ps(commands, script))
+    section("STARTUP (Run / RunOnce)", ps(commands, script))
 }
 
 fn section_scheduled_tasks(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -508,7 +533,7 @@ function Get-FileData($p) {
     $sha2 = (Get-FileHash $p -Algorithm SHA256).Hash
     $sig  = (Get-AuthenticodeSignature $p).Status
     $vi   = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($p)
-    "MD5:$md5 | SHA256:$sha2 | Sig:$sig | Editeur:$($vi.CompanyName)"
+    "MD5:$md5 | SHA256:$sha2 | Sig:$sig | Publisher:$($vi.CompanyName)"
 }
 Get-ScheduledTask -EA SilentlyContinue |
     Where-Object { $_.TaskPath -notlike '\Microsoft\*' } |
@@ -530,7 +555,7 @@ Get-ScheduledTask -EA SilentlyContinue |
         "    RunAs   : $($principal.UserId) ($($principal.RunLevel))"
     }
 "#;
-    section("TACHES PLANIFIEES (hors Microsoft)", ps(commands, script))
+    section("SCHEDULED TASKS (excluding Microsoft)", ps(commands, script))
 }
 
 fn section_installed_software(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -548,13 +573,13 @@ Get-ItemProperty $paths -EA SilentlyContinue |
         "$($_.DisplayName) $($_.DisplayVersion) — $($_.Publisher)"
         if ($_.InstallDate) {
             $d = $_.InstallDate
-            if ($d -match '(\d{4})(\d{2})(\d{2})') { "    Installe le : $($matches[1])-$($matches[2])-$($matches[3])" }
+            if ($d -match '(\d{4})(\d{2})(\d{2})') { "    Installed on : $($matches[1])-$($matches[2])-$($matches[3])" }
         }
-        if ($_.InstallLocation) { "    Dossier     : $($_.InstallLocation)" }
-        if ($_.UninstallString) { "    Desinstall  : $($_.UninstallString)" }
+        if ($_.InstallLocation) { "    Folder       : $($_.InstallLocation)" }
+        if ($_.UninstallString) { "    Uninstall    : $($_.UninstallString)" }
     }
 "#;
-    section("LOGICIELS INSTALLES", ps(commands, script))
+    section("INSTALLED SOFTWARE", ps(commands, script))
 }
 
 fn section_browser_extensions(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -575,7 +600,7 @@ if (Test-Path $chromeBase) {
                     $manifest = "$($verDir.FullName)\manifest.json"
                     if (Test-Path $manifest) {
                         $m = Get-Content $manifest -Raw -EA SilentlyContinue | ConvertFrom-Json -EA SilentlyContinue
-                        $name = if ($m.name -and !($m.name -like '__MSG_*')) { $m.name } else { "(nom localisé)" }
+                        $name = if ($m.name -and !($m.name -like '__MSG_*')) { $m.name } else { "(localized name)" }
                         "  [$profile] $extId — $name v$($m.version)"
                         if ($m.permissions) { "    Permissions: $($m.permissions -join ', ')" }
                     }
@@ -583,7 +608,7 @@ if (Test-Path $chromeBase) {
             }
         }
     }
-} else { "  (Chrome non installé ou profil introuvable)" }
+} else { "  (Chrome not installed or profile not found)" }
 ""
 # ── Microsoft Edge ────────────────────────────────────────────────────────────
 "--- Microsoft Edge ---"
@@ -600,7 +625,7 @@ if (Test-Path $edgeBase) {
                     $manifest = "$($verDir.FullName)\manifest.json"
                     if (Test-Path $manifest) {
                         $m = Get-Content $manifest -Raw -EA SilentlyContinue | ConvertFrom-Json -EA SilentlyContinue
-                        $name = if ($m.name -and !($m.name -like '__MSG_*')) { $m.name } else { "(nom localisé)" }
+                        $name = if ($m.name -and !($m.name -like '__MSG_*')) { $m.name } else { "(localized name)" }
                         "  [$profile] $extId — $name v$($m.version)"
                         if ($m.permissions) { "    Permissions: $($m.permissions -join ', ')" }
                     }
@@ -608,7 +633,7 @@ if (Test-Path $edgeBase) {
             }
         }
     }
-} else { "  (Edge non installé ou profil introuvable)" }
+} else { "  (Edge not installed or profile not found)" }
 ""
 # ── Firefox ───────────────────────────────────────────────────────────────────
 "--- Mozilla Firefox ---"
@@ -621,7 +646,7 @@ if (Test-Path $ffBase) {
             $data = Get-Content $addonsJson -Raw -EA SilentlyContinue | ConvertFrom-Json -EA SilentlyContinue
             if ($data -and $data.addons) {
                 $data.addons | Where-Object { $_.type -eq 'extension' -and $_.id -notlike '*mozilla*' -and $_.id -notlike '*firefox*' } | ForEach-Object {
-                    "  [$($_.defaultLocale.name)] ID: $($_.id) v$($_.version) — Actif: $($_.active)"
+                    "  [$($_.defaultLocale.name)] ID: $($_.id) v$($_.version) — Active: $($_.active)"
                     if ($_.userPermissions -and $_.userPermissions.permissions) {
                         "    Permissions: $($_.userPermissions.permissions -join ', ')"
                     }
@@ -629,9 +654,9 @@ if (Test-Path $ffBase) {
             }
         }
     }
-} else { "  (Firefox non installé ou profil introuvable)" }
+} else { "  (Firefox not installed or profile not found)" }
 "#;
-    section("EXTENSIONS NAVIGATEUR (Chrome / Edge / Firefox)", ps(commands, script))
+    section("BROWSER EXTENSIONS (Chrome / Edge / Firefox)", ps(commands, script))
 }
 
 fn section_recent_files(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -669,7 +694,7 @@ foreach ($d in $dirs) {
     }
 }
 "#;
-    section("FICHIERS RECENTS (90 derniers jours)", ps(commands, script))
+    section("RECENT FILES (last 90 days)", ps(commands, script))
 }
 
 fn section_hosts_file(commands: &mut dyn CommandRunner, dirs: &dyn KnownDirs) -> DiagSection {
@@ -682,17 +707,17 @@ if (Test-Path $p) {{
     $md5  = (Get-FileHash $p -Algorithm MD5).Hash
     $sha2 = (Get-FileHash $p -Algorithm SHA256).Hash
     $fi   = Get-Item $p
-    "Fichier : $p"
+    "File    : $p"
     "MD5     : $md5"
     "SHA256  : $sha2"
-    "Taille  : $($fi.Length) octets | Modifie: $($fi.LastWriteTime.ToString('yyyy-MM-dd HH:mm'))"
-    "--- Entrees actives (hors commentaires) ---"
+    "Size    : $($fi.Length) bytes | Modified: $($fi.LastWriteTime.ToString('yyyy-MM-dd HH:mm'))"
+    "--- Active entries (excluding comments) ---"
     Get-Content $p | Where-Object {{ $_ -notmatch '^\s*#' -and $_ -match '\S' }}
-}} else {{ "Fichier hosts introuvable : $p" }}
+}} else {{ "Hosts file not found: $p" }}
 "#,
         hosts = hosts
     );
-    section("FICHIER HOSTS", ps(commands, &script))
+    section("HOSTS FILE", ps(commands, &script))
 }
 
 fn section_network(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -703,7 +728,22 @@ fn section_network(commands: &mut dyn CommandRunner) -> DiagSection {
         .map(str::to_string)
         .filter(|l| !l.trim().is_empty())
         .collect();
-    section("CONFIGURATION RESEAU (ipconfig /all)", lines)
+    section("NETWORK CONFIGURATION (ipconfig /all)", lines)
+}
+
+fn section_winsock_catalog(commands: &mut dyn CommandRunner) -> DiagSection {
+    // Raw provider catalog: each entry that isn't a stock Windows provider
+    // (loaded from a DLL outside System32) is where a network-layer hijack
+    // (rogue LSP) would show up. Dumped as-is, like `ipconfig /all` above —
+    // no filtering, so nothing that matters is left out.
+    let lines = commands
+        .run_capture("netsh.exe", &["winsock", "show", "catalog"])
+        .unwrap_or_default()
+        .lines()
+        .map(str::to_string)
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+    section("WINSOCK CATALOG (netsh winsock show catalog)", lines)
 }
 
 fn section_proxy(commands: &mut dyn CommandRunner) -> DiagSection {
@@ -722,36 +762,102 @@ $pm = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Internet
 "ProxyServer   : $($pm.ProxyServer)"
 "--- WinHTTP ---"
 netsh winhttp show proxy 2>&1
-"--- Variables d'environnement ---"
+"--- Environment variables ---"
 "HTTP_PROXY    : $env:HTTP_PROXY"
 "HTTPS_PROXY   : $env:HTTPS_PROXY"
 "NO_PROXY      : $env:NO_PROXY"
 "#;
-    section("PROXY SYSTEME", ps(commands, script))
+    section("SYSTEM PROXY", ps(commands, script))
 }
 
-fn section_browser_policies(registry: &dyn Registry) -> DiagSection {
-    let checks: &[(&str, &str)] = &[
-        (r"HKLM\SOFTWARE\Policies\Google\Chrome",   "Chrome   (HKLM)"),
-        (r"HKCU\SOFTWARE\Policies\Google\Chrome",   "Chrome   (HKCU)"),
-        (r"HKLM\SOFTWARE\Policies\Microsoft\Edge",  "Edge     (HKLM)"),
-        (r"HKCU\SOFTWARE\Policies\Microsoft\Edge",  "Edge     (HKCU)"),
-        (r"HKLM\SOFTWARE\Policies\Mozilla\Firefox", "Firefox  (HKLM)"),
-        (r"HKCU\SOFTWARE\Policies\Mozilla\Firefox", "Firefox  (HKCU)"),
-    ];
-    let lines: Vec<String> = checks
-        .iter()
-        .map(|(key, label)| {
-            let present =
-                registry.has_any_value(key) || !registry.enum_subkeys(key).is_empty();
-            if present {
-                format!("[PRESENT] {label} — {key}")
-            } else {
-                format!("[absent ] {label}")
-            }
-        })
-        .collect();
-    section("POLITIQUES NAVIGATEUR (Policies)", lines)
+fn section_browser_policies(commands: &mut dyn CommandRunner) -> DiagSection {
+    // Dumps the actual value names/data under each browser Group Policy key
+    // (and one level of subkeys, e.g. ExtensionInstallForcelist) instead of
+    // just flagging the key as present — a policy key present with an empty
+    // homepage/search override reads very differently from one that force-
+    // installs three extensions and locks the search engine.
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+function Dump-PolicyKey($path, $label) {
+    "--- $label ---"
+    if (!(Test-Path $path)) { "  (absent)"; ""; return }
+    $item = Get-Item $path
+    foreach ($p in $item.Property) {
+        $v = (Get-ItemProperty -Path $path -Name $p -EA SilentlyContinue).$p
+        "  $p = $v"
+    }
+    $subkeys = Get-ChildItem $path -EA SilentlyContinue
+    foreach ($sub in $subkeys) {
+        "  [$($sub.PSChildName)]"
+        foreach ($p in $sub.Property) {
+            $v = (Get-ItemProperty -Path $sub.PSPath -Name $p -EA SilentlyContinue).$p
+            "    $p = $v"
+        }
+    }
+    if (!$item.Property -and !$subkeys) { "  (key present, no values)" }
+    ""
+}
+Dump-PolicyKey 'HKLM:\SOFTWARE\Policies\Google\Chrome'   'Chrome   (HKLM)'
+Dump-PolicyKey 'HKCU:\SOFTWARE\Policies\Google\Chrome'   'Chrome   (HKCU)'
+Dump-PolicyKey 'HKLM:\SOFTWARE\Policies\Microsoft\Edge'  'Edge     (HKLM)'
+Dump-PolicyKey 'HKCU:\SOFTWARE\Policies\Microsoft\Edge'  'Edge     (HKCU)'
+Dump-PolicyKey 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' 'Firefox  (HKLM)'
+Dump-PolicyKey 'HKCU:\SOFTWARE\Policies\Mozilla\Firefox' 'Firefox  (HKCU)'
+"#;
+    section("BROWSER POLICIES (Policies)", ps(commands, script))
+}
+
+fn section_file_associations(commands: &mut dyn CommandRunner) -> DiagSection {
+    // Current HKCR ProgId + shell\open\command, and any per-user UserChoice
+    // override, for the same four extensions "Restore file associations"
+    // resets. The Windows-standard ProgId/command is printed next
+    // to the live value purely as a reference point — this file never
+    // labels an entry as wrong or in need of repair.
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+New-PSDrive -PSProvider Registry -Root HKEY_CLASSES_ROOT -Name HKCR -EA SilentlyContinue | Out-Null
+$refs = [ordered]@{
+    '.exe' = @{ ProgId='exefile'; Cmd='"%1" %*' }
+    '.bat' = @{ ProgId='batfile'; Cmd='"%1" %*' }
+    '.com' = @{ ProgId='comfile'; Cmd='"%1" %*' }
+    '.lnk' = @{ ProgId='lnkfile'; Cmd='(handled by the shell, no explicit command)' }
+}
+foreach ($ext in $refs.Keys) {
+    $progId = (Get-ItemProperty "HKCR:\$ext" -EA SilentlyContinue).'(default)'
+    "$ext"
+    "  ProgId (HKCR)         : $(if($progId){$progId}else{'(none)'})"
+    if ($progId) {
+        $cmd = (Get-ItemProperty "HKCR:\$progId\shell\open\command" -EA SilentlyContinue).'(default)'
+        "  Command (shell/open)  : $(if($cmd){$cmd}else{'(none)'})"
+    }
+    $userChoiceKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\$ext\UserChoice"
+    $userChoice = (Get-ItemProperty $userChoiceKey -EA SilentlyContinue).ProgId
+    "  UserChoice (HKCU)     : $(if($userChoice){$userChoice}else{'(none)'})"
+    "  Windows reference     : ProgId '$($refs[$ext].ProgId)', command $($refs[$ext].Cmd)"
+    ""
+}
+"#;
+    section(
+        "FILE ASSOCIATIONS (.exe / .bat / .com / .lnk)",
+        ps(commands, script),
+    )
+}
+
+fn section_explorer_settings(commands: &mut dyn CommandRunner) -> DiagSection {
+    // The three Explorer display values "Restore system settings"
+    // resets. Each line states the value's documented meaning and Windows'
+    // own default next to the live value, as reference — not a verdict.
+    let script = r#"
+$ErrorActionPreference='SilentlyContinue'
+$p = Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -EA SilentlyContinue
+"Hidden          : $($p.Hidden)  (2 = hidden files/folders not shown [Windows default] ; 1 = shown)"
+"HideFileExt     : $($p.HideFileExt)  (1 = known file extensions hidden [Windows default] ; 0 = shown)"
+"ShowSuperHidden : $($p.ShowSuperHidden)  (0 = protected system files hidden [Windows default] ; 1 = shown)"
+"#;
+    section(
+        "EXPLORER SETTINGS (hidden files / extensions)",
+        ps(commands, script),
+    )
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -759,54 +865,55 @@ fn section_browser_policies(registry: &dyn Registry) -> DiagSection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::fakes::{FakeCommandRunner, FakeKnownDirs, FakeProcessManager, FakeRegistry};
+    use crate::fakes::{FakeCommandRunner, FakeKnownDirs, FakeProcessManager};
 
     #[test]
-    fn collect_returns_sixteen_sections() {
-        let registry = FakeRegistry::new();
+    fn collect_returns_twenty_sections() {
         let processes = FakeProcessManager::new();
         let mut commands = FakeCommandRunner::new();
         let dirs = FakeKnownDirs::default();
-        let report = collect(&registry, &processes, &mut commands, &dirs, "2024-01-01 00:00:00");
-        assert_eq!(report.sections.len(), 16);
+        let report = collect(&processes, &mut commands, &dirs, "2024-01-01 00:00:00");
+        assert_eq!(report.sections.len(), 20);
     }
 
     #[test]
     fn to_text_starts_with_utf8_bom() {
-        let registry = FakeRegistry::new();
         let processes = FakeProcessManager::new();
         let mut commands = FakeCommandRunner::new();
         let dirs = FakeKnownDirs::default();
-        let report = collect(&registry, &processes, &mut commands, &dirs, "2024-01-01 00:00:00");
+        let report = collect(&processes, &mut commands, &dirs, "2024-01-01 00:00:00");
         let text = report.to_text();
         assert!(text.starts_with('\u{FEFF}'), "Report must begin with UTF-8 BOM");
     }
 
     #[test]
     fn to_text_contains_header_and_all_section_titles() {
-        let registry = FakeRegistry::new();
         let processes = FakeProcessManager::new();
         let mut commands = FakeCommandRunner::new();
         let dirs = FakeKnownDirs::default();
-        let report = collect(&registry, &processes, &mut commands, &dirs, "2024-01-01 00:00:00");
+        let report = collect(&processes, &mut commands, &dirs, "2024-01-01 00:00:00");
         let text = report.to_text();
         assert!(text.contains("KpRm"));
-        assert!(text.contains("ACTIVATION WINDOWS"));
-        assert!(text.contains("INFORMATIONS"));
-        assert!(text.contains("ERREURS WINDOWS"));
-        assert!(text.contains("OUTILS DE"));
-        assert!(text.contains("PROCESSUS EN COURS"));
+        assert!(text.contains("WINDOWS ACTIVATION"));
+        assert!(text.contains("SYSTEM INFORMATION"));
+        assert!(text.contains("WINDOWS ERRORS"));
+        assert!(text.contains("SECURITY TOOLS"));
+        assert!(text.contains("FIREWALL"));
+        assert!(text.contains("RUNNING PROCESSES"));
         assert!(text.contains("SERVICES"));
-        assert!(text.contains("PILOTES"));
-        assert!(text.contains("DEMARRAGE AUTOMATIQUE"));
-        assert!(text.contains("TACHES PLANIFIEES"));
-        assert!(text.contains("LOGICIELS INSTALLES"));
-        assert!(text.contains("EXTENSIONS NAVIGATEUR"));
-        assert!(text.contains("FICHIERS RECENTS"));
-        assert!(text.contains("FICHIER HOSTS"));
-        assert!(text.contains("CONFIGURATION RESEAU"));
-        assert!(text.contains("PROXY SYSTEME"));
-        assert!(text.contains("POLITIQUES NAVIGATEUR"));
+        assert!(text.contains("DRIVERS"));
+        assert!(text.contains("STARTUP"));
+        assert!(text.contains("SCHEDULED TASKS"));
+        assert!(text.contains("INSTALLED SOFTWARE"));
+        assert!(text.contains("BROWSER EXTENSIONS"));
+        assert!(text.contains("RECENT FILES"));
+        assert!(text.contains("HOSTS FILE"));
+        assert!(text.contains("NETWORK CONFIGURATION"));
+        assert!(text.contains("WINSOCK CATALOG"));
+        assert!(text.contains("SYSTEM PROXY"));
+        assert!(text.contains("BROWSER POLICIES"));
+        assert!(text.contains("FILE ASSOCIATIONS"));
+        assert!(text.contains("EXPLORER SETTINGS"));
     }
 
     #[test]
@@ -825,17 +932,56 @@ mod tests {
     }
 
     #[test]
-    fn browser_policies_marks_present_keys() {
-        let mut registry = FakeRegistry::new();
-        registry.add_key(r"HKLM\SOFTWARE\Policies\Google\Chrome");
-        registry.add_value(
-            r"HKLM\SOFTWARE\Policies\Google\Chrome",
-            "HomepageLocation",
-            "http://evil.com",
-        );
-        let sec = section_browser_policies(&registry);
-        let chrome = sec.lines.iter().find(|l| l.contains("Chrome") && l.contains("HKLM")).unwrap();
-        assert!(chrome.contains("PRESENT"));
+    fn browser_policies_section_calls_powershell_for_every_browser_key() {
+        let mut commands = FakeCommandRunner::new();
+        section_browser_policies(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe"
+                && a.iter().any(|s| {
+                    s.contains(r"Policies\Google\Chrome")
+                        && s.contains(r"Policies\Microsoft\Edge")
+                        && s.contains(r"Policies\Mozilla\Firefox")
+                })
+        }));
+    }
+
+    #[test]
+    fn file_associations_section_calls_powershell_with_the_four_extensions() {
+        let mut commands = FakeCommandRunner::new();
+        section_file_associations(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe"
+                && a.iter().any(|s| {
+                    s.contains(".exe") && s.contains(".bat") && s.contains(".com") && s.contains(".lnk")
+                })
+        }));
+    }
+
+    #[test]
+    fn explorer_settings_section_calls_powershell_with_the_advanced_key() {
+        let mut commands = FakeCommandRunner::new();
+        section_explorer_settings(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe" && a.iter().any(|s| s.contains("Explorer\\Advanced"))
+        }));
+    }
+
+    #[test]
+    fn firewall_profiles_section_calls_powershell_with_get_netfirewallprofile() {
+        let mut commands = FakeCommandRunner::new();
+        section_firewall_profiles(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "powershell.exe" && a.iter().any(|s| s.contains("Get-NetFirewallProfile"))
+        }));
+    }
+
+    #[test]
+    fn winsock_catalog_section_calls_netsh_winsock_show_catalog() {
+        let mut commands = FakeCommandRunner::new();
+        section_winsock_catalog(&mut commands);
+        assert!(commands.calls.iter().any(|(p, a)| {
+            p == "netsh.exe" && a == &["winsock", "show", "catalog"]
+        }));
     }
 
     #[test]
@@ -874,6 +1020,6 @@ mod tests {
             sections: vec![sec],
         };
         let text = report.to_text();
-        assert!(text.contains("(aucune entrée)"));
+        assert!(text.contains("(no entries)"));
     }
 }

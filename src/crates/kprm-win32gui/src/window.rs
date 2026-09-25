@@ -12,7 +12,8 @@ use windows::Win32::Graphics::Dwm::{
 };
 use windows::Win32::Graphics::Gdi::{
     BeginPaint, BitBlt, CreateCompatibleBitmap, CreateCompatibleDC, DeleteDC, DeleteObject,
-    EndPaint, InvalidateRect, ScreenToClient, SelectObject, HBITMAP, HDC, PAINTSTRUCT, SRCCOPY,
+    EndPaint, GetMonitorInfoW, InvalidateRect, MonitorFromWindow, ScreenToClient, SelectObject,
+    HBITMAP, HDC, MONITORINFO, MONITOR_DEFAULTTONEAREST, PAINTSTRUCT, SRCCOPY,
 };
 use windows::Win32::UI::Controls::MARGINS;
 use windows::Win32::UI::HiDpi::{
@@ -21,8 +22,9 @@ use windows::Win32::UI::HiDpi::{
 use windows::Win32::UI::WindowsAndMessaging::{
     CreateWindowExW, DefWindowProcW, DestroyWindow, DispatchMessageW, GetClientRect, GetMessageW,
     GetWindowLongPtrW, LoadCursorW, PostQuitMessage, RegisterClassExW, SetWindowLongPtrW,
-    ShowWindow, TranslateMessage, CW_USEDEFAULT, GWLP_USERDATA, HTCAPTION, HTCLIENT, IDC_ARROW,
-    MINMAXINFO, MSG, SetWindowPos, SW_MINIMIZE, SW_SHOW, SWP_NOMOVE, SWP_NOZORDER, WM_APP, WM_CLOSE,
+    ShowWindow, TranslateMessage, CW_USEDEFAULT, GWLP_USERDATA, HTBOTTOM, HTBOTTOMLEFT,
+    HTBOTTOMRIGHT, HTCAPTION, HTCLIENT, HTLEFT, HTRIGHT, HTTOP, HTTOPLEFT, HTTOPRIGHT, IDC_ARROW,
+    MINMAXINFO, MSG, SetWindowPos, SW_MINIMIZE, SW_SHOW, SWP_NOZORDER, WM_APP, WM_CLOSE,
     WM_DESTROY, WM_DPICHANGED, WM_GETMINMAXINFO, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MOUSEMOVE,
     WM_MOUSEWHEEL, WM_NCHITTEST, WM_PAINT, WM_SIZE, WNDCLASSEXW, WNDCLASS_STYLES, WS_EX_APPWINDOW,
     WS_POPUP,
@@ -34,6 +36,37 @@ pub struct WindowConfig {
     pub title: String,
     pub size: (i32, i32),
     pub min_size: (i32, i32),
+}
+
+/// How many logical pixels around the edge count as the resize grip — the
+/// window has no visible border to grab (it's a plain `WS_POPUP`, see the
+/// module doc comment), so this is an invisible strip layered over the
+/// outermost few pixels of whatever `AppWindow::hit_zone` would otherwise
+/// report there.
+const RESIZE_BORDER: f32 = 6.0;
+
+/// Classifies `(x, y)` as one of the 8 resize edges/corners if it falls
+/// within [`RESIZE_BORDER`] of the window's bounds, given the current
+/// logical client `width`/`height` — checked before `AppWindow::hit_zone`
+/// in `WM_NCHITTEST`, so it takes priority over the title bar's drag
+/// region right at the very top edge (`RESIZE_BORDER` is much thinner than
+/// the title bar itself, so most of it is still draggable).
+fn resize_hit_test(x: f32, y: f32, width: f32, height: f32) -> Option<u32> {
+    let left = x < RESIZE_BORDER;
+    let right = x > width - RESIZE_BORDER;
+    let top = y < RESIZE_BORDER;
+    let bottom = y > height - RESIZE_BORDER;
+    match (left, right, top, bottom) {
+        (true, _, true, _) => Some(HTTOPLEFT),
+        (_, true, true, _) => Some(HTTOPRIGHT),
+        (true, _, _, true) => Some(HTBOTTOMLEFT),
+        (_, true, _, true) => Some(HTBOTTOMRIGHT),
+        (true, false, false, false) => Some(HTLEFT),
+        (false, true, false, false) => Some(HTRIGHT),
+        (false, false, true, false) => Some(HTTOP),
+        (false, false, false, true) => Some(HTBOTTOM),
+        _ => None,
+    }
 }
 
 /// What a point (in logical, DPI-scaled client pixels) hit-tests as, for
@@ -159,6 +192,9 @@ unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: 
                 let x = pt.x as f32 / state.dpi_scale;
                 let y = pt.y as f32 / state.dpi_scale;
                 let (width, height) = logical_client_size(hwnd, state.dpi_scale);
+                if let Some(ht) = resize_hit_test(x, y, width, height) {
+                    return LRESULT(ht as isize);
+                }
                 return match state.app.hit_zone(x, y, width, height) {
                     HitZone::Caption => LRESULT(HTCAPTION as isize),
                     HitZone::Client => LRESULT(HTCLIENT as isize),
@@ -383,18 +419,29 @@ pub fn run<A: AppWindow + 'static>(
             None,
         )?;
 
+        // Convert the logical `cfg.size` to physical pixels for this
+        // monitor's DPI (see the comment above `CreateWindowExW`), then
+        // clamp to the monitor's work area and center on it — so the
+        // window never opens larger than the screen it's launched on (a
+        // real scenario on a small VM display, not just a hypothetical),
+        // rather than `CW_USEDEFAULT`'s arbitrary OS-chosen position.
         let initial_dpi_scale = GetDpiForWindow(hwnd) as f32 / 96.0;
-        if (initial_dpi_scale - 1.0).abs() > f32::EPSILON {
-            let _ = SetWindowPos(
-                hwnd,
-                None,
-                0,
-                0,
-                (cfg.size.0 as f32 * initial_dpi_scale) as i32,
-                (cfg.size.1 as f32 * initial_dpi_scale) as i32,
-                SWP_NOMOVE | SWP_NOZORDER,
-            );
-        }
+        let mut monitor_info = MONITORINFO { cbSize: std::mem::size_of::<MONITORINFO>() as u32, ..Default::default() };
+        let hmonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+        let _ = GetMonitorInfoW(hmonitor, &mut monitor_info);
+        let work = monitor_info.rcWork;
+        let work_w = (work.right - work.left).max(1);
+        let work_h = (work.bottom - work.top).max(1);
+        // A small margin so the window doesn't land flush against the
+        // screen edges when it's clamped down to fit.
+        let margin = (16.0 * initial_dpi_scale) as i32;
+        let desired_w = (cfg.size.0 as f32 * initial_dpi_scale) as i32;
+        let desired_h = (cfg.size.1 as f32 * initial_dpi_scale) as i32;
+        let final_w = desired_w.min((work_w - margin).max(1));
+        let final_h = desired_h.min((work_h - margin).max(1));
+        let final_x = work.left + (work_w - final_w) / 2;
+        let final_y = work.top + (work_h - final_h) / 2;
+        let _ = SetWindowPos(hwnd, None, final_x, final_y, final_w, final_h, SWP_NOZORDER);
 
         // Best-effort visual chrome: rounded corners require Windows 11
         // (DWMWA_WINDOW_CORNER_PREFERENCE is silently a no-op/error on

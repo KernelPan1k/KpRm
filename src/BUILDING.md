@@ -197,37 +197,15 @@ they don't get rediscovered from scratch:
   verify with real printed coordinates instead, or check on an
   interactive Windows session.
 
-- **`eframe`'s `glow` (OpenGL) renderer requires OpenGL 2.0+, which
-  isn't a given on every machine this tool is meant to run on** — a VM
-  or remote session with only a generic/basic display adapter can be
-  stuck on OpenGL 1.1, and `run_gui`'s `eframe::run_native` then
-  returns `Err("egui_glow: OpenGL: egui_glow requires opengl 2.0+.")`.
-  Because `kprm` has no `#![windows_subsystem = "windows"]` (so headless
-  subcommands keep a visible console), a double-click on such a machine
-  briefly flashes a console with that message and closes — easy to miss
-  entirely, looking like the UAC prompt was accepted and then nothing
-  happened. To see the underlying error message yourself instead of a
-  vanishing console flash, run `kprm.exe` from an already-open elevated
-  terminal rather than double-clicking it.
-
-  Switching `eframe`'s renderer feature from `glow` to `wgpu` was tried,
-  on the theory that `wgpu`'s Direct3D 12 backend could fall back to
-  Windows' built-in software WARP adapter on a machine with no real GPU
-  driver. It doesn't work: confirmed by reading `wgpu-hal` 24.x's DX12
-  backend source directly, it enumerates adapters only via
-  `IDXGIFactory6::EnumAdapterByGpuPreference`/`EnumAdapters1` — it never
-  calls the separate `IDXGIFactory4::EnumWarpAdapter` that WARP actually
-  requires, so `wgpu` finds zero usable adapters on such a machine
-  (`WGPU error: Failed to create wgpu adapter, no suitable adapter
-  found`), same failure mode as `glow`. Manually creating the WARP
-  adapter ourselves (raw `D3D12CreateDevice` via the `windows` crate)
-  and bridging it into `wgpu` isn't possible either without forking
-  `wgpu-hal`: the constructor that would accept a raw adapter
-  (`dx12::Adapter::expose`) is `pub(super)`, not part of its public API.
-  Bundling a software OpenGL implementation (e.g. Mesa's `opengl32.dll`)
-  next to `kprm.exe` would also work, but was rejected to keep this a
-  single-file distributable. Net result: `eframe` stays on `glow`, and
-  OpenGL 2.0+ remains a real, undocumented-elsewhere requirement for the
-  GUI to start at all — worth knowing if this ever needs to run on a
-  deliberately minimal VM or a machine with a badly degraded display
-  driver.
+- **(Historical, resolved) `eframe`'s `glow` (OpenGL) renderer required
+  OpenGL 2.0+, which wasn't a given on every machine this tool is meant
+  to run on** — a VM or remote session with only a generic/basic display
+  adapter could be stuck on OpenGL 1.1, failing the GUI outright. This is
+  the reason the GUI was rewritten from `eframe`/`egui` to native Win32/
+  GDI+ (no OpenGL, no `wgpu`, no bundled software renderer) — see the
+  rewrite plan and `src/crates/kprm-win32gui`. `kprm` now also declares
+  `#![windows_subsystem = "windows"]` (`kprm/src/main.rs`), since the
+  console it used to keep around for exactly this failure's error message
+  no longer serves a purpose — a normal launch shows no console window at
+  all, while the CLI subcommands still print to an existing terminal
+  normally when run from one.

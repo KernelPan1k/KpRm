@@ -170,21 +170,21 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 let dir = backup::backup_dir(dirs.home_drive(), &kprm_windows::current_timestamp());
                 if std::fs::create_dir_all(&dir).is_err() {
                     report.push(
-                        "Sauvegarde du registre",
+                        "Registry backup",
                         "task",
-                        format!("créer le dossier {dir}"),
-                        kprm_engine::report::EventResult::Failed("échec".to_string()),
+                        format!("create folder {dir}"),
+                        kprm_engine::report::EventResult::Failed("failed".to_string()),
                     );
                 } else {
                     for result in backup::backup_registry(&mut registry, &dir) {
                         report.push(
-                            "Sauvegarde du registre",
+                            "Registry backup",
                             "task",
                             result.description,
                             if result.succeeded {
                                 kprm_engine::report::EventResult::Ran
                             } else {
-                                kprm_engine::report::EventResult::Failed("échec".to_string())
+                                kprm_engine::report::EventResult::Failed("failed".to_string())
                             },
                         );
                     }
@@ -194,13 +194,13 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             if remove_restore_points {
                 let result = restore_point::remove_all_restore_points(&mut commands);
                 report.push(
-                    "Points de restauration",
+                    "Restore points",
                     "task",
                     result.description,
                     if result.succeeded {
                         kprm_engine::report::EventResult::Ran
                     } else {
-                        kprm_engine::report::EventResult::Failed("échec".to_string())
+                        kprm_engine::report::EventResult::Failed("failed".to_string())
                     },
                 );
             }
@@ -208,13 +208,13 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             if create_restore_point {
                 for result in restore_point::create_restore_point(&mut commands, &mut registry) {
                     report.push(
-                        "Points de restauration",
+                        "Restore points",
                         "task",
                         result.description,
                         if result.succeeded {
                             kprm_engine::report::EventResult::Ran
                         } else {
-                            kprm_engine::report::EventResult::Failed("échec".to_string())
+                            kprm_engine::report::EventResult::Failed("failed".to_string())
                         },
                     );
                 }
@@ -224,18 +224,18 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 let points = restore_point::list_restore_points(&mut commands);
                 if points.is_empty() {
                     report.push(
-                        "Points de restauration",
+                        "Restore points",
                         "restore_point",
-                        "Aucun point de restauration trouvé",
+                        "No restore point found",
                         kprm_engine::report::EventResult::Found,
                     );
                 } else {
                     for point in points {
                         report.push(
-                            "Points de restauration",
+                            "Restore points",
                             "restore_point",
                             format!(
-                                "n°{} \"{}\" ({})",
+                                "#{} \"{}\" ({})",
                                 point.sequence_number, point.description, point.created_at
                             ),
                             kprm_engine::report::EventResult::Found,
@@ -271,7 +271,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                         if result.succeeded {
                             kprm_engine::report::EventResult::Removed
                         } else {
-                            kprm_engine::report::EventResult::Failed("écriture échouée".to_string())
+                            kprm_engine::report::EventResult::Failed("write failed".to_string())
                         },
                     );
                 }
@@ -280,13 +280,13 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             if restore_settings {
                 for result in system_settings::restore_defaults(&mut registry, &mut commands) {
                     report.push(
-                        "Paramètres système",
+                        "System settings",
                         "task",
                         result.description,
                         if result.succeeded {
                             kprm_engine::report::EventResult::Ran
                         } else {
-                            kprm_engine::report::EventResult::Failed("échec".to_string())
+                            kprm_engine::report::EventResult::Failed("failed".to_string())
                         },
                     );
                 }
@@ -323,8 +323,8 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                             .and_then(|mut file| {
                                 use std::io::Write as _;
                                 file.write_all(
-                                    "\r\n- Erreurs -\r\n    [X] Échec de la planification de \
-                                     la suppression différée (7 jours)\r\n"
+                                    "\r\n- Errors -\r\n    [X] Failed to schedule the deferred \
+                                     deletion (7 days)\r\n"
                                         .as_bytes(),
                                 )
                             });
@@ -405,7 +405,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                     let msg = if ok {
                         path.clone()
                     } else {
-                        "Échec de la génération du rapport".to_string()
+                        "Failed to generate the report".to_string()
                     };
                     let _ = response_tx.send(WorkerResponse::DiagnosticDone(msg));
                     return;
@@ -419,7 +419,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 if result.succeeded {
                     kprm_engine::report::EventResult::Ran
                 } else {
-                    kprm_engine::report::EventResult::Failed("échec".to_string())
+                    kprm_engine::report::EventResult::Failed("failed".to_string())
                 },
             );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
@@ -433,15 +433,14 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             let mut report = Report::default();
             for outcome in outcomes {
                 report.push(
-                    "Restauration du registre",
+                    "Registry restore",
                     "registry_restore",
                     outcome.description,
                     if outcome.scheduled {
                         kprm_engine::report::EventResult::ScheduledOnReboot
                     } else {
                         kprm_engine::report::EventResult::Failed(
-                            "fichier de sauvegarde introuvable, ou échec de la planification"
-                                .to_string(),
+                            "backup file not found, or scheduling failed".to_string(),
                         )
                     },
                 );
@@ -497,7 +496,7 @@ fn run_tools_with_progress(
 fn report_title(dirs: &kprm_windows::EnvKnownDirs) -> Vec<String> {
     let mut title = vec![
         format!(
-            "# KpRm v{} — rapport du {}",
+            "# KpRm v{} — Report — {}",
             env!("CARGO_PKG_VERSION"),
             kprm_windows::current_timestamp()
         ),

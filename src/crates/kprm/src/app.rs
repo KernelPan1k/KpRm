@@ -4,10 +4,11 @@
 //! for why. Real actions run on a background thread (see [`crate::worker`])
 //! so the UI never freezes during a scan/removal.
 //!
-//! **Porting status**: the title bar, startup disclaimer, tab bar,
-//! footer, and all four tabs (Automatic/Custom/Extra Tools/Donate) are
-//! fully ported. The two modal dialogs (restart-required, registry-restore
-//! confirmation) are still outstanding — see the rewrite plan.
+//! **Porting status**: the title bar, startup disclaimer, tab bar, footer,
+//! all four tabs (Automatic/Custom/Extra Tools/Donate), and both modal
+//! dialogs (restart-required, registry-restore confirmation) are fully
+//! ported. Remaining work is the polish pass (DPI edge cases, manifest,
+//! reference-screenshot comparison) — see the rewrite plan.
 
 use std::collections::HashSet;
 use std::sync::mpsc::{Receiver, Sender};
@@ -74,11 +75,31 @@ const MAINT_ROW_GAP: f32 = 8.0;
 const MAINT_RUN_BTN_SIZE: (f32, f32) = (90.0, 28.0);
 const BACKUP_LIST_HEIGHT: f32 = 140.0;
 const BACKUP_ROW_HEIGHT: f32 = 26.0;
-/// Wheel step for the Extra Tools tab's whole-tab scroll — unlike the
-/// Custom tab's list (uniform `RESULT_ROW_HEIGHT` rows) this scroll's
-/// content isn't rows of one height, so this is just a reasonable
-/// "one text line" step.
-const EXTRA_WHEEL_LINE_HEIGHT: f32 = 40.0;
+/// Wheel step for the Automatic/Donate/Extra Tools tabs' whole-tab
+/// scrolls — unlike the Custom tab's list (uniform `RESULT_ROW_HEIGHT`
+/// rows) their content isn't rows of one height, so this is just a
+/// reasonable "one text line" step.
+const TAB_SCROLL_LINE_HEIGHT: f32 = 40.0;
+
+// Modal dialogs (restart-required, registry-restore confirmation) — drawn
+// as an overlay pass at the end of `paint`, matching `docs/design/
+// Restart.dc.html`'s vertically-stacked layout (a badge, centered title/
+// body, then a full-width primary button and a plain "later/cancel" link)
+// rather than the pre-rewrite egui version's side-by-side buttons.
+const DIALOG_PANEL_WIDTH: f32 = 340.0;
+const DIALOG_PAD: f32 = 24.0;
+const DIALOG_BADGE_SIZE: f32 = 52.0;
+const DIALOG_BADGE_GAP: f32 = 16.0;
+const DIALOG_TITLE_HEIGHT: f32 = 20.0;
+const DIALOG_TITLE_GAP: f32 = 8.0;
+const DIALOG_BODY_HEIGHT: f32 = 92.0;
+const DIALOG_BODY_GAP: f32 = 18.0;
+const DIALOG_PRIMARY_BTN_HEIGHT: f32 = 40.0;
+const DIALOG_PRIMARY_GAP: f32 = 12.0;
+const DIALOG_LINK_HEIGHT: f32 = 20.0;
+const LOCK_LIST_ROW_HEIGHT: f32 = 26.0;
+const LOCK_LIST_MAX_ROWS: usize = 4;
+const LOCK_LIST_PAD: f32 = 4.0;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum Tab {
@@ -86,6 +107,16 @@ enum Tab {
     Custom,
     ExtraTools,
     Donate,
+}
+
+/// Which wording the restart dialog shows — the same dialog is reused for
+/// a locked-file cleanup pass and for a registry restore, and the two
+/// deserve different phrasing (`restart-dialog-body` vs
+/// `restore-restart-dialog-body`).
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
+enum RestartReason {
+    LockedFiles,
+    RegistryRestore,
 }
 
 #[derive(PartialEq, Clone, Copy, Debug)]
@@ -128,6 +159,10 @@ enum UiButton {
     BackupRadio(usize),
     RestoreButton,
     RunMaintenance(MaintenanceTask),
+    RestartNow,
+    RestartLater,
+    ConfirmRestore,
+    CancelRestore,
 }
 
 #[allow(dead_code)] // wired up again once each tab is ported
@@ -151,6 +186,14 @@ pub struct KprmApp {
     scan_results: Vec<(kprm_engine::report::Event, bool)>,
 
     show_restart_dialog: bool,
+    /// Which wording `draw_restart_dialog` shows — only meaningful while
+    /// `show_restart_dialog` is `true`.
+    restart_reason: RestartReason,
+    /// Paths of whatever got scheduled for on-reboot deletion by the run
+    /// that triggered `show_restart_dialog` (mockup parity —
+    /// `docs/design/Restart.dc.html`'s locked-files list; the original app
+    /// never showed this).
+    restart_locked_files: Vec<String>,
     available_backups: Vec<kprm_engine::backup::AvailableBackup>,
     selected_backup: Option<kprm_engine::backup::AvailableBackup>,
     confirm_restore: Option<kprm_engine::backup::AvailableBackup>,
@@ -179,6 +222,11 @@ pub struct KprmApp {
     action_rects: Vec<RectF>,
     quarantine_rects: Vec<(QuarantineChoice, RectF)>,
     run_button_rect: RectF,
+    /// The Automatic tab's whole-tab scroll — see `draw_ui_automatic`; a
+    /// small enough window (or a resize down to `min_size`, now that the
+    /// window is resizable) can make the card grid + sidebar taller than
+    /// the available space.
+    automatic_scroll: ScrollState,
 
     /// The Custom tab's result-list scroll area — see
     /// `kprm_win32gui::scroll` (the rewrite plan's highest-risk primitive).
@@ -189,6 +237,9 @@ pub struct KprmApp {
 
     copy_button_rects: [RectF; 4],
     paypal_button_rect: RectF,
+    /// The Donate tab's whole-tab scroll — 4 address cards plus PayPal can
+    /// outgrow a small window just like the Automatic tab's content.
+    donate_scroll: ScrollState,
 
     /// The Extra Tools tab's whole-tab scroll, and the backup list's own
     /// nested scroll inside it — see `draw_ui_extra_tools` for how their
@@ -239,6 +290,8 @@ impl KprmApp {
             progress: None,
             scan_results: Vec::new(),
             show_restart_dialog: false,
+            restart_reason: RestartReason::LockedFiles,
+            restart_locked_files: Vec::new(),
             available_backups: kprm_windows::list_registry_backups(
                 &kprm_windows::EnvKnownDirs::detect(),
             ),
@@ -256,12 +309,14 @@ impl KprmApp {
             action_rects: Vec::new(),
             quarantine_rects: Vec::new(),
             run_button_rect: RectF::default(),
+            automatic_scroll: ScrollState::default(),
             scroll: ScrollState::default(),
             toolbar_button_rects: Vec::new(),
             search_button_rect: RectF::default(),
             remove_selected_button_rect: RectF::default(),
             copy_button_rects: [RectF::default(); 4],
             paypal_button_rect: RectF::default(),
+            donate_scroll: ScrollState::default(),
             outer_scroll: ScrollState::default(),
             backup_scroll: ScrollState::default(),
             refresh_backups_rect: RectF::default(),
@@ -320,6 +375,17 @@ impl KprmApp {
             self.scan_results = report.events.into_iter().map(|e| (e, true)).collect();
         } else {
             if report.needs_restart() {
+                self.restart_reason = if report.events.iter().any(|e| e.action_type == "registry_restore") {
+                    RestartReason::RegistryRestore
+                } else {
+                    RestartReason::LockedFiles
+                };
+                self.restart_locked_files = report
+                    .events
+                    .iter()
+                    .filter(|e| e.result == EventResult::ScheduledOnReboot)
+                    .map(|e| e.target.clone())
+                    .collect();
                 self.show_restart_dialog = true;
             }
             let handled: HashSet<String> = report
@@ -359,13 +425,112 @@ impl KprmApp {
         RectF { X: x, Y: DISCLAIMER_BUTTONS_Y, Width: w, Height: h }
     }
 
+    /// Geometry for `draw_restart_dialog`/`button_at`, shared so hit-testing
+    /// (no `Graphics`, can't measure text) matches what got painted exactly
+    /// — everything here is fixed-size, so plain arithmetic on
+    /// `self.restart_locked_files.len()` is enough, no cached rects needed.
+    /// Returns `(panel, primary_button, later_link, locked_files_list)`.
+    fn restart_dialog_layout(&self, width: f32, height: f32) -> (RectF, RectF, RectF, Option<RectF>) {
+        let lock_list = if self.restart_locked_files.is_empty() {
+            None
+        } else {
+            let rows = self.restart_locked_files.len().min(LOCK_LIST_MAX_ROWS) as f32;
+            Some(LOCK_LIST_PAD * 2.0 + rows * LOCK_LIST_ROW_HEIGHT)
+        };
+        let content_h = DIALOG_PAD * 2.0
+            + DIALOG_BADGE_SIZE
+            + DIALOG_BADGE_GAP
+            + DIALOG_TITLE_HEIGHT
+            + DIALOG_TITLE_GAP
+            + DIALOG_BODY_HEIGHT
+            + DIALOG_BODY_GAP
+            + lock_list.map(|h| h + DIALOG_BODY_GAP).unwrap_or(0.0)
+            + DIALOG_PRIMARY_BTN_HEIGHT
+            + DIALOG_PRIMARY_GAP
+            + DIALOG_LINK_HEIGHT;
+        let panel = RectF {
+            X: (width - DIALOG_PANEL_WIDTH) / 2.0,
+            Y: (height - content_h) / 2.0,
+            Width: DIALOG_PANEL_WIDTH,
+            Height: content_h,
+        };
+        let mut y = panel.Y + DIALOG_PAD + DIALOG_BADGE_SIZE + DIALOG_BADGE_GAP + DIALOG_TITLE_HEIGHT
+            + DIALOG_TITLE_GAP
+            + DIALOG_BODY_HEIGHT
+            + DIALOG_BODY_GAP;
+        let lock_list_rect = lock_list.map(|h| {
+            let rect = RectF { X: panel.X + DIALOG_PAD, Y: y, Width: panel.Width - DIALOG_PAD * 2.0, Height: h };
+            y += h + DIALOG_BODY_GAP;
+            rect
+        });
+        let primary = RectF {
+            X: panel.X + DIALOG_PAD,
+            Y: y,
+            Width: panel.Width - DIALOG_PAD * 2.0,
+            Height: DIALOG_PRIMARY_BTN_HEIGHT,
+        };
+        y += DIALOG_PRIMARY_BTN_HEIGHT + DIALOG_PRIMARY_GAP;
+        let link = RectF { X: panel.X + DIALOG_PAD, Y: y, Width: panel.Width - DIALOG_PAD * 2.0, Height: DIALOG_LINK_HEIGHT };
+        (panel, primary, link, lock_list_rect)
+    }
+
+    /// Same idea as [`Self::restart_dialog_layout`] but for the (fixed-
+    /// height, no locked-files list) registry-restore confirmation.
+    /// Returns `(panel, confirm_button, cancel_link)`.
+    fn confirm_dialog_layout(&self, width: f32, height: f32) -> (RectF, RectF, RectF) {
+        let content_h = DIALOG_PAD * 2.0
+            + DIALOG_BADGE_SIZE
+            + DIALOG_BADGE_GAP
+            + DIALOG_TITLE_HEIGHT
+            + DIALOG_TITLE_GAP
+            + DIALOG_BODY_HEIGHT
+            + DIALOG_BODY_GAP
+            + DIALOG_PRIMARY_BTN_HEIGHT
+            + DIALOG_PRIMARY_GAP
+            + DIALOG_LINK_HEIGHT;
+        let panel = RectF {
+            X: (width - DIALOG_PANEL_WIDTH) / 2.0,
+            Y: (height - content_h) / 2.0,
+            Width: DIALOG_PANEL_WIDTH,
+            Height: content_h,
+        };
+        let y = panel.Y + DIALOG_PAD + DIALOG_BADGE_SIZE + DIALOG_BADGE_GAP + DIALOG_TITLE_HEIGHT
+            + DIALOG_TITLE_GAP
+            + DIALOG_BODY_HEIGHT
+            + DIALOG_BODY_GAP;
+        let confirm = RectF { X: panel.X + DIALOG_PAD, Y: y, Width: panel.Width - DIALOG_PAD * 2.0, Height: DIALOG_PRIMARY_BTN_HEIGHT };
+        let link = RectF {
+            X: panel.X + DIALOG_PAD,
+            Y: y + DIALOG_PRIMARY_BTN_HEIGHT + DIALOG_PRIMARY_GAP,
+            Width: panel.Width - DIALOG_PAD * 2.0,
+            Height: DIALOG_LINK_HEIGHT,
+        };
+        (panel, confirm, link)
+    }
+
     fn button_at(&self, width: f32, height: f32, x: f32, y: f32) -> Option<UiButton> {
         for btn in [UiButton::Minimize, UiButton::Close] {
             if rect_contains(self.title_bar_button_rect(width, btn), x, y) {
                 return Some(btn);
             }
         }
-        if !self.disclaimer_accepted {
+        if self.show_restart_dialog {
+            let (_, primary, link, _) = self.restart_dialog_layout(width, height);
+            if rect_contains(primary, x, y) {
+                return Some(UiButton::RestartNow);
+            }
+            if rect_contains(link, x, y) {
+                return Some(UiButton::RestartLater);
+            }
+        } else if self.confirm_restore.is_some() {
+            let (_, confirm, link) = self.confirm_dialog_layout(width, height);
+            if rect_contains(confirm, x, y) {
+                return Some(UiButton::ConfirmRestore);
+            }
+            if rect_contains(link, x, y) {
+                return Some(UiButton::CancelRestore);
+            }
+        } else if !self.disclaimer_accepted {
             for btn in [UiButton::DisclaimerAccept, UiButton::DisclaimerDecline] {
                 if rect_contains(self.disclaimer_button_rect(width, height, btn), x, y) {
                     return Some(btn);
@@ -378,18 +543,24 @@ impl KprmApp {
                 }
             }
             if self.tab == Tab::Automatic {
-                for (i, rect) in self.action_rects.iter().enumerate() {
-                    if rect_contains(*rect, x, y) {
-                        return Some(UiButton::ActionCard(i));
+                // Cached in content space (drawn as if `automatic_scroll`'s
+                // viewport were unscrolled — see `draw_ui_automatic`), same
+                // convention as the Extra Tools tab below.
+                if self.automatic_scroll.contains(x, y) {
+                    let y_content = y + self.automatic_scroll.offset;
+                    for (i, rect) in self.action_rects.iter().enumerate() {
+                        if rect_contains(*rect, x, y_content) {
+                            return Some(UiButton::ActionCard(i));
+                        }
                     }
-                }
-                for (choice, rect) in &self.quarantine_rects {
-                    if rect_contains(*rect, x, y) {
-                        return Some(UiButton::QuarantineSeg(*choice));
+                    for (choice, rect) in &self.quarantine_rects {
+                        if rect_contains(*rect, x, y_content) {
+                            return Some(UiButton::QuarantineSeg(*choice));
+                        }
                     }
-                }
-                if rect_contains(self.run_button_rect, x, y) && self.can_run() {
-                    return Some(UiButton::RunButton);
+                    if rect_contains(self.run_button_rect, x, y_content) && self.can_run() {
+                        return Some(UiButton::RunButton);
+                    }
                 }
             } else if self.tab == Tab::Custom {
                 for (btn, rect) in &self.toolbar_button_rects {
@@ -413,13 +584,16 @@ impl KprmApp {
                     return Some(UiButton::RemoveSelectedButton);
                 }
             } else if self.tab == Tab::Donate {
-                for (i, rect) in self.copy_button_rects.iter().enumerate() {
-                    if rect_contains(*rect, x, y) {
-                        return Some(UiButton::CopyAddress(i));
+                if self.donate_scroll.contains(x, y) {
+                    let y_content = y + self.donate_scroll.offset;
+                    for (i, rect) in self.copy_button_rects.iter().enumerate() {
+                        if rect_contains(*rect, x, y_content) {
+                            return Some(UiButton::CopyAddress(i));
+                        }
                     }
-                }
-                if !PAYPAL_URL.is_empty() && rect_contains(self.paypal_button_rect, x, y) {
-                    return Some(UiButton::OpenPayPal);
+                    if !PAYPAL_URL.is_empty() && rect_contains(self.paypal_button_rect, x, y_content) {
+                        return Some(UiButton::OpenPayPal);
+                    }
                 }
             } else if self.tab == Tab::ExtraTools {
                 // All of this tab's interactive rects were cached in
@@ -491,6 +665,7 @@ impl KprmApp {
 
         let near = StringFormat::new().unwrap();
         near.set_align(StringAlignmentNear).unwrap();
+        near.set_line_align(StringAlignmentCenter).unwrap();
         let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
         g.draw_string(
             "KpRm",
@@ -508,6 +683,7 @@ impl KprmApp {
         let text_2 = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(
             concat!("v", env!("CARGO_PKG_VERSION")),
             &self.fonts.monospace(10.5),
@@ -617,6 +793,7 @@ impl KprmApp {
         let font = self.fonts.proportional(13.0);
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
 
         self.tab_rects.clear();
         let mut x = 16.0;
@@ -709,136 +886,148 @@ impl KprmApp {
         }
     }
 
-    /// Placeholder for the tabs not yet ported (see the rewrite plan's
-    /// phases 5-6).
     /// The "Automatique" tab: a 2-column grid of action-checkbox cards, the
     /// 3-way quarantine choice, a run button, and (mockup parity — the
     /// original egui app never had this) a right-hand sidebar with the
-    /// live catalog size and the last run's timestamp.
-    fn draw_ui_automatic(&mut self, g: &Graphics, width: f32, _height: f32) {
+    /// live catalog size and the last run's timestamp. Scrolls as one
+    /// block (see `kprm_win32gui::scroll`) for whenever the window is
+    /// resized smaller than all of this needs.
+    fn draw_ui_automatic(&mut self, g: &Graphics, width: f32, height: f32) {
         let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let bottom = height - FOOTER_HEIGHT;
+        let viewport = RectF { X: 0.0, Y: top, Width: width, Height: (bottom - top).max(40.0) };
         let content_x = CONTENT_PAD_X;
         let content_y = top + CONTENT_PAD_TOP;
         let left_col_width = width - CONTENT_PAD_X * 2.0 - SIDEBAR_WIDTH - COLUMN_GAP;
 
-        let near = StringFormat::new().unwrap();
-        near.set_align(StringAlignmentNear).unwrap();
-        let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
-        g.draw_string(
-            &self.t("actions").to_uppercase(),
-            &self.fonts.proportional(11.0),
-            RectF { X: content_x, Y: content_y, Width: left_col_width, Height: 16.0 },
-            &near,
-            &header_brush,
-        )
-        .unwrap();
+        let mut content_bottom = viewport.Y;
+        let mut scroll = self.automatic_scroll;
+        scroll.show(g, viewport, |g| {
+            let near = StringFormat::new().unwrap();
+            near.set_align(StringAlignmentNear).unwrap();
+            let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+            g.draw_string(
+                &self.t("actions").to_uppercase(),
+                &self.fonts.proportional(11.0),
+                RectF { X: content_x, Y: content_y, Width: left_col_width, Height: 16.0 },
+                &near,
+                &header_brush,
+            )
+            .unwrap();
 
-        let grid_y = content_y + 24.0;
-        let card_w = (left_col_width - CARD_GAP) / 2.0;
+            let grid_y = content_y + 24.0;
+            let card_w = (left_col_width - CARD_GAP) / 2.0;
 
-        let specs: [(bool, &Icon, kprm_win32gui::color::Color, kprm_win32gui::color::Color, String, String); 6] = [
-            (
-                self.opt_remove_tools,
-                &app_icons::TRASH,
-                theme::BLUE_BG,
-                theme::BLUE,
-                self.t("delete-tools"),
-                self.t("action-remove-tools-desc"),
-            ),
-            (
-                self.opt_backup_registry,
-                &app_icons::SAVE,
-                theme::GREEN_BG,
-                theme::GREEN,
-                self.t("save-registry"),
-                self.t("action-backup-registry-desc"),
-            ),
-            (
-                self.opt_remove_restore_points,
-                &app_icons::UNDO,
-                theme::BLUE_BG,
-                theme::BLUE,
-                self.t("delete-system-restore-points"),
-                self.t("action-remove-restore-points-desc"),
-            ),
-            (
-                self.opt_create_restore_point,
-                &app_icons::CIRCLE_PLUS,
-                theme::GREEN_BG,
-                theme::GREEN,
-                self.t("create-restore-point"),
-                self.t("action-create-restore-point-desc"),
-            ),
-            (
-                self.opt_restore_uac,
-                &app_icons::LOCK,
-                theme::BLUE_BG,
-                theme::BLUE,
-                self.t("restore-uac"),
-                self.t("action-restore-uac-desc"),
-            ),
-            (
-                self.opt_restore_settings,
-                &app_icons::SLIDERS,
-                theme::BLUE_BG,
-                theme::BLUE,
-                self.t("restore-settings"),
-                self.t("action-restore-settings-desc"),
-            ),
-        ];
+            let specs: [(bool, &Icon, kprm_win32gui::color::Color, kprm_win32gui::color::Color, String, String); 6] = [
+                (
+                    self.opt_remove_tools,
+                    &app_icons::TRASH,
+                    theme::BLUE_BG,
+                    theme::BLUE,
+                    self.t("delete-tools"),
+                    self.t("action-remove-tools-desc"),
+                ),
+                (
+                    self.opt_backup_registry,
+                    &app_icons::SAVE,
+                    theme::GREEN_BG,
+                    theme::GREEN,
+                    self.t("save-registry"),
+                    self.t("action-backup-registry-desc"),
+                ),
+                (
+                    self.opt_remove_restore_points,
+                    &app_icons::UNDO,
+                    theme::BLUE_BG,
+                    theme::BLUE,
+                    self.t("delete-system-restore-points"),
+                    self.t("action-remove-restore-points-desc"),
+                ),
+                (
+                    self.opt_create_restore_point,
+                    &app_icons::CIRCLE_PLUS,
+                    theme::GREEN_BG,
+                    theme::GREEN,
+                    self.t("create-restore-point"),
+                    self.t("action-create-restore-point-desc"),
+                ),
+                (
+                    self.opt_restore_uac,
+                    &app_icons::LOCK,
+                    theme::BLUE_BG,
+                    theme::BLUE,
+                    self.t("restore-uac"),
+                    self.t("action-restore-uac-desc"),
+                ),
+                (
+                    self.opt_restore_settings,
+                    &app_icons::SLIDERS,
+                    theme::BLUE_BG,
+                    theme::BLUE,
+                    self.t("restore-settings"),
+                    self.t("action-restore-settings-desc"),
+                ),
+            ];
 
-        self.action_rects.clear();
-        for (i, (checked, icon, badge_bg, icon_color, title, desc)) in specs.iter().enumerate() {
-            let row = (i / 2) as f32;
-            let col = (i % 2) as f32;
-            let rect = RectF {
-                X: content_x + col * (card_w + CARD_GAP),
-                Y: grid_y + row * (CARD_HEIGHT + CARD_GAP),
-                Width: card_w,
-                Height: CARD_HEIGHT,
+            self.action_rects.clear();
+            for (i, (checked, icon, badge_bg, icon_color, title, desc)) in specs.iter().enumerate() {
+                let row = (i / 2) as f32;
+                let col = (i % 2) as f32;
+                let rect = RectF {
+                    X: content_x + col * (card_w + CARD_GAP),
+                    Y: grid_y + row * (CARD_HEIGHT + CARD_GAP),
+                    Width: card_w,
+                    Height: CARD_HEIGHT,
+                };
+                self.action_rects.push(rect);
+                self.draw_action_card(g, rect, i, *checked, icon, *badge_bg, *icon_color, title, desc);
+            }
+
+            let quarantine_y = grid_y + 3.0 * CARD_HEIGHT + 2.0 * CARD_GAP + 18.0;
+            g.draw_string(
+                &self.t("quarantine-section-title"),
+                &self.fonts.proportional(11.0),
+                RectF { X: content_x, Y: quarantine_y, Width: left_col_width, Height: 16.0 },
+                &near,
+                &header_brush,
+            )
+            .unwrap();
+
+            let seg_y = quarantine_y + 24.0;
+            let seg_w = (left_col_width - SEGMENT_GAP * 2.0) / 3.0;
+            let segs = [
+                (QuarantineChoice::Keep, &app_icons::BOX, theme::TEXT_2, self.t("quarantine-keep"), self.t("quarantine-keep-desc")),
+                (QuarantineChoice::Now, &app_icons::TRASH, theme::RED, self.t("remove-now"), self.t("quarantine-now-desc")),
+                (QuarantineChoice::In7Days, &app_icons::CLOCK, theme::BLUE, self.t("quarantine-7-days"), self.t("quarantine-7-days-desc")),
+            ];
+            self.quarantine_rects.clear();
+            for (i, (choice, icon, icon_color, title, desc)) in segs.iter().enumerate() {
+                let rect = RectF {
+                    X: content_x + i as f32 * (seg_w + SEGMENT_GAP),
+                    Y: seg_y,
+                    Width: seg_w,
+                    Height: SEGMENT_HEIGHT,
+                };
+                self.quarantine_rects.push((*choice, rect));
+                self.draw_quarantine_segment(g, rect, *choice, icon, *icon_color, title, desc);
+            }
+
+            self.run_button_rect = RectF {
+                X: content_x,
+                Y: seg_y + SEGMENT_HEIGHT + 20.0,
+                Width: RUN_BUTTON_SIZE.0,
+                Height: RUN_BUTTON_SIZE.1,
             };
-            self.action_rects.push(rect);
-            self.draw_action_card(g, rect, i, *checked, icon, *badge_bg, *icon_color, title, desc);
-        }
+            self.draw_run_button(g);
+            let left_bottom =
+                self.run_button_rect.Y + self.run_button_rect.Height + if !self.can_run() { 22.0 } else { 0.0 };
 
-        let quarantine_y = grid_y + 3.0 * CARD_HEIGHT + 2.0 * CARD_GAP + 18.0;
-        g.draw_string(
-            &self.t("quarantine-section-title"),
-            &self.fonts.proportional(11.0),
-            RectF { X: content_x, Y: quarantine_y, Width: left_col_width, Height: 16.0 },
-            &near,
-            &header_brush,
-        )
-        .unwrap();
-
-        let seg_y = quarantine_y + 24.0;
-        let seg_w = (left_col_width - SEGMENT_GAP * 2.0) / 3.0;
-        let segs = [
-            (QuarantineChoice::Keep, &app_icons::BOX, theme::TEXT_2, self.t("quarantine-keep"), self.t("quarantine-keep-desc")),
-            (QuarantineChoice::Now, &app_icons::TRASH, theme::RED, self.t("remove-now"), self.t("quarantine-now-desc")),
-            (QuarantineChoice::In7Days, &app_icons::CLOCK, theme::BLUE, self.t("quarantine-7-days"), self.t("quarantine-7-days-desc")),
-        ];
-        self.quarantine_rects.clear();
-        for (i, (choice, icon, icon_color, title, desc)) in segs.iter().enumerate() {
-            let rect = RectF {
-                X: content_x + i as f32 * (seg_w + SEGMENT_GAP),
-                Y: seg_y,
-                Width: seg_w,
-                Height: SEGMENT_HEIGHT,
-            };
-            self.quarantine_rects.push((*choice, rect));
-            self.draw_quarantine_segment(g, rect, *choice, icon, *icon_color, title, desc);
-        }
-
-        self.run_button_rect = RectF {
-            X: content_x,
-            Y: seg_y + SEGMENT_HEIGHT + 20.0,
-            Width: RUN_BUTTON_SIZE.0,
-            Height: RUN_BUTTON_SIZE.1,
-        };
-        self.draw_run_button(g);
-
-        self.draw_sidebar(g, width, top);
+            let sidebar_bottom = self.draw_sidebar(g, width, top);
+            content_bottom = left_bottom.max(sidebar_bottom) + 20.0;
+        });
+        let content_height = content_bottom - viewport.Y;
+        scroll.finish(g, content_height);
+        self.automatic_scroll = scroll;
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -963,6 +1152,7 @@ impl KprmApp {
         let text_brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(&self.t("run"), &self.fonts.proportional(13.5), self.run_button_rect, &center, &text_brush)
             .unwrap();
 
@@ -988,8 +1178,10 @@ impl KprmApp {
 
     /// Mockup parity (`docs/design/Main.dc.html`'s right column) — new
     /// functionality, not a port: the original app persisted nothing
-    /// between runs.
-    fn draw_sidebar(&self, g: &Graphics, width: f32, top: f32) {
+    /// between runs. Returns the sidebar's own bottom Y so the caller can
+    /// compare it against the left column's when sizing the tab's scroll
+    /// content.
+    fn draw_sidebar(&self, g: &Graphics, width: f32, top: f32) -> f32 {
         let x = width - CONTENT_PAD_X - SIDEBAR_WIDTH;
         let y = top + CONTENT_PAD_TOP;
         let panel = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
@@ -1070,6 +1262,8 @@ impl KprmApp {
             &text_2b,
         )
         .unwrap();
+
+        stats_y + STATS_H
     }
 
     /// The "Personnalisé" tab: a scrollable list of everything the last
@@ -1202,6 +1396,7 @@ impl KprmApp {
         let brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(label, &self.fonts.proportional(11.5), rect, &center, &brush).unwrap();
     }
 
@@ -1261,6 +1456,7 @@ impl KprmApp {
         let brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(label, &self.fonts.proportional(12.5), self.search_button_rect, &center, &brush).unwrap();
     }
 
@@ -1277,6 +1473,7 @@ impl KprmApp {
         let brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(label, &self.fonts.proportional(12.5), self.remove_selected_button_rect, &center, &brush)
             .unwrap();
     }
@@ -1286,56 +1483,68 @@ impl KprmApp {
     /// then compact rows for the other addresses and, once
     /// [`PAYPAL_URL`] is filled in, a PayPal link (GitHub Sponsors is
     /// intentionally not implemented, per the user's request).
-    fn draw_ui_donate(&mut self, g: &Graphics, width: f32) {
+    fn draw_ui_donate(&mut self, g: &Graphics, width: f32, height: f32) {
         let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let bottom = height - FOOTER_HEIGHT;
+        let viewport = RectF { X: 0.0, Y: top, Width: width, Height: (bottom - top).max(40.0) };
         let content_x = CONTENT_PAD_X;
         let content_w = width - CONTENT_PAD_X * 2.0;
-        let mut y = top + CONTENT_PAD_TOP;
 
-        let near = StringFormat::new().unwrap();
-        near.set_align(StringAlignmentNear).unwrap();
+        let mut content_bottom = viewport.Y;
+        let mut scroll = self.donate_scroll;
+        scroll.show(g, viewport, |g| {
+            let mut y = top + CONTENT_PAD_TOP;
 
-        let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
-        g.draw_string(
-            &self.t("tab-donate").to_uppercase(),
-            &self.fonts.proportional(11.0),
-            RectF { X: content_x, Y: y, Width: content_w, Height: 16.0 },
-            &near,
-            &header_brush,
-        )
-        .unwrap();
-        y += 24.0;
+            let near = StringFormat::new().unwrap();
+            near.set_align(StringAlignmentNear).unwrap();
 
-        let body_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
-        g.draw_string(
-            &self.t("donate-body"),
-            &self.fonts.proportional(12.0),
-            RectF { X: content_x, Y: y, Width: content_w, Height: 20.0 },
-            &near,
-            &body_brush,
-        )
-        .unwrap();
-        y += 32.0;
+            let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+            g.draw_string(
+                &self.t("tab-donate").to_uppercase(),
+                &self.fonts.proportional(11.0),
+                RectF { X: content_x, Y: y, Width: content_w, Height: 16.0 },
+                &near,
+                &header_brush,
+            )
+            .unwrap();
+            y += 24.0;
 
-        // Every address gets the same treatment: label + address + copy
-        // button + its own scannable QR code.
-        let copy_label = self.t("copy-button");
-        let cryptos = [
-            (0usize, "Bitcoin (BTC)", BTC_ADDRESS),
-            (1, "Ethereum (ETH)", ETH_ADDRESS),
-            (2, "Litecoin (LTC)", LTC_ADDRESS),
-            (3, "Monero (XMR)", XMR_ADDRESS),
-        ];
-        for (i, label, address) in cryptos {
-            let card_rect = RectF { X: content_x, Y: y, Width: content_w, Height: DONATE_CARD_HEIGHT };
-            self.draw_donate_card(g, card_rect, i, label, address, &copy_label);
-            y += DONATE_CARD_HEIGHT + DONATE_CARD_GAP;
-        }
+            let body_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+            g.draw_string(
+                &self.t("donate-body"),
+                &self.fonts.proportional(12.0),
+                RectF { X: content_x, Y: y, Width: content_w, Height: 20.0 },
+                &near,
+                &body_brush,
+            )
+            .unwrap();
+            y += 32.0;
 
-        if !PAYPAL_URL.is_empty() {
-            self.paypal_button_rect = RectF { X: content_x, Y: y, Width: 160.0, Height: 32.0 };
-            self.draw_paypal_button(g, self.paypal_button_rect);
-        }
+            // Every address gets the same treatment: label + address + copy
+            // button + its own scannable QR code.
+            let copy_label = self.t("copy-button");
+            let cryptos = [
+                (0usize, "Bitcoin (BTC)", BTC_ADDRESS),
+                (1, "Ethereum (ETH)", ETH_ADDRESS),
+                (2, "Litecoin (LTC)", LTC_ADDRESS),
+                (3, "Monero (XMR)", XMR_ADDRESS),
+            ];
+            for (i, label, address) in cryptos {
+                let card_rect = RectF { X: content_x, Y: y, Width: content_w, Height: DONATE_CARD_HEIGHT };
+                self.draw_donate_card(g, card_rect, i, label, address, &copy_label);
+                y += DONATE_CARD_HEIGHT + DONATE_CARD_GAP;
+            }
+
+            if !PAYPAL_URL.is_empty() {
+                self.paypal_button_rect = RectF { X: content_x, Y: y, Width: 160.0, Height: 32.0 };
+                self.draw_paypal_button(g, self.paypal_button_rect);
+                y += 32.0;
+            }
+            content_bottom = y + 20.0;
+        });
+        let content_height = content_bottom - viewport.Y;
+        scroll.finish(g, content_height);
+        self.donate_scroll = scroll;
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -1403,6 +1612,7 @@ impl KprmApp {
         let brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string(label, &self.fonts.proportional(11.0), rect, &center, &brush).unwrap();
     }
 
@@ -1416,6 +1626,7 @@ impl KprmApp {
         let brush = SolidBrush::new(text_color.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         g.draw_string("PayPal", &self.fonts.proportional(12.5), rect, &center, &brush).unwrap();
     }
 
@@ -1469,6 +1680,7 @@ impl KprmApp {
         near.set_align(StringAlignmentNear).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
         let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
         let title_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
         let desc_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
@@ -1760,6 +1972,7 @@ impl KprmApp {
         near.set_align(StringAlignmentNear).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
 
         let btn_rect = RectF {
             X: rect.X + rect.Width - MAINT_RUN_BTN_SIZE.0,
@@ -1803,6 +2016,173 @@ impl KprmApp {
         g.draw_string(&self.t("run"), &self.fonts.proportional(12.0), btn_rect, &center, &text_brush).ok();
 
         btn_rect
+    }
+
+    fn draw_dialog_overlay(&self, g: &Graphics, width: f32, height: f32) {
+        let overlay = SolidBrush::new(Color::rgba(0x0c, 0x0d, 0x10, 140).to_argb()).unwrap();
+        g.fill_rect(RectF { X: 0.0, Y: 0.0, Width: width, Height: height }, &overlay).ok();
+    }
+
+    /// A panel with a centered icon badge, title and wrapped body — shared
+    /// layout for both dialogs, at whatever rect the caller already worked
+    /// out (see `restart_dialog_layout`/`confirm_dialog_layout`).
+    fn draw_dialog_frame(&self, g: &Graphics, panel: RectF, badge_bg: Color, icon: &Icon, icon_color: Color, title: &str, body: &str) {
+        let panel_fill = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+        g.fill_rounded_rect(panel, 14.0, &panel_fill).unwrap();
+        let border = Pen::new(theme::BORDER.to_argb(), 1.0).unwrap();
+        g.draw_rounded_rect(panel, 14.0, &border).unwrap();
+
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+
+        let badge_rect = RectF {
+            X: panel.X + (panel.Width - DIALOG_BADGE_SIZE) / 2.0,
+            Y: panel.Y + DIALOG_PAD,
+            Width: DIALOG_BADGE_SIZE,
+            Height: DIALOG_BADGE_SIZE,
+        };
+        let badge_fill = SolidBrush::new(badge_bg.to_argb()).unwrap();
+        g.fill_rounded_rect(badge_rect, 999.0, &badge_fill).unwrap();
+        let icon_rect = RectF {
+            X: badge_rect.X + (DIALOG_BADGE_SIZE - 26.0) / 2.0,
+            Y: badge_rect.Y + (DIALOG_BADGE_SIZE - 26.0) / 2.0,
+            Width: 26.0,
+            Height: 26.0,
+        };
+        icon.draw(g, icon_rect, icon_color, 1.8).ok();
+
+        let title_y = badge_rect.Y + DIALOG_BADGE_SIZE + DIALOG_BADGE_GAP;
+        let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            title,
+            &self.fonts.proportional(15.0),
+            RectF { X: panel.X + DIALOG_PAD, Y: title_y, Width: panel.Width - DIALOG_PAD * 2.0, Height: DIALOG_TITLE_HEIGHT },
+            &center,
+            &text_1,
+        )
+        .unwrap();
+
+        let body_y = title_y + DIALOG_TITLE_HEIGHT + DIALOG_TITLE_GAP;
+        let text_2 = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            body,
+            &self.fonts.proportional(12.5),
+            RectF { X: panel.X + DIALOG_PAD, Y: body_y, Width: panel.Width - DIALOG_PAD * 2.0, Height: DIALOG_BODY_HEIGHT },
+            &center,
+            &text_2,
+        )
+        .unwrap();
+    }
+
+    /// A full-width colored primary button plus a plain underlined "link"
+    /// below it — `docs/design/Restart.dc.html`'s button stack, reused for
+    /// both dialogs instead of the pre-rewrite egui version's side-by-side
+    /// buttons.
+    fn draw_dialog_buttons(&self, g: &Graphics, primary: RectF, link: RectF, primary_fill: Color, primary_text: Color, primary_label: &str, link_label: &str, link_hovered: bool) {
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        center.set_line_align(StringAlignmentCenter).unwrap();
+
+        let fill = SolidBrush::new(primary_fill.to_argb()).unwrap();
+        g.fill_rounded_rect(primary, theme::RADIUS, &fill).unwrap();
+        let text_brush = SolidBrush::new(primary_text.to_argb()).unwrap();
+        g.draw_string(primary_label, &self.fonts.proportional(13.5), primary, &center, &text_brush).unwrap();
+
+        let link_color = if link_hovered { theme::TEXT_1 } else { theme::TEXT_2 };
+        let link_brush = SolidBrush::new(link_color.to_argb()).unwrap();
+        g.draw_string(link_label, &self.fonts.proportional(12.0), link, &center, &link_brush).unwrap();
+        let text_w = g.measure_line_width(link_label, &self.fonts.proportional(12.0)).unwrap_or(60.0);
+        let underline_y = link.Y + link.Height - 4.0;
+        let underline_x = link.X + (link.Width - text_w) / 2.0;
+        let underline_pen = Pen::new(link_color.to_argb(), 1.0).unwrap();
+        g.draw_line(underline_x, underline_y, underline_x + text_w, underline_y, &underline_pen).ok();
+    }
+
+    /// The "Redémarrage nécessaire" prompt — shown after a real run left
+    /// something scheduled for deletion (or a registry restore scheduled)
+    /// on next boot (see `Report::needs_restart`). Restarting is always an
+    /// explicit choice here, never automatic, unlike the original AutoIt
+    /// tool.
+    fn draw_restart_dialog(&self, g: &Graphics, width: f32, height: f32) {
+        self.draw_dialog_overlay(g, width, height);
+        let (panel, primary, link, lock_list) = self.restart_dialog_layout(width, height);
+
+        let title = self.t("restart-dialog-title");
+        let body = match self.restart_reason {
+            RestartReason::LockedFiles => self.t("restart-dialog-body"),
+            RestartReason::RegistryRestore => self.t("restore-restart-dialog-body"),
+        };
+        self.draw_dialog_frame(g, panel, theme::AMBER_BG, &app_icons::UNDO, theme::AMBER, &title, &body);
+
+        if let Some(list_rect) = lock_list {
+            let elevated = SolidBrush::new(theme::BG_ELEVATED.to_argb()).unwrap();
+            g.fill_rounded_rect(list_rect, theme::RADIUS, &elevated).unwrap();
+            let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+            g.draw_rounded_rect(list_rect, theme::RADIUS, &border).unwrap();
+
+            let near = StringFormat::new().unwrap();
+            near.set_align(StringAlignmentNear).unwrap();
+            let path_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+            let shown = self.restart_locked_files.len().min(LOCK_LIST_MAX_ROWS);
+            for (i, path) in self.restart_locked_files.iter().take(shown).enumerate() {
+                let row_rect = RectF {
+                    X: list_rect.X + LOCK_LIST_PAD,
+                    Y: list_rect.Y + LOCK_LIST_PAD + i as f32 * LOCK_LIST_ROW_HEIGHT,
+                    Width: list_rect.Width - LOCK_LIST_PAD * 2.0,
+                    Height: LOCK_LIST_ROW_HEIGHT,
+                };
+                let icon_rect = RectF { X: row_rect.X, Y: row_rect.Y + row_rect.Height / 2.0 - 7.0, Width: 14.0, Height: 14.0 };
+                app_icons::LOCK.draw(g, icon_rect, theme::TEXT_3, 1.8).ok();
+                g.draw_string(
+                    path,
+                    &self.fonts.monospace(10.5),
+                    RectF { X: row_rect.X + 22.0, Y: row_rect.Y, Width: row_rect.Width - 22.0, Height: row_rect.Height },
+                    &near,
+                    &path_brush,
+                )
+                .ok();
+            }
+        }
+
+        let hovered = self.hover == Some(UiButton::RestartLater);
+        self.draw_dialog_buttons(
+            g,
+            primary,
+            link,
+            theme::AMBER,
+            Color::rgb(0x2a, 0x1a, 0x08),
+            &self.t("restart-now-button"),
+            &self.t("restart-later-button"),
+            hovered,
+        );
+    }
+
+    /// The "are you sure?" gate in front of a registry restore — the one
+    /// action in the whole app that overwrites live system state wholesale
+    /// and can't be undone, so it gets an explicit confirmation on top of
+    /// the button click, unlike every other action here.
+    fn draw_confirm_restore_dialog(&self, g: &Graphics, width: f32, height: f32) {
+        let Some(backup) = self.confirm_restore.clone() else {
+            return;
+        };
+        self.draw_dialog_overlay(g, width, height);
+        let (panel, confirm, link) = self.confirm_dialog_layout(width, height);
+
+        let title = self.t("restore-registry-confirm-title");
+        let body = self.tf("restore-registry-confirm-body", &[("date", &format_backup_timestamp(&backup.timestamp))]);
+        self.draw_dialog_frame(g, panel, theme::RED_BG, &app_icons::ALERT, theme::RED, &title, &body);
+
+        let hovered = self.hover == Some(UiButton::CancelRestore);
+        self.draw_dialog_buttons(
+            g,
+            confirm,
+            link,
+            theme::RED,
+            Color::rgb(0xff, 0xff, 0xff),
+            &self.t("restore-registry-confirm-button"),
+            &self.t("restore-registry-cancel-button"),
+            hovered,
+        );
     }
 }
 
@@ -1861,8 +2241,19 @@ impl AppWindow for KprmApp {
                 Tab::Automatic => self.draw_ui_automatic(g, width, height),
                 Tab::Custom => self.draw_ui_custom(g, width, height),
                 Tab::ExtraTools => self.draw_ui_extra_tools(g, width, height),
-                Tab::Donate => self.draw_ui_donate(g, width),
+                Tab::Donate => self.draw_ui_donate(g, width, height),
             }
+        }
+
+        // Overlay passes, on top of everything above — not real modal
+        // windows (see the rewrite plan's architecture section), just a
+        // darkened backdrop plus a centered panel, exactly like the
+        // pre-rewrite egui version's `egui::Window` dialogs. `button_at`
+        // gates all other hit-testing out while either is showing.
+        if self.show_restart_dialog {
+            self.draw_restart_dialog(g, width, height);
+        } else if self.confirm_restore.is_some() {
+            self.draw_confirm_restore_dialog(g, width, height);
         }
     }
 
@@ -1998,6 +2389,25 @@ impl AppWindow for KprmApp {
                     self.status = self.t(maintenance_status_key(task));
                     let _ = self.request_tx.send(WorkerRequest::RunMaintenanceTask(task));
                 }
+                Some(UiButton::RestartNow) => {
+                    self.show_restart_dialog = false;
+                    if let Err(err) = kprm_windows::reboot_machine() {
+                        self.status = format!("{} : {err}", self.t("fail"));
+                    }
+                }
+                Some(UiButton::RestartLater) => {
+                    self.show_restart_dialog = false;
+                }
+                Some(UiButton::ConfirmRestore) => {
+                    if let Some(backup) = self.confirm_restore.take() {
+                        self.busy = true;
+                        self.status = self.t("status-restoring");
+                        let _ = self.request_tx.send(WorkerRequest::RestoreRegistryBackup(backup));
+                    }
+                }
+                Some(UiButton::CancelRestore) => {
+                    self.confirm_restore = None;
+                }
                 None => {}
             }
         }
@@ -2014,8 +2424,14 @@ impl AppWindow for KprmApp {
     }
 
     fn on_mouse_wheel(&mut self, x: f32, y: f32, notches: f32, _width: f32, _height: f32) -> bool {
-        if self.tab == Tab::Custom && self.scroll.contains(x, y) {
+        if self.tab == Tab::Automatic && self.automatic_scroll.contains(x, y) {
+            self.automatic_scroll.scroll_by_notches(notches, TAB_SCROLL_LINE_HEIGHT);
+            true
+        } else if self.tab == Tab::Custom && self.scroll.contains(x, y) {
             self.scroll.scroll_by_notches(notches, RESULT_ROW_HEIGHT);
+            true
+        } else if self.tab == Tab::Donate && self.donate_scroll.contains(x, y) {
+            self.donate_scroll.scroll_by_notches(notches, TAB_SCROLL_LINE_HEIGHT);
             true
         } else if self.tab == Tab::ExtraTools {
             // Innermost scroll under the cursor wins: `backup_scroll`'s
@@ -2032,7 +2448,7 @@ impl AppWindow for KprmApp {
                 self.backup_scroll.scroll_by_notches(notches, BACKUP_ROW_HEIGHT);
                 true
             } else if self.outer_scroll.contains(x, y) {
-                self.outer_scroll.scroll_by_notches(notches, EXTRA_WHEEL_LINE_HEIGHT);
+                self.outer_scroll.scroll_by_notches(notches, TAB_SCROLL_LINE_HEIGHT);
                 true
             } else {
                 false

@@ -9,6 +9,7 @@
 //! hits).
 
 use std::fs;
+use std::os::windows::process::CommandExt;
 use std::path::Path;
 
 use kprm_catalog::EntryKind;
@@ -87,6 +88,12 @@ pub(crate) fn schedule_replace_on_reboot(source: &str, dest: &str) -> bool {
 /// docs/RUST-REWRITE-SPEC.md §3.1) — `icacls` ships with every Windows
 /// install, so this adds no dependency.
 fn grant_full_control(path: &str) {
+    // Without CREATE_NO_WINDOW, a console-subsystem child spawned from a
+    // GUI-subsystem process (kprm itself has no console of its own to
+    // inherit — see `windows_subsystem` in `kprm`'s `main.rs`) gets a
+    // brand new console window allocated for it, flashing visibly.
+    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
     let Ok(user) = std::env::var("USERNAME") else {
         return;
     };
@@ -95,6 +102,7 @@ fn grant_full_control(path: &str) {
     }
     let _ = std::process::Command::new("icacls.exe")
         .args([path, "/grant", &format!("{user}:F"), "/t", "/c", "/q"])
+        .creation_flags(CREATE_NO_WINDOW)
         .output();
 }
 

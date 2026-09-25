@@ -121,10 +121,17 @@ one of the 8 embedded languages) with four tabs:
     (with signature/hash), startup entries, scheduled tasks, installed
     software, browser extensions (Chrome/Edge/Firefox), files modified
     in the last 90 days, Windows activation status, registered security
-    products, recent Application/System event-log errors (last 7 days),
-    hosts file, network configuration, proxy settings and browser
-    policies — saved to `%HOMEDRIVE%\KPRM\` and copied to the Desktop
-    for easy sharing
+    products, firewall profile state, recent Application/System
+    event-log errors (last 7 days), hosts file, network configuration,
+    the Winsock provider catalog, proxy settings, the actual values
+    under each browser group-policy key, the current `.exe`/`.bat`/
+    `.com`/`.lnk` file associations (HKCR + any per-user `UserChoice`
+    override, next to Windows' own default as a reference point), and
+    the three Explorer display settings (hidden files, known
+    extensions, protected OS files) — everything the report needs to
+    let the user judge for themselves whether each repair tool above is
+    worth running, without the report itself passing judgment — saved
+    to `%HOMEDRIVE%\KPRM\` and copied to the Desktop for easy sharing
   - *Restauration du registre*: restore a `SOFTWARE`/`NTUSER.DAT`
     backup created from a "Sauvegarder le registre" run back over the
     live hives at next boot — see note below
@@ -311,7 +318,7 @@ full design rationale behind this rewrite.
 
 ## Testing
 
-`cargo test --workspace` runs 144 unit tests: `kprm-engine`'s pure
+`cargo test --workspace` runs 151 unit tests: `kprm-engine`'s pure
 logic is tested entirely with in-memory fakes, no Windows dependency
 at all, while `kprm-windows`'s adapters are tested for real — but only
 ever against disposable state (temp files, a private registry

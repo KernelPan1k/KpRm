@@ -122,9 +122,9 @@ pub fn reset_hosts_file(commands: &mut dyn CommandRunner, dirs: &dyn KnownDirs) 
         hosts
     );
     if commands.run("powershell.exe", &["-NoProfile", "-NonInteractive", "-Command", &cmd]) {
-        MaintenanceResult::ok(format!("Fichier hosts réinitialisé : {hosts}"))
+        MaintenanceResult::ok(format!("Hosts file reset: {hosts}"))
     } else {
-        MaintenanceResult::fail(format!("Échec de la réinitialisation du fichier hosts : {hosts}"))
+        MaintenanceResult::fail(format!("Failed to reset the hosts file: {hosts}"))
     }
 }
 
@@ -145,7 +145,7 @@ pub fn remove_proxy(registry: &mut dyn Registry, commands: &mut dyn CommandRunne
         ],
     );
     commands.run("netsh.exe", &["winhttp", "reset", "proxy"]);
-    MaintenanceResult::ok("Proxy Internet Options + WinHTTP supprimé")
+    MaintenanceResult::ok("Internet Options + WinHTTP proxy removed")
 }
 
 /// Deletes the Group Policy registry subtrees that adware uses to lock Chrome,
@@ -162,7 +162,7 @@ pub fn reset_browser_policies(registry: &mut dyn Registry) -> MaintenanceResult 
         r"HKCU\SOFTWARE\Policies\Mozilla\Firefox",
     ];
     let removed: usize = keys.iter().filter(|k| registry.delete_key(k)).count();
-    MaintenanceResult::ok(format!("{removed} politique(s) navigateur supprimée(s)"))
+    MaintenanceResult::ok(format!("{removed} browser policy key(s) removed"))
 }
 
 /// Restores the default HKCR shell associations for `.exe`, `.bat`, `.com`,
@@ -186,7 +186,7 @@ pub fn restore_file_associations(commands: &mut dyn CommandRunner) -> Maintenanc
     for (prog, args) in ops {
         commands.run(prog, args);
     }
-    MaintenanceResult::ok("Associations .exe / .bat / .com / .lnk restaurées")
+    MaintenanceResult::ok("Associations for .exe / .bat / .com / .lnk restored")
 }
 
 /// Deletes the direct contents of `%TEMP%` and `%WINDIR%\Temp`.
@@ -213,7 +213,7 @@ pub fn clean_temp_dirs(fs: &mut dyn FileSystem, dirs: &dyn KnownDirs) -> Mainten
     }
 
     MaintenanceResult::ok(format!(
-        "{removed} élément(s) supprimé(s) dans les dossiers temporaires"
+        "{removed} item(s) deleted from temp folders"
     ))
 }
 

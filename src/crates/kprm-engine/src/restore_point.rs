@@ -44,14 +44,14 @@ pub fn create_restore_point(
 ) -> Vec<RestorePointResult> {
     vec![
         RestorePointResult {
-            description: "activer la protection du système",
+            description: "enable System Restore protection",
             succeeded: run_powershell(
                 commands,
                 r#"Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
             ),
         },
         RestorePointResult {
-            description: "lever la limite d'un point de restauration par jour",
+            description: "lift the one-restore-point-per-day limit",
             succeeded: registry.write_dword(
                 SYSTEM_RESTORE_KEY,
                 "SystemRestorePointCreationFrequency",
@@ -59,7 +59,7 @@ pub fn create_restore_point(
             ),
         },
         RestorePointResult {
-            description: "créer le point de restauration",
+            description: "create the restore point",
             succeeded: run_powershell(
                 commands,
                 "Checkpoint-Computer -Description 'KpRm' -RestorePointType MODIFY_SETTINGS",
@@ -75,7 +75,7 @@ pub fn create_restore_point(
 /// raw `SrClient.dll` call this avoids).
 pub fn remove_all_restore_points(commands: &mut dyn CommandRunner) -> RestorePointResult {
     RestorePointResult {
-        description: "supprimer les points de restauration",
+        description: "remove the restore points",
         succeeded: run_powershell(
             commands,
             r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,

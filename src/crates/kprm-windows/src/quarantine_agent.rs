@@ -104,7 +104,7 @@ pub fn run_quarantine_cleanup(list_file: &str) {
 }
 
 fn append_to_report(report_path: &str, report: &kprm_engine::report::Report) {
-    let mut text = String::from("\r\n- Suppressions différées (7 jours) -\r\n");
+    let mut text = String::from("\r\n- Deferred deletions (7 days) -\r\n");
     for event in &report.events {
         let symbol = match event.result {
             EventResult::Removed => "[OK]",
@@ -114,7 +114,7 @@ fn append_to_report(report_path: &str, report: &kprm_engine::report::Report) {
         text.push_str(&format!("  {symbol} {} ({})\r\n", event.target, event.tool));
     }
     if report.events.is_empty() {
-        text.push_str("  [I] Rien à supprimer (déjà absent)\r\n");
+        text.push_str("  [I] Nothing to remove (already gone)\r\n");
     }
 
     if let Ok(mut file) = std::fs::OpenOptions::new().append(true).open(report_path) {
