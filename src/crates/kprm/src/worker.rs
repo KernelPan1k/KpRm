@@ -16,7 +16,7 @@ use kprm_engine::report::Report;
 use kprm_engine::{backup, maintenance, restore_point, system_settings, uac};
 
 /// One-off maintenance task launched from the Extra Tools tab.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MaintenanceTask {
     FlushDns,
     ResetFirewall,

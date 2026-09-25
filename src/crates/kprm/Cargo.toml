@@ -29,11 +29,16 @@ kprm-windows = { path = "../kprm-windows" }
 kprm-win32gui = { path = "../kprm-win32gui" }
 clap.workspace = true
 arboard = "3"
+# Pure-Rust QR encoding (no image rendering — the Donate tab's BTC QR is
+# drawn as plain filled squares via GDI+, module-by-module) for the
+# Donate tab's BTC QR code.
+qrcode = { version = "0.14", default-features = false }
 
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.58", features = [
     "Win32_Foundation",
     "Win32_Graphics_GdiPlus",
+    "Win32_UI_Shell",
     "Win32_UI_WindowsAndMessaging",
 ] }
 

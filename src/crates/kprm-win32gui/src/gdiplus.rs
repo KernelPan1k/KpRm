@@ -402,6 +402,24 @@ impl Graphics {
         unsafe { check(gp::GdipTranslateWorldTransform(self.0, dx, dy, gp::MatrixOrderPrepend)) }
     }
 
+    /// Snapshots the full graphics state (clip *and* transform together) —
+    /// paired with [`Graphics::restore`], this is what lets
+    /// [`crate::scroll::ScrollState::show`] nest correctly: restoring
+    /// undoes exactly this call's clip+translate, leaving whatever an
+    /// *enclosing* scroll area had already set up intact, unlike
+    /// unconditionally resetting the clip.
+    pub fn save(&self) -> Result<u32, GdiplusError> {
+        unsafe {
+            let mut state = 0u32;
+            check(gp::GdipSaveGraphics(self.0, &mut state))?;
+            Ok(state)
+        }
+    }
+
+    pub fn restore(&self, state: u32) -> Result<(), GdiplusError> {
+        unsafe { check(gp::GdipRestoreGraphics(self.0, state)) }
+    }
+
     pub fn fill_rect(&self, rect: gp::RectF, brush: &SolidBrush) -> Result<(), GdiplusError> {
         unsafe {
             check(gp::GdipFillRectangle(

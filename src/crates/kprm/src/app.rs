@@ -4,10 +4,10 @@
 //! for why. Real actions run on a background thread (see [`crate::worker`])
 //! so the UI never freezes during a scan/removal.
 //!
-//! **Porting status**: the title bar, startup disclaimer, tab bar, and
-//! footer are fully ported. Each tab's own content and the two modal
-//! dialogs are still placeholders — being filled in phase by phase; see
-//! the rewrite plan.
+//! **Porting status**: the title bar, startup disclaimer, tab bar,
+//! footer, and all four tabs (Automatic/Custom/Extra Tools/Donate) are
+//! fully ported. The two modal dialogs (restart-required, registry-restore
+//! confirmation) are still outstanding — see the rewrite plan.
 
 use std::collections::HashSet;
 use std::sync::mpsc::{Receiver, Sender};
@@ -25,7 +25,7 @@ use windows::Win32::Graphics::GdiPlus::{RectF, StringAlignmentCenter, StringAlig
 
 use crate::app_icons;
 use crate::theme::{self, Fonts};
-use crate::worker::{self, WorkerRequest, WorkerResponse};
+use crate::worker::{self, MaintenanceTask, WorkerRequest, WorkerResponse};
 
 const TITLE_BAR_HEIGHT: f32 = 46.0;
 const TAB_BAR_HEIGHT: f32 = 44.0;
@@ -54,6 +54,31 @@ const TOOLBAR_HEIGHT: f32 = 32.0;
 const LIST_GAP: f32 = 10.0;
 const RESULT_ROW_HEIGHT: f32 = 34.0;
 const BUTTONS_ROW_HEIGHT: f32 = 34.0;
+
+const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
+const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
+const LTC_ADDRESS: &str = "Lh3p9yoDzJrYKHDm3TaW55B49q2uMVZaj5";
+const XMR_ADDRESS: &str = "BUsMZ3KoHcPvUAKCuFL8dsgUQAuWBJbaRxda6sQ8ND53";
+/// Single place to fill in once a PayPal.me link exists — the row stays
+/// hidden (and the GitHub Sponsors row skipped entirely, at the user's
+/// request) until this is non-empty.
+const PAYPAL_URL: &str = "";
+const QR_SIZE: f32 = 76.0;
+const DONATE_CARD_PAD: f32 = 14.0;
+const DONATE_CARD_HEIGHT: f32 = 104.0;
+const DONATE_CARD_GAP: f32 = 10.0;
+
+const EXTRA_SECTION_GAP: f32 = 27.0;
+const MAINT_ROW_HEIGHT: f32 = 46.0;
+const MAINT_ROW_GAP: f32 = 8.0;
+const MAINT_RUN_BTN_SIZE: (f32, f32) = (90.0, 28.0);
+const BACKUP_LIST_HEIGHT: f32 = 140.0;
+const BACKUP_ROW_HEIGHT: f32 = 26.0;
+/// Wheel step for the Extra Tools tab's whole-tab scroll — unlike the
+/// Custom tab's list (uniform `RESULT_ROW_HEIGHT` rows) this scroll's
+/// content isn't rows of one height, so this is just a reasonable
+/// "one text line" step.
+const EXTRA_WHEEL_LINE_HEIGHT: f32 = 40.0;
 
 #[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum Tab {
@@ -96,6 +121,13 @@ enum UiButton {
     ResultRow(usize),
     SearchButton,
     RemoveSelectedButton,
+    /// 0=BTC, 1=ETH, 2=LTC, 3=XMR — indexes `DONATE_ADDRESSES`.
+    CopyAddress(usize),
+    OpenPayPal,
+    RefreshBackups,
+    BackupRadio(usize),
+    RestoreButton,
+    RunMaintenance(MaintenanceTask),
 }
 
 #[allow(dead_code)] // wired up again once each tab is ported
@@ -154,6 +186,18 @@ pub struct KprmApp {
     toolbar_button_rects: Vec<(UiButton, RectF)>,
     search_button_rect: RectF,
     remove_selected_button_rect: RectF,
+
+    copy_button_rects: [RectF; 4],
+    paypal_button_rect: RectF,
+
+    /// The Extra Tools tab's whole-tab scroll, and the backup list's own
+    /// nested scroll inside it — see `draw_ui_extra_tools` for how their
+    /// coordinate spaces compose (the rewrite plan's nested-scroll risk).
+    outer_scroll: ScrollState,
+    backup_scroll: ScrollState,
+    refresh_backups_rect: RectF,
+    restore_button_rect: RectF,
+    maintenance_row_rects: Vec<(MaintenanceTask, RectF)>,
 
     /// Read once at startup; the number of tools the embedded catalog
     /// knows about, shown in the Automatic tab's sidebar stat card.
@@ -216,6 +260,13 @@ impl KprmApp {
             toolbar_button_rects: Vec::new(),
             search_button_rect: RectF::default(),
             remove_selected_button_rect: RectF::default(),
+            copy_button_rects: [RectF::default(); 4],
+            paypal_button_rect: RectF::default(),
+            outer_scroll: ScrollState::default(),
+            backup_scroll: ScrollState::default(),
+            refresh_backups_rect: RectF::default(),
+            restore_button_rect: RectF::default(),
+            maintenance_row_rects: Vec::new(),
             catalog_tool_count,
             last_run,
         }
@@ -360,6 +411,51 @@ impl KprmApp {
                 }
                 if rect_contains(self.remove_selected_button_rect, x, y) && self.can_remove_selected() {
                     return Some(UiButton::RemoveSelectedButton);
+                }
+            } else if self.tab == Tab::Donate {
+                for (i, rect) in self.copy_button_rects.iter().enumerate() {
+                    if rect_contains(*rect, x, y) {
+                        return Some(UiButton::CopyAddress(i));
+                    }
+                }
+                if !PAYPAL_URL.is_empty() && rect_contains(self.paypal_button_rect, x, y) {
+                    return Some(UiButton::OpenPayPal);
+                }
+            } else if self.tab == Tab::ExtraTools {
+                // All of this tab's interactive rects were cached in
+                // "outer-content space" (drawn as if `outer_scroll`'s
+                // viewport were unscrolled — see `draw_ui_extra_tools`),
+                // so the real cursor `y` needs converting back into that
+                // space before comparing against them; the reverse of what
+                // `ScrollState::show` does to draw them on screen.
+                if self.outer_scroll.contains(x, y) {
+                    let y_content = y + self.outer_scroll.offset;
+                    if rect_contains(self.backup_scroll.last_viewport, x, y_content) {
+                        let y_inner = y_content + self.backup_scroll.offset;
+                        let relative_y = y_inner - self.backup_scroll.last_viewport.Y;
+                        if relative_y >= 0.0 {
+                            let index = (relative_y / BACKUP_ROW_HEIGHT) as usize;
+                            if index < self.available_backups.len() {
+                                return Some(UiButton::BackupRadio(index));
+                            }
+                        }
+                    }
+                    if rect_contains(self.refresh_backups_rect, x, y_content) {
+                        return Some(UiButton::RefreshBackups);
+                    }
+                    if !self.busy
+                        && self.selected_backup.is_some()
+                        && rect_contains(self.restore_button_rect, x, y_content)
+                    {
+                        return Some(UiButton::RestoreButton);
+                    }
+                    if !self.busy {
+                        for (task, rect) in &self.maintenance_row_rects {
+                            if rect_contains(*rect, x, y_content) {
+                                return Some(UiButton::RunMaintenance(*task));
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -615,25 +711,6 @@ impl KprmApp {
 
     /// Placeholder for the tabs not yet ported (see the rewrite plan's
     /// phases 5-6).
-    fn draw_tab_body_placeholder(&self, g: &Graphics, width: f32, height: f32) {
-        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
-        let bottom = height - FOOTER_HEIGHT;
-        let bg = SolidBrush::new(theme::BG.to_argb()).unwrap();
-        g.fill_rect(RectF { X: 0.0, Y: top, Width: width, Height: bottom - top }, &bg)
-            .unwrap();
-        let text = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
-        let center = StringFormat::new().unwrap();
-        center.set_align(StringAlignmentCenter).unwrap();
-        g.draw_string(
-            "Contenu de cet onglet : phases suivantes",
-            &self.fonts.proportional(13.0),
-            RectF { X: 0.0, Y: (top + bottom) / 2.0, Width: width, Height: 24.0 },
-            &center,
-            &text,
-        )
-        .unwrap();
-    }
-
     /// The "Automatique" tab: a 2-column grid of action-checkbox cards, the
     /// 3-way quarantine choice, a run button, and (mockup parity — the
     /// original egui app never had this) a right-hand sidebar with the
@@ -1203,10 +1280,567 @@ impl KprmApp {
         g.draw_string(label, &self.fonts.proportional(12.5), self.remove_selected_button_rect, &center, &brush)
             .unwrap();
     }
+
+    /// The "Dons" tab: a primary Bitcoin card with a real QR code (mockup
+    /// parity — the original app never rendered one) plus a copy button,
+    /// then compact rows for the other addresses and, once
+    /// [`PAYPAL_URL`] is filled in, a PayPal link (GitHub Sponsors is
+    /// intentionally not implemented, per the user's request).
+    fn draw_ui_donate(&mut self, g: &Graphics, width: f32) {
+        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let content_x = CONTENT_PAD_X;
+        let content_w = width - CONTENT_PAD_X * 2.0;
+        let mut y = top + CONTENT_PAD_TOP;
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+
+        let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("tab-donate").to_uppercase(),
+            &self.fonts.proportional(11.0),
+            RectF { X: content_x, Y: y, Width: content_w, Height: 16.0 },
+            &near,
+            &header_brush,
+        )
+        .unwrap();
+        y += 24.0;
+
+        let body_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("donate-body"),
+            &self.fonts.proportional(12.0),
+            RectF { X: content_x, Y: y, Width: content_w, Height: 20.0 },
+            &near,
+            &body_brush,
+        )
+        .unwrap();
+        y += 32.0;
+
+        // Every address gets the same treatment: label + address + copy
+        // button + its own scannable QR code.
+        let copy_label = self.t("copy-button");
+        let cryptos = [
+            (0usize, "Bitcoin (BTC)", BTC_ADDRESS),
+            (1, "Ethereum (ETH)", ETH_ADDRESS),
+            (2, "Litecoin (LTC)", LTC_ADDRESS),
+            (3, "Monero (XMR)", XMR_ADDRESS),
+        ];
+        for (i, label, address) in cryptos {
+            let card_rect = RectF { X: content_x, Y: y, Width: content_w, Height: DONATE_CARD_HEIGHT };
+            self.draw_donate_card(g, card_rect, i, label, address, &copy_label);
+            y += DONATE_CARD_HEIGHT + DONATE_CARD_GAP;
+        }
+
+        if !PAYPAL_URL.is_empty() {
+            self.paypal_button_rect = RectF { X: content_x, Y: y, Width: 160.0, Height: 32.0 };
+            self.draw_paypal_button(g, self.paypal_button_rect);
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn draw_donate_card(&mut self, g: &Graphics, card_rect: RectF, index: usize, label: &str, address: &str, copy_label: &str) {
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+
+        let panel = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+        g.fill_rounded_rect(card_rect, 12.0, &panel).unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_rounded_rect(card_rect, 12.0, &border).unwrap();
+
+        let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        let label_x = card_rect.X + DONATE_CARD_PAD;
+        let text_area_w = card_rect.Width - DONATE_CARD_PAD * 3.0 - QR_SIZE;
+        g.draw_string(
+            label,
+            &self.fonts.proportional(13.5),
+            RectF { X: label_x, Y: card_rect.Y + DONATE_CARD_PAD, Width: text_area_w, Height: 18.0 },
+            &near,
+            &text_1,
+        )
+        .unwrap();
+
+        let copy_w = g.measure_line_width(copy_label, &self.fonts.proportional(11.0)).unwrap_or(50.0) + 24.0;
+        let addr_y = card_rect.Y + DONATE_CARD_PAD + 26.0;
+        let addr_box_w = (text_area_w - copy_w - 8.0).max(40.0);
+        let addr_box = RectF { X: label_x, Y: addr_y, Width: addr_box_w, Height: 32.0 };
+        let elevated = SolidBrush::new(theme::BG_ELEVATED.to_argb()).unwrap();
+        g.fill_rounded_rect(addr_box, 8.0, &elevated).unwrap();
+        g.draw_rounded_rect(addr_box, 8.0, &border).unwrap();
+        let addr_text = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            address,
+            &self.fonts.monospace(10.5),
+            RectF { X: addr_box.X + 10.0, Y: addr_box.Y + 8.0, Width: addr_box.Width - 20.0, Height: 18.0 },
+            &near,
+            &addr_text,
+        )
+        .unwrap();
+
+        self.copy_button_rects[index] =
+            RectF { X: addr_box.X + addr_box.Width + 8.0, Y: addr_y, Width: copy_w, Height: 32.0 };
+        self.draw_copy_button(g, self.copy_button_rects[index], index, copy_label);
+
+        let qr_rect = RectF {
+            X: card_rect.X + card_rect.Width - DONATE_CARD_PAD - QR_SIZE,
+            Y: card_rect.Y + (DONATE_CARD_HEIGHT - QR_SIZE) / 2.0,
+            Width: QR_SIZE,
+            Height: QR_SIZE,
+        };
+        self.draw_qr(g, qr_rect, address);
+    }
+
+    fn draw_copy_button(&self, g: &Graphics, rect: RectF, index: usize, label: &str) {
+        let hovered = self.hover == Some(UiButton::CopyAddress(index));
+        if hovered {
+            let fill = SolidBrush::new(theme::BG_HOVER.to_argb()).unwrap();
+            g.fill_rounded_rect(rect, 7.0, &fill).unwrap();
+        }
+        let border_color = if hovered { theme::BORDER } else { theme::BORDER_SOFT };
+        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(rect, 7.0, &pen).unwrap();
+        let text_color = if hovered { theme::TEXT_1 } else { theme::TEXT_2 };
+        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(label, &self.fonts.proportional(11.0), rect, &center, &brush).unwrap();
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn draw_paypal_button(&self, g: &Graphics, rect: RectF) {
+        let hovered = self.hover == Some(UiButton::OpenPayPal);
+        let border_color = if hovered { theme::BORDER } else { theme::BORDER_SOFT };
+        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(rect, theme::RADIUS, &pen).unwrap();
+        let text_color = if hovered { theme::TEXT_1 } else { theme::TEXT_2 };
+        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string("PayPal", &self.fonts.proportional(12.5), rect, &center, &brush).unwrap();
+    }
+
+    /// Encodes `data` (the BTC address) into a QR code and draws it as
+    /// plain filled squares, one per module — genuinely new functionality,
+    /// not a port (the original app never had one).
+    fn draw_qr(&self, g: &Graphics, rect: RectF, data: &str) {
+        let bg = SolidBrush::new(Color::rgb(0xff, 0xff, 0xff).to_argb()).unwrap();
+        g.fill_rounded_rect(rect, 6.0, &bg).ok();
+
+        let Ok(code) = qrcode::QrCode::new(data.as_bytes()) else {
+            return;
+        };
+        let modules_per_side = code.width();
+        let colors = code.to_colors();
+        const QUIET_ZONE: f32 = 1.0;
+        let module_size = rect.Width / (modules_per_side as f32 + QUIET_ZONE * 2.0);
+        let offset = module_size * QUIET_ZONE;
+        let dark = SolidBrush::new(Color::rgb(0x14, 0x16, 0x1b).to_argb()).unwrap();
+        for row in 0..modules_per_side {
+            for col in 0..modules_per_side {
+                if colors[row * modules_per_side + col] == qrcode::Color::Dark {
+                    let module_rect = RectF {
+                        X: rect.X + offset + col as f32 * module_size,
+                        Y: rect.Y + offset + row as f32 * module_size,
+                        Width: module_size + 0.5,
+                        Height: module_size + 0.5,
+                    };
+                    g.fill_rect(module_rect, &dark).ok();
+                }
+            }
+        }
+    }
+
+    /// The "Outils +" tab: a registry-restore section (its own nested
+    /// scroll for the backup list, inside the whole-tab scroll) followed
+    /// by 12 maintenance actions across 5 sections — the rewrite's other
+    /// scroll-primitive risk, this time nested. See
+    /// `kprm_win32gui::scroll::ScrollState::show`'s doc comment for how the
+    /// two scrolls' coordinate spaces compose, and `button_at`/
+    /// `on_mouse_wheel` for how hit-testing and wheel routing undo it.
+    fn draw_ui_extra_tools(&mut self, g: &Graphics, width: f32, height: f32) {
+        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let bottom = height - FOOTER_HEIGHT;
+        let content_x = CONTENT_PAD_X;
+        let content_w = width - CONTENT_PAD_X * 2.0;
+        let viewport =
+            RectF { X: content_x, Y: top, Width: content_w, Height: (bottom - top).max(40.0) };
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        let title_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        let desc_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        let amber_brush = SolidBrush::new(theme::AMBER.to_argb()).unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+
+        let sections: [(&str, &[(&str, &str, MaintenanceTask, bool)]); 5] = [
+            (
+                "quick-actions-title",
+                &[
+                    ("quick-actions-flush-dns", "quick-actions-flush-dns-desc", MaintenanceTask::FlushDns, false),
+                    ("quick-actions-clean-temp", "quick-actions-clean-temp-desc", MaintenanceTask::CleanTempDirs, false),
+                    ("quick-actions-empty-recycle", "quick-actions-empty-recycle-desc", MaintenanceTask::EmptyRecycleBin, false),
+                ],
+            ),
+            (
+                "network-section-title",
+                &[
+                    ("network-winsock-reset", "network-winsock-reset-desc", MaintenanceTask::ResetWinsock, true),
+                    ("network-hosts-reset", "network-hosts-reset-desc", MaintenanceTask::ResetHostsFile, false),
+                    ("network-proxy-remove", "network-proxy-remove-desc", MaintenanceTask::RemoveProxy, false),
+                ],
+            ),
+            (
+                "browsers-section-title",
+                &[
+                    ("browsers-policies-reset", "browsers-policies-reset-desc", MaintenanceTask::ResetBrowserPolicies, false),
+                    ("browsers-file-assoc", "browsers-file-assoc-desc", MaintenanceTask::RestoreFileAssociations, false),
+                ],
+            ),
+            (
+                "windows-repair-title",
+                &[
+                    ("windows-repair-firewall", "windows-repair-firewall-desc", MaintenanceTask::ResetFirewall, false),
+                    ("windows-repair-sfc", "windows-repair-sfc-desc", MaintenanceTask::RunSfc, false),
+                    ("windows-repair-dism", "windows-repair-dism-desc", MaintenanceTask::RunDism, true),
+                ],
+            ),
+            (
+                "diag-section-title",
+                &[("diag-button", "diag-button-desc", MaintenanceTask::GenerateDiagnosticReport, false)],
+            ),
+        ];
+
+        let mut maint_rects: Vec<(MaintenanceTask, RectF)> = Vec::new();
+        let mut refresh_rect = RectF::default();
+        let mut restore_rect = RectF::default();
+        let mut content_bottom = viewport.Y;
+
+        // `outer_scroll`/`backup_scroll` are copied out for the duration of
+        // the closures, and `backup_local` is shown from *inside* the outer
+        // closure — see the borrow-checker pattern note on `draw_ui_custom`
+        // and the coordinate-space note on `ScrollState::show`.
+        let mut backup_local = self.backup_scroll;
+        let mut outer = self.outer_scroll;
+        outer.show(g, viewport, |g| {
+            let x = viewport.X;
+            let w = viewport.Width;
+            let mut y = viewport.Y + CONTENT_PAD_TOP;
+
+            g.draw_string(
+                &self.t("tab-extra-tools").to_uppercase(),
+                &self.fonts.proportional(11.0),
+                RectF { X: x, Y: y, Width: w, Height: 16.0 },
+                &near,
+                &header_brush,
+            )
+            .ok();
+            y += 24.0;
+
+            g.draw_string(
+                &self.t("restore-registry-title"),
+                &self.fonts.proportional(13.0),
+                RectF { X: x, Y: y, Width: w, Height: 18.0 },
+                &near,
+                &title_brush,
+            )
+            .ok();
+            y += 22.0;
+
+            g.draw_string(
+                &self.t("restore-registry-intro"),
+                &self.fonts.proportional(11.0),
+                RectF { X: x, Y: y, Width: w, Height: 30.0 },
+                &near,
+                &desc_brush,
+            )
+            .ok();
+            y += 34.0;
+
+            g.draw_string(
+                &self.t("restore-registry-warning"),
+                &self.fonts.proportional(11.0),
+                RectF { X: x, Y: y, Width: w, Height: 30.0 },
+                &near,
+                &amber_brush,
+            )
+            .ok();
+            y += 40.0;
+
+            let refresh_label = self.t("restore-registry-refresh");
+            let refresh_w =
+                g.measure_line_width(&refresh_label, &self.fonts.proportional(12.0)).unwrap_or(80.0) + 24.0;
+            refresh_rect = RectF { X: x, Y: y, Width: refresh_w, Height: 30.0 };
+            let refresh_hovered = self.hover == Some(UiButton::RefreshBackups);
+            let refresh_border_color = if refresh_hovered { theme::BORDER } else { theme::BORDER_SOFT };
+            let refresh_pen = Pen::new(refresh_border_color.to_argb(), 1.5).unwrap();
+            g.draw_rounded_rect(refresh_rect, theme::RADIUS, &refresh_pen).ok();
+            let refresh_text_color = if refresh_hovered { theme::TEXT_1 } else { theme::TEXT_2 };
+            let refresh_brush = SolidBrush::new(refresh_text_color.to_argb()).unwrap();
+            g.draw_string(&refresh_label, &self.fonts.proportional(12.0), refresh_rect, &center, &refresh_brush)
+                .ok();
+            y += 30.0 + 12.0;
+
+            let panel_rect = RectF { X: x, Y: y, Width: w, Height: BACKUP_LIST_HEIGHT };
+            let panel_fill = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+            g.fill_rounded_rect(panel_rect, 12.0, &panel_fill).ok();
+            g.draw_rounded_rect(panel_rect, 12.0, &border).ok();
+
+            let backup_viewport = RectF {
+                X: panel_rect.X + 6.0,
+                Y: panel_rect.Y + 6.0,
+                Width: panel_rect.Width - 12.0,
+                Height: panel_rect.Height - 12.0,
+            };
+            let backups_empty = self.available_backups.is_empty();
+            let backup_content_h = if backups_empty {
+                backup_viewport.Height
+            } else {
+                self.available_backups.len() as f32 * BACKUP_ROW_HEIGHT
+            };
+
+            backup_local.show(g, backup_viewport, |g| {
+                if backups_empty {
+                    let hint_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+                    g.draw_string(
+                        &self.t("restore-registry-empty"),
+                        &self.fonts.proportional(11.5),
+                        RectF {
+                            X: backup_viewport.X,
+                            Y: backup_viewport.Y + backup_viewport.Height / 2.0 - 16.0,
+                            Width: backup_viewport.Width,
+                            Height: 32.0,
+                        },
+                        &center,
+                        &hint_brush,
+                    )
+                    .ok();
+                    return;
+                }
+                for i in 0..self.available_backups.len() {
+                    let backup = &self.available_backups[i];
+                    let is_selected = self.selected_backup.as_ref() == Some(backup);
+                    let row_rect = RectF {
+                        X: backup_viewport.X,
+                        Y: backup_viewport.Y + i as f32 * BACKUP_ROW_HEIGHT,
+                        Width: backup_viewport.Width,
+                        Height: BACKUP_ROW_HEIGHT,
+                    };
+                    self.draw_backup_row(g, row_rect, i, backup, is_selected);
+                }
+            });
+            backup_local.finish(g, backup_content_h);
+            y += BACKUP_LIST_HEIGHT + 14.0;
+
+            let restore_label = self.t("restore-registry-button");
+            restore_rect = RectF { X: x, Y: y, Width: 140.0, Height: 32.0 };
+            let can_restore = !self.busy && self.selected_backup.is_some();
+            let restore_fill_color = if can_restore { theme::RED } else { theme::BG_PANEL };
+            let restore_fill = SolidBrush::new(restore_fill_color.to_argb()).unwrap();
+            g.fill_rounded_rect(restore_rect, theme::RADIUS, &restore_fill).ok();
+            if !can_restore {
+                g.draw_rounded_rect(restore_rect, theme::RADIUS, &border).ok();
+            }
+            let restore_text_color = if can_restore { Color::rgb(0xff, 0xff, 0xff) } else { theme::TEXT_3 };
+            let restore_text_brush = SolidBrush::new(restore_text_color.to_argb()).unwrap();
+            g.draw_string(&restore_label, &self.fonts.proportional(12.5), restore_rect, &center, &restore_text_brush)
+                .ok();
+            y += 32.0 + EXTRA_SECTION_GAP;
+
+            for (section_key, rows) in sections {
+                g.draw_line(x, y, x + w, y, &border).ok();
+                y += 16.0;
+                g.draw_string(
+                    &self.t(section_key).to_uppercase(),
+                    &self.fonts.proportional(11.0),
+                    RectF { X: x, Y: y, Width: w, Height: 16.0 },
+                    &near,
+                    &header_brush,
+                )
+                .ok();
+                y += 24.0;
+                for (title_key, desc_key, task, amber) in rows.iter().copied() {
+                    let row_rect = RectF { X: x, Y: y, Width: w, Height: MAINT_ROW_HEIGHT };
+                    let title = self.t(title_key);
+                    let desc = self.t(desc_key);
+                    let btn_rect = self.draw_maintenance_row(g, row_rect, &title, &desc, amber);
+                    maint_rects.push((task, btn_rect));
+                    y += MAINT_ROW_HEIGHT + MAINT_ROW_GAP;
+                }
+                y += EXTRA_SECTION_GAP - MAINT_ROW_GAP;
+            }
+
+            content_bottom = y + 8.0;
+        });
+
+        let content_height = content_bottom - viewport.Y;
+        outer.finish(g, content_height);
+        self.outer_scroll = outer;
+        self.backup_scroll = backup_local;
+        self.refresh_backups_rect = refresh_rect;
+        self.restore_button_rect = restore_rect;
+        self.maintenance_row_rects = maint_rects;
+    }
+
+    fn draw_backup_row(
+        &self,
+        g: &Graphics,
+        rect: RectF,
+        index: usize,
+        backup: &kprm_engine::backup::AvailableBackup,
+        selected: bool,
+    ) {
+        let hovered = self.hover == Some(UiButton::BackupRadio(index));
+        if hovered {
+            let fill = SolidBrush::new(theme::BG_HOVER.to_argb()).unwrap();
+            g.fill_rounded_rect(rect, 6.0, &fill).ok();
+        }
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+
+        const RADIO_SIZE: f32 = 14.0;
+        let radio_rect = RectF {
+            X: rect.X + 6.0,
+            Y: rect.Y + rect.Height / 2.0 - RADIO_SIZE / 2.0,
+            Width: RADIO_SIZE,
+            Height: RADIO_SIZE,
+        };
+        let ring_color = if selected { theme::BLUE } else { theme::BORDER };
+        let ring_pen = Pen::new(ring_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(radio_rect, RADIO_SIZE / 2.0, &ring_pen).ok();
+        if selected {
+            const DOT: f32 = RADIO_SIZE - 7.0;
+            let dot_rect = RectF { X: radio_rect.X + 3.5, Y: radio_rect.Y + 3.5, Width: DOT, Height: DOT };
+            let dot_fill = SolidBrush::new(theme::BLUE.to_argb()).unwrap();
+            g.fill_rounded_rect(dot_rect, DOT / 2.0, &dot_fill).ok();
+        }
+
+        let tag_font = self.fonts.proportional(9.5);
+        let tag_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        let mut tag_x = rect.X + rect.Width - 8.0;
+        for tag in [("NTUSER.DAT", backup.has_ntuser), ("SOFTWARE", backup.has_software)] {
+            if !tag.1 {
+                continue;
+            }
+            let tag_w = g.measure_line_width(tag.0, &tag_font).unwrap_or(50.0);
+            tag_x -= tag_w;
+            g.draw_string(
+                tag.0,
+                &tag_font,
+                RectF { X: tag_x, Y: rect.Y + rect.Height / 2.0 - 7.0, Width: tag_w, Height: 14.0 },
+                &near,
+                &tag_brush,
+            )
+            .ok();
+            tag_x -= 10.0;
+        }
+
+        let text_color = if selected { theme::TEXT_1 } else { theme::TEXT_2 };
+        let text_brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let label_x = radio_rect.X + RADIO_SIZE + 8.0;
+        g.draw_string(
+            &format_backup_timestamp(&backup.timestamp),
+            &self.fonts.monospace(11.5),
+            RectF { X: label_x, Y: rect.Y, Width: (tag_x - label_x - 8.0).max(20.0), Height: rect.Height },
+            &near,
+            &text_brush,
+        )
+        .ok();
+    }
+
+    /// One maintenance action row: title + wrapped description on the
+    /// left, a blue "Exécuter" button on the right — returns the button's
+    /// rect so the caller can cache it (in the same outer-content
+    /// coordinate space as the row itself) for `button_at`.
+    fn draw_maintenance_row(&self, g: &Graphics, rect: RectF, title: &str, desc: &str, amber: bool) -> RectF {
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+
+        let btn_rect = RectF {
+            X: rect.X + rect.Width - MAINT_RUN_BTN_SIZE.0,
+            Y: rect.Y + (rect.Height - MAINT_RUN_BTN_SIZE.1) / 2.0,
+            Width: MAINT_RUN_BTN_SIZE.0,
+            Height: MAINT_RUN_BTN_SIZE.1,
+        };
+        let text_w = (btn_rect.X - rect.X - 16.0).max(20.0);
+
+        let title_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            title,
+            &self.fonts.proportional(12.0),
+            RectF { X: rect.X, Y: rect.Y, Width: text_w, Height: 18.0 },
+            &near,
+            &title_brush,
+        )
+        .ok();
+
+        let desc_color = if amber { theme::AMBER } else { theme::TEXT_3 };
+        let desc_brush = SolidBrush::new(desc_color.to_argb()).unwrap();
+        g.draw_string(
+            desc,
+            &self.fonts.proportional(10.5),
+            RectF { X: rect.X, Y: rect.Y + 20.0, Width: text_w, Height: rect.Height - 20.0 },
+            &near,
+            &desc_brush,
+        )
+        .ok();
+
+        let enabled = !self.busy;
+        let fill_color = if enabled { theme::BLUE } else { theme::BG_PANEL };
+        let fill = SolidBrush::new(fill_color.to_argb()).unwrap();
+        g.fill_rounded_rect(btn_rect, theme::RADIUS, &fill).ok();
+        if !enabled {
+            let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+            g.draw_rounded_rect(btn_rect, theme::RADIUS, &border).ok();
+        }
+        let text_color = if enabled { Color::rgb(0xff, 0xff, 0xff) } else { theme::TEXT_3 };
+        let text_brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        g.draw_string(&self.t("run"), &self.fonts.proportional(12.0), btn_rect, &center, &text_brush).ok();
+
+        btn_rect
+    }
 }
 
 fn rect_contains(r: RectF, x: f32, y: f32) -> bool {
     x >= r.X && x <= r.X + r.Width && y >= r.Y && y <= r.Y + r.Height
+}
+
+/// `20260905113716` -> `2026-09-05 11:37:16` (a backup folder's timestamp
+/// name, as `AvailableBackup::timestamp` stores it).
+fn format_backup_timestamp(timestamp: &str) -> String {
+    if timestamp.len() != 14 || !timestamp.bytes().all(|b| b.is_ascii_digit()) {
+        return timestamp.to_string();
+    }
+    format!(
+        "{}-{}-{} {}:{}:{}",
+        &timestamp[0..4],
+        &timestamp[4..6],
+        &timestamp[6..8],
+        &timestamp[8..10],
+        &timestamp[10..12],
+        &timestamp[12..14],
+    )
+}
+
+/// The status text shown while each maintenance task runs — SFC/DISM/the
+/// diagnostic report get their own longer-running wording, everything else
+/// shares the generic "running" status.
+fn maintenance_status_key(task: MaintenanceTask) -> &'static str {
+    match task {
+        MaintenanceTask::RunSfc => "status-sfc",
+        MaintenanceTask::RunDism => "status-dism",
+        MaintenanceTask::GenerateDiagnosticReport => "diag-status-running",
+        _ => "status-running",
+    }
+}
+
+fn wide(s: &str) -> Vec<u16> {
+    s.encode_utf16().chain(std::iter::once(0)).collect()
 }
 
 impl AppWindow for KprmApp {
@@ -1226,7 +1860,8 @@ impl AppWindow for KprmApp {
             match self.tab {
                 Tab::Automatic => self.draw_ui_automatic(g, width, height),
                 Tab::Custom => self.draw_ui_custom(g, width, height),
-                _ => self.draw_tab_body_placeholder(g, width, height),
+                Tab::ExtraTools => self.draw_ui_extra_tools(g, width, height),
+                Tab::Donate => self.draw_ui_donate(g, width),
             }
         }
     }
@@ -1324,6 +1959,45 @@ impl AppWindow for KprmApp {
                         let _ = self.request_tx.send(WorkerRequest::RemoveSelected(selected));
                     }
                 }
+                Some(UiButton::CopyAddress(i)) => {
+                    let address = [BTC_ADDRESS, ETH_ADDRESS, LTC_ADDRESS, XMR_ADDRESS].get(i).copied();
+                    if let Some(address) = address {
+                        if let Ok(mut clipboard) = arboard::Clipboard::new() {
+                            let _ = clipboard.set_text(address);
+                        }
+                    }
+                }
+                Some(UiButton::OpenPayPal) => {
+                    if !PAYPAL_URL.is_empty() {
+                        unsafe {
+                            let operation = wide("open");
+                            let url = wide(PAYPAL_URL);
+                            let _ = windows::Win32::UI::Shell::ShellExecuteW(
+                                None,
+                                windows::core::PCWSTR(operation.as_ptr()),
+                                windows::core::PCWSTR(url.as_ptr()),
+                                None,
+                                None,
+                                windows::Win32::UI::WindowsAndMessaging::SW_SHOWNORMAL,
+                            );
+                        }
+                    }
+                }
+                Some(UiButton::RefreshBackups) => {
+                    self.available_backups =
+                        kprm_windows::list_registry_backups(&kprm_windows::EnvKnownDirs::detect());
+                }
+                Some(UiButton::BackupRadio(i)) => {
+                    self.selected_backup = self.available_backups.get(i).cloned();
+                }
+                Some(UiButton::RestoreButton) => {
+                    self.confirm_restore.clone_from(&self.selected_backup);
+                }
+                Some(UiButton::RunMaintenance(task)) => {
+                    self.busy = true;
+                    self.status = self.t(maintenance_status_key(task));
+                    let _ = self.request_tx.send(WorkerRequest::RunMaintenanceTask(task));
+                }
                 None => {}
             }
         }
@@ -1343,6 +2017,26 @@ impl AppWindow for KprmApp {
         if self.tab == Tab::Custom && self.scroll.contains(x, y) {
             self.scroll.scroll_by_notches(notches, RESULT_ROW_HEIGHT);
             true
+        } else if self.tab == Tab::ExtraTools {
+            // Innermost scroll under the cursor wins: `backup_scroll`'s
+            // viewport is cached in outer-content space (see `button_at`),
+            // so convert it back to real/screen space before testing
+            // containment against the real cursor position.
+            let backup_real_viewport = RectF {
+                X: self.backup_scroll.last_viewport.X,
+                Y: self.backup_scroll.last_viewport.Y - self.outer_scroll.offset,
+                Width: self.backup_scroll.last_viewport.Width,
+                Height: self.backup_scroll.last_viewport.Height,
+            };
+            if rect_contains(backup_real_viewport, x, y) {
+                self.backup_scroll.scroll_by_notches(notches, BACKUP_ROW_HEIGHT);
+                true
+            } else if self.outer_scroll.contains(x, y) {
+                self.outer_scroll.scroll_by_notches(notches, EXTRA_WHEEL_LINE_HEIGHT);
+                true
+            } else {
+                false
+            }
         } else {
             false
         }

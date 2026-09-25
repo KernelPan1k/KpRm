@@ -54,18 +54,26 @@ impl ScrollState {
 
     /// Runs `draw_content` with the graphics clipped to `viewport` and
     /// translated so the content scrolls — `draw_content` draws as if
-    /// `viewport.Y` were the top of an unscrolled, unclipped page, and
-    /// returns the content's total natural height (used to clamp the
-    /// offset and size the thumb).
+    /// `viewport.Y` were the top of an unscrolled, unclipped page. Nests
+    /// correctly inside another `show` (the Extra Tools tab's backup list
+    /// inside its own whole-tab scroll): the clip/translate are undone via
+    /// [`Graphics::save`]/[`Graphics::restore`] rather than an
+    /// unconditional [`Graphics::reset_clip`], so an *enclosing* scroll
+    /// area's own clip survives untouched. `viewport` is in whatever
+    /// coordinate space is already active — if called from inside another
+    /// `show`'s `draw_content`, that's already-translated space, so no
+    /// manual adjustment for the outer offset is needed.
     pub fn show(&mut self, g: &Graphics, viewport: RectF, draw_content: impl FnOnce(&Graphics)) {
         self.last_viewport = viewport;
+        let state = g.save().ok();
         g.set_clip_rect(viewport).ok();
         g.translate(0.0, -self.offset).ok();
 
         draw_content(g);
 
-        g.translate(0.0, self.offset).ok();
-        g.reset_clip().ok();
+        if let Some(state) = state {
+            g.restore(state).ok();
+        }
     }
 
     /// Call once the content's real height is known (typically right after
