@@ -106,3 +106,7 @@ eula-body = Este software se proporciona "TAL CUAL" sin garantía de ningún tip
 eula-accept = Sí
 eula-decline = No
 already-running = ¡KpRm ya está en ejecución!
+sidebar-tagline = Limpieza post-infección
+sidebar-catalog-label = CATÁLOGO
+sidebar-catalog-value = { $count } herramientas
+sidebar-last-run-label = ÚLTIMA EJECUCIÓN

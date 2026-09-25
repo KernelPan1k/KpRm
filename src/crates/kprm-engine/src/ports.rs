@@ -44,6 +44,9 @@ pub trait Registry {
     fn has_any_value(&self, key: &str) -> bool;
     fn delete_key(&mut self, key: &str) -> bool;
     fn write_dword(&mut self, key: &str, value_name: &str, value: u32) -> bool;
+    /// Writes a `REG_SZ` string value — e.g. the Automatic tab's "dernier
+    /// passage" timestamp shown in the sidebar.
+    fn write_string(&mut self, key: &str, value_name: &str, value: &str) -> bool;
 
     /// Exports the live `key` hive to `file_path` in the native binary
     /// registry-hive format (as produced by `RegSaveKeyExW`/`reg save`),

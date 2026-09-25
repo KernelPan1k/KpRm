@@ -1,19 +1,61 @@
-//! The two functional tabs (Automatique / Analyse personnalisée) plus two
-//! static placeholder tabs (Outils + / Dons), matching the design mockup
-//! shared earlier in the project. Real actions run on a background thread
-//! (see [`crate::worker`]) so the UI never freezes during a scan/removal.
+//! `KprmApp`: the GUI's screens, built on `kprm-win32gui`'s owner-drawn
+//! `AppWindow` (see `../../kprm-win32gui/src/window.rs`) rather than
+//! `egui`/`eframe` — see `../../BUILDING.md` and the project's rewrite plan
+//! for why. Real actions run on a background thread (see [`crate::worker`])
+//! so the UI never freezes during a scan/removal.
+//!
+//! **Porting status**: the title bar, startup disclaimer, tab bar, and
+//! footer are fully ported. Each tab's own content and the two modal
+//! dialogs are still placeholders — being filled in phase by phase; see
+//! the rewrite plan.
 
 use std::collections::HashSet;
 use std::sync::mpsc::{Receiver, Sender};
 
-use eframe::egui::{self, Align2, Color32, FontId, Frame, Margin, Sense, Stroke, Vec2};
 use kprm_engine::quarantine::QuarantineMode;
 use kprm_engine::report::{Event, EventResult, Report};
+use kprm_win32gui::color::Color;
+use kprm_win32gui::gdiplus::{Graphics, Pen, SolidBrush, StringFormat};
+use kprm_win32gui::icons::Icon;
+use kprm_win32gui::image::Bitmap;
+use kprm_win32gui::scroll::ScrollState;
+use kprm_win32gui::window::{AppWindow, HitZone};
+use windows::Win32::Foundation::HWND;
+use windows::Win32::Graphics::GdiPlus::{RectF, StringAlignmentCenter, StringAlignmentNear};
 
-use crate::theme;
-use crate::worker::{self, MaintenanceTask, WorkerRequest, WorkerResponse};
+use crate::app_icons;
+use crate::theme::{self, Fonts};
+use crate::worker::{self, WorkerRequest, WorkerResponse};
 
-#[derive(PartialEq, Eq, Clone, Copy)]
+const TITLE_BAR_HEIGHT: f32 = 46.0;
+const TAB_BAR_HEIGHT: f32 = 44.0;
+const FOOTER_HEIGHT: f32 = 44.0;
+const BTN_SIZE: f32 = 26.0;
+const BTN_MARGIN_TOP: f32 = 10.0;
+const BTN_RIGHT_MARGIN: f32 = 8.0;
+const BTN_GAP: f32 = 4.0;
+const DISCLAIMER_BTN_SIZE: (f32, f32) = (90.0, 32.0);
+const DISCLAIMER_TITLE_Y: f32 = 100.0;
+const DISCLAIMER_BODY_Y: f32 = 150.0;
+const DISCLAIMER_BODY_HEIGHT: f32 = 260.0;
+const DISCLAIMER_BUTTONS_Y: f32 = DISCLAIMER_BODY_Y + DISCLAIMER_BODY_HEIGHT + 20.0;
+
+const CONTENT_PAD_X: f32 = 24.0;
+const CONTENT_PAD_TOP: f32 = 20.0;
+const SIDEBAR_WIDTH: f32 = 168.0;
+const COLUMN_GAP: f32 = 20.0;
+const CARD_GAP: f32 = 10.0;
+const CARD_HEIGHT: f32 = 78.0;
+const SEGMENT_GAP: f32 = 10.0;
+const SEGMENT_HEIGHT: f32 = 52.0;
+const RUN_BUTTON_SIZE: (f32, f32) = (120.0, 34.0);
+
+const TOOLBAR_HEIGHT: f32 = 32.0;
+const LIST_GAP: f32 = 10.0;
+const RESULT_ROW_HEIGHT: f32 = 34.0;
+const BUTTONS_ROW_HEIGHT: f32 = 34.0;
+
+#[derive(PartialEq, Eq, Clone, Copy, Debug)]
 enum Tab {
     Automatic,
     Custom,
@@ -21,17 +63,7 @@ enum Tab {
     Donate,
 }
 
-/// Which body text [`KprmApp::restart_dialog`] shows — the same dialog is
-/// reused for a locked-file cleanup pass and for a registry restore, and
-/// the two deserve different wording (spec-free: registry restore is a
-/// new feature the original never had).
-#[derive(PartialEq, Eq, Clone, Copy)]
-enum RestartReason {
-    LockedFiles,
-    RegistryRestore,
-}
-
-#[derive(PartialEq, Clone, Copy)]
+#[derive(PartialEq, Clone, Copy, Debug)]
 enum QuarantineChoice {
     Keep,
     Now,
@@ -48,9 +80,29 @@ impl From<QuarantineChoice> for QuarantineMode {
     }
 }
 
+#[derive(PartialEq, Clone, Copy, Debug)]
+enum UiButton {
+    Minimize,
+    Close,
+    DisclaimerAccept,
+    DisclaimerDecline,
+    Tab(Tab),
+    ActionCard(usize),
+    QuarantineSeg(QuarantineChoice),
+    RunButton,
+    SelectAll,
+    SelectNone,
+    Clear,
+    ResultRow(usize),
+    SearchButton,
+    RemoveSelectedButton,
+}
+
+#[allow(dead_code)] // wired up again once each tab is ported
 pub struct KprmApp {
     tab: Tab,
-    logo_texture: Option<egui::TextureHandle>,
+    fonts: Fonts,
+    logo: Bitmap,
 
     opt_remove_tools: bool,
     opt_backup_registry: bool,
@@ -62,57 +114,75 @@ pub struct KprmApp {
 
     status: String,
     busy: bool,
-    /// `(processed, total)` tools, updated during a scan or a real
-    /// "Supprimer les outils" pass — `None` while busy with a step that
-    /// doesn't report fine-grained progress (backup, restore points, UAC,
-    /// settings), or while idle.
     progress: Option<(usize, usize)>,
 
-    scan_results: Vec<(Event, bool)>,
+    scan_results: Vec<(kprm_engine::report::Event, bool)>,
 
-    /// Set when the last real run left something scheduled for deletion
-    /// on next boot — prompts the "Redémarrage nécessaire" dialog instead
-    /// of restarting unconditionally like the original did.
     show_restart_dialog: bool,
-    /// Which wording [`KprmApp::restart_dialog`] shows — only meaningful
-    /// while `show_restart_dialog` is `true`.
-    restart_reason: RestartReason,
-
-    /// Previous registry backups found under `<home_drive>\KPRM\backup\`
-    /// (Extra Tools tab), refreshed on startup and via its "Rafraîchir"
-    /// button.
     available_backups: Vec<kprm_engine::backup::AvailableBackup>,
     selected_backup: Option<kprm_engine::backup::AvailableBackup>,
-    /// Set while the "are you sure?" dialog for restoring `selected_backup`
-    /// is open — restoring a hive is destructive and needs an explicit
-    /// confirmation on top of the button click, unlike every other action
-    /// here.
     confirm_restore: Option<kprm_engine::backup::AvailableBackup>,
 
-    /// Gates the whole app behind the startup disclaimer (see
-    /// [`KprmApp::ui_disclaimer`]) until accepted, matching the original.
+    /// Gates the whole app behind the startup disclaimer until accepted,
+    /// matching the original — see `ui_disclaimer`.
     disclaimer_accepted: bool,
 
-    /// Loaded once at startup from the detected OS locale (see
-    /// `main.rs`) — every UI string except the "KpRm"/"by kernel-panik"
-    /// brand text and the crypto addresses goes through [`KprmApp::t`]/
-    /// [`KprmApp::tf`] instead of a hardcoded literal.
     t: kprm_i18n::Translations,
 
     request_tx: Sender<WorkerRequest>,
     response_rx: Receiver<WorkerResponse>,
+
+    hover: Option<UiButton>,
+    pressed: Option<UiButton>,
+    close_requested: bool,
+    minimize_requested: bool,
+
+    /// The tab labels' rects from the *last* paint — text-width-dependent,
+    /// so recomputed every `draw_tab_bar` call rather than hardcoded; mouse
+    /// hit-testing (which has no `Graphics` to measure text with) reads
+    /// this cache instead of re-measuring.
+    tab_rects: Vec<(Tab, RectF)>,
+    /// The 6 action-row checkbox cards' rects from the last paint, indexed
+    /// the same as the `opt_*` fields are checked in `action_card_specs`.
+    action_rects: Vec<RectF>,
+    quarantine_rects: Vec<(QuarantineChoice, RectF)>,
+    run_button_rect: RectF,
+
+    /// The Custom tab's result-list scroll area — see
+    /// `kprm_win32gui::scroll` (the rewrite plan's highest-risk primitive).
+    scroll: ScrollState,
+    toolbar_button_rects: Vec<(UiButton, RectF)>,
+    search_button_rect: RectF,
+    remove_selected_button_rect: RectF,
+
+    /// Read once at startup; the number of tools the embedded catalog
+    /// knows about, shown in the Automatic tab's sidebar stat card.
+    catalog_tool_count: usize,
+    /// The last recorded successful run's timestamp (see
+    /// `kprm_engine::last_run`), shown in the same sidebar — `None` until
+    /// the first run completes.
+    last_run: Option<String>,
 }
 
 impl KprmApp {
-    pub fn new(translations: kprm_i18n::Translations) -> Self {
+    pub fn new(translations: kprm_i18n::Translations, hwnd: HWND) -> Self {
         let (response_tx, response_rx) = std::sync::mpsc::channel();
-        let request_tx = worker::spawn(response_tx);
+        let request_tx = worker::spawn(response_tx, hwnd);
         let status = translations
             .get("status-ready")
             .unwrap_or_else(|_| "Ready".to_string());
+
+        let logo = Bitmap::from_png_bytes(include_bytes!("../assets/bug.png"))
+            .expect("embedded bug.png must decode");
+        logo.recolor_white().expect("bug.png recolor must succeed");
+
+        let catalog_tool_count = kprm_catalog::Catalog::embedded().map(|c| c.tools().len()).unwrap_or(0);
+        let last_run = kprm_engine::last_run::read(&kprm_windows::WinRegistry);
+
         Self {
             tab: Tab::Automatic,
-            logo_texture: None,
+            fonts: Fonts::load().expect("embedded fonts must load"),
+            logo,
             opt_remove_tools: true,
             opt_backup_registry: false,
             opt_remove_restore_points: false,
@@ -125,7 +195,6 @@ impl KprmApp {
             progress: None,
             scan_results: Vec::new(),
             show_restart_dialog: false,
-            restart_reason: RestartReason::LockedFiles,
             available_backups: kprm_windows::list_registry_backups(
                 &kprm_windows::EnvKnownDirs::detect(),
             ),
@@ -135,169 +204,35 @@ impl KprmApp {
             t: translations,
             request_tx,
             response_rx,
+            hover: None,
+            pressed: None,
+            close_requested: false,
+            minimize_requested: false,
+            tab_rects: Vec::new(),
+            action_rects: Vec::new(),
+            quarantine_rects: Vec::new(),
+            run_button_rect: RectF::default(),
+            scroll: ScrollState::default(),
+            toolbar_button_rects: Vec::new(),
+            search_button_rect: RectF::default(),
+            remove_selected_button_rect: RectF::default(),
+            catalog_tool_count,
+            last_run,
         }
     }
 
-    /// Looks up `key` in the current locale, falling back to the raw key
-    /// itself if somehow missing — this must never panic, even if a key
-    /// was mistyped somewhere, since it runs on every frame.
     fn t(&self, key: &str) -> String {
         self.t.get(key).unwrap_or_else(|_| key.to_string())
     }
 
-    /// Like [`KprmApp::t`], with `{ $name }` placeables filled in from
-    /// `args`.
+    #[allow(dead_code)]
     fn tf(&self, key: &str, args: &[(&str, &str)]) -> String {
         self.t
             .get_fmt(key, args)
             .unwrap_or_else(|_| key.to_string())
     }
-}
 
-/// A small square glyph button (minimize/close), used only in the title bar.
-fn icon_button(ui: &mut egui::Ui, glyph: &str, hover_bg: Color32) -> egui::Response {
-    let (rect, response) = ui.allocate_exact_size(Vec2::splat(26.0), Sense::click());
-    if response.hovered() {
-        ui.painter().rect_filled(rect, 6.0, hover_bg);
-    }
-    ui.painter().text(
-        rect.center(),
-        Align2::CENTER_CENTER,
-        glyph,
-        FontId::proportional(14.0),
-        theme::TEXT_2,
-    );
-    response
-}
-
-/// One "card" row in the Actions section: checkbox + colored icon badge +
-/// bold title + muted one-line description, matching the mockup's row
-/// pattern (docs/design/Main.dc.html).
-///
-/// `width` is computed once by the caller and threaded straight down,
-/// rather than re-derived from `ui.available_width()` inside nested
-/// closures — simpler to reason about, and confirmed correct by measuring
-/// the actual laid-out rects (see rust/README.md: this session's
-/// screenshot tooling turned out to be unreliable and was giving false
-/// negatives during development — the layout itself was fine).
-#[allow(clippy::too_many_arguments)]
-fn action_row(
-    ui: &mut egui::Ui,
-    checked: &mut bool,
-    badge_bg: Color32,
-    badge_fg: Color32,
-    glyph: &str,
-    title: &str,
-    description: &str,
-    width: f32,
-) {
-    const CHECKBOX_W: f32 = 22.0;
-    const BADGE_W: f32 = 26.0;
-    const MARGIN: f32 = 12.0 * 2.0;
-    const GAPS: f32 = 8.0 * 2.0;
-    let text_width = (width - CHECKBOX_W - BADGE_W - MARGIN - GAPS).max(60.0);
-
-    Frame::none()
-        .fill(theme::BG_PANEL)
-        .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-        .rounding(theme::RADIUS)
-        .inner_margin(Margin::symmetric(12.0, 10.0))
-        .show(ui, |ui| {
-            ui.set_width(width - MARGIN);
-            // Fixed content height regardless of description length, so
-            // every card in the grid lines up with its neighbors — without
-            // this, a card whose description happens to wrap to a second
-            // line ends up taller than the others in its row/column,
-            // producing the slight misalignment reported after the last
-            // round (short descriptions are also kept short on purpose so
-            // none of them actually need to wrap at the current column
-            // width; this is the safety net for if that ever changes).
-            ui.set_min_height(34.0);
-            ui.horizontal(|ui| {
-                ui.checkbox(checked, "");
-                let (badge_rect, _) = ui.allocate_exact_size(Vec2::splat(BADGE_W), Sense::hover());
-                ui.painter().rect_filled(badge_rect, 7.0, badge_bg);
-                ui.painter().text(
-                    badge_rect.center(),
-                    Align2::CENTER_CENTER,
-                    glyph,
-                    FontId::proportional(13.0),
-                    badge_fg,
-                );
-                ui.vertical(|ui| {
-                    ui.set_width(text_width);
-                    ui.add(
-                        egui::Label::new(
-                            egui::RichText::new(title)
-                                .size(13.0)
-                                .strong()
-                                .color(theme::TEXT_1),
-                        )
-                        .wrap(),
-                    );
-                    ui.add(
-                        egui::Label::new(
-                            egui::RichText::new(description)
-                                .size(10.5)
-                                .color(theme::TEXT_2),
-                        )
-                        .wrap(),
-                    );
-                });
-            });
-        });
-}
-
-/// One segment of the 3-way quarantine choice (Conserver / Maintenant /
-/// Dans 7 jours). Uses `ui.add_sized` for the button's footprint; the
-/// description is a hover tooltip instead of a second line, keeping this a
-/// plain `Button`.
-/// Returns `true` when this click just changed `choice` to `value` — the
-/// caller uses this to auto-check "Supprimer les outils" when a quarantine
-/// mode other than "Conserver" is picked (original spec §2.2: each of
-/// "Supprimer maintenant"/"Dans 7 jours" auto-selects it, since quarantine
-/// only has any effect inside tool removal in the first place — picking
-/// one without it silently did nothing before this).
-fn quarantine_segment(
-    ui: &mut egui::Ui,
-    choice: &mut QuarantineChoice,
-    value: QuarantineChoice,
-    title: &str,
-    subtitle: &str,
-    width: f32,
-) -> bool {
-    let selected = *choice == value;
-    let (bg, border, text_color) = if selected {
-        (theme::BLUE_BG, theme::BLUE, theme::TEXT_1)
-    } else {
-        (theme::BG_PANEL, theme::BORDER_SOFT, theme::TEXT_2)
-    };
-
-    let button = egui::Button::new(
-        egui::RichText::new(title)
-            .size(12.5)
-            .strong()
-            .color(text_color),
-    )
-    .fill(bg)
-    .stroke(Stroke::new(1.5_f32, border))
-    .rounding(theme::RADIUS);
-    let response = ui
-        .add_sized(Vec2::new(width, 36.0), button)
-        .on_hover_text(subtitle);
-    if response.clicked() {
-        *choice = value;
-        true
-    } else {
-        false
-    }
-}
-
-impl KprmApp {
     fn poll_worker(&mut self) {
-        // Drained in a loop rather than once: progress messages can arrive
-        // faster than this is polled, and the final Done/Failed must never
-        // be missed behind a backlog of Progress ones.
         while let Ok(response) = self.response_rx.try_recv() {
             match response {
                 WorkerResponse::Progress { current, total } => {
@@ -326,9 +261,6 @@ impl KprmApp {
         }
     }
 
-    /// A scan's report is "all Found" — becomes the checkable list.
-    /// Any other report (an automatic run, or a "remove selected" pass)
-    /// instead prunes whatever it successfully touched out of that list.
     fn handle_report(&mut self, report: Report) {
         let is_scan_result = !report.events.is_empty()
             && report.events.iter().all(|e| e.result == EventResult::Found);
@@ -337,15 +269,6 @@ impl KprmApp {
             self.scan_results = report.events.into_iter().map(|e| (e, true)).collect();
         } else {
             if report.needs_restart() {
-                self.restart_reason = if report
-                    .events
-                    .iter()
-                    .any(|e| e.action_type == "registry_restore")
-                {
-                    RestartReason::RegistryRestore
-                } else {
-                    RestartReason::LockedFiles
-                };
                 self.show_restart_dialog = true;
             }
             let handled: HashSet<String> = report
@@ -364,1173 +287,1064 @@ impl KprmApp {
         }
     }
 
+    fn title_bar_button_rect(&self, width: f32, btn: UiButton) -> RectF {
+        let close_x = width - BTN_RIGHT_MARGIN - BTN_SIZE;
+        let minimize_x = close_x - BTN_GAP - BTN_SIZE;
+        let x = match btn {
+            UiButton::Close => close_x,
+            _ => minimize_x,
+        };
+        RectF { X: x, Y: BTN_MARGIN_TOP, Width: BTN_SIZE, Height: BTN_SIZE }
+    }
+
+    fn disclaimer_button_rect(&self, width: f32, _height: f32, btn: UiButton) -> RectF {
+        let (w, h) = DISCLAIMER_BTN_SIZE;
+        let total_w = w * 2.0 + 8.0;
+        let left = (width - total_w) / 2.0;
+        let x = match btn {
+            UiButton::DisclaimerAccept => left,
+            _ => left + w + 8.0,
+        };
+        RectF { X: x, Y: DISCLAIMER_BUTTONS_Y, Width: w, Height: h }
+    }
+
+    fn button_at(&self, width: f32, height: f32, x: f32, y: f32) -> Option<UiButton> {
+        for btn in [UiButton::Minimize, UiButton::Close] {
+            if rect_contains(self.title_bar_button_rect(width, btn), x, y) {
+                return Some(btn);
+            }
+        }
+        if !self.disclaimer_accepted {
+            for btn in [UiButton::DisclaimerAccept, UiButton::DisclaimerDecline] {
+                if rect_contains(self.disclaimer_button_rect(width, height, btn), x, y) {
+                    return Some(btn);
+                }
+            }
+        } else {
+            for (tab, rect) in &self.tab_rects {
+                if rect_contains(*rect, x, y) {
+                    return Some(UiButton::Tab(*tab));
+                }
+            }
+            if self.tab == Tab::Automatic {
+                for (i, rect) in self.action_rects.iter().enumerate() {
+                    if rect_contains(*rect, x, y) {
+                        return Some(UiButton::ActionCard(i));
+                    }
+                }
+                for (choice, rect) in &self.quarantine_rects {
+                    if rect_contains(*rect, x, y) {
+                        return Some(UiButton::QuarantineSeg(*choice));
+                    }
+                }
+                if rect_contains(self.run_button_rect, x, y) && self.can_run() {
+                    return Some(UiButton::RunButton);
+                }
+            } else if self.tab == Tab::Custom {
+                for (btn, rect) in &self.toolbar_button_rects {
+                    if rect_contains(*rect, x, y) {
+                        return Some(*btn);
+                    }
+                }
+                if self.scroll.contains(x, y) {
+                    let relative_y = (y - self.scroll.last_viewport.Y) + self.scroll.offset;
+                    if relative_y >= 0.0 {
+                        let index = (relative_y / RESULT_ROW_HEIGHT) as usize;
+                        if index < self.scan_results.len() {
+                            return Some(UiButton::ResultRow(index));
+                        }
+                    }
+                }
+                if rect_contains(self.search_button_rect, x, y) && !self.busy {
+                    return Some(UiButton::SearchButton);
+                }
+                if rect_contains(self.remove_selected_button_rect, x, y) && self.can_remove_selected() {
+                    return Some(UiButton::RemoveSelectedButton);
+                }
+            }
+        }
+        None
+    }
+
+    /// At least one action must be checked, and nothing may already be
+    /// running — mirrors the original's `can_run` gate on the run button.
+    fn can_run(&self) -> bool {
+        !self.busy
+            && (self.opt_remove_tools
+                || self.opt_backup_registry
+                || self.opt_remove_restore_points
+                || self.opt_create_restore_point
+                || self.opt_restore_uac
+                || self.opt_restore_settings)
+    }
+
+    fn can_remove_selected(&self) -> bool {
+        !self.busy && self.scan_results.iter().any(|(_, checked)| *checked)
+    }
+
+    fn draw_title_bar(&self, g: &Graphics, width: f32) {
+        let titlebar_bg = SolidBrush::new(theme::BG_ELEVATED.to_argb()).unwrap();
+        g.fill_rect(RectF { X: 0.0, Y: 0.0, Width: width, Height: TITLE_BAR_HEIGHT }, &titlebar_bg)
+            .unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_line(0.0, TITLE_BAR_HEIGHT, width, TITLE_BAR_HEIGHT, &border).ok();
+
+        self.logo
+            .draw(g, RectF { X: 16.0, Y: 8.0, Width: 30.0, Height: 30.0 })
+            .ok();
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            "KpRm",
+            &self.fonts.proportional(15.0),
+            RectF { X: 54.0, Y: 14.0, Width: 100.0, Height: 20.0 },
+            &near,
+            &text_1,
+        )
+        .unwrap();
+
+        let pill_rect = RectF { X: 106.0, Y: 12.0, Width: 60.0, Height: 20.0 };
+        let pill_bg = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+        g.fill_rounded_rect(pill_rect, 999.0, &pill_bg).unwrap();
+        g.draw_rounded_rect(pill_rect, 999.0, &border).unwrap();
+        let text_2 = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(
+            concat!("v", env!("CARGO_PKG_VERSION")),
+            &self.fonts.monospace(10.5),
+            pill_rect,
+            &center,
+            &text_2,
+        )
+        .unwrap();
+
+        let text_3 = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        g.draw_string(
+            "by kernel-panik",
+            &self.fonts.proportional(10.5),
+            RectF { X: 176.0, Y: 15.0, Width: 100.0, Height: 18.0 },
+            &near,
+            &text_3,
+        )
+        .unwrap();
+
+        for btn in [UiButton::Minimize, UiButton::Close] {
+            let r = self.title_bar_button_rect(width, btn);
+            let is_hover = self.hover == Some(btn);
+            if is_hover {
+                let fill_color = if btn == UiButton::Close { theme::RED_BG } else { theme::BG_HOVER };
+                let fill = SolidBrush::new(fill_color.to_argb()).unwrap();
+                g.fill_rounded_rect(r, 6.0, &fill).unwrap();
+            }
+            let glyph_color = if is_hover && btn == UiButton::Close { theme::RED } else { theme::TEXT_2 };
+            let glyph_brush = SolidBrush::new(glyph_color.to_argb()).unwrap();
+            let glyph = if btn == UiButton::Minimize { "\u{2014}" } else { "\u{00D7}" };
+            g.draw_string(glyph, &self.fonts.proportional(14.0), r, &center, &glyph_brush)
+                .unwrap();
+        }
+    }
+
     /// The startup "AS IS, no warranty, no commercial use" disclaimer —
-    /// see [`KprmApp::disclaimer_accepted`]. Declining closes the window
-    /// immediately, matching the original's `Exit` on "No".
-    fn ui_disclaimer(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+    /// shown unconditionally on every launch (not persisted), matching the
+    /// original. Declining closes the window immediately.
+    fn draw_disclaimer(&self, g: &Graphics, width: f32, height: f32) {
         let title = self.t("eula-title");
         let body = self.t("eula-body");
         let accept_label = self.t("eula-accept");
         let decline_label = self.t("eula-decline");
-        ui.vertical_centered(|ui| {
-            ui.add_space(20.0);
-            ui.label(
-                egui::RichText::new(title)
-                    .size(17.0)
-                    .strong()
-                    .color(theme::TEXT_1),
-            );
-            ui.add_space(16.0);
-            ui.add(
-                egui::Label::new(egui::RichText::new(body).size(13.0).color(theme::TEXT_2)).wrap(),
-            );
-            ui.add_space(24.0);
-            ui.horizontal(|ui| {
-                let accept = egui::Button::new(
-                    egui::RichText::new(accept_label)
-                        .strong()
-                        .color(Color32::from_rgb(0x10, 0x2a, 0x1c)),
-                )
-                .fill(theme::GREEN)
-                .min_size(Vec2::new(90.0, 32.0));
-                if ui.add(accept).clicked() {
-                    self.disclaimer_accepted = true;
-                }
-                ui.add_space(8.0);
-                let decline =
-                    egui::Button::new(egui::RichText::new(decline_label).color(Color32::WHITE))
-                        .fill(theme::RED)
-                        .min_size(Vec2::new(90.0, 32.0));
-                if ui.add(decline).clicked() {
-                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                }
-            });
-        });
-    }
 
-    /// The "Redémarrage nécessaire" prompt — shown after a real run left
-    /// something scheduled for deletion on next boot (see
-    /// [`Report::needs_restart`]). Mirrors `docs/design/Restart.dc.html`;
-    /// unlike the original AutoIt tool, restarting is an explicit choice,
-    /// never automatic.
-    fn restart_dialog(&mut self, ctx: &egui::Context) {
-        if !self.show_restart_dialog {
-            return;
-        }
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
 
-        let title = self.t("restart-dialog-title");
-        let body = match self.restart_reason {
-            RestartReason::LockedFiles => self.t("restart-dialog-body"),
-            RestartReason::RegistryRestore => self.t("restore-restart-dialog-body"),
-        };
-        let restart_label = self.t("restart-now-button");
-        let later_label = self.t("restart-later-button");
-        let fail_label = self.t("fail");
-
-        egui::Window::new("restart_dialog")
-            .title_bar(false)
-            .collapsible(false)
-            .resizable(false)
-            .anchor(egui::Align2::CENTER_CENTER, Vec2::ZERO)
-            .frame(
-                Frame::none()
-                    .fill(theme::BG_ELEVATED)
-                    .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-                    .rounding(theme::RADIUS)
-                    .inner_margin(Margin::same(20.0)),
-            )
-            .show(ctx, |ui| {
-                ui.set_width(340.0);
-                ui.label(
-                    egui::RichText::new(title)
-                        .size(15.0)
-                        .strong()
-                        .color(theme::TEXT_1),
-                );
-                ui.add_space(8.0);
-                ui.add(
-                    egui::Label::new(egui::RichText::new(body).size(12.0).color(theme::TEXT_2))
-                        .wrap(),
-                );
-                ui.add_space(16.0);
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    let restart_button = egui::Button::new(
-                        egui::RichText::new(restart_label)
-                            .strong()
-                            .color(Color32::from_rgb(0x2a, 0x1a, 0x08)),
-                    )
-                    .fill(theme::AMBER)
-                    .min_size(Vec2::new(170.0, 32.0));
-                    if ui.add(restart_button).clicked() {
-                        self.show_restart_dialog = false;
-                        if let Err(err) = kprm_windows::reboot_machine() {
-                            self.status = format!("{fail_label} : {err}");
-                        }
-                    }
-                    ui.add_space(8.0);
-                    let later_button =
-                        egui::Button::new(egui::RichText::new(later_label).color(theme::TEXT_2))
-                            .fill(theme::BG_PANEL)
-                            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-                            .min_size(Vec2::new(90.0, 32.0));
-                    if ui.add(later_button).clicked() {
-                        self.show_restart_dialog = false;
-                    }
-                });
-            });
-    }
-
-    fn title_bar(&mut self, ctx: &egui::Context) {
-        egui::TopBottomPanel::top("titlebar")
-            .frame(
-                Frame::none()
-                    .fill(theme::BG_ELEVATED)
-                    .inner_margin(Margin::symmetric(12.0, 8.0)),
-            )
-            .exact_height(46.0)
-            .show(ctx, |ui| {
-                ui.horizontal(|ui| {
-                    // KpRm bug logo (original icon from the AutoIt version).
-                    if let Some(tex) = &self.logo_texture {
-                        let logo_size = Vec2::splat(30.0);
-                        let (logo_rect, _) =
-                            ui.allocate_exact_size(logo_size, Sense::hover());
-                        ui.painter().image(
-                            tex.id(),
-                            logo_rect,
-                            egui::Rect::from_min_max(
-                                egui::Pos2::ZERO,
-                                egui::Pos2::new(1.0, 1.0),
-                            ),
-                            Color32::WHITE,
-                        );
-                    } else {
-                        let (badge_rect, _) =
-                            ui.allocate_exact_size(Vec2::splat(26.0), Sense::hover());
-                        ui.painter().rect_filled(badge_rect, 8.0, theme::BLUE_BG);
-                        let c = badge_rect.center();
-                        let stroke = Stroke::new(1.8_f32, theme::BLUE);
-                        ui.painter().line_segment(
-                            [c + Vec2::new(-6.0, 0.0), c + Vec2::new(-2.0, 4.0)],
-                            stroke,
-                        );
-                        ui.painter().line_segment(
-                            [c + Vec2::new(-2.0, 4.0), c + Vec2::new(6.0, -5.0)],
-                            stroke,
-                        );
-                    }
-
-                    ui.add_space(8.0);
-                    ui.label(
-                        egui::RichText::new("KpRm")
-                            .strong()
-                            .size(15.0)
-                            .color(theme::TEXT_1),
-                    );
-                    ui.add_space(6.0);
-                    Frame::none()
-                        .fill(theme::BG_PANEL)
-                        .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-                        .rounding(999.0)
-                        .inner_margin(Margin::symmetric(7.0, 2.0))
-                        .show(ui, |ui| {
-                            ui.label(
-                                egui::RichText::new(concat!("v", env!("CARGO_PKG_VERSION")))
-                                    .monospace()
-                                    .size(10.5)
-                                    .color(theme::TEXT_2),
-                            );
-                        });
-                    ui.add_space(10.0);
-                    ui.label(
-                        egui::RichText::new("by kernel-panik")
-                            .size(10.5)
-                            .color(theme::TEXT_3),
-                    );
-
-                    let remaining = ui.available_width() - 60.0;
-                    let (drag_rect, drag_response) = ui.allocate_exact_size(
-                        Vec2::new(remaining.max(0.0), 26.0),
-                        Sense::click_and_drag(),
-                    );
-                    if drag_response.drag_started() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
-                    }
-                    let _ = drag_rect;
-
-                    if icon_button(ui, "—", theme::BG_HOVER).clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Minimized(true));
-                    }
-                    if icon_button(ui, "×", theme::RED_BG).clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
-                });
-            });
-    }
-
-    fn tab_bar(&mut self, ctx: &egui::Context) {
-        egui::TopBottomPanel::top("tabs")
-            .frame(
-                Frame::none()
-                    .fill(theme::BG)
-                    .inner_margin(Margin::symmetric(16.0, 10.0)),
-            )
-            .show(ctx, |ui| {
-                let tabs = [
-                    (Tab::Automatic, self.t("auto")),
-                    (Tab::Custom, self.t("custom")),
-                    (Tab::ExtraTools, self.t("tab-extra-tools")),
-                    (Tab::Donate, self.t("tab-donate")),
-                ];
-                let mut selected_rect = None;
-                ui.horizontal(|ui| {
-                    for (tab, label) in tabs {
-                        let selected = self.tab == tab;
-                        let color = if selected {
-                            theme::TEXT_1
-                        } else {
-                            theme::TEXT_2
-                        };
-                        let resp = ui.add(
-                            egui::Button::new(egui::RichText::new(label).size(13.0).color(color))
-                                .frame(false),
-                        );
-                        if resp.clicked() {
-                            self.tab = tab;
-                        }
-                        if selected {
-                            selected_rect = Some(resp.rect);
-                        }
-                        ui.add_space(10.0);
-                    }
-                });
-                let bottom = ui.min_rect().bottom() + 8.0;
-                ui.painter().hline(
-                    ui.max_rect().x_range(),
-                    bottom,
-                    Stroke::new(1.0_f32, theme::BORDER_SOFT),
-                );
-                if let Some(rect) = selected_rect {
-                    ui.painter()
-                        .hline(rect.x_range(), bottom, Stroke::new(2.0_f32, theme::BLUE));
-                }
-            });
-    }
-
-    fn footer(&mut self, ctx: &egui::Context) {
-        egui::TopBottomPanel::bottom("status")
-            .frame(
-                Frame::none()
-                    .fill(theme::BG_ELEVATED)
-                    .inner_margin(Margin::symmetric(20.0, 12.0)),
-            )
-            .show(ctx, |ui| {
-                ui.horizontal(|ui| {
-                    let dot_color = if self.busy {
-                        theme::BLUE
-                    } else {
-                        theme::TEXT_3
-                    };
-                    let (rect, _) = ui.allocate_exact_size(Vec2::splat(8.0), Sense::hover());
-                    ui.painter().circle_filled(rect.center(), 4.0, dot_color);
-                    ui.add_space(4.0);
-                    if self.busy && self.progress.is_none() {
-                        ui.spinner();
-                    }
-                    ui.monospace(
-                        egui::RichText::new(&self.status)
-                            .size(12.0)
-                            .color(theme::TEXT_2),
-                    );
-
-                    if let Some((current, total)) = self.progress {
-                        ui.add_space(10.0);
-                        let fraction = if total == 0 {
-                            0.0
-                        } else {
-                            current as f32 / total as f32
-                        };
-                        ui.add(
-                            egui::ProgressBar::new(fraction)
-                                .desired_width(160.0)
-                                .text(format!("{current}/{total}")),
-                        );
-                    }
-                });
-            });
-    }
-
-    fn ui_automatic(&mut self, ui: &mut egui::Ui) {
-        ui.add_space(4.0);
-        ui.label(
-            egui::RichText::new(self.t("actions").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-
-        // Every row's title/description is resolved to an owned String up
-        // front: the `with_layout` closures below need `&mut self.opt_*`
-        // (a field borrow), so nothing inside them can also call
-        // `self.t(...)` (a whole-`self` borrow) without conflicting.
-        let remove_tools_title = self.t("delete-tools");
-        let remove_tools_desc = self.t("action-remove-tools-desc");
-        let backup_registry_title = self.t("save-registry");
-        let backup_registry_desc = self.t("action-backup-registry-desc");
-        let remove_restore_points_title = self.t("delete-system-restore-points");
-        let remove_restore_points_desc = self.t("action-remove-restore-points-desc");
-        let create_restore_point_title = self.t("create-restore-point");
-        let create_restore_point_desc = self.t("action-create-restore-point-desc");
-        let restore_uac_title = self.t("restore-uac");
-        let restore_uac_desc = self.t("action-restore-uac-desc");
-        let restore_settings_title = self.t("restore-settings");
-        let restore_settings_desc = self.t("action-restore-settings-desc");
-
-        // 2-column layout, `half` computed once here (the one place that
-        // legitimately knows the real available width) and threaded
-        // explicitly into every `action_row` call.
-        // Use egui's real inter-item spacing (not a guessed constant) so the
-        // two cards exactly fill the row with no left-over slack on the
-        // right — a small contributor to the reported misalignment.
-        let gap = ui.spacing().item_spacing.x;
-        let half = (ui.available_width() - gap) / 2.0;
-
-        // `with_layout(..., Align::Min)` instead of plain `ui.horizontal`
-        // (which centers cross-axis by default): two `Frame`s of the same
-        // reported height still ended up offset by a few pixels under
-        // center alignment — forcing top alignment removes that ambiguity
-        // entirely instead of chasing egui's exact centering computation.
-        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
-            action_row(
-                ui,
-                &mut self.opt_remove_tools,
-                theme::BLUE_BG,
-                theme::BLUE,
-                "T",
-                &remove_tools_title,
-                &remove_tools_desc,
-                half,
-            );
-            action_row(
-                ui,
-                &mut self.opt_backup_registry,
-                theme::GREEN_BG,
-                theme::GREEN,
-                "R",
-                &backup_registry_title,
-                &backup_registry_desc,
-                half,
-            );
-        });
-        ui.add_space(8.0);
-        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
-            action_row(
-                ui,
-                &mut self.opt_remove_restore_points,
-                theme::BLUE_BG,
-                theme::BLUE,
-                "P",
-                &remove_restore_points_title,
-                &remove_restore_points_desc,
-                half,
-            );
-            action_row(
-                ui,
-                &mut self.opt_create_restore_point,
-                theme::GREEN_BG,
-                theme::GREEN,
-                "+",
-                &create_restore_point_title,
-                &create_restore_point_desc,
-                half,
-            );
-        });
-        ui.add_space(8.0);
-        ui.with_layout(egui::Layout::left_to_right(egui::Align::Min), |ui| {
-            action_row(
-                ui,
-                &mut self.opt_restore_uac,
-                theme::BLUE_BG,
-                theme::BLUE,
-                "U",
-                &restore_uac_title,
-                &restore_uac_desc,
-                half,
-            );
-            action_row(
-                ui,
-                &mut self.opt_restore_settings,
-                theme::BLUE_BG,
-                theme::BLUE,
-                "S",
-                &restore_settings_title,
-                &restore_settings_desc,
-                half,
-            );
-        });
-
-        ui.add_space(14.0);
-        ui.label(
-            egui::RichText::new(self.t("quarantine-section-title"))
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-        let keep_title = self.t("quarantine-keep");
-        let keep_desc = self.t("quarantine-keep-desc");
-        let now_title = self.t("remove-now");
-        let now_desc = self.t("quarantine-now-desc");
-        let seven_days_title = self.t("quarantine-7-days");
-        let seven_days_desc = self.t("quarantine-7-days-desc");
-        let seg_gap = ui.spacing().item_spacing.x;
-        let seg_width = (ui.available_width() - seg_gap * 2.0) / 3.0;
-        ui.horizontal(|ui| {
-            quarantine_segment(
-                ui,
-                &mut self.quarantine_choice,
-                QuarantineChoice::Keep,
-                &keep_title,
-                &keep_desc,
-                seg_width,
-            );
-            if quarantine_segment(
-                ui,
-                &mut self.quarantine_choice,
-                QuarantineChoice::Now,
-                &now_title,
-                &now_desc,
-                seg_width,
-            ) {
-                self.opt_remove_tools = true;
-            }
-            if quarantine_segment(
-                ui,
-                &mut self.quarantine_choice,
-                QuarantineChoice::In7Days,
-                &seven_days_title,
-                &seven_days_desc,
-                seg_width,
-            ) {
-                self.opt_remove_tools = true;
-            }
-        });
-
-        ui.add_space(16.0);
-        let can_run = !self.busy
-            && (self.opt_remove_tools
-                || self.opt_restore_uac
-                || self.opt_restore_settings
-                || self.opt_remove_restore_points
-                || self.opt_create_restore_point
-                || self.opt_backup_registry);
-        let run_button = egui::Button::new(
-            egui::RichText::new(self.t("run"))
-                .strong()
-                .color(Color32::from_rgb(0x10, 0x2a, 0x1c)),
+        let title_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            &title,
+            &self.fonts.proportional(17.0),
+            RectF { X: 0.0, Y: DISCLAIMER_TITLE_Y, Width: width, Height: 26.0 },
+            &center,
+            &title_brush,
         )
-        .fill(theme::GREEN)
-        .min_size(Vec2::new(120.0, 34.0));
-        if ui.add_enabled(can_run, run_button).clicked() {
-            self.busy = true;
-            self.status = self.t("status-running");
-            let _ = self.request_tx.send(WorkerRequest::RunAutomatic {
-                backup_registry: self.opt_backup_registry,
-                remove_tools: self.opt_remove_tools,
-                restore_uac: self.opt_restore_uac,
-                restore_settings: self.opt_restore_settings,
-                remove_restore_points: self.opt_remove_restore_points,
-                create_restore_point: self.opt_create_restore_point,
-                quarantine_mode: self.quarantine_choice.into(),
-            });
+        .unwrap();
+
+        // GDI+'s `DrawString` wraps to the rect's *width* but does not
+        // clip to its *height* by default — it just keeps drawing wrapped
+        // lines past the bottom if the text doesn't fit, so this height
+        // needs real headroom (`DISCLAIMER_BODY_HEIGHT`) rather than being
+        // tight around the expected text, unlike a clipped/scrollable
+        // widget.
+        let body_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            &body,
+            &self.fonts.proportional(13.0),
+            RectF {
+                X: 80.0,
+                Y: DISCLAIMER_BODY_Y,
+                Width: width - 160.0,
+                Height: DISCLAIMER_BODY_HEIGHT,
+            },
+            &center,
+            &body_brush,
+        )
+        .unwrap();
+
+        let accept_rect = self.disclaimer_button_rect(width, height, UiButton::DisclaimerAccept);
+        let accept_fill = SolidBrush::new(theme::GREEN.to_argb()).unwrap();
+        g.fill_rounded_rect(accept_rect, theme::RADIUS, &accept_fill).unwrap();
+        let accept_text = SolidBrush::new(Color::rgb(0x10, 0x2a, 0x1c).to_argb()).unwrap();
+        g.draw_string(&accept_label, &self.fonts.proportional(13.0), accept_rect, &center, &accept_text)
+            .unwrap();
+
+        let decline_rect = self.disclaimer_button_rect(width, height, UiButton::DisclaimerDecline);
+        let decline_fill = SolidBrush::new(theme::RED.to_argb()).unwrap();
+        g.fill_rounded_rect(decline_rect, theme::RADIUS, &decline_fill).unwrap();
+        let decline_text = SolidBrush::new(Color::rgb(0xff, 0xff, 0xff).to_argb()).unwrap();
+        g.draw_string(&decline_label, &self.fonts.proportional(13.0), decline_rect, &center, &decline_text)
+            .unwrap();
+    }
+
+    /// Frameless text tabs with a blue underline beneath the selected one —
+    /// mechanical port of `tab_bar`. Tab rects depend on each label's
+    /// measured width, so they're computed here (the only place a
+    /// `Graphics` is available) and cached in `self.tab_rects` for mouse
+    /// hit-testing to read back.
+    fn draw_tab_bar(&mut self, g: &Graphics, width: f32) {
+        let y0 = TITLE_BAR_HEIGHT;
+        let tabs = [
+            (Tab::Automatic, self.t("auto")),
+            (Tab::Custom, self.t("custom")),
+            (Tab::ExtraTools, self.t("tab-extra-tools")),
+            (Tab::Donate, self.t("tab-donate")),
+        ];
+        let font = self.fonts.proportional(13.0);
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+
+        self.tab_rects.clear();
+        let mut x = 16.0;
+        let mut selected_rect: Option<RectF> = None;
+        for (tab, label) in &tabs {
+            const H_PADDING: f32 = 14.0;
+            let text_w = g.measure_line_width(label, &font).unwrap_or(60.0);
+            let rect = RectF { X: x, Y: y0, Width: text_w + H_PADDING * 2.0, Height: TAB_BAR_HEIGHT };
+
+            let color = if self.tab == *tab { theme::TEXT_1 } else { theme::TEXT_2 };
+            let brush = SolidBrush::new(color.to_argb()).unwrap();
+            g.draw_string(label, &font, rect, &center, &brush).unwrap();
+
+            if self.tab == *tab {
+                selected_rect = Some(rect);
+            }
+            self.tab_rects.push((*tab, rect));
+            x += rect.Width;
         }
-        if !can_run {
-            ui.add_space(4.0);
-            ui.label(
-                egui::RichText::new(self.t("no-option-selected"))
-                    .size(10.5)
-                    .color(theme::TEXT_3),
-            );
+
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_line(0.0, y0 + TAB_BAR_HEIGHT, width, y0 + TAB_BAR_HEIGHT, &border)
+            .ok();
+        if let Some(r) = selected_rect {
+            let blue = Pen::new(theme::BLUE.to_argb(), 2.0).unwrap();
+            g.draw_line(r.X + 4.0, y0 + TAB_BAR_HEIGHT, r.X + r.Width - 4.0, y0 + TAB_BAR_HEIGHT, &blue)
+                .ok();
         }
     }
 
-    fn ui_custom(&mut self, ui: &mut egui::Ui) {
-        ui.add_space(4.0);
-        let found = self.scan_results.len();
-        let selected_count = self
-            .scan_results
-            .iter()
-            .filter(|(_, checked)| *checked)
-            .count();
-        let counts_label = self.tf(
-            "custom-counts",
-            &[
-                ("found", &found.to_string()),
-                ("selected", &selected_count.to_string()),
-            ],
-        );
-        let select_all_label = self.t("all");
-        let select_none_label = self.t("no-element");
-        let clear_label = self.t("empty");
-        ui.horizontal(|ui| {
-            ui.label(
-                egui::RichText::new(counts_label)
-                    .size(13.0)
-                    .color(theme::TEXT_1),
-            );
-            ui.add_space(8.0);
-            if ui.button(select_all_label).clicked() {
-                for (_, checked) in &mut self.scan_results {
-                    *checked = true;
-                }
-            }
-            if ui.button(select_none_label).clicked() {
-                for (_, checked) in &mut self.scan_results {
-                    *checked = false;
-                }
-            }
-            if ui.button(clear_label).clicked() {
-                self.scan_results.clear();
-            }
-        });
+    /// Status dot + text + (while a fine-grained pass is running) a
+    /// progress bar. The busy-with-no-progress spinner is deferred (see the
+    /// rewrite plan's compromises: it needs its own repaint timer, and
+    /// nothing yet sets `busy = true` since no tab triggers a worker
+    /// request until the Automatic tab is ported).
+    fn draw_footer(&self, g: &Graphics, width: f32, height: f32) {
+        let y0 = height - FOOTER_HEIGHT;
+        let bg = SolidBrush::new(theme::BG_ELEVATED.to_argb()).unwrap();
+        g.fill_rect(RectF { X: 0.0, Y: y0, Width: width, Height: FOOTER_HEIGHT }, &bg)
+            .unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_line(0.0, y0, width, y0, &border).ok();
 
-        ui.add_space(8.0);
-        let empty_hint = self.t("custom-empty-hint");
-        Frame::none()
-            .fill(theme::BG_PANEL)
-            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-            .rounding(theme::RADIUS)
-            .inner_margin(Margin::same(6.0))
-            .show(ui, |ui| {
-                let w = ui.available_width();
-                ui.set_min_width(w);
-                ui.set_max_width(w);
-                egui::ScrollArea::vertical()
-                    .max_height(280.0)
-                    .show(ui, |ui| {
-                        if self.scan_results.is_empty() {
-                            ui.add_space(20.0);
-                            ui.vertical_centered(|ui| {
-                                ui.label(egui::RichText::new(empty_hint).color(theme::TEXT_3));
-                            });
-                            ui.add_space(20.0);
-                        }
-                        for (event, checked) in &mut self.scan_results {
-                            ui.horizontal(|ui| {
-                                ui.checkbox(checked, "");
-                                ui.label(
-                                    egui::RichText::new(&event.target)
-                                        .monospace()
-                                        .size(12.0)
-                                        .color(theme::TEXT_1),
-                                );
-                                ui.with_layout(
-                                    egui::Layout::right_to_left(egui::Align::Center),
-                                    |ui| {
-                                        ui.label(
-                                            egui::RichText::new(format!(
-                                                "{} · {}",
-                                                event.tool, event.action_type
-                                            ))
-                                            .size(10.0)
-                                            .color(theme::TEXT_3),
-                                        );
-                                    },
-                                );
-                            });
-                        }
-                    });
-            });
+        let dot_color = if self.busy { theme::BLUE } else { theme::TEXT_3 };
+        let dot_brush = SolidBrush::new(dot_color.to_argb()).unwrap();
+        g.fill_rounded_rect(
+            RectF { X: 24.0, Y: y0 + FOOTER_HEIGHT / 2.0 - 4.0, Width: 8.0, Height: 8.0 },
+            4.0,
+            &dot_brush,
+        )
+        .unwrap();
 
-        ui.add_space(10.0);
-        let search_label = self.t("search");
-        let selected: Vec<(String, String)> = self
-            .scan_results
-            .iter()
-            .filter(|(_, checked)| *checked)
-            .map(|(e, _)| (e.tool.clone(), e.target.clone()))
-            .collect();
-        let remove_selection_label = self.tf(
-            "remove-selection-button",
-            &[("count", &selected.len().to_string())],
-        );
-        let scanning_status = self.t("status-scanning");
-        let removing_status = self.t("status-removing");
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(
-                    !self.busy,
-                    egui::Button::new(search_label).min_size(Vec2::new(0.0, 32.0)),
-                )
-                .clicked()
-            {
-                self.busy = true;
-                self.status = scanning_status;
-                let _ = self.request_tx.send(WorkerRequest::Scan);
-            }
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let text_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            &self.status,
+            &self.fonts.monospace(12.0),
+            RectF { X: 40.0, Y: y0 + FOOTER_HEIGHT / 2.0 - 9.0, Width: width - 260.0, Height: 18.0 },
+            &near,
+            &text_brush,
+        )
+        .unwrap();
 
-            let can_remove = !self.busy && !selected.is_empty();
-            let remove_button = egui::Button::new(
-                egui::RichText::new(remove_selection_label).color(Color32::WHITE),
+        if let Some((current, total)) = self.progress {
+            const BAR_W: f32 = 160.0;
+            let bar_rect = RectF {
+                X: width - BAR_W - 100.0,
+                Y: y0 + FOOTER_HEIGHT / 2.0 - 3.0,
+                Width: BAR_W,
+                Height: 6.0,
+            };
+            let track = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+            g.fill_rounded_rect(bar_rect, 3.0, &track).unwrap();
+            let fraction = if total > 0 { current as f32 / total as f32 } else { 0.0 };
+            let fill_rect = RectF { Width: bar_rect.Width * fraction.clamp(0.0, 1.0), ..bar_rect };
+            let fill = SolidBrush::new(theme::BLUE.to_argb()).unwrap();
+            g.fill_rounded_rect(fill_rect, 3.0, &fill).ok();
+
+            let label = format!("{current}/{total}");
+            let label_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+            g.draw_string(
+                &label,
+                &self.fonts.monospace(11.0),
+                RectF { X: width - 96.0, Y: y0 + FOOTER_HEIGHT / 2.0 - 9.0, Width: 80.0, Height: 18.0 },
+                &near,
+                &label_brush,
             )
-            .fill(theme::RED)
-            .min_size(Vec2::new(0.0, 32.0));
-            if ui.add_enabled(can_remove, remove_button).clicked() {
-                self.busy = true;
-                self.status = removing_status;
-                let _ = self
-                    .request_tx
-                    .send(WorkerRequest::RemoveSelected(selected));
-            }
-        });
+            .ok();
+        }
     }
 
-    fn ui_extra_tools(&mut self, ui: &mut egui::Ui) {
-        egui::ScrollArea::vertical().show(ui, |ui| {
-        ui.add_space(4.0);
-        ui.label(
-            egui::RichText::new(self.t("tab-extra-tools").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(10.0);
+    /// Placeholder for the tabs not yet ported (see the rewrite plan's
+    /// phases 5-6).
+    fn draw_tab_body_placeholder(&self, g: &Graphics, width: f32, height: f32) {
+        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let bottom = height - FOOTER_HEIGHT;
+        let bg = SolidBrush::new(theme::BG.to_argb()).unwrap();
+        g.fill_rect(RectF { X: 0.0, Y: top, Width: width, Height: bottom - top }, &bg)
+            .unwrap();
+        let text = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(
+            "Contenu de cet onglet : phases suivantes",
+            &self.fonts.proportional(13.0),
+            RectF { X: 0.0, Y: (top + bottom) / 2.0, Width: width, Height: 24.0 },
+            &center,
+            &text,
+        )
+        .unwrap();
+    }
 
-        ui.label(
-            egui::RichText::new(self.t("restore-registry-title"))
-                .size(13.0)
-                .strong()
-                .color(theme::TEXT_1),
-        );
-        ui.add_space(4.0);
-        ui.add(
-            egui::Label::new(
-                egui::RichText::new(self.t("restore-registry-intro"))
-                    .size(11.0)
-                    .color(theme::TEXT_3),
-            )
-            .wrap(),
-        );
-        ui.add_space(6.0);
-        ui.add(
-            egui::Label::new(
-                egui::RichText::new(self.t("restore-registry-warning"))
-                    .size(11.0)
-                    .color(theme::AMBER),
-            )
-            .wrap(),
-        );
-        ui.add_space(8.0);
+    /// The "Automatique" tab: a 2-column grid of action-checkbox cards, the
+    /// 3-way quarantine choice, a run button, and (mockup parity — the
+    /// original egui app never had this) a right-hand sidebar with the
+    /// live catalog size and the last run's timestamp.
+    fn draw_ui_automatic(&mut self, g: &Graphics, width: f32, _height: f32) {
+        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let content_x = CONTENT_PAD_X;
+        let content_y = top + CONTENT_PAD_TOP;
+        let left_col_width = width - CONTENT_PAD_X * 2.0 - SIDEBAR_WIDTH - COLUMN_GAP;
 
-        let refresh_label = self.t("restore-registry-refresh");
-        if ui.button(refresh_label).clicked() {
-            self.available_backups =
-                kprm_windows::list_registry_backups(&kprm_windows::EnvKnownDirs::detect());
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("actions").to_uppercase(),
+            &self.fonts.proportional(11.0),
+            RectF { X: content_x, Y: content_y, Width: left_col_width, Height: 16.0 },
+            &near,
+            &header_brush,
+        )
+        .unwrap();
+
+        let grid_y = content_y + 24.0;
+        let card_w = (left_col_width - CARD_GAP) / 2.0;
+
+        let specs: [(bool, &Icon, kprm_win32gui::color::Color, kprm_win32gui::color::Color, String, String); 6] = [
+            (
+                self.opt_remove_tools,
+                &app_icons::TRASH,
+                theme::BLUE_BG,
+                theme::BLUE,
+                self.t("delete-tools"),
+                self.t("action-remove-tools-desc"),
+            ),
+            (
+                self.opt_backup_registry,
+                &app_icons::SAVE,
+                theme::GREEN_BG,
+                theme::GREEN,
+                self.t("save-registry"),
+                self.t("action-backup-registry-desc"),
+            ),
+            (
+                self.opt_remove_restore_points,
+                &app_icons::UNDO,
+                theme::BLUE_BG,
+                theme::BLUE,
+                self.t("delete-system-restore-points"),
+                self.t("action-remove-restore-points-desc"),
+            ),
+            (
+                self.opt_create_restore_point,
+                &app_icons::CIRCLE_PLUS,
+                theme::GREEN_BG,
+                theme::GREEN,
+                self.t("create-restore-point"),
+                self.t("action-create-restore-point-desc"),
+            ),
+            (
+                self.opt_restore_uac,
+                &app_icons::LOCK,
+                theme::BLUE_BG,
+                theme::BLUE,
+                self.t("restore-uac"),
+                self.t("action-restore-uac-desc"),
+            ),
+            (
+                self.opt_restore_settings,
+                &app_icons::SLIDERS,
+                theme::BLUE_BG,
+                theme::BLUE,
+                self.t("restore-settings"),
+                self.t("action-restore-settings-desc"),
+            ),
+        ];
+
+        self.action_rects.clear();
+        for (i, (checked, icon, badge_bg, icon_color, title, desc)) in specs.iter().enumerate() {
+            let row = (i / 2) as f32;
+            let col = (i % 2) as f32;
+            let rect = RectF {
+                X: content_x + col * (card_w + CARD_GAP),
+                Y: grid_y + row * (CARD_HEIGHT + CARD_GAP),
+                Width: card_w,
+                Height: CARD_HEIGHT,
+            };
+            self.action_rects.push(rect);
+            self.draw_action_card(g, rect, i, *checked, icon, *badge_bg, *icon_color, title, desc);
         }
 
-        ui.add_space(8.0);
-        let empty_hint = self.t("restore-registry-empty");
-        // Precomputed rather than borrowed from self, since the loop below
-        // both reads it and needs to mutate self.selected_backup — see
-        // the same pattern in ui_custom/ui_automatic.
-        let backups = self.available_backups.clone();
-        Frame::none()
-            .fill(theme::BG_PANEL)
-            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-            .rounding(theme::RADIUS)
-            .inner_margin(Margin::same(6.0))
-            .show(ui, |ui| {
-                let w = ui.available_width();
-                ui.set_min_width(w);
-                ui.set_max_width(w);
-                egui::ScrollArea::vertical()
-                    .max_height(200.0)
-                    .show(ui, |ui| {
-                        if backups.is_empty() {
-                            ui.add_space(20.0);
-                            ui.vertical_centered(|ui| {
-                                ui.label(egui::RichText::new(&empty_hint).color(theme::TEXT_3));
-                            });
-                            ui.add_space(20.0);
-                        }
-                        for backup in &backups {
-                            ui.horizontal(|ui| {
-                                let is_selected = self.selected_backup.as_ref() == Some(backup);
-                                if ui
-                                    .radio(is_selected, format_backup_timestamp(&backup.timestamp))
-                                    .clicked()
-                                {
-                                    self.selected_backup = Some(backup.clone());
-                                }
-                                ui.with_layout(
-                                    egui::Layout::right_to_left(egui::Align::Center),
-                                    |ui| {
-                                        if backup.has_software {
-                                            ui.label(
-                                                egui::RichText::new("SOFTWARE")
-                                                    .size(10.0)
-                                                    .color(theme::TEXT_3),
-                                            );
-                                        }
-                                        if backup.has_ntuser {
-                                            ui.label(
-                                                egui::RichText::new("NTUSER.DAT")
-                                                    .size(10.0)
-                                                    .color(theme::TEXT_3),
-                                            );
-                                        }
-                                    },
-                                );
-                            });
-                        }
-                    });
-            });
+        let quarantine_y = grid_y + 3.0 * CARD_HEIGHT + 2.0 * CARD_GAP + 18.0;
+        g.draw_string(
+            &self.t("quarantine-section-title"),
+            &self.fonts.proportional(11.0),
+            RectF { X: content_x, Y: quarantine_y, Width: left_col_width, Height: 16.0 },
+            &near,
+            &header_brush,
+        )
+        .unwrap();
 
-        ui.add_space(10.0);
-        let restore_label = self.t("restore-registry-button");
-        let can_restore = !self.busy && self.selected_backup.is_some();
-        let restore_button =
-            egui::Button::new(egui::RichText::new(restore_label).color(Color32::WHITE))
-                .fill(theme::RED)
-                .min_size(Vec2::new(0.0, 32.0));
-        if ui.add_enabled(can_restore, restore_button).clicked() {
-            self.confirm_restore.clone_from(&self.selected_backup);
+        let seg_y = quarantine_y + 24.0;
+        let seg_w = (left_col_width - SEGMENT_GAP * 2.0) / 3.0;
+        let segs = [
+            (QuarantineChoice::Keep, &app_icons::BOX, theme::TEXT_2, self.t("quarantine-keep"), self.t("quarantine-keep-desc")),
+            (QuarantineChoice::Now, &app_icons::TRASH, theme::RED, self.t("remove-now"), self.t("quarantine-now-desc")),
+            (QuarantineChoice::In7Days, &app_icons::CLOCK, theme::BLUE, self.t("quarantine-7-days"), self.t("quarantine-7-days-desc")),
+        ];
+        self.quarantine_rects.clear();
+        for (i, (choice, icon, icon_color, title, desc)) in segs.iter().enumerate() {
+            let rect = RectF {
+                X: content_x + i as f32 * (seg_w + SEGMENT_GAP),
+                Y: seg_y,
+                Width: seg_w,
+                Height: SEGMENT_HEIGHT,
+            };
+            self.quarantine_rects.push((*choice, rect));
+            self.draw_quarantine_segment(g, rect, *choice, icon, *icon_color, title, desc);
         }
 
-        // --- Actions rapides ---
-        ui.add_space(16.0);
-        ui.separator();
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("quick-actions-title").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-
-        self.ui_maintenance_row(
-            ui,
-            "quick-actions-flush-dns",
-            "quick-actions-flush-dns-desc",
-            MaintenanceTask::FlushDns,
-            "status-running",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "quick-actions-clean-temp",
-            "quick-actions-clean-temp-desc",
-            MaintenanceTask::CleanTempDirs,
-            "status-running",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "quick-actions-empty-recycle",
-            "quick-actions-empty-recycle-desc",
-            MaintenanceTask::EmptyRecycleBin,
-            "status-running",
-            false,
-        );
-
-        // --- Réseau ---
-        ui.add_space(16.0);
-        ui.separator();
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("network-section-title").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-
-        self.ui_maintenance_row(
-            ui,
-            "network-winsock-reset",
-            "network-winsock-reset-desc",
-            MaintenanceTask::ResetWinsock,
-            "status-running",
-            true, // amber: requires restart
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "network-hosts-reset",
-            "network-hosts-reset-desc",
-            MaintenanceTask::ResetHostsFile,
-            "status-running",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "network-proxy-remove",
-            "network-proxy-remove-desc",
-            MaintenanceTask::RemoveProxy,
-            "status-running",
-            false,
-        );
-
-        // --- Navigateurs ---
-        ui.add_space(16.0);
-        ui.separator();
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("browsers-section-title").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-
-        self.ui_maintenance_row(
-            ui,
-            "browsers-policies-reset",
-            "browsers-policies-reset-desc",
-            MaintenanceTask::ResetBrowserPolicies,
-            "status-running",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "browsers-file-assoc",
-            "browsers-file-assoc-desc",
-            MaintenanceTask::RestoreFileAssociations,
-            "status-running",
-            false,
-        );
-
-        // --- Réparation Windows ---
-        ui.add_space(16.0);
-        ui.separator();
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("windows-repair-title").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-
-        self.ui_maintenance_row(
-            ui,
-            "windows-repair-firewall",
-            "windows-repair-firewall-desc",
-            MaintenanceTask::ResetFirewall,
-            "status-running",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "windows-repair-sfc",
-            "windows-repair-sfc-desc",
-            MaintenanceTask::RunSfc,
-            "status-sfc",
-            false,
-        );
-        ui.add_space(6.0);
-        self.ui_maintenance_row(
-            ui,
-            "windows-repair-dism",
-            "windows-repair-dism-desc",
-            MaintenanceTask::RunDism,
-            "status-dism",
-            true, // amber description (warning about duration)
-        );
-
-        // --- Rapport diagnostic ---
-        ui.add_space(16.0);
-        ui.separator();
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("diag-section-title").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
-        );
-        ui.add_space(8.0);
-        self.ui_maintenance_row(
-            ui,
-            "diag-button",
-            "diag-button-desc",
-            MaintenanceTask::GenerateDiagnosticReport,
-            "diag-status-running",
-            false,
-        );
-        ui.add_space(8.0);
-        }); // ScrollArea
-    }
-
-    /// Renders one maintenance action row: title + description on the left,
-    /// "Exécuter" button on the right. `amber_desc` tints the description in
-    /// [`theme::AMBER`] for actions that warrant extra attention (DISM).
-    fn ui_maintenance_row(
-        &mut self,
-        ui: &mut egui::Ui,
-        title_key: &str,
-        desc_key: &str,
-        task: MaintenanceTask,
-        status_key: &str,
-        amber_desc: bool,
-    ) {
-        let title = self.t(title_key);
-        let desc = self.t(desc_key);
-        let run_label = self.t("run");
-        let status = self.t(status_key);
-        let desc_color = if amber_desc { theme::AMBER } else { theme::TEXT_3 };
-
-        ui.horizontal(|ui| {
-            ui.vertical(|ui| {
-                ui.set_max_width(ui.available_width() - 110.0);
-                ui.label(
-                    egui::RichText::new(title)
-                        .size(12.0)
-                        .strong()
-                        .color(theme::TEXT_1),
-                );
-                ui.add(
-                    egui::Label::new(
-                        egui::RichText::new(desc).size(11.0).color(desc_color),
-                    )
-                    .wrap(),
-                );
-            });
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                let btn = egui::Button::new(
-                    egui::RichText::new(run_label).color(Color32::WHITE),
-                )
-                .fill(theme::BLUE)
-                .min_size(Vec2::new(90.0, 28.0));
-                if ui.add_enabled(!self.busy, btn).clicked() {
-                    self.busy = true;
-                    self.status = status;
-                    let _ = self
-                        .request_tx
-                        .send(WorkerRequest::RunMaintenanceTask(task));
-                }
-            });
-        });
-    }
-
-    /// The "are you sure?" gate in front of a registry restore — this is
-    /// the one action in the whole app that overwrites live system state
-    /// wholesale and can't be undone, so it gets an explicit confirmation
-    /// on top of the button click, unlike every other action here.
-    fn restore_confirm_dialog(&mut self, ctx: &egui::Context) {
-        let Some(backup) = self.confirm_restore.clone() else {
-            return;
+        self.run_button_rect = RectF {
+            X: content_x,
+            Y: seg_y + SEGMENT_HEIGHT + 20.0,
+            Width: RUN_BUTTON_SIZE.0,
+            Height: RUN_BUTTON_SIZE.1,
         };
+        self.draw_run_button(g);
 
-        let title = self.t("restore-registry-confirm-title");
-        let body = self.tf(
-            "restore-registry-confirm-body",
-            &[("date", &format_backup_timestamp(&backup.timestamp))],
-        );
-        let confirm_label = self.t("restore-registry-confirm-button");
-        let cancel_label = self.t("restore-registry-cancel-button");
-        let restoring_status = self.t("status-restoring");
+        self.draw_sidebar(g, width, top);
+    }
 
-        egui::Window::new("restore_confirm_dialog")
-            .title_bar(false)
-            .collapsible(false)
-            .resizable(false)
-            .anchor(egui::Align2::CENTER_CENTER, Vec2::ZERO)
-            .frame(
-                Frame::none()
-                    .fill(theme::BG_ELEVATED)
-                    .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-                    .rounding(theme::RADIUS)
-                    .inner_margin(Margin::same(20.0)),
+    #[allow(clippy::too_many_arguments)]
+    fn draw_action_card(
+        &self,
+        g: &Graphics,
+        rect: RectF,
+        index: usize,
+        checked: bool,
+        icon: &Icon,
+        badge_bg: Color,
+        icon_color: Color,
+        title: &str,
+        desc: &str,
+    ) {
+        let hovered = self.hover == Some(UiButton::ActionCard(index));
+        let panel_bg = if hovered { theme::BG_HOVER } else { theme::BG_PANEL };
+        let panel = SolidBrush::new(panel_bg.to_argb()).unwrap();
+        g.fill_rounded_rect(rect, 10.0, &panel).unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_rounded_rect(rect, 10.0, &border).unwrap();
+
+        const PAD: f32 = 12.0;
+        let cb_rect = RectF { X: rect.X + PAD, Y: rect.Y + PAD, Width: 18.0, Height: 18.0 };
+        if checked {
+            let fill = SolidBrush::new(theme::GREEN.to_argb()).unwrap();
+            g.fill_rounded_rect(cb_rect, 5.0, &fill).unwrap();
+            let check_rect = RectF { X: cb_rect.X + 2.0, Y: cb_rect.Y + 2.0, Width: 14.0, Height: 14.0 };
+            app_icons::CHECK.draw(g, check_rect, Color::rgb(0x10, 0x2a, 0x1c), 2.4).ok();
+        } else {
+            let empty_border = Pen::new(theme::BORDER.to_argb(), 1.5).unwrap();
+            g.draw_rounded_rect(cb_rect, 5.0, &empty_border).ok();
+        }
+
+        let badge_rect = RectF { X: cb_rect.X + 18.0 + 8.0, Y: rect.Y + PAD - 4.0, Width: 26.0, Height: 26.0 };
+        let badge_fill = SolidBrush::new(badge_bg.to_argb()).unwrap();
+        g.fill_rounded_rect(badge_rect, 7.0, &badge_fill).unwrap();
+        let icon_rect = RectF { X: badge_rect.X + 6.0, Y: badge_rect.Y + 6.0, Width: 14.0, Height: 14.0 };
+        icon.draw(g, icon_rect, icon_color, 1.8).ok();
+
+        let text_x = badge_rect.X + 26.0 + 10.0;
+        let text_w = (rect.X + rect.Width - text_x - PAD).max(20.0);
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let title_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            title,
+            &self.fonts.proportional(12.5),
+            RectF { X: text_x, Y: rect.Y + PAD - 4.0, Width: text_w, Height: 32.0 },
+            &near,
+            &title_brush,
+        )
+        .unwrap();
+        let desc_brush = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            desc,
+            &self.fonts.proportional(10.5),
+            RectF { X: text_x, Y: rect.Y + PAD - 4.0 + 30.0, Width: text_w, Height: 30.0 },
+            &near,
+            &desc_brush,
+        )
+        .unwrap();
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn draw_quarantine_segment(
+        &self,
+        g: &Graphics,
+        rect: RectF,
+        choice: QuarantineChoice,
+        icon: &Icon,
+        icon_color: Color,
+        title: &str,
+        desc: &str,
+    ) {
+        let selected = self.quarantine_choice == choice;
+        let (bg, border_color, text_color) = if selected {
+            (theme::BLUE_BG, theme::BLUE, theme::TEXT_1)
+        } else {
+            (theme::BG_PANEL, theme::BORDER_SOFT, theme::TEXT_2)
+        };
+        let fill = SolidBrush::new(bg.to_argb()).unwrap();
+        g.fill_rounded_rect(rect, 9.0, &fill).unwrap();
+        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(rect, 9.0, &pen).unwrap();
+
+        let icon_rect = RectF { X: rect.X + 11.0, Y: rect.Y + 10.0, Width: 14.0, Height: 14.0 };
+        let icon_draw_color = if selected { theme::BLUE } else { icon_color };
+        icon.draw(g, icon_rect, icon_draw_color, 1.8).ok();
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let title_brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        g.draw_string(
+            title,
+            &self.fonts.proportional(12.5),
+            RectF { X: rect.X + 29.0, Y: rect.Y + 9.0, Width: rect.Width - 40.0, Height: 18.0 },
+            &near,
+            &title_brush,
+        )
+        .unwrap();
+        let desc_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        g.draw_string(
+            desc,
+            &self.fonts.proportional(10.5),
+            RectF { X: rect.X + 11.0, Y: rect.Y + 29.0, Width: rect.Width - 22.0, Height: 16.0 },
+            &near,
+            &desc_brush,
+        )
+        .unwrap();
+    }
+
+    fn draw_run_button(&self, g: &Graphics) {
+        let enabled = self.can_run();
+        let fill = SolidBrush::new(if enabled { theme::GREEN } else { theme::BG_PANEL }.to_argb()).unwrap();
+        g.fill_rounded_rect(self.run_button_rect, theme::RADIUS, &fill).unwrap();
+        if !enabled {
+            let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+            g.draw_rounded_rect(self.run_button_rect, theme::RADIUS, &border).ok();
+        }
+        let text_color = if enabled { Color::rgb(0x10, 0x2a, 0x1c) } else { theme::TEXT_3 };
+        let text_brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(&self.t("run"), &self.fonts.proportional(13.5), self.run_button_rect, &center, &text_brush)
+            .unwrap();
+
+        if !enabled {
+            let hint_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+            let near = StringFormat::new().unwrap();
+            near.set_align(StringAlignmentNear).unwrap();
+            g.draw_string(
+                &self.t("no-option-selected"),
+                &self.fonts.proportional(10.5),
+                RectF {
+                    X: self.run_button_rect.X,
+                    Y: self.run_button_rect.Y + self.run_button_rect.Height + 6.0,
+                    Width: 300.0,
+                    Height: 16.0,
+                },
+                &near,
+                &hint_brush,
             )
-            .show(ctx, |ui| {
-                ui.set_width(360.0);
-                ui.label(
-                    egui::RichText::new(title)
-                        .size(15.0)
-                        .strong()
-                        .color(theme::TEXT_1),
-                );
-                ui.add_space(8.0);
-                ui.add(
-                    egui::Label::new(egui::RichText::new(body).size(12.0).color(theme::TEXT_2))
-                        .wrap(),
-                );
-                ui.add_space(16.0);
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    let confirm_button = egui::Button::new(
-                        egui::RichText::new(confirm_label)
-                            .strong()
-                            .color(Color32::WHITE),
-                    )
-                    .fill(theme::RED)
-                    .min_size(Vec2::new(120.0, 32.0));
-                    if ui.add(confirm_button).clicked() {
-                        self.confirm_restore = None;
-                        self.busy = true;
-                        self.status = restoring_status;
-                        let _ = self
-                            .request_tx
-                            .send(WorkerRequest::RestoreRegistryBackup(backup.clone()));
-                    }
-                    ui.add_space(8.0);
-                    let cancel_button =
-                        egui::Button::new(egui::RichText::new(cancel_label).color(theme::TEXT_2))
-                            .fill(theme::BG_PANEL)
-                            .stroke(Stroke::new(1.0_f32, theme::BORDER_SOFT))
-                            .min_size(Vec2::new(90.0, 32.0));
-                    if ui.add(cancel_button).clicked() {
-                        self.confirm_restore = None;
-                    }
-                });
-            });
+            .ok();
+        }
     }
 
-    fn ui_donate(&mut self, ui: &mut egui::Ui) {
-        ui.add_space(4.0);
-        ui.label(
-            egui::RichText::new(self.t("tab-donate").to_uppercase())
-                .size(11.0)
-                .strong()
-                .color(theme::TEXT_3),
+    /// Mockup parity (`docs/design/Main.dc.html`'s right column) — new
+    /// functionality, not a port: the original app persisted nothing
+    /// between runs.
+    fn draw_sidebar(&self, g: &Graphics, width: f32, top: f32) {
+        let x = width - CONTENT_PAD_X - SIDEBAR_WIDTH;
+        let y = top + CONTENT_PAD_TOP;
+        let panel = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+
+        const BRAND_H: f32 = 130.0;
+        let brand_rect = RectF { X: x, Y: y, Width: SIDEBAR_WIDTH, Height: BRAND_H };
+        g.fill_rounded_rect(brand_rect, 12.0, &panel).unwrap();
+        g.draw_rounded_rect(brand_rect, 12.0, &border).unwrap();
+        const BADGE_SIZE: f32 = 56.0;
+        let badge_rect =
+            RectF { X: x + (SIDEBAR_WIDTH - BADGE_SIZE) / 2.0, Y: y + 18.0, Width: BADGE_SIZE, Height: BADGE_SIZE };
+        let badge_bg = SolidBrush::new(theme::BLUE_BG.to_argb()).unwrap();
+        g.fill_rounded_rect(badge_rect, 999.0, &badge_bg).unwrap();
+        let icon_rect = RectF { X: badge_rect.X + 14.0, Y: badge_rect.Y + 14.0, Width: 28.0, Height: 28.0 };
+        app_icons::SHIELD.draw(g, icon_rect, theme::BLUE, 1.7).ok();
+        let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            "KpRm",
+            &self.fonts.proportional(13.5),
+            RectF { X: x, Y: y + 82.0, Width: SIDEBAR_WIDTH, Height: 18.0 },
+            &center,
+            &text_1,
+        )
+        .unwrap();
+        let text_2 = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("sidebar-tagline"),
+            &self.fonts.proportional(11.0),
+            RectF { X: x + 10.0, Y: y + 100.0, Width: SIDEBAR_WIDTH - 20.0, Height: 28.0 },
+            &center,
+            &text_2,
+        )
+        .unwrap();
+
+        const STATS_H: f32 = 110.0;
+        let stats_y = y + BRAND_H + 14.0;
+        let stats_rect = RectF { X: x, Y: stats_y, Width: SIDEBAR_WIDTH, Height: STATS_H };
+        g.fill_rounded_rect(stats_rect, 12.0, &panel).unwrap();
+        g.draw_rounded_rect(stats_rect, 12.0, &border).unwrap();
+        let label_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        let value_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("sidebar-catalog-label"),
+            &self.fonts.proportional(10.0),
+            RectF { X: x + 14.0, Y: stats_y + 12.0, Width: SIDEBAR_WIDTH - 28.0, Height: 14.0 },
+            &near,
+            &label_brush,
+        )
+        .unwrap();
+        g.draw_string(
+            &self.tf("sidebar-catalog-value", &[("count", &self.catalog_tool_count.to_string())]),
+            &self.fonts.monospace(13.0),
+            RectF { X: x + 14.0, Y: stats_y + 28.0, Width: SIDEBAR_WIDTH - 28.0, Height: 18.0 },
+            &near,
+            &value_brush,
+        )
+        .unwrap();
+        g.draw_line(x + 14.0, stats_y + 54.0, x + SIDEBAR_WIDTH - 14.0, stats_y + 54.0, &border).ok();
+        g.draw_string(
+            &self.t("sidebar-last-run-label"),
+            &self.fonts.proportional(10.0),
+            RectF { X: x + 14.0, Y: stats_y + 62.0, Width: SIDEBAR_WIDTH - 28.0, Height: 14.0 },
+            &near,
+            &label_brush,
+        )
+        .unwrap();
+        let text_2b = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            self.last_run.as_deref().unwrap_or("\u{2014}"),
+            &self.fonts.monospace(11.0),
+            RectF { X: x + 14.0, Y: stats_y + 78.0, Width: SIDEBAR_WIDTH - 28.0, Height: 18.0 },
+            &near,
+            &text_2b,
+        )
+        .unwrap();
+    }
+
+    /// The "Personnalisé" tab: a scrollable list of everything the last
+    /// scan found, each independently checkable, plus select-all/none/
+    /// clear shortcuts and the scan/remove actions. The list is this
+    /// tab's — and the whole rewrite's — first scrollable region; see
+    /// `kprm_win32gui::scroll` for how clipping/translation/the thumb
+    /// work.
+    fn draw_ui_custom(&mut self, g: &Graphics, width: f32, height: f32) {
+        let top = TITLE_BAR_HEIGHT + TAB_BAR_HEIGHT;
+        let bottom = height - FOOTER_HEIGHT;
+        let content_x = CONTENT_PAD_X;
+        let content_w = width - CONTENT_PAD_X * 2.0;
+        let y = top + CONTENT_PAD_TOP;
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+
+        let found = self.scan_results.len();
+        let selected_count = self.scan_results.iter().filter(|(_, checked)| *checked).count();
+        let counts = self.tf(
+            "custom-counts",
+            &[("found", &found.to_string()), ("selected", &selected_count.to_string())],
         );
-        ui.add_space(10.0);
-        ui.label(
-            egui::RichText::new(self.t("donate-body"))
-                .size(12.0)
-                .color(theme::TEXT_2),
-        );
-        ui.add_space(8.0);
-        let copy_label = self.t("copy-button");
-        donation_address_row(ui, "Bitcoin (BTC)", BTC_ADDRESS, &copy_label);
-        ui.add_space(10.0);
-        donation_address_row(ui, "Ethereum (ETH)", ETH_ADDRESS, &copy_label);
-        ui.add_space(10.0);
-        donation_address_row(ui, "Litecoin (LTC)", LTC_ADDRESS, &copy_label);
-        ui.add_space(10.0);
-        donation_address_row(ui, "Monero (XMR)", XMR_ADDRESS, &copy_label);
+        let text_1 = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            &counts,
+            &self.fonts.proportional(13.0),
+            RectF { X: content_x, Y: y + TOOLBAR_HEIGHT / 2.0 - 9.0, Width: 320.0, Height: 18.0 },
+            &near,
+            &text_1,
+        )
+        .unwrap();
+
+        let toolbar_specs = [
+            (UiButton::SelectAll, self.t("all")),
+            (UiButton::SelectNone, self.t("no-element")),
+            (UiButton::Clear, self.t("empty")),
+        ];
+        let font_toolbar = self.fonts.proportional(11.5);
+        let mut bx = content_x + content_w;
+        let mut computed: Vec<(UiButton, String, RectF)> = Vec::new();
+        for (btn, label) in toolbar_specs.iter().rev() {
+            let w = g.measure_line_width(label, &font_toolbar).unwrap_or(30.0) + 24.0;
+            bx -= w;
+            computed.push((*btn, label.clone(), RectF { X: bx, Y: y, Width: w, Height: TOOLBAR_HEIGHT }));
+            bx -= 8.0;
+        }
+        computed.reverse();
+        self.toolbar_button_rects = computed.iter().map(|(btn, _, rect)| (*btn, *rect)).collect();
+        for (btn, label, rect) in &computed {
+            self.draw_toolbar_button(g, *rect, *btn, label);
+        }
+
+        let list_y = y + TOOLBAR_HEIGHT + LIST_GAP;
+        let list_bottom = bottom - CONTENT_PAD_TOP - BUTTONS_ROW_HEIGHT - LIST_GAP;
+        let panel_rect = RectF { X: content_x, Y: list_y, Width: content_w, Height: (list_bottom - list_y).max(40.0) };
+        let panel_fill = SolidBrush::new(theme::BG_PANEL.to_argb()).unwrap();
+        g.fill_rounded_rect(panel_rect, 12.0, &panel_fill).unwrap();
+        let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_rounded_rect(panel_rect, 12.0, &border).unwrap();
+
+        let viewport = RectF {
+            X: panel_rect.X + 6.0,
+            Y: panel_rect.Y + 6.0,
+            Width: panel_rect.Width - 12.0,
+            Height: panel_rect.Height - 12.0,
+        };
+        let content_height = (self.scan_results.len() as f32 * RESULT_ROW_HEIGHT).max(1.0);
+
+        // `self.scroll` is copied out for the duration of the closure so
+        // the closure can freely read `self` (fonts, scan_results, hover
+        // state, ...) without conflicting with `ScrollState::show`'s
+        // `&mut` receiver — see `kprm_win32gui::scroll::ScrollState`.
+        let mut scroll = self.scroll;
+        scroll.show(g, viewport, |g| {
+            if self.scan_results.is_empty() {
+                let hint_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+                g.draw_string(
+                    &self.t("custom-empty-hint"),
+                    &self.fonts.proportional(12.0),
+                    RectF { X: viewport.X, Y: viewport.Y + viewport.Height / 2.0 - 10.0, Width: viewport.Width, Height: 20.0 },
+                    &center,
+                    &hint_brush,
+                )
+                .ok();
+            }
+            for (i, (event, checked)) in self.scan_results.iter().enumerate() {
+                let row_rect = RectF {
+                    X: viewport.X,
+                    Y: viewport.Y + i as f32 * RESULT_ROW_HEIGHT,
+                    Width: viewport.Width,
+                    Height: RESULT_ROW_HEIGHT,
+                };
+                self.draw_result_row(g, row_rect, i, event, *checked);
+            }
+        });
+        scroll.finish(g, content_height);
+        self.scroll = scroll;
+
+        let buttons_y = list_bottom + LIST_GAP;
+        let search_label = self.t("search");
+        let search_w = g.measure_line_width(&search_label, &self.fonts.proportional(12.5)).unwrap_or(60.0) + 32.0;
+        self.search_button_rect = RectF { X: content_x, Y: buttons_y, Width: search_w, Height: BUTTONS_ROW_HEIGHT };
+        self.draw_search_button(g, &search_label);
+
+        let remove_label = self.tf("remove-selection-button", &[("count", &selected_count.to_string())]);
+        let remove_w = g.measure_line_width(&remove_label, &self.fonts.proportional(12.5)).unwrap_or(100.0) + 32.0;
+        self.remove_selected_button_rect = RectF {
+            X: content_x + search_w + 10.0,
+            Y: buttons_y,
+            Width: remove_w,
+            Height: BUTTONS_ROW_HEIGHT,
+        };
+        self.draw_remove_selected_button(g, &remove_label);
+    }
+
+    fn draw_toolbar_button(&self, g: &Graphics, rect: RectF, btn: UiButton, label: &str) {
+        let hovered = self.hover == Some(btn);
+        if hovered {
+            let fill = SolidBrush::new(theme::BG_HOVER.to_argb()).unwrap();
+            g.fill_rounded_rect(rect, 7.0, &fill).unwrap();
+        }
+        let border_color = if hovered { theme::BORDER } else { theme::BORDER_SOFT };
+        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(rect, 7.0, &pen).unwrap();
+        let text_color = if hovered { theme::TEXT_1 } else { theme::TEXT_2 };
+        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(label, &self.fonts.proportional(11.5), rect, &center, &brush).unwrap();
+    }
+
+    fn draw_result_row(&self, g: &Graphics, rect: RectF, index: usize, event: &Event, checked: bool) {
+        let hovered = self.hover == Some(UiButton::ResultRow(index));
+        if hovered {
+            let fill = SolidBrush::new(theme::BG_HOVER.to_argb()).unwrap();
+            g.fill_rounded_rect(rect, 8.0, &fill).ok();
+        }
+
+        let cb_rect = RectF { X: rect.X + 10.0, Y: rect.Y + rect.Height / 2.0 - 9.0, Width: 18.0, Height: 18.0 };
+        if checked {
+            let fill = SolidBrush::new(theme::GREEN.to_argb()).unwrap();
+            g.fill_rounded_rect(cb_rect, 5.0, &fill).unwrap();
+            let check_rect = RectF { X: cb_rect.X + 2.0, Y: cb_rect.Y + 2.0, Width: 14.0, Height: 14.0 };
+            app_icons::CHECK.draw(g, check_rect, Color::rgb(0x10, 0x2a, 0x1c), 2.4).ok();
+        } else {
+            let empty_border = Pen::new(theme::BORDER.to_argb(), 1.5).unwrap();
+            g.draw_rounded_rect(cb_rect, 5.0, &empty_border).ok();
+        }
+
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+
+        let tag_font = self.fonts.proportional(10.0);
+        let tag = format!("{} \u{b7} {}", event.tool, event.action_type);
+        let tag_w = g.measure_line_width(&tag, &tag_font).unwrap_or(60.0) + 16.0;
+        let tag_rect = RectF { X: rect.X + rect.Width - tag_w - 10.0, Y: rect.Y + rect.Height / 2.0 - 9.0, Width: tag_w, Height: 18.0 };
+        let tag_bg = SolidBrush::new(theme::BG_ELEVATED.to_argb()).unwrap();
+        g.fill_rounded_rect(tag_rect, 999.0, &tag_bg).ok();
+        let tag_border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+        g.draw_rounded_rect(tag_rect, 999.0, &tag_border).ok();
+        let tag_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+        g.draw_string(&tag, &tag_font, tag_rect, &center, &tag_brush).ok();
+
+        let path_x = cb_rect.X + 18.0 + 10.0;
+        let path_w = (tag_rect.X - path_x - 10.0).max(20.0);
+        let path_brush = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            &event.target,
+            &self.fonts.monospace(12.0),
+            RectF { X: path_x, Y: rect.Y + rect.Height / 2.0 - 8.0, Width: path_w, Height: 16.0 },
+            &near,
+            &path_brush,
+        )
+        .ok();
+    }
+
+    fn draw_search_button(&self, g: &Graphics, label: &str) {
+        let enabled = !self.busy;
+        let border_color = if enabled { theme::BORDER } else { theme::BORDER_SOFT };
+        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(self.search_button_rect, theme::RADIUS, &pen).unwrap();
+        let text_color = if enabled { theme::TEXT_2 } else { theme::TEXT_3 };
+        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(label, &self.fonts.proportional(12.5), self.search_button_rect, &center, &brush).unwrap();
+    }
+
+    fn draw_remove_selected_button(&self, g: &Graphics, label: &str) {
+        let enabled = self.can_remove_selected();
+        let fill_color = if enabled { theme::RED } else { theme::BG_PANEL };
+        let fill = SolidBrush::new(fill_color.to_argb()).unwrap();
+        g.fill_rounded_rect(self.remove_selected_button_rect, theme::RADIUS, &fill).unwrap();
+        if !enabled {
+            let border = Pen::new(theme::BORDER_SOFT.to_argb(), 1.0).unwrap();
+            g.draw_rounded_rect(self.remove_selected_button_rect, theme::RADIUS, &border).ok();
+        }
+        let text_color = if enabled { Color::rgb(0xff, 0xff, 0xff) } else { theme::TEXT_3 };
+        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let center = StringFormat::new().unwrap();
+        center.set_align(StringAlignmentCenter).unwrap();
+        g.draw_string(label, &self.fonts.proportional(12.5), self.remove_selected_button_rect, &center, &brush)
+            .unwrap();
     }
 }
 
-/// Turns a `current_timestamp()`-style value (`YYYYMMDDHHMMSS`) into a
-/// readable `YYYY-MM-DD HH:MM:SS` string for display — kept in this
-/// unpunctuated, locale-agnostic form rather than routed through
-/// `kprm-i18n`, since a plain sortable date needs no translation. Falls
-/// back to the raw value if it isn't exactly 14 digits (should never
-/// happen — backup folder names are always written by
-/// `kprm_windows::current_timestamp()`).
-fn format_backup_timestamp(timestamp: &str) -> String {
-    if timestamp.len() != 14 || !timestamp.bytes().all(|b| b.is_ascii_digit()) {
-        return timestamp.to_string();
-    }
-    format!(
-        "{}-{}-{} {}:{}:{}",
-        &timestamp[0..4],
-        &timestamp[4..6],
-        &timestamp[6..8],
-        &timestamp[8..10],
-        &timestamp[10..12],
-        &timestamp[12..14],
-    )
+fn rect_contains(r: RectF, x: f32, y: f32) -> bool {
+    x >= r.X && x <= r.X + r.Width && y >= r.Y && y <= r.Y + r.Height
 }
 
-/// One "label + monospace address + copy button" row in the Donate tab.
-fn donation_address_row(ui: &mut egui::Ui, label: &str, address: &'static str, copy_label: &str) {
-    ui.label(
-        egui::RichText::new(label)
-            .size(11.0)
-            .strong()
-            .color(theme::TEXT_3),
-    );
-    ui.add_space(4.0);
-    ui.horizontal(|ui| {
-        ui.monospace(egui::RichText::new(address).color(theme::TEXT_1));
-        if ui.small_button(copy_label).clicked() {
-            if let Ok(mut clipboard) = arboard::Clipboard::new() {
-                let _ = clipboard.set_text(address);
+impl AppWindow for KprmApp {
+    fn paint(&mut self, g: &Graphics, width: f32, height: f32) {
+        self.poll_worker();
+
+        let bg = SolidBrush::new(theme::BG.to_argb()).unwrap();
+        g.fill_rect(RectF { X: 0.0, Y: 0.0, Width: width, Height: height }, &bg)
+            .unwrap();
+
+        self.draw_title_bar(g, width);
+        if !self.disclaimer_accepted {
+            self.draw_disclaimer(g, width, height);
+        } else {
+            self.draw_tab_bar(g, width);
+            self.draw_footer(g, width, height);
+            match self.tab {
+                Tab::Automatic => self.draw_ui_automatic(g, width, height),
+                Tab::Custom => self.draw_ui_custom(g, width, height),
+                _ => self.draw_tab_body_placeholder(g, width, height),
             }
         }
-    });
-}
+    }
 
-const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
-const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
-const LTC_ADDRESS: &str = "Lh3p9yoDzJrYKHDm3TaW55B49q2uMVZaj5";
-const XMR_ADDRESS: &str = "BUsMZ3KoHcPvUAKCuFL8dsgUQAuWBJbaRxda6sQ8ND53";
+    fn hit_zone(&self, x: f32, y: f32, width: f32, height: f32) -> HitZone {
+        if y < TITLE_BAR_HEIGHT && self.button_at(width, height, x, y).is_none() {
+            HitZone::Caption
+        } else {
+            HitZone::Client
+        }
+    }
 
-impl eframe::App for KprmApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Load the bug logo texture once on first frame.
-        // The raw ICO-derived PNG has opaque black shapes on a transparent
-        // background — force every non-transparent pixel to white so the
-        // silhouette is visible on the dark title bar.
-        if self.logo_texture.is_none() {
-            if let Ok(icon) = eframe::icon_data::from_png_bytes(
-                include_bytes!("../assets/bug.png"),
-            ) {
-                let mut rgba = icon.rgba;
-                for chunk in rgba.chunks_mut(4) {
-                    if chunk[3] > 0 {
-                        chunk[0] = 255;
-                        chunk[1] = 255;
-                        chunk[2] = 255;
+    fn on_mouse_move(&mut self, x: f32, y: f32, width: f32, height: f32) -> bool {
+        let new_hover = self.button_at(width, height, x, y);
+        if new_hover != self.hover {
+            self.hover = new_hover;
+            true
+        } else {
+            false
+        }
+    }
+
+    fn on_mouse_down(&mut self, _x: f32, _y: f32, _width: f32, _height: f32) -> bool {
+        self.pressed = self.hover;
+        false
+    }
+
+    fn on_mouse_up(&mut self, _x: f32, _y: f32, _width: f32, _height: f32) -> bool {
+        if self.pressed.is_some() && self.pressed == self.hover {
+            match self.pressed {
+                Some(UiButton::Close) => self.close_requested = true,
+                Some(UiButton::Minimize) => self.minimize_requested = true,
+                Some(UiButton::DisclaimerAccept) => self.disclaimer_accepted = true,
+                Some(UiButton::DisclaimerDecline) => self.close_requested = true,
+                Some(UiButton::Tab(tab)) => self.tab = tab,
+                Some(UiButton::ActionCard(i)) => match i {
+                    0 => self.opt_remove_tools = !self.opt_remove_tools,
+                    1 => self.opt_backup_registry = !self.opt_backup_registry,
+                    2 => self.opt_remove_restore_points = !self.opt_remove_restore_points,
+                    3 => self.opt_create_restore_point = !self.opt_create_restore_point,
+                    4 => self.opt_restore_uac = !self.opt_restore_uac,
+                    5 => self.opt_restore_settings = !self.opt_restore_settings,
+                    _ => {}
+                },
+                Some(UiButton::QuarantineSeg(choice)) => {
+                    self.quarantine_choice = choice;
+                    if choice != QuarantineChoice::Keep {
+                        self.opt_remove_tools = true;
                     }
                 }
-                let img = egui::ColorImage::from_rgba_unmultiplied(
-                    [icon.width as usize, icon.height as usize],
-                    &rgba,
-                );
-                self.logo_texture =
-                    Some(ctx.load_texture("kprm-logo", img, egui::TextureOptions::LINEAR));
+                Some(UiButton::RunButton) => {
+                    self.busy = true;
+                    self.status = self.t("status-running");
+                    let _ = self.request_tx.send(WorkerRequest::RunAutomatic {
+                        backup_registry: self.opt_backup_registry,
+                        remove_tools: self.opt_remove_tools,
+                        restore_uac: self.opt_restore_uac,
+                        restore_settings: self.opt_restore_settings,
+                        remove_restore_points: self.opt_remove_restore_points,
+                        create_restore_point: self.opt_create_restore_point,
+                        quarantine_mode: self.quarantine_choice.into(),
+                    });
+                }
+                Some(UiButton::SelectAll) => {
+                    for (_, checked) in &mut self.scan_results {
+                        *checked = true;
+                    }
+                }
+                Some(UiButton::SelectNone) => {
+                    for (_, checked) in &mut self.scan_results {
+                        *checked = false;
+                    }
+                }
+                Some(UiButton::Clear) => self.scan_results.clear(),
+                Some(UiButton::ResultRow(i)) => {
+                    if let Some((_, checked)) = self.scan_results.get_mut(i) {
+                        *checked = !*checked;
+                    }
+                }
+                Some(UiButton::SearchButton) => {
+                    self.busy = true;
+                    self.status = self.t("status-scanning");
+                    let _ = self.request_tx.send(WorkerRequest::Scan);
+                }
+                Some(UiButton::RemoveSelectedButton) => {
+                    let selected: Vec<(String, String)> = self
+                        .scan_results
+                        .iter()
+                        .filter(|(_, checked)| *checked)
+                        .map(|(e, _)| (e.tool.clone(), e.target.clone()))
+                        .collect();
+                    if !selected.is_empty() {
+                        self.busy = true;
+                        self.status = self.t("status-removing");
+                        let _ = self.request_tx.send(WorkerRequest::RemoveSelected(selected));
+                    }
+                }
+                None => {}
             }
         }
+        self.pressed = None;
+        true
+    }
 
-        self.poll_worker();
-        if self.busy {
-            ctx.request_repaint();
+    fn should_close(&mut self) -> bool {
+        std::mem::take(&mut self.close_requested)
+    }
+
+    fn should_minimize(&mut self) -> bool {
+        std::mem::take(&mut self.minimize_requested)
+    }
+
+    fn on_mouse_wheel(&mut self, x: f32, y: f32, notches: f32, _width: f32, _height: f32) -> bool {
+        if self.tab == Tab::Custom && self.scroll.contains(x, y) {
+            self.scroll.scroll_by_notches(notches, RESULT_ROW_HEIGHT);
+            true
+        } else {
+            false
         }
-
-        self.title_bar(ctx);
-
-        // Gates everything else — the original shows this "AS IS, no
-        // commercial use" disclaimer before any UI, exiting immediately on
-        // "No" (spec §2.1.5); this is the one screen it never localized
-        // even in the original (English-only regardless of @OSLang), so
-        // it's translated properly here instead.
-        if !self.disclaimer_accepted {
-            egui::CentralPanel::default()
-                .frame(
-                    Frame::none()
-                        .fill(theme::BG)
-                        .inner_margin(Margin::symmetric(30.0, 24.0)),
-                )
-                .show(ctx, |ui| self.ui_disclaimer(ui, ctx));
-            return;
-        }
-
-        self.tab_bar(ctx);
-        self.footer(ctx);
-
-        egui::CentralPanel::default()
-            .frame(
-                Frame::none()
-                    .fill(theme::BG)
-                    .inner_margin(Margin::symmetric(20.0, 4.0)),
-            )
-            .show(ctx, |ui| match self.tab {
-                Tab::Automatic => self.ui_automatic(ui),
-                Tab::Custom => self.ui_custom(ui),
-                Tab::ExtraTools => self.ui_extra_tools(ui),
-                Tab::Donate => self.ui_donate(ui),
-            });
-
-        self.restart_dialog(ctx);
-        self.restore_confirm_dialog(ctx);
     }
 }

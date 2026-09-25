@@ -106,3 +106,7 @@ eula-body = This software is provided "AS IS" without warranty of any kind. You 
 eula-accept = Yes
 eula-decline = No
 already-running = KpRm is already running!
+sidebar-tagline = Post-infection cleanup
+sidebar-catalog-label = CATALOG
+sidebar-catalog-value = { $count } tools
+sidebar-last-run-label = LAST RUN

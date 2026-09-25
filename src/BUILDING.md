@@ -7,8 +7,11 @@ why and how.
 
 ## Requirements
 
-- Rust stable, `x86_64-pc-windows-gnu` target (`rustup target add
-  x86_64-pc-windows-gnu`).
+- The `stable-x86_64-pc-windows-gnu` Rust toolchain (`rustup toolchain
+  install stable-x86_64-pc-windows-gnu`). `rust-toolchain.toml` pins
+  this automatically for anyone building inside this directory — see
+  [Known quirks](#known-quirks) for why that file matters, not just the
+  `x86_64-pc-windows-gnu` *target*.
 - A full MinGW-w64 distribution (e.g. [WinLibs](https://winlibs.com/),
   UCRT variant, ~270 MB), installed somewhere stable (this project
   assumes `C:\mingw64`) and added to `PATH`.
@@ -32,7 +35,8 @@ The release binary lands at `target/release/kprm.exe` (~4.9 MB) and is
 fully self-contained: `objdump -p` shows it only imports from system
 DLLs (`kernel32`, `user32`, `gdi32`, `opengl32`, the `api-ms-win-crt-*`
 forwarders, ...). No installer, no bundled runtime, no third-party DLL
-to ship alongside it.
+to ship alongside it — see the note about `rust-toolchain.toml` below
+if you ever see a different result.
 
 `cargo test --workspace` runs a large real-adapter test suite in
 `kprm-windows` — real temp files, a private
@@ -107,6 +111,29 @@ in `egui`/`winit` regardless.
 A few non-obvious things that cost real debugging time, kept here so
 they don't get rediscovered from scratch:
 
+- **`rustup target add x86_64-pc-windows-gnu` is not enough — the
+  active *toolchain* (not just the target) must be GNU-hosted.**
+  `.cargo/config.toml`'s `[target.x86_64-pc-windows-gnu]` linker
+  override only applies once a build actually targets GNU. Adding the
+  GNU *target* to an otherwise-default `stable-x86_64-pc-windows-msvc`
+  toolchain doesn't do that on its own: plain `cargo build --release`
+  (no `--target` flag, no `[build] target` in cargo config) always
+  builds for the active toolchain's own host, so on a machine whose
+  rustup default is MSVC-hosted, it silently produces an MSVC-linked
+  `kprm.exe` instead — dynamically linked against the real Visual C++
+  runtime (`VCRUNTIME140.dll`), which isn't part of Windows and is
+  missing on any machine without the Visual C++ Redistributable
+  installed ("il manque vcruntime140.dll"). Confirmed by comparing
+  `objdump -p` output (and the presence/absence of a linker "Rich"
+  header, which only MSVC's `link.exe` emits) between a plain
+  `cargo build --release` under a default MSVC-hosted toolchain versus
+  the same command under `stable-x86_64-pc-windows-gnu` — only the
+  latter is free of any `VCRUNTIME140.dll` import. `rust-toolchain.toml`
+  (pinning `channel = "stable-x86_64-pc-windows-gnu"`) fixes this for
+  good: it makes rustup select the right toolchain automatically for
+  anyone building inside this directory, regardless of their global
+  `rustup default`.
+
 - **Accented Windows usernames break the GNU linker.** If the Windows
   account name contains an accented character (`C:\Users\Prénom...`),
   install the Rust toolchain (`RUSTUP_HOME`/`CARGO_HOME`) **and**
@@ -114,6 +141,26 @@ they don't get rediscovered from scratch:
   `cargo install`, which builds under `%TEMP%`) silently fails to
   resolve accented paths (`ld: cannot find ...: No such file or
   directory` / `cannot find ...rlib` on files that demonstrably exist).
+  This bites in two separate stages, both needing the same fix: first
+  `ld` fails to find the toolchain's own sysroot `.rlib` files under
+  `%RUSTUP_HOME%\toolchains\...` (fixed by relocating `RUSTUP_HOME`);
+  once that's fixed, it then fails to find crates.io dependency import
+  libs referenced via `-L <accented CARGO_HOME>\registry\src\...`
+  (e.g. `cannot find -lwindows.0.52.0`, from `windows_x86_64_gnu`'s
+  bundled `.a` — a raw-dylib forwarder lib, not a typo) — fixed the same
+  way by also relocating `CARGO_HOME`. Concretely, this was fixed for
+  this machine's `MickaëlMathieu` account by setting persistent user env
+  vars `RUSTUP_HOME=C:\rustup` and `CARGO_HOME=C:\rustup\cargo`
+  (`[System.Environment]::SetEnvironmentVariable(..., 'User')`), then
+  reinstalling the toolchain there (`rustup toolchain install
+  stable-x86_64-pc-windows-gnu`) and copying the existing
+  `%USERPROFILE%\.cargo` registry cache over to avoid re-downloading it.
+  **If a fresh shell ever shows the old accented-path failure again**
+  (e.g. a reset sandbox/container that doesn't persist Windows user env
+  vars across sessions), redo the same two `SetEnvironmentVariable`
+  calls (or `setx`) and re-run `rustup toolchain install
+  stable-x86_64-pc-windows-gnu` under those vars — the rest of the setup
+  (MinGW at `C:\mingw64`, `.cargo/config.toml`) is unaffected.
 
 - **MinGW always links its own manifest, silently overriding a custom
   one.** `gcc`'s spec unconditionally links `default-manifest.o`
@@ -149,3 +196,38 @@ they don't get rediscovered from scratch:
   in a similar headless/non-interactive environment, don't trust it —
   verify with real printed coordinates instead, or check on an
   interactive Windows session.
+
+- **`eframe`'s `glow` (OpenGL) renderer requires OpenGL 2.0+, which
+  isn't a given on every machine this tool is meant to run on** — a VM
+  or remote session with only a generic/basic display adapter can be
+  stuck on OpenGL 1.1, and `run_gui`'s `eframe::run_native` then
+  returns `Err("egui_glow: OpenGL: egui_glow requires opengl 2.0+.")`.
+  Because `kprm` has no `#![windows_subsystem = "windows"]` (so headless
+  subcommands keep a visible console), a double-click on such a machine
+  briefly flashes a console with that message and closes — easy to miss
+  entirely, looking like the UAC prompt was accepted and then nothing
+  happened. To see the underlying error message yourself instead of a
+  vanishing console flash, run `kprm.exe` from an already-open elevated
+  terminal rather than double-clicking it.
+
+  Switching `eframe`'s renderer feature from `glow` to `wgpu` was tried,
+  on the theory that `wgpu`'s Direct3D 12 backend could fall back to
+  Windows' built-in software WARP adapter on a machine with no real GPU
+  driver. It doesn't work: confirmed by reading `wgpu-hal` 24.x's DX12
+  backend source directly, it enumerates adapters only via
+  `IDXGIFactory6::EnumAdapterByGpuPreference`/`EnumAdapters1` — it never
+  calls the separate `IDXGIFactory4::EnumWarpAdapter` that WARP actually
+  requires, so `wgpu` finds zero usable adapters on such a machine
+  (`WGPU error: Failed to create wgpu adapter, no suitable adapter
+  found`), same failure mode as `glow`. Manually creating the WARP
+  adapter ourselves (raw `D3D12CreateDevice` via the `windows` crate)
+  and bridging it into `wgpu` isn't possible either without forking
+  `wgpu-hal`: the constructor that would accept a raw adapter
+  (`dx12::Adapter::expose`) is `pub(super)`, not part of its public API.
+  Bundling a software OpenGL implementation (e.g. Mesa's `opengl32.dll`)
+  next to `kprm.exe` would also work, but was rejected to keep this a
+  single-file distributable. Net result: `eframe` stays on `glow`, and
+  OpenGL 2.0+ remains a real, undocumented-elsewhere requirement for the
+  GUI to start at all — worth knowing if this ever needs to run on a
+  deliberately minimal VM or a machine with a badly degraded display
+  driver.

@@ -1,9 +1,0 @@
-IDI_ICON1 ICON "icon.ico"
-
-// Resource ID 1 / type 24 (RT_MANIFEST) is what Windows looks for on an
-// .exe to decide its requested elevation — CREATEPROCESS_MANIFEST_RESOURCE_ID.
-// Most of what this app does (deleting files under Program Files, writing
-// HKLM, killing other users' processes, creating/removing System Restore
-// points) silently fails without it; the original AutoIt tool had the same
-// requirement via its own `#RequireAdmin` directive.
-1 24 "app.manifest"

@@ -6,7 +6,8 @@
 //! - `kprm.exe --quarantine-cleanup <file>`: the hidden headless target
 //!   the "Dans 7 jours" scheduled task reruns a week after being set up
 //!   (`kprm_windows::quarantine_agent`) — checked first, before either
-//!   clap or eframe get involved, since it isn't a documented subcommand.
+//!   clap or the GUI window get involved, since it isn't a documented
+//!   subcommand.
 //!
 //! Kept as one binary (rather than a separate CLI/GUI pair) so the
 //! "quarantine agent" copy always has *something* to rerun regardless of
@@ -17,12 +18,12 @@
 //! `../../README.md` for the trade-off that was chosen deliberately.
 
 mod app;
+mod app_icons;
 mod cli;
 mod theme;
 mod worker;
 
 use clap::Parser;
-use eframe::egui;
 
 fn main() -> std::process::ExitCode {
     if let Some(list_file) = quarantine_cleanup_arg() {
@@ -69,31 +70,17 @@ fn quarantine_cleanup_arg() -> Option<String> {
     args.get(pos + 1).cloned()
 }
 
-fn run_gui(translations: kprm_i18n::Translations) -> eframe::Result<()> {
-    // The PE resource icon (build.rs + assets/icon.rc) is what Explorer and
-    // the taskbar show before the window even exists; this sets the same
-    // icon for the window/title-bar/Alt+Tab once it's running, since a
-    // borderless viewport doesn't pick one up from OS decorations.
-    let icon = eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png"))
-        .expect("embedded icon.png must decode");
-
-    let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_inner_size([820.0, 680.0])
-            .with_min_inner_size([720.0, 480.0])
-            .with_decorations(false)
-            .with_transparent(false)
-            .with_icon(icon),
-        ..Default::default()
-    };
-
-    eframe::run_native(
-        "KpRm",
-        options,
-        Box::new(|cc| {
-            theme::install_fonts(&cc.egui_ctx);
-            theme::install_visuals(&cc.egui_ctx);
-            Ok(Box::new(app::KprmApp::new(translations)))
-        }),
+fn run_gui(translations: kprm_i18n::Translations) -> windows::core::Result<()> {
+    // The window/title-bar/Alt+Tab icon: the PE resource icon (build.rs +
+    // assets/icon.rc) is what Explorer and the taskbar show before the
+    // window even exists — TODO (later phase): set the same one on the
+    // HWND itself via WM_SETICON, matching the previous eframe behavior.
+    kprm_win32gui::window::run(
+        kprm_win32gui::window::WindowConfig {
+            title: "KpRm".to_string(),
+            size: (820, 680),
+            min_size: (720, 480),
+        },
+        move |hwnd| app::KprmApp::new(translations, hwnd),
     )
 }

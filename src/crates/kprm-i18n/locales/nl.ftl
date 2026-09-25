@@ -106,3 +106,7 @@ eula-body = Deze software wordt geleverd "ZOALS ZE IS" zonder enige vorm van gar
 eula-accept = Ja
 eula-decline = Nee
 already-running = KpRm is al actief!
+sidebar-tagline = Opschoning na infectie
+sidebar-catalog-label = CATALOGUS
+sidebar-catalog-value = { $count } tools
+sidebar-last-run-label = LAATSTE UITVOERING

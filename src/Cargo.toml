@@ -5,6 +5,7 @@ members = [
     "crates/kprm-engine",
     "crates/kprm-i18n",
     "crates/kprm-windows",
+    "crates/kprm-win32gui",
     "crates/kprm",
 ]
 

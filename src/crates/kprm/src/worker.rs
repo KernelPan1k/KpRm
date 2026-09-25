@@ -5,6 +5,9 @@
 
 use std::sync::mpsc::{Receiver, Sender};
 
+use windows::Win32::Foundation::{HWND, LPARAM, WPARAM};
+use windows::Win32::UI::WindowsAndMessaging::{PostMessageW, WM_APP};
+
 use kprm_catalog::Catalog;
 use kprm_engine::orchestrator::{self, RunOptions};
 use kprm_engine::paths::KnownDirs;
@@ -68,17 +71,44 @@ pub enum WorkerResponse {
     Failed(String),
 }
 
+/// The window message `kprm-win32gui`'s `WndProc` drains the worker's
+/// response channel and repaints on — replaces the previous `egui` GUI's
+/// per-rendered-frame `try_recv` polling with a real push notification.
+pub const WM_APP_WORKER: u32 = WM_APP + 1;
+
 /// Spawns the worker thread and returns the channel to send it requests on.
 /// Every [`WorkerResponse`] — zero or more [`WorkerResponse::Progress`]
 /// followed by exactly one [`WorkerResponse::Done`]/[`WorkerResponse::Failed`]
-/// — is sent on `response_tx`, which the caller polls from the UI thread.
-pub fn spawn(response_tx: Sender<WorkerResponse>) -> Sender<WorkerRequest> {
+/// — is sent on `response_tx`, which the caller drains from the UI thread
+/// on [`WM_APP_WORKER`].
+pub fn spawn(response_tx: Sender<WorkerResponse>, hwnd: HWND) -> Sender<WorkerRequest> {
     let (request_tx, request_rx): (Sender<WorkerRequest>, Receiver<WorkerRequest>) =
         std::sync::mpsc::channel();
+    // `handle` (and everything it calls) sends on this channel from dozens
+    // of call sites — rather than touching every one of them, a small
+    // forwarding thread is the single seam that both relays each response
+    // to `response_tx` and wakes the window, so `handle`'s own code stays
+    // exactly the plain `Sender<WorkerResponse>` it always was.
+    let (internal_tx, internal_rx): (Sender<WorkerResponse>, Receiver<WorkerResponse>) =
+        std::sync::mpsc::channel();
+
+    // `HWND` wraps a raw pointer and so isn't `Send`; only its numeric
+    // value needs to cross the thread boundary, to be handed straight back
+    // to `PostMessageW`.
+    let hwnd_addr = hwnd.0 as usize;
+    std::thread::spawn(move || {
+        for response in internal_rx {
+            let _ = response_tx.send(response);
+            let hwnd = HWND(hwnd_addr as *mut core::ffi::c_void);
+            unsafe {
+                let _ = PostMessageW(hwnd, WM_APP_WORKER, WPARAM(0), LPARAM(0));
+            }
+        }
+    });
 
     std::thread::spawn(move || {
         for request in request_rx {
-            handle(request, &response_tx);
+            handle(request, &internal_tx);
         }
     });
 
@@ -307,6 +337,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             // (spec §2.2/§2.3) — a delayed `del` via `cmd.exe`, or folded
             // into the restart-on-reboot cleanup if one is pending.
             kprm_windows::schedule_self_deletion(report.needs_restart());
+            kprm_engine::last_run::record(&mut registry, &kprm_windows::current_timestamp());
 
             let _ = response_tx.send(WorkerResponse::Done(report));
         }
@@ -320,6 +351,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             kprm_windows::schedule_self_deletion(report.needs_restart());
+            kprm_engine::last_run::record(&mut registry, &kprm_windows::current_timestamp());
             let _ = response_tx.send(WorkerResponse::Done(report));
         }
 
@@ -349,7 +381,6 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 MaintenanceTask::GenerateDiagnosticReport => {
                     let ts = kprm_windows::current_timestamp();
                     let diag = kprm_engine::diagnostics::collect(
-                        &mut registry,
                         &mut processes,
                         &mut commands,
                         &dirs,

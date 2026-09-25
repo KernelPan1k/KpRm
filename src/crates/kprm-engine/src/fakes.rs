@@ -116,6 +116,7 @@ pub struct FakeRegistry {
     keys: BTreeMap<String, BTreeMap<String, String>>,
     pub deleted_keys: Vec<String>,
     pub written_dwords: Vec<(String, String, u32)>,
+    pub written_strings: Vec<(String, String, String)>,
     pub saved_keys: Vec<(String, String)>,
     pub save_key_to_file_succeeds: bool,
 }
@@ -172,6 +173,16 @@ impl Registry for FakeRegistry {
     fn write_dword(&mut self, key: &str, value_name: &str, value: u32) -> bool {
         self.written_dwords
             .push((key.to_string(), value_name.to_string(), value));
+        self.keys
+            .entry(key.to_string())
+            .or_default()
+            .insert(value_name.to_string(), value.to_string());
+        true
+    }
+
+    fn write_string(&mut self, key: &str, value_name: &str, value: &str) -> bool {
+        self.written_strings
+            .push((key.to_string(), value_name.to_string(), value.to_string()));
         self.keys
             .entry(key.to_string())
             .or_default()

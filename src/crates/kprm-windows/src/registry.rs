@@ -91,6 +91,22 @@ impl Registry for WinRegistry {
         }
     }
 
+    fn write_string(&mut self, key: &str, value_name: &str, value: &str) -> bool {
+        let Some((hive, rest, wow64_flag)) = split_hive(key) else {
+            return false;
+        };
+        let root = RegKey::predef(hive);
+        let opened = if rest.is_empty() {
+            Ok((root, RegDisposition::REG_OPENED_EXISTING_KEY))
+        } else {
+            root.create_subkey_with_flags(rest, KEY_WRITE | wow64_flag)
+        };
+        match opened {
+            Ok((k, _)) => k.set_value(value_name, &value).is_ok(),
+            Err(_) => false,
+        }
+    }
+
     fn save_key_to_file(&mut self, key: &str, file_path: &str) -> bool {
         use windows::core::PCWSTR;
         use windows::Win32::Foundation::ERROR_SUCCESS;

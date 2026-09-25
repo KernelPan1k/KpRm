@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  Dev-only alternative to app.manifest, embedded instead of it when the
+  `dev-noadmin` Cargo feature is enabled (see build.rs) - requests no
+  elevation at all (`asInvoker`), so building with that Cargo feature on
+  (see BUILDING.md for the exact command; not repeated here since a literal
+  double hyphen, as in Cargo's own flag spelling, is invalid inside an XML
+  comment) launches straight into the GUI without a UAC prompt, for
+  fast iteration on pure UI/layout work that doesn't need any of the real
+  elevated actions. Never used for a release build.
+-->
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>
       <requestedPrivileges>
-        <requestedExecutionLevel level="requireAdministrator" uiAccess="false"/>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
       </requestedPrivileges>
     </security>
   </trustInfo>
@@ -14,13 +24,6 @@
     </application>
   </compatibility>
   <asmv3:application xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
-    <!-- Declarative per-monitor-v2 DPI awareness: the previous eframe/
-         winit GUI got this implicitly at process init; a raw Win32
-         window does not by default, so it must be requested here. This
-         is the canonical source for kprm.exe itself; kprm-win32gui also
-         calls SetProcessDpiAwarenessContext at startup purely as a
-         fallback for its own manifest-less examples - a no-op here
-         since this manifest already declared it. -->
     <asmv3:windowsSettings xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">
       <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</dpiAwareness>
     </asmv3:windowsSettings>

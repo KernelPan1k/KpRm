@@ -106,3 +106,7 @@ eula-body = Это программное обеспечение предост�
 eula-accept = Да
 eula-decline = Нет
 already-running = KpRm уже запущена!
+sidebar-tagline = Очистка после заражения
+sidebar-catalog-label = КАТАЛОГ
+sidebar-catalog-value = { $count } инструментов
+sidebar-last-run-label = ПОСЛЕДНИЙ ЗАПУСК

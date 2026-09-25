@@ -8,6 +8,7 @@
 pub mod backup;
 pub mod diagnostics;
 pub mod fakes;
+pub mod last_run;
 pub mod maintenance;
 pub mod matcher;
 pub mod orchestrator;
