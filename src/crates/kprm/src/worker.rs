@@ -267,7 +267,7 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                     report.push(
                         "UAC",
                         "registry_key",
-                        result.value_name,
+                        format!("{} = {}", result.value_name, result.value),
                         if result.succeeded {
                             kprm_engine::report::EventResult::Removed
                         } else {
@@ -350,7 +350,6 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 &mut processes,
             );
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
-            kprm_windows::schedule_self_deletion(report.needs_restart());
             kprm_engine::last_run::record(&mut registry, &kprm_windows::current_timestamp());
             let _ = response_tx.send(WorkerResponse::Done(report));
         }
@@ -447,9 +446,11 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             }
             // A technician restoring a client's registry wants a paper
             // trail like any other real action — but this never triggers
-            // schedule_self_deletion(), unlike RunAutomatic/RemoveSelected:
-            // that behavior is specific to an actual cleanup run, and this
-            // is a new, unrelated administrative feature.
+            // schedule_self_deletion(), unlike RunAutomatic: confirmed
+            // with the user that self-deletion is specific to the
+            // Automatic tab's real run, not Scan/RemoveSelected (the
+            // Custom tab's iterative search-then-remove flow) or this
+            // new, unrelated administrative feature.
             kprm_windows::write_and_open_report(&report, &dirs, &report_title(&dirs));
             let _ = response_tx.send(WorkerResponse::Done(report));
         }

@@ -186,7 +186,16 @@ fn handle_action(
             }
         }
         Action::HomeDrive(a) => {
-            let root = dirs.home_drive().to_string();
+            // `dirs.home_drive()` is a bare drive letter + colon (e.g.
+            // "C:", from the `HOMEDRIVE` env var) with no trailing
+            // separator — every *other* caller is fine with that since
+            // they immediately concatenate their own `\...`, but handed
+            // to `fs.list_dir` as-is here it's a Windows "drive-relative"
+            // path: it resolves against that drive's current directory,
+            // not its root, so this was silently scanning the wrong
+            // folder on every real machine (confirmed: `C:` lists this
+            // process's own cwd, `C:\` lists the real root).
+            let root = format!("{}\\", dirs.home_drive());
             handle_file_like(tool, "home_drive", a, &root, 1, fs, options, report);
         }
         Action::AppData(a) => {

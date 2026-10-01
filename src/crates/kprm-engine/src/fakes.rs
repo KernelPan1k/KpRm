@@ -73,7 +73,15 @@ impl FileSystem for FakeFileSystem {
     }
 
     fn list_dir(&self, path: &str, _max_depth: u32) -> Vec<String> {
-        let prefix = format!("{path}\\");
+        // `path` may or may not already end in a separator (e.g. a bare
+        // drive root passed as `"C:\"` vs. every other known dir, which
+        // has none) — exactly one real `\`, never a doubled-up one that
+        // would never match a stored key like `C:\AdwCleaner`.
+        let prefix = if path.ends_with('\\') {
+            path.to_string()
+        } else {
+            format!("{path}\\")
+        };
         self.entries
             .keys()
             .filter(|p| p.starts_with(&prefix))
@@ -237,6 +245,11 @@ pub struct FakeCommandRunner {
     /// What [`FakeCommandRunner::run_capture`] returns when
     /// `always_succeeds` — every call gets the same canned output.
     pub captured_stdout: Option<String>,
+    /// What [`FakeCommandRunner::run_with_exit_code`] returns as the exit
+    /// code. Defaults to 0 when `always_succeeds`, 1 otherwise; set this
+    /// explicitly to simulate a specific code (e.g. 3010, Windows'
+    /// `ERROR_SUCCESS_REBOOT_REQUIRED`).
+    pub captured_exit_code: Option<i32>,
 }
 
 impl FakeCommandRunner {
@@ -276,6 +289,17 @@ impl CommandRunner for FakeCommandRunner {
             self.always_succeeds,
             self.captured_stdout.clone().unwrap_or_default(),
         )
+    }
+
+    fn run_with_exit_code(&mut self, program: &str, args: &[&str]) -> (Option<i32>, String) {
+        self.calls.push((
+            program.to_string(),
+            args.iter().map(|s| s.to_string()).collect(),
+        ));
+        let code = self
+            .captured_exit_code
+            .unwrap_or(if self.always_succeeds { 0 } else { 1 });
+        (Some(code), self.captured_stdout.clone().unwrap_or_default())
     }
 }
 

@@ -85,4 +85,12 @@ pub trait CommandRunner {
     /// *why* a command failed in a report (`netsh` prints its actual
     /// failure reason to stdout, not just a bare exit code).
     fn run_with_output(&mut self, program: &str, args: &[&str]) -> (bool, String);
+
+    /// Like [`CommandRunner::run_with_output`], but exposes the raw exit
+    /// code instead of collapsing it to a bool — needed to recognize
+    /// Windows' standard `ERROR_SUCCESS_REBOOT_REQUIRED` (3010) exit code,
+    /// which some commands (e.g. `netsh int ip/ipv4/ipv6 reset`) return on
+    /// a fully successful run that merely needs a restart to take effect.
+    /// `None` when the process couldn't even be launched.
+    fn run_with_exit_code(&mut self, program: &str, args: &[&str]) -> (Option<i32>, String);
 }

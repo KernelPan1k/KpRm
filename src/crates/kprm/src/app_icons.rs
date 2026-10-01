@@ -54,8 +54,7 @@ pub const SLIDERS: Icon = Icon(&[
     Element::Circle { cx: 19.0, cy: 14.0, r: 2.0 },
 ]);
 
-/// Quarantine segment icons.
-pub const BOX: Icon = Icon(&[Element::Path("M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6z")]);
+/// Quarantine segment icon ("Dans 7 jours").
 pub const CLOCK: Icon = Icon(&[Element::Circle { cx: 12.0, cy: 12.0, r: 9.0 }, Element::Polyline(&[(12.0, 7.0), (12.0, 12.0), (16.0, 14.0)])]);
 
 /// The registry-restore confirmation dialog's badge — this is the one

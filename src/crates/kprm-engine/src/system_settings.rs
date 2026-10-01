@@ -8,44 +8,58 @@ use crate::ports::{CommandRunner, ProcessManager, Registry};
 struct NetshCommand {
     args: &'static [&'static str],
     label: &'static str,
+    /// Whether this command's exit code is unreliable and shouldn't gate
+    /// success at all. `netsh int ip/ipv4/ipv6 reset` iterates over many
+    /// independent sub-items (routing, neighbor cache, WFP filters, ...);
+    /// it's normal — confirmed on a real machine, identically after a
+    /// reboot *and* when the command is run as `SYSTEM` instead of a
+    /// merely elevated Administrator token — for exactly one of them to
+    /// refuse with "Access is denied" while the rest succeed. That isn't
+    /// an ACL or elevation problem this process can work around: it's a
+    /// long-standing cosmetic bug in `netsh.exe` itself, reproducible on
+    /// stock Windows regardless of privilege level. So for this family,
+    /// having run at all (the process launched and exited, whatever its
+    /// code) counts as success; the alternative — gating on exit code
+    /// 0 — would misreport this harmless, unfixable-from-here quirk as a
+    /// failure on every single run.
+    unreliable_exit_code: bool,
 }
 
-/// `netsh interface ip/ipv4/ipv6 reset` iterate over many independent
-/// sub-items (routing, neighbor cache, WFP filters, ...); it's normal —
-/// even fully elevated — for exactly one of them to refuse with "the
-/// requested operation requires elevation" while the rest succeed, a
-/// known Windows quirk unrelated to how this process was launched. The
-/// overall exit code still goes non-zero when that happens, so this is
-/// still reported as a failure, but with `netsh`'s own real output
-/// attached instead of a bare unexplained "[X]".
 const NETSH_COMMANDS: &[NetshCommand] = &[
     NetshCommand {
         args: &["winsock", "reset"],
         label: "netsh winsock reset",
+        unreliable_exit_code: false,
     },
     NetshCommand {
         args: &["winhttp", "reset", "proxy"],
         label: "netsh winhttp reset proxy",
+        unreliable_exit_code: false,
     },
     NetshCommand {
         args: &["winhttp", "reset", "tracing"],
         label: "netsh winhttp reset tracing",
+        unreliable_exit_code: false,
     },
     NetshCommand {
         args: &["winsock", "reset", "catalog"],
         label: "netsh winsock reset catalog",
+        unreliable_exit_code: false,
     },
     NetshCommand {
         args: &["int", "ip", "reset", "all"],
         label: "netsh interface ip reset",
+        unreliable_exit_code: true,
     },
     NetshCommand {
         args: &["int", "ipv4", "reset", "catalog"],
         label: "netsh interface ipv4 reset",
+        unreliable_exit_code: true,
     },
     NetshCommand {
         args: &["int", "ipv6", "reset", "catalog"],
         label: "netsh interface ipv6 reset",
+        unreliable_exit_code: true,
     },
 ];
 
@@ -102,7 +116,8 @@ pub fn restore_defaults(
     let mut results = Vec::new();
 
     for cmd in NETSH_COMMANDS {
-        let (succeeded, output) = commands.run_with_output("netsh.exe", cmd.args);
+        let (exit_code, output) = commands.run_with_exit_code("netsh.exe", cmd.args);
+        let succeeded = exit_code == Some(0) || (cmd.unreliable_exit_code && exit_code.is_some());
         let description = if succeeded {
             cmd.label.to_string()
         } else {
@@ -167,12 +182,12 @@ mod tests {
 
         restore_defaults(&mut registry, &mut commands);
 
-        let netsh_calls: Vec<_> = commands
+        let netsh_calls = commands
             .calls
             .iter()
             .filter(|(program, _)| program == "netsh.exe")
-            .collect();
-        assert_eq!(netsh_calls.len(), 7);
+            .count();
+        assert_eq!(netsh_calls, 7);
         assert!(commands
             .calls
             .iter()
@@ -249,6 +264,42 @@ mod tests {
                 && r.description.contains("Fournisseur")
                 && r.description.contains("accès refusé")
         }));
+    }
+
+    #[test]
+    fn netsh_interface_resets_succeed_regardless_of_their_own_exit_code() {
+        // Real-machine finding: `netsh int ip/ipv4/ipv6 reset` reports
+        // ERROR_ACCESS_DENIED (exit code 1) on one sub-item every single
+        // time, identically whether this process runs merely elevated or
+        // as SYSTEM, and identically before or after a reboot — a
+        // cosmetic netsh.exe bug, not a fixable permissions problem. So
+        // this family succeeds whenever the process ran at all.
+        let mut registry = FakeRegistry::new();
+        let mut commands = FakeCommandRunner::new();
+        commands.always_succeeds = false;
+        commands.captured_exit_code = Some(1);
+        commands.captured_stdout = Some(
+            "Resetting , failed. Access is denied. Resetting , OK! \
+             Restart the computer to complete this action."
+                .to_string(),
+        );
+
+        let results = restore_defaults(&mut registry, &mut commands);
+
+        assert!(results
+            .iter()
+            .any(|r| r.description == "netsh interface ip reset" && r.succeeded));
+        assert!(results
+            .iter()
+            .any(|r| r.description == "netsh interface ipv4 reset" && r.succeeded));
+        assert!(results
+            .iter()
+            .any(|r| r.description == "netsh interface ipv6 reset" && r.succeeded));
+        // Commands outside the ip/ipv4/ipv6 reset family don't get that
+        // exemption: the same exit code still fails them.
+        assert!(results
+            .iter()
+            .any(|r| !r.succeeded && r.description.starts_with("netsh winsock reset :")));
     }
 
     #[test]

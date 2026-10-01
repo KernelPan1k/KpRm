@@ -218,6 +218,19 @@ impl Action {
             Action::Task(_) | Action::RegistryKey(_) | Action::Folder(_) => vec![],
         }
     }
+
+    /// The literal `path` field of the three action types that go through
+    /// macro resolution at runtime (`@HomeDrive\...` and friends,
+    /// `kprm_engine::paths::resolve_path_macro`) — `None` for every other
+    /// action type, which has no such field.
+    pub fn path_field(&self) -> Option<&str> {
+        match self {
+            Action::CleanDirectory(a) => Some(a.path.as_str()),
+            Action::File(a) => Some(a.path.as_str()),
+            Action::Folder(a) => Some(a.path.as_str()),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, thiserror::Error)]
@@ -244,7 +257,32 @@ pub enum CatalogError {
     EmptyTool { tool: String },
     #[error("tool '{0}' has an empty name")]
     EmptyName(String),
+    #[error(
+        "tool '{tool}': `path` uses {macro_name} with no '\\' right after it ('{path}') — \
+         every macro resolves to a bare directory with no trailing separator, so without \
+         one the rest of the path would silently fuse onto it (e.g. `@HomeDrive` alone \
+         becomes the Windows drive-relative current directory, not the drive's root)"
+    )]
+    MacroMissingSeparator {
+        tool: String,
+        macro_name: &'static str,
+        path: String,
+    },
 }
+
+/// Every `@Macro` prefix a catalog `path` field may use — kept in sync by
+/// hand with `kprm_engine::paths::MACROS` (this crate doesn't depend on
+/// `kprm-engine`, so the two tables can't share one definition). Only the
+/// names matter here: validation just needs to know a path *starts* with
+/// one of these, not what it resolves to.
+const PATH_MACROS: &[&str] = &[
+    "@AppDataCommonDir",
+    "@DesktopDir",
+    "@LocalAppDataDir",
+    "@HomeDrive",
+    "@TempDir",
+    "@UserProfileDir",
+];
 
 /// A tool, tagged with the source file it was loaded from (for error messages).
 #[derive(Debug, Clone)]
@@ -396,6 +434,21 @@ impl Catalog {
                         });
                     }
                 }
+
+                if let Some(path) = action.path_field() {
+                    if let Some(&macro_name) =
+                        PATH_MACROS.iter().find(|m| path.starts_with(*m))
+                    {
+                        let rest = &path[macro_name.len()..];
+                        if !rest.starts_with('\\') {
+                            errors.push(CatalogError::MacroMissingSeparator {
+                                tool: tool.name.clone(),
+                                macro_name,
+                                path: path.to_string(),
+                            });
+                        }
+                    }
+                }
             }
         }
 
@@ -511,6 +564,82 @@ mod tests {
         assert!(errors
             .iter()
             .any(|e| matches!(e, CatalogError::EmptyTool { tool } if tool == "Empty")));
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn rejects_home_drive_macro_with_no_separator_after_it() {
+        let dir = tempdir();
+        std::fs::write(
+            dir.join("bad.toml"),
+            "name = 'Bad'\n[[actions]]\ntype = 'folder'\npath = '@HomeDriveFoo'\n",
+        )
+        .unwrap();
+
+        let result = Catalog::from_dir(&dir);
+        assert!(result.is_err());
+        let errors = result.unwrap_err();
+        assert!(errors.iter().any(|e| matches!(
+            e,
+            CatalogError::MacroMissingSeparator { tool, macro_name, path }
+                if tool == "Bad" && *macro_name == "@HomeDrive" && path == "@HomeDriveFoo"
+        )));
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn accepts_home_drive_macro_followed_by_a_separator() {
+        let dir = tempdir();
+        std::fs::write(
+            dir.join("good.toml"),
+            "name = 'Good'\n[[actions]]\ntype = 'folder'\npath = '@HomeDrive\\Quarantine'\n",
+        )
+        .unwrap();
+
+        let result = Catalog::from_dir(&dir);
+        assert!(result.is_ok(), "{:?}", result.err());
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn rejects_any_other_macro_with_no_separator_after_it_too() {
+        let dir = tempdir();
+        std::fs::write(
+            dir.join("bad.toml"),
+            "name = 'Bad'\n[[actions]]\ntype = 'file'\npath = '@DesktopDirFoo.txt'\n",
+        )
+        .unwrap();
+
+        let result = Catalog::from_dir(&dir);
+        assert!(result.is_err());
+        let errors = result.unwrap_err();
+        assert!(errors.iter().any(|e| matches!(
+            e,
+            CatalogError::MacroMissingSeparator { tool, macro_name, path }
+                if tool == "Bad" && *macro_name == "@DesktopDir" && path == "@DesktopDirFoo.txt"
+        )));
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn accepts_a_path_with_no_macro_at_all() {
+        let dir = tempdir();
+        std::fs::write(
+            dir.join("good.toml"),
+            r"name = 'Good'
+[[actions]]
+type = 'file'
+path = 'C:\Windows\System32\drivers\etc\hosts'
+",
+        )
+        .unwrap();
+
+        let result = Catalog::from_dir(&dir);
+        assert!(result.is_ok(), "{:?}", result.err());
 
         std::fs::remove_dir_all(&dir).ok();
     }

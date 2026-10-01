@@ -325,6 +325,18 @@ unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: 
                 }
 
                 let _ = EndPaint(hwnd, &ps);
+
+                // `paint()` calls into the app's own per-frame polling
+                // (e.g. `kprm`'s worker-response drain), which is the
+                // only place state like "a background task just finished,
+                // close now" changes — unlike a mouse click, there's no
+                // other event to hang this check off of, so it's checked
+                // here on every repaint instead.
+                if state.app.should_close() {
+                    let _ = DestroyWindow(hwnd);
+                } else if state.app.should_minimize() {
+                    let _ = ShowWindow(hwnd, SW_MINIMIZE);
+                }
             }
             LRESULT(0)
         }

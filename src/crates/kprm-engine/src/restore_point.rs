@@ -37,25 +37,20 @@ fn run_powershell(commands: &mut dyn CommandRunner, script: &str) -> bool {
 }
 
 /// Enables System Restore on the system drive, lifts the once-a-day
-/// creation throttle, then creates a "KpRm" restore point.
+/// creation throttle (an internal prerequisite, not reported on its own
+/// line — a user has no action to take on it either way), then creates a
+/// "KpRm" restore point.
 pub fn create_restore_point(
     commands: &mut dyn CommandRunner,
     registry: &mut dyn Registry,
 ) -> Vec<RestorePointResult> {
+    registry.write_dword(SYSTEM_RESTORE_KEY, "SystemRestorePointCreationFrequency", 0);
     vec![
         RestorePointResult {
             description: "enable System Restore protection",
             succeeded: run_powershell(
                 commands,
                 r#"Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
-            ),
-        },
-        RestorePointResult {
-            description: "lift the one-restore-point-per-day limit",
-            succeeded: registry.write_dword(
-                SYSTEM_RESTORE_KEY,
-                "SystemRestorePointCreationFrequency",
-                0,
             ),
         },
         RestorePointResult {
@@ -69,16 +64,31 @@ pub fn create_restore_point(
 }
 
 /// Clears every existing restore point on the system drive by cycling
-/// System Restore off then on — the documented, DLL-free way to wipe them
-/// all at once (there is no stock cmdlet to remove a single point;
+/// System Restore off then on — the documented way to wipe them all at
+/// once (there is no stock cmdlet to remove a single point;
 /// `SRRemoveRestorePoint`, which the original called directly, requires a
-/// raw `SrClient.dll` call this avoids).
+/// raw `SrClient.dll` call this avoids) — plus an explicit `vssadmin
+/// delete shadows` in between the two.
+///
+/// That explicit delete turned out to be necessary on a real machine:
+/// `Disable-ComputerRestore` is documented to delete every existing
+/// restore point, but restore points are themselves VSS shadow copies,
+/// and that deletion is handled asynchronously by the VSS service —
+/// re-enabling immediately after (needed so protection isn't left off)
+/// can race ahead of it and leave the old points sitting on disk, which
+/// is exactly what was observed (restore points from every past run still
+/// piling up). `vssadmin delete shadows` deletes them synchronously, so
+/// it's run before re-enabling rather than relying on the cmdlet's own
+/// async cleanup. It exits non-zero when there's nothing to delete (e.g.
+/// the very first run) — harmless, and not allowed to affect `succeeded`
+/// below, which still tracks only the two `*-ComputerRestore` calls that
+/// actually matter.
 pub fn remove_all_restore_points(commands: &mut dyn CommandRunner) -> RestorePointResult {
     RestorePointResult {
         description: "remove the restore points",
         succeeded: run_powershell(
             commands,
-            r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
+            r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; vssadmin delete shadows /for=$env:SystemDrive /all /quiet; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
         ),
     }
 }
@@ -142,7 +152,7 @@ mod tests {
 
         let results = create_restore_point(&mut commands, &mut registry);
 
-        assert_eq!(results.len(), 3);
+        assert_eq!(results.len(), 2);
         assert!(results.iter().all(|r| r.succeeded));
         assert!(commands
             .calls
@@ -167,8 +177,7 @@ mod tests {
         let results = create_restore_point(&mut commands, &mut registry);
 
         assert!(!results[0].succeeded); // Enable-ComputerRestore
-        assert!(results[1].succeeded); // registry write, unaffected by the fake command runner
-        assert!(!results[2].succeeded); // Checkpoint-Computer
+        assert!(!results[1].succeeded); // Checkpoint-Computer
     }
 
     #[test]
@@ -182,6 +191,12 @@ mod tests {
         let script = args.last().unwrap();
         assert!(script.contains("Disable-ComputerRestore"));
         assert!(script.contains("Enable-ComputerRestore"));
+        // The explicit vssadmin purge must run strictly between the two,
+        // so re-enabling can't race ahead of the actual deletion.
+        let disable_at = script.find("Disable-ComputerRestore").unwrap();
+        let vssadmin_at = script.find("vssadmin delete shadows").unwrap();
+        let enable_at = script.rfind("Enable-ComputerRestore").unwrap();
+        assert!(disable_at < vssadmin_at && vssadmin_at < enable_at);
     }
 
     #[test]

@@ -121,7 +121,6 @@ enum RestartReason {
 
 #[derive(PartialEq, Clone, Copy, Debug)]
 enum QuarantineChoice {
-    Keep,
     Now,
     In7Days,
 }
@@ -129,7 +128,6 @@ enum QuarantineChoice {
 impl From<QuarantineChoice> for QuarantineMode {
     fn from(choice: QuarantineChoice) -> Self {
         match choice {
-            QuarantineChoice::Keep => QuarantineMode::Keep,
             QuarantineChoice::Now => QuarantineMode::Now,
             QuarantineChoice::In7Days => QuarantineMode::In7Days,
         }
@@ -211,6 +209,16 @@ pub struct KprmApp {
     pressed: Option<UiButton>,
     close_requested: bool,
     minimize_requested: bool,
+    /// Set when `RunButton` ("Exécuter") sends `RunAutomatic`, so the
+    /// matching `Done` closes the app automatically once it arrives (and
+    /// no restart dialog needs the user first) — confirmed with the user:
+    /// a real cleanup run should kill and delete itself when it's done,
+    /// not sit open waiting to be closed by hand (which is also the only
+    /// way the exe's own scheduled self-deletion can ever succeed, since
+    /// Windows won't delete a running exe's image). Left `false` for
+    /// `Scan`/`RemoveSelected`, whose results the user is meant to keep
+    /// reviewing/acting on in the same window.
+    close_on_done: bool,
 
     /// The tab labels' rects from the *last* paint — text-width-dependent,
     /// so recomputed every `draw_tab_bar` call rather than hardcoded; mouse
@@ -284,7 +292,7 @@ impl KprmApp {
             opt_create_restore_point: false,
             opt_restore_uac: false,
             opt_restore_settings: false,
-            quarantine_choice: QuarantineChoice::Keep,
+            quarantine_choice: QuarantineChoice::Now,
             status,
             busy: false,
             progress: None,
@@ -304,6 +312,7 @@ impl KprmApp {
             hover: None,
             pressed: None,
             close_requested: false,
+            close_on_done: false,
             minimize_requested: false,
             tab_rects: Vec::new(),
             action_rects: Vec::new(),
@@ -351,7 +360,16 @@ impl KprmApp {
                         "status-done",
                         &[("count", &report.events.len().to_string())],
                     );
+                    // Only close if nothing else needs the user's
+                    // attention first — a pending restart dialog still
+                    // has to show, and the exe's own self-deletion
+                    // already defers to next boot in that case anyway.
+                    let close_after = std::mem::take(&mut self.close_on_done)
+                        && !report.needs_restart();
                     self.handle_report(report);
+                    if close_after {
+                        self.close_requested = true;
+                    }
                 }
                 WorkerResponse::DiagnosticDone(path) => {
                     self.busy = false;
@@ -994,9 +1012,8 @@ impl KprmApp {
             .unwrap();
 
             let seg_y = quarantine_y + 24.0;
-            let seg_w = (left_col_width - SEGMENT_GAP * 2.0) / 3.0;
+            let seg_w = (left_col_width - SEGMENT_GAP) / 2.0;
             let segs = [
-                (QuarantineChoice::Keep, &app_icons::BOX, theme::TEXT_2, self.t("quarantine-keep"), self.t("quarantine-keep-desc")),
                 (QuarantineChoice::Now, &app_icons::TRASH, theme::RED, self.t("remove-now"), self.t("quarantine-now-desc")),
                 (QuarantineChoice::In7Days, &app_icons::CLOCK, theme::BLUE, self.t("quarantine-7-days"), self.t("quarantine-7-days-desc")),
             ];
@@ -2299,12 +2316,11 @@ impl AppWindow for KprmApp {
                 },
                 Some(UiButton::QuarantineSeg(choice)) => {
                     self.quarantine_choice = choice;
-                    if choice != QuarantineChoice::Keep {
-                        self.opt_remove_tools = true;
-                    }
+                    self.opt_remove_tools = true;
                 }
                 Some(UiButton::RunButton) => {
                     self.busy = true;
+                    self.close_on_done = true;
                     self.status = self.t("status-running");
                     let _ = self.request_tx.send(WorkerRequest::RunAutomatic {
                         backup_registry: self.opt_backup_registry,
