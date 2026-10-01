@@ -78,24 +78,6 @@ pub fn run_dism(commands: &mut dyn CommandRunner) -> MaintenanceResult {
     }
 }
 
-/// Empties the current user's Recycle Bin via PowerShell.
-/// `Clear-RecycleBin` is available on PowerShell 5.1+ (Windows 10+).
-pub fn empty_recycle_bin(commands: &mut dyn CommandRunner) -> MaintenanceResult {
-    if commands.run(
-        "powershell.exe",
-        &[
-            "-NoProfile",
-            "-NonInteractive",
-            "-Command",
-            "Clear-RecycleBin -Force -ErrorAction SilentlyContinue",
-        ],
-    ) {
-        MaintenanceResult::ok("Clear-RecycleBin")
-    } else {
-        MaintenanceResult::fail("Clear-RecycleBin")
-    }
-}
-
 /// `netsh winsock reset` — resets the Winsock catalog corrupted by network
 /// malware (rootkits, LSP hijackers). Requires a reboot to take effect.
 pub fn reset_winsock(commands: &mut dyn CommandRunner) -> MaintenanceResult {
@@ -277,17 +259,6 @@ mod tests {
             .calls
             .iter()
             .any(|(p, a)| p == "DISM.exe" && a.iter().any(|s| s == "/RestoreHealth")));
-    }
-
-    #[test]
-    fn empty_recycle_bin_calls_powershell_clear_recyclebin() {
-        let mut commands = FakeCommandRunner::new();
-        let result = empty_recycle_bin(&mut commands);
-        assert!(result.succeeded);
-        assert!(commands
-            .calls
-            .iter()
-            .any(|(p, a)| p == "powershell.exe" && a.iter().any(|s| s.contains("Clear-RecycleBin"))));
     }
 
     #[test]

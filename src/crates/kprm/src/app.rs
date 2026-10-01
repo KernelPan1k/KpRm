@@ -60,10 +60,7 @@ const BTC_ADDRESS: &str = "bc1qeuy23256g05v80ggcy6ezwrlhxttrhm827hf2u";
 const ETH_ADDRESS: &str = "0x02AF1772AADaE8abf1d522aF5E87115E1Ed0dea5";
 const LTC_ADDRESS: &str = "Lh3p9yoDzJrYKHDm3TaW55B49q2uMVZaj5";
 const XMR_ADDRESS: &str = "BUsMZ3KoHcPvUAKCuFL8dsgUQAuWBJbaRxda6sQ8ND53";
-/// Single place to fill in once a PayPal.me link exists — the row stays
-/// hidden (and the GitHub Sponsors row skipped entirely, at the user's
-/// request) until this is non-empty.
-const PAYPAL_URL: &str = "";
+const PAYPAL_URL: &str = "https://www.paypal.me/kernelpan1k";
 const QR_SIZE: f32 = 76.0;
 const DONATE_CARD_PAD: f32 = 14.0;
 const DONATE_CARD_HEIGHT: f32 = 104.0;
@@ -282,8 +279,27 @@ impl KprmApp {
         let catalog_tool_count = kprm_catalog::Catalog::embedded().map(|c| c.tools().len()).unwrap_or(0);
         let last_run = kprm_engine::last_run::read(&kprm_windows::WinRegistry);
 
-        Self {
-            tab: Tab::Automatic,
+        // Dev-only hook for taking README screenshots without clicking
+        // through the disclaimer by hand each time — only compiled into
+        // the `dev-noadmin` build used for fast UI iteration, never into
+        // a real release.
+        #[cfg(feature = "dev-noadmin")]
+        let (initial_tab, disclaimer_accepted) = {
+            let tab = match std::env::var("KPRM_SCREENSHOT_TAB").as_deref() {
+                Ok("custom") => Tab::Custom,
+                Ok("extra") => Tab::ExtraTools,
+                Ok("donate") => Tab::Donate,
+                _ => Tab::Automatic,
+            };
+            let accepted = std::env::var("KPRM_SCREENSHOT").is_ok();
+            (tab, accepted)
+        };
+        #[cfg(not(feature = "dev-noadmin"))]
+        let (initial_tab, disclaimer_accepted) = (Tab::Automatic, false);
+
+        #[cfg_attr(not(feature = "dev-noadmin"), allow(unused_mut))]
+        let mut app = Self {
+            tab: initial_tab,
             fonts: Fonts::load().expect("embedded fonts must load"),
             logo,
             opt_remove_tools: true,
@@ -305,7 +321,7 @@ impl KprmApp {
             ),
             selected_backup: None,
             confirm_restore: None,
-            disclaimer_accepted: false,
+            disclaimer_accepted,
             t: translations,
             request_tx,
             response_rx,
@@ -333,7 +349,18 @@ impl KprmApp {
             maintenance_row_rects: Vec::new(),
             catalog_tool_count,
             last_run,
+        };
+
+        #[cfg(feature = "dev-noadmin")]
+        if app.tab == Tab::Custom && std::env::var("KPRM_SCREENSHOT").is_ok() {
+            // Same as clicking "Analyser" — populates the tab with real
+            // results instead of screenshotting it empty.
+            app.busy = true;
+            app.status = app.t("status-scanning");
+            let _ = app.request_tx.send(WorkerRequest::Scan);
         }
+
+        app
     }
 
     fn t(&self, key: &str) -> String {
@@ -1537,6 +1564,27 @@ impl KprmApp {
             .unwrap();
             y += 32.0;
 
+            // PayPal first and visually heavier (filled accent card, not
+            // just a small outline button) — it's the option most people
+            // already know how to use, so it leads; the crypto addresses
+            // below are the secondary path for those who prefer them.
+            if !PAYPAL_URL.is_empty() {
+                let card_rect = RectF { X: content_x, Y: y, Width: content_w, Height: DONATE_CARD_HEIGHT };
+                self.draw_paypal_card(g, card_rect);
+                y += DONATE_CARD_HEIGHT + DONATE_CARD_GAP + 8.0;
+
+                let header_brush = SolidBrush::new(theme::TEXT_3.to_argb()).unwrap();
+                g.draw_string(
+                    &self.t("donate-crypto-title").to_uppercase(),
+                    &self.fonts.proportional(11.0),
+                    RectF { X: content_x, Y: y, Width: content_w, Height: 16.0 },
+                    &near,
+                    &header_brush,
+                )
+                .unwrap();
+                y += 24.0;
+            }
+
             // Every address gets the same treatment: label + address + copy
             // button + its own scannable QR code.
             let copy_label = self.t("copy-button");
@@ -1550,12 +1598,6 @@ impl KprmApp {
                 let card_rect = RectF { X: content_x, Y: y, Width: content_w, Height: DONATE_CARD_HEIGHT };
                 self.draw_donate_card(g, card_rect, i, label, address, &copy_label);
                 y += DONATE_CARD_HEIGHT + DONATE_CARD_GAP;
-            }
-
-            if !PAYPAL_URL.is_empty() {
-                self.paypal_button_rect = RectF { X: content_x, Y: y, Width: 160.0, Height: 32.0 };
-                self.draw_paypal_button(g, self.paypal_button_rect);
-                y += 32.0;
             }
             content_bottom = y + 20.0;
         });
@@ -1633,18 +1675,76 @@ impl KprmApp {
         g.draw_string(label, &self.fonts.proportional(11.0), rect, &center, &brush).unwrap();
     }
 
-    #[allow(clippy::too_many_arguments)]
+    /// Filled (not just outlined) so it reads as the primary call to
+    /// action on the tab — every other button here (copy, the crypto
+    /// cards' own styling) is outline-only, which is exactly the
+    /// contrast PayPal, leading the tab, is meant to stand out against.
     fn draw_paypal_button(&self, g: &Graphics, rect: RectF) {
         let hovered = self.hover == Some(UiButton::OpenPayPal);
-        let border_color = if hovered { theme::BORDER } else { theme::BORDER_SOFT };
-        let pen = Pen::new(border_color.to_argb(), 1.5).unwrap();
-        g.draw_rounded_rect(rect, theme::RADIUS, &pen).unwrap();
-        let text_color = if hovered { theme::TEXT_1 } else { theme::TEXT_2 };
-        let brush = SolidBrush::new(text_color.to_argb()).unwrap();
+        let fill_color = if hovered { Color::rgb(0x4a, 0x8d, 0xe0) } else { theme::BLUE };
+        let fill = SolidBrush::new(fill_color.to_argb()).unwrap();
+        g.fill_rounded_rect(rect, theme::RADIUS, &fill).unwrap();
+        let brush = SolidBrush::new(theme::BG.to_argb()).unwrap();
         let center = StringFormat::new().unwrap();
         center.set_align(StringAlignmentCenter).unwrap();
         center.set_line_align(StringAlignmentCenter).unwrap();
-        g.draw_string("PayPal", &self.fonts.proportional(12.5), rect, &center, &brush).unwrap();
+        g.draw_string(
+            &self.t("donate-paypal-button"),
+            &self.fonts.proportional(13.0),
+            rect,
+            &center,
+            &brush,
+        )
+        .unwrap();
+    }
+
+    /// The Donate tab's lead card: a filled blue-accent panel (unlike the
+    /// plain `BG_PANEL` crypto cards below it) with a title, a short
+    /// description and the PayPal button — the hero that makes PayPal the
+    /// first and most visually prominent option on the tab, not just the
+    /// first in source order.
+    fn draw_paypal_card(&mut self, g: &Graphics, card_rect: RectF) {
+        let near = StringFormat::new().unwrap();
+        near.set_align(StringAlignmentNear).unwrap();
+
+        let panel = SolidBrush::new(theme::BLUE_BG.to_argb()).unwrap();
+        g.fill_rounded_rect(card_rect, 12.0, &panel).unwrap();
+        let border = Pen::new(theme::BLUE.to_argb(), 1.5).unwrap();
+        g.draw_rounded_rect(card_rect, 12.0, &border).unwrap();
+
+        const BTN_W: f32 = 180.0;
+        const BTN_H: f32 = 40.0;
+        let pad = DONATE_CARD_PAD;
+        let text_w = (card_rect.Width - pad * 3.0 - BTN_W).max(80.0);
+
+        let title = SolidBrush::new(theme::TEXT_1.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("donate-paypal-title"),
+            &self.fonts.proportional(16.0),
+            RectF { X: card_rect.X + pad, Y: card_rect.Y + pad + 4.0, Width: text_w, Height: 24.0 },
+            &near,
+            &title,
+        )
+        .unwrap();
+
+        let body = SolidBrush::new(theme::TEXT_2.to_argb()).unwrap();
+        g.draw_string(
+            &self.t("donate-paypal-desc"),
+            &self.fonts.proportional(12.5),
+            RectF { X: card_rect.X + pad, Y: card_rect.Y + pad + 32.0, Width: text_w, Height: 40.0 },
+            &near,
+            &body,
+        )
+        .unwrap();
+
+        let btn_rect = RectF {
+            X: card_rect.X + card_rect.Width - pad - BTN_W,
+            Y: card_rect.Y + (card_rect.Height - BTN_H) / 2.0,
+            Width: BTN_W,
+            Height: BTN_H,
+        };
+        self.paypal_button_rect = btn_rect;
+        self.draw_paypal_button(g, btn_rect);
     }
 
     /// Encodes `data` (the BTC address) into a QR code and draws it as
@@ -1710,7 +1810,6 @@ impl KprmApp {
                 &[
                     ("quick-actions-flush-dns", "quick-actions-flush-dns-desc", MaintenanceTask::FlushDns, false),
                     ("quick-actions-clean-temp", "quick-actions-clean-temp-desc", MaintenanceTask::CleanTempDirs, false),
-                    ("quick-actions-empty-recycle", "quick-actions-empty-recycle-desc", MaintenanceTask::EmptyRecycleBin, false),
                 ],
             ),
             (

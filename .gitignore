@@ -10,3 +10,7 @@ KpRm.exe
 
 # Rust rewrite (src/)
 /src/target/
+
+# Code-signing material — never committed, regardless of where it's dropped
+*.pfx
+*.p12

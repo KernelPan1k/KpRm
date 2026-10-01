@@ -23,7 +23,6 @@ pub enum MaintenanceTask {
     RunSfc,
     RunDism,
     CleanTempDirs,
-    EmptyRecycleBin,
     ResetWinsock,
     ResetHostsFile,
     RemoveProxy,
@@ -363,7 +362,6 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
                 MaintenanceTask::CleanTempDirs => {
                     maintenance::clean_temp_dirs(&mut fs, &dirs)
                 }
-                MaintenanceTask::EmptyRecycleBin => maintenance::empty_recycle_bin(&mut commands),
                 MaintenanceTask::ResetWinsock => maintenance::reset_winsock(&mut commands),
                 MaintenanceTask::ResetHostsFile => {
                     maintenance::reset_hosts_file(&mut commands, &dirs)
