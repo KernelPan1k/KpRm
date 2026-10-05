@@ -386,7 +386,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "kprm"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "arboard",
  "clap",
@@ -402,7 +402,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-catalog"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "include_dir",
  "regex",
@@ -413,7 +413,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-engine"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "kprm-catalog",
  "regex",
@@ -424,7 +424,7 @@ dependencies = [
 
 [[package]]
 name = "kprm-i18n"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "fluent-bundle",
  "include_dir",
@@ -434,14 +434,14 @@ dependencies = [
 
 [[package]]
 name = "kprm-win32gui"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "windows",
 ]
 
 [[package]]
 name = "kprm-windows"
-version = "3.0.1"
+version = "3.1.0"
 dependencies = [
  "kprm-catalog",
  "kprm-engine",
