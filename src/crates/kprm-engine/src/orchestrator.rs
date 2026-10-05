@@ -24,6 +24,15 @@ use crate::registry as reg_fmt;
 use crate::report::{EventResult, Report};
 use crate::whitelist;
 
+/// Recursion depth used for every known-folder scan in [`handle_action`]
+/// (desktop, download, program files, home drive, app data, ...). Deep
+/// enough to catch a tool's leftovers nested a few levels down (installers
+/// extracted into a subfolder, a portable tool kept in its own folder, ...)
+/// without being unbounded: `kprm-windows`'s `walk` has no cycle detection,
+/// so an unlimited depth could recurse forever into a reparse point/junction
+/// that loops back on itself.
+const FILE_LIKE_SCAN_DEPTH: u32 = 8;
+
 pub struct RunOptions {
     pub quarantine_mode: QuarantineMode,
     /// `true` = "Analyser" (find and report only, touch nothing); `false` =
@@ -170,19 +179,55 @@ fn handle_action(
         Action::Process(a) => handle_process(tool, a, fs, processes, options, report),
         Action::Desktop(a) => {
             let root = dirs.desktop().to_string();
-            handle_file_like(tool, "desktop", a, &root, 3, fs, options, report);
+            handle_file_like(
+                tool,
+                "desktop",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::DesktopCommon(a) => {
             let root = dirs.desktop_common().to_string();
-            handle_file_like(tool, "desktop_common", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "desktop_common",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::Download(a) => {
             let root = format!("{}\\Downloads", dirs.user_profile());
-            handle_file_like(tool, "download", a, &root, 3, fs, options, report);
+            handle_file_like(
+                tool,
+                "download",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::ProgramFiles(a) => {
             for root in program_files_roots(fs, dirs) {
-                handle_file_like(tool, "program_files", a, &root, 1, fs, options, report);
+                handle_file_like(
+                    tool,
+                    "program_files",
+                    a,
+                    &root,
+                    FILE_LIKE_SCAN_DEPTH,
+                    fs,
+                    options,
+                    report,
+                );
             }
         }
         Action::HomeDrive(a) => {
@@ -196,37 +241,100 @@ fn handle_action(
             // folder on every real machine (confirmed: `C:` lists this
             // process's own cwd, `C:\` lists the real root).
             let root = format!("{}\\", dirs.home_drive());
-            handle_file_like(tool, "home_drive", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "home_drive",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::AppData(a) => {
             let root = dirs.app_data().to_string();
-            handle_file_like(tool, "app_data", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "app_data",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::AppDataCommon(a) => {
             let root = dirs.app_data_common().to_string();
-            handle_file_like(tool, "app_data_common", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "app_data_common",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::AppDataLocal(a) => {
             let root = dirs.local_app_data().to_string();
-            handle_file_like(tool, "app_data_local", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "app_data_local",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::WindowsFolder(a) => {
             let root = dirs.windows_dir().to_string();
-            handle_file_like(tool, "windows_folder", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "windows_folder",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::StartMenu(a) => {
             let root = format!(
                 "{}\\Microsoft\\Windows\\Start Menu\\Programs",
                 dirs.app_data_common()
             );
-            handle_file_like(tool, "start_menu", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "start_menu",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::UserStartMenu(a) => {
             let root = format!(
                 "{}\\Microsoft\\Windows\\Start Menu\\Programs",
                 dirs.app_data()
             );
-            handle_file_like(tool, "user_start_menu", a, &root, 1, fs, options, report);
+            handle_file_like(
+                tool,
+                "user_start_menu",
+                a,
+                &root,
+                FILE_LIKE_SCAN_DEPTH,
+                fs,
+                options,
+                report,
+            );
         }
         Action::SoftwareKey(a) => {
             handle_software_key(tool, a, registry, options.is_64bit_os, options, report);
