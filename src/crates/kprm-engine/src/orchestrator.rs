@@ -24,14 +24,37 @@ use crate::registry as reg_fmt;
 use crate::report::{EventResult, Report};
 use crate::whitelist;
 
-/// Recursion depth used for every known-folder scan in [`handle_action`]
-/// (desktop, download, program files, home drive, app data, ...). Deep
-/// enough to catch a tool's leftovers nested a few levels down (installers
-/// extracted into a subfolder, a portable tool kept in its own folder, ...)
-/// without being unbounded: `kprm-windows`'s `walk` has no cycle detection,
-/// so an unlimited depth could recurse forever into a reparse point/junction
-/// that loops back on itself.
-const FILE_LIKE_SCAN_DEPTH: u32 = 8;
+/// Recursion depth for `desktop` and `download` — the only two known-folder
+/// scans the original engine made recursive at all (docs/RUST-REWRITE-SPEC.md
+/// §2.6: "profondeur -2 (récursif limité)"). Deep enough to catch a tool's
+/// leftovers nested a few levels down (an installer extracted into a
+/// subfolder, a portable tool kept in its own folder, ...) without being
+/// unbounded: `kprm-windows`'s `walk` has no cycle detection, so an
+/// unlimited depth could recurse forever into a reparse point/junction that
+/// loops back on itself.
+const DEEP_FILE_LIKE_SCAN_DEPTH: u32 = 8;
+
+/// Recursion depth for every other known-folder scan (`desktop_common`,
+/// `program_files`, `home_drive`, `app_data`, `app_data_common`,
+/// `app_data_local`, `windows_folder`, `start_menu`, `user_start_menu`) —
+/// root-level only, matching the original engine (docs/RUST-REWRITE-SPEC.md
+/// §2.6 marks every one of these "non récursif"). `home_drive` in
+/// particular is the *entire system drive*: scanning it at
+/// [`DEEP_FILE_LIKE_SCAN_DEPTH`] walks the whole disk instead of just
+/// checking its root for the handful of top-level litter these tools are
+/// actually known to drop there — confirmed by a single such walk taking
+/// ~280s on a real, far-from-empty system drive before this constant split
+/// was reinstated.
+const ROOT_ONLY_SCAN_DEPTH: u32 = 1;
+
+/// The scan depth for a given file-like `action_type` label (as returned by
+/// [`file_like_variant`]/[`Action::type_name`]).
+fn file_like_depth(action_type: &str) -> u32 {
+    match action_type {
+        "desktop" | "download" => DEEP_FILE_LIKE_SCAN_DEPTH,
+        _ => ROOT_ONLY_SCAN_DEPTH,
+    }
+}
 
 pub struct RunOptions {
     pub quarantine_mode: QuarantineMode,
@@ -42,11 +65,10 @@ pub struct RunOptions {
 }
 
 /// Runs every action of every tool in `catalog` against the given ports.
-/// Directory-like actions are walked one tool-action at a time rather than
-/// batched per directory across all tools like the original engine did for
-/// performance — a reasonable v1 simplification (see docs/RUST-REWRITE-SPEC.md
-/// §5.1); correctness is identical, only the number of directory listings
-/// differs.
+/// File-like actions (Desktop, Download, Program Files, ...) are batched
+/// across the whole catalog first — see [`run_file_like_actions`] — then
+/// every tool's remaining actions (process, registry, task, ...) run as
+/// before, one tool at a time.
 #[allow(clippy::too_many_arguments)]
 pub fn run_tool_actions(
     catalog: &Catalog,
@@ -58,6 +80,7 @@ pub fn run_tool_actions(
     options: &RunOptions,
 ) -> Report {
     let mut report = Report::default();
+    run_file_like_actions(catalog, fs, dirs, options, &mut report);
     for tool in catalog.tools() {
         run_tool(
             tool,
@@ -73,11 +96,18 @@ pub fn run_tool_actions(
     report
 }
 
-/// Runs every action of a single `tool`, appending results into `report` —
-/// the per-tool unit [`run_tool_actions`] loops over the whole catalog
-/// with. Exposed separately so a caller (the GUI's worker thread) can
-/// report progress between tools instead of only getting one result at
-/// the very end of a ~200-tool, several-second pass.
+/// Runs every *non-file-like* action of a single `tool`, appending results
+/// into `report` — the per-tool unit [`run_tool_actions`] loops over the
+/// whole catalog with. Exposed separately so a caller (the GUI's worker
+/// thread) can report progress between tools instead of only getting a
+/// result at the very end of a ~270-tool pass.
+///
+/// File-like actions (Desktop, Download, Program Files, ...) are skipped
+/// here: they're handled once for the entire catalog by
+/// [`run_file_like_actions`], which a caller of this function must run
+/// separately (`run_tool_actions` does so automatically). Running them here
+/// too would both duplicate every removal and reintroduce the per-tool
+/// directory walk this split exists to avoid.
 #[allow(clippy::too_many_arguments)]
 pub fn run_tool(
     tool: &kprm_catalog::Tool,
@@ -90,9 +120,201 @@ pub fn run_tool(
     report: &mut Report,
 ) {
     for action in &tool.actions {
+        if file_like_variant(action).is_some() {
+            continue;
+        }
         handle_action(
             &tool.name, action, fs, registry, processes, commands, dirs, options, report,
         );
+    }
+}
+
+/// Every catalog action type that scans a known folder recursively, paired
+/// with the field name [`Action::type_name`] reports it under.
+const FILE_LIKE_ACTION_TYPES: [&str; 11] = [
+    "desktop",
+    "desktop_common",
+    "download",
+    "program_files",
+    "home_drive",
+    "app_data",
+    "app_data_common",
+    "app_data_local",
+    "windows_folder",
+    "start_menu",
+    "user_start_menu",
+];
+
+/// Narrows `action` to its [`FileLikeAction`] payload and type label, or
+/// `None` for any other action type.
+fn file_like_variant(action: &Action) -> Option<(&'static str, &FileLikeAction)> {
+    match action {
+        Action::Desktop(a) => Some(("desktop", a)),
+        Action::DesktopCommon(a) => Some(("desktop_common", a)),
+        Action::Download(a) => Some(("download", a)),
+        Action::ProgramFiles(a) => Some(("program_files", a)),
+        Action::HomeDrive(a) => Some(("home_drive", a)),
+        Action::AppData(a) => Some(("app_data", a)),
+        Action::AppDataCommon(a) => Some(("app_data_common", a)),
+        Action::AppDataLocal(a) => Some(("app_data_local", a)),
+        Action::WindowsFolder(a) => Some(("windows_folder", a)),
+        Action::StartMenu(a) => Some(("start_menu", a)),
+        Action::UserStartMenu(a) => Some(("user_start_menu", a)),
+        _ => None,
+    }
+}
+
+/// Resolves the root(s) a file-like action type scans — the same roots
+/// [`handle_action`] used to compute separately for every tool's own copy
+/// of the same action type.
+fn file_like_roots(action_type: &str, fs: &dyn FileSystem, dirs: &dyn KnownDirs) -> Vec<String> {
+    match action_type {
+        "desktop" => vec![dirs.desktop().to_string()],
+        "desktop_common" => vec![dirs.desktop_common().to_string()],
+        "download" => vec![format!("{}\\Downloads", dirs.user_profile())],
+        "program_files" => program_files_roots(fs, dirs),
+        // See the comment on the `HomeDrive` arm of `handle_action` (now
+        // folded into this match): `dirs.home_drive()` is a bare drive
+        // letter + colon with no trailing separator, which Windows treats
+        // as "drive-relative" rather than the drive's root unless one is
+        // appended here.
+        "home_drive" => vec![format!("{}\\", dirs.home_drive())],
+        "app_data" => vec![dirs.app_data().to_string()],
+        "app_data_common" => vec![dirs.app_data_common().to_string()],
+        "app_data_local" => vec![dirs.local_app_data().to_string()],
+        "windows_folder" => vec![dirs.windows_dir().to_string()],
+        "start_menu" => vec![format!(
+            "{}\\Microsoft\\Windows\\Start Menu\\Programs",
+            dirs.app_data_common()
+        )],
+        "user_start_menu" => vec![format!(
+            "{}\\Microsoft\\Windows\\Start Menu\\Programs",
+            dirs.app_data()
+        )],
+        other => unreachable!("file_like_roots called with non-file-like action_type {other:?}"),
+    }
+}
+
+/// Runs every file-like action (Desktop, Download, Program Files, ...) in
+/// the whole `catalog`, walking each known folder exactly once instead of
+/// once per tool. This restores the original AutoIt engine's behavior
+/// (docs/RUST-REWRITE-SPEC.md §5.1 flagged the per-tool walk as "a
+/// reasonable v1 simplification", but with ~267 tools in the real catalog
+/// and 263 of them carrying a `desktop` rule alone, walking that tree once
+/// per tool made a full scan dramatically slower than necessary).
+/// [`crate::matcher::match_entry`] already supports testing many tools'
+/// rules against one entry in a single pass — this is what finally puts it
+/// to use that way, batching across tools instead of just within one.
+pub fn run_file_like_actions(
+    catalog: &Catalog,
+    fs: &mut dyn FileSystem,
+    dirs: &dyn KnownDirs,
+    options: &RunOptions,
+    report: &mut Report,
+) {
+    for action_type in FILE_LIKE_ACTION_TYPES {
+        let entries: Vec<(&str, &FileLikeAction)> = catalog
+            .tools()
+            .iter()
+            .flat_map(|tool| tool.actions.iter().map(move |action| (tool, action)))
+            .filter_map(|(tool, action)| {
+                let (t, a) = file_like_variant(action)?;
+                (t == action_type).then_some((tool.name.as_str(), a))
+            })
+            .collect();
+        if entries.is_empty() {
+            continue;
+        }
+
+        for root in file_like_roots(action_type, fs, dirs) {
+            handle_file_like_group(
+                action_type,
+                &entries,
+                &root,
+                file_like_depth(action_type),
+                fs,
+                options,
+                report,
+            );
+        }
+    }
+}
+
+/// Walks `root` once and tests every `(tool, action)` pair in `entries`
+/// (every tool in the catalog sharing this same action type) against each
+/// child in a single pass — the batched counterpart of [`handle_file_like`],
+/// which tests only one tool's rule per walk.
+#[allow(clippy::too_many_arguments)]
+fn handle_file_like_group(
+    action_type: &'static str,
+    entries: &[(&str, &FileLikeAction)],
+    root: &str,
+    depth: u32,
+    fs: &mut dyn FileSystem,
+    options: &RunOptions,
+    report: &mut Report,
+) {
+    let compiled: Vec<(Regex, Option<Regex>)> = entries
+        .iter()
+        .map(|(_, a)| (compiled(&a.pattern), optional_compiled(&a.company_name)))
+        .collect();
+    let rules: Vec<FileRule> = entries
+        .iter()
+        .zip(compiled.iter())
+        .map(|((tool, a), (pattern, company))| FileRule {
+            tool,
+            pattern,
+            company_name: company.as_ref(),
+            kind: a.kind,
+            quarantine: a.quarantine,
+        })
+        .collect();
+    let needs_company = rules.iter().any(|r| r.company_name.is_some());
+
+    for child in fs.list_dir(root, depth) {
+        let Some(kind) = fs.kind(&child) else {
+            continue;
+        };
+        let file_name = basename(&child).to_string();
+
+        // Company info is a property of the file itself, so it's read at
+        // most once per entry here and shared across every rule that needs
+        // it below — read lazily to avoid needless version-info reads on
+        // every other file.
+        let company_name =
+            if kind == EntryKind::File && needs_company && has_exe_or_com_extension(&file_name) {
+                fs.company_name(&child)
+            } else {
+                None
+            };
+
+        let candidate = CandidateEntry {
+            full_path: &child,
+            file_name: &file_name,
+            kind,
+            company_name: company_name.as_deref(),
+        };
+
+        // Every matching tool fires for this entry, not just the first —
+        // same semantics as handle_file_like, just evaluated for every
+        // tool that shares this root in one go instead of one tool at a
+        // time. If one match's removal makes the entry disappear, a later
+        // match's own removal attempt simply reports `NotFound` and is
+        // silently skipped by `apply_removal`, exactly like the old
+        // per-tool walk would see nothing left to remove on an already-
+        // deleted entry.
+        for m in match_entry(&candidate, &rules) {
+            apply_removal(
+                m.tool,
+                action_type,
+                &child,
+                kind,
+                m.quarantine,
+                fs,
+                options,
+                report,
+            );
+        }
     }
 }
 
@@ -184,7 +406,7 @@ fn handle_action(
                 "desktop",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("desktop"),
                 fs,
                 options,
                 report,
@@ -197,7 +419,7 @@ fn handle_action(
                 "desktop_common",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("desktop_common"),
                 fs,
                 options,
                 report,
@@ -210,7 +432,7 @@ fn handle_action(
                 "download",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("download"),
                 fs,
                 options,
                 report,
@@ -223,7 +445,7 @@ fn handle_action(
                     "program_files",
                     a,
                     &root,
-                    FILE_LIKE_SCAN_DEPTH,
+                    file_like_depth("program_files"),
                     fs,
                     options,
                     report,
@@ -246,7 +468,7 @@ fn handle_action(
                 "home_drive",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("home_drive"),
                 fs,
                 options,
                 report,
@@ -259,7 +481,7 @@ fn handle_action(
                 "app_data",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("app_data"),
                 fs,
                 options,
                 report,
@@ -272,7 +494,7 @@ fn handle_action(
                 "app_data_common",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("app_data_common"),
                 fs,
                 options,
                 report,
@@ -285,7 +507,7 @@ fn handle_action(
                 "app_data_local",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("app_data_local"),
                 fs,
                 options,
                 report,
@@ -298,7 +520,7 @@ fn handle_action(
                 "windows_folder",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("windows_folder"),
                 fs,
                 options,
                 report,
@@ -314,7 +536,7 @@ fn handle_action(
                 "start_menu",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("start_menu"),
                 fs,
                 options,
                 report,
@@ -330,7 +552,7 @@ fn handle_action(
                 "user_start_menu",
                 a,
                 &root,
-                FILE_LIKE_SCAN_DEPTH,
+                file_like_depth("user_start_menu"),
                 fs,
                 options,
                 report,
@@ -1304,5 +1526,68 @@ mod tests {
 
         assert!(processes.killed.contains(&1234));
         assert!(!processes.killed.contains(&999));
+    }
+
+    #[test]
+    fn run_tool_actions_walks_a_shared_root_once_for_every_tool() {
+        let dir = std::env::temp_dir().join(format!(
+            "kprm-orchestrator-test-shared-desktop-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(
+            dir.join("ToolA.toml"),
+            "name = 'ToolA'\n\n[[actions]]\ntype = 'desktop'\npattern = '(?i)^ToolA\\.exe$'\nkind = 'file'\n",
+        )
+        .unwrap();
+        std::fs::write(
+            dir.join("ToolB.toml"),
+            "name = 'ToolB'\n\n[[actions]]\ntype = 'desktop'\npattern = '(?i)^ToolB\\.exe$'\nkind = 'file'\n",
+        )
+        .unwrap();
+        let catalog = Catalog::from_dir(&dir).unwrap();
+        std::fs::remove_dir_all(&dir).ok();
+
+        let mut fs = FakeFileSystem::new();
+        fs.add_file(r"C:\Users\bob\Desktop\ToolA.exe", None);
+        fs.add_file(r"C:\Users\bob\Desktop\ToolB.exe", None);
+        let mut registry = FakeRegistry::new();
+        let mut processes = FakeProcessManager::new();
+        let mut commands = FakeCommandRunner::new();
+        let dirs = FakeKnownDirs::default();
+
+        let report = run_tool_actions(
+            &catalog,
+            &mut fs,
+            &mut registry,
+            &mut processes,
+            &mut commands,
+            &dirs,
+            &default_options(),
+        );
+
+        assert_eq!(
+            report.events.len(),
+            2,
+            "both tools' desktop rule should fire from the one shared walk: {:?}",
+            report.events
+        );
+        assert!(fs
+            .removed
+            .contains(&r"C:\Users\bob\Desktop\ToolA.exe".to_string()));
+        assert!(fs
+            .removed
+            .contains(&r"C:\Users\bob\Desktop\ToolB.exe".to_string()));
+
+        let desktop_walks = fs
+            .list_dir_calls
+            .borrow()
+            .iter()
+            .filter(|p| p.as_str() == r"C:\Users\bob\Desktop")
+            .count();
+        assert_eq!(
+            desktop_walks, 1,
+            "the shared desktop root must be walked exactly once for the whole catalog, not once per tool"
+        );
     }
 }

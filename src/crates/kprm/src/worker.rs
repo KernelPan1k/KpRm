@@ -456,9 +456,15 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
 }
 
 /// Runs every tool in `catalog`, sending a [`WorkerResponse::Progress`]
-/// after each one — the same overall effect as
+/// along the way — the same overall effect as
 /// `orchestrator::run_tool_actions`, just with progress reporting woven
-/// through the loop instead of only returning a result at the very end.
+/// through instead of only returning a result at the very end.
+///
+/// The file-like actions shared by most of the catalog (Desktop, Download,
+/// ...) are scanned once up front via [`orchestrator::run_file_like_actions`]
+/// — that single pass is reported as progress unit 1 — before looping over
+/// each tool's remaining (cheap, no directory walk) actions one at a time
+/// for the rest of the bar.
 #[allow(clippy::too_many_arguments)]
 fn run_tools_with_progress(
     catalog: &Catalog,
@@ -472,7 +478,11 @@ fn run_tools_with_progress(
 ) -> Report {
     let mut report = Report::default();
     let tools = catalog.tools();
-    let total = tools.len();
+    let total = tools.len() + 1;
+
+    orchestrator::run_file_like_actions(catalog, fs, dirs, options, &mut report);
+    let _ = response_tx.send(WorkerResponse::Progress { current: 1, total });
+
     for (index, tool) in tools.iter().enumerate() {
         orchestrator::run_tool(
             tool,
@@ -485,7 +495,7 @@ fn run_tools_with_progress(
             &mut report,
         );
         let _ = response_tx.send(WorkerResponse::Progress {
-            current: index + 1,
+            current: index + 2,
             total,
         });
     }

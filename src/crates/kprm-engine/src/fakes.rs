@@ -4,6 +4,7 @@
 //! process...) without touching a real machine. See
 //! docs/RUST-REWRITE-SPEC.md §9.0/§9.1.
 
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 
 use kprm_catalog::EntryKind;
@@ -28,6 +29,11 @@ pub struct FakeFileSystem {
     entries: BTreeMap<String, FakeEntry>,
     pub removed: Vec<String>,
     pub scheduled_on_reboot: Vec<String>,
+    /// Every `path` [`FileSystem::list_dir`] was called with, in call
+    /// order — lets a test assert a shared root was walked once for the
+    /// whole catalog rather than once per tool. `RefCell` because
+    /// `list_dir` only takes `&self`.
+    pub list_dir_calls: RefCell<Vec<String>>,
 }
 
 impl FakeFileSystem {
@@ -73,6 +79,7 @@ impl FileSystem for FakeFileSystem {
     }
 
     fn list_dir(&self, path: &str, _max_depth: u32) -> Vec<String> {
+        self.list_dir_calls.borrow_mut().push(path.to_string());
         // `path` may or may not already end in a separator (e.g. a bare
         // drive root passed as `"C:\"` vs. every other known dir, which
         // has none) — exactly one real `\`, never a doubled-up one that
