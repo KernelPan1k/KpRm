@@ -1,0 +1,29 @@
+name = 'Malicious App Uninstaller'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MAU(-\d+)?\.exe$'
+company_name = '(?i)^Xyntrax'
+kind = 'file'
+
+[[actions]]
+type = 'desktop'
+pattern = '(?i)^MAU(-\d+)?\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MAU(-\d+)?\.exe$'
+company_name = '(?i)^Xyntrax'
+kind = 'file'
+
+[[actions]]
+type = 'download'
+pattern = '(?i)^MAU(-\d+)?\.txt$'
+kind = 'file'
+
+[[actions]]
+type = 'process'
+pattern = '(?i)^MAU(-\d+)?\.exe$'
+company_name = '(?i)^Xyntrax'
+force = false
