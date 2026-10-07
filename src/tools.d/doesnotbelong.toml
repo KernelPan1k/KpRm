@@ -3,19 +3,16 @@ name = 'DoesNotBelong'
 [[actions]]
 type = 'desktop'
 pattern = '(?i)^DoesNotBelong.*\.(exe|txt)$'
-company_name = '(?i)^Thisisu'
 kind = 'file'
 
 [[actions]]
 type = 'download'
 pattern = '(?i)^DoesNotBelong.*\.(exe|txt)$'
-company_name = '(?i)^Thisisu'
 kind = 'file'
 
 [[actions]]
 type = 'process'
 pattern = '(?i)^DoesNotBelong.*\.exe$'
-company_name = '(?i)^Thisisu'
 force = false
 
 [[actions]]
