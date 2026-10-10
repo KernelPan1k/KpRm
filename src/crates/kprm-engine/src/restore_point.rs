@@ -67,28 +67,37 @@ pub fn create_restore_point(
 /// System Restore off then on — the documented way to wipe them all at
 /// once (there is no stock cmdlet to remove a single point;
 /// `SRRemoveRestorePoint`, which the original called directly, requires a
-/// raw `SrClient.dll` call this avoids) — plus an explicit `vssadmin
-/// delete shadows` in between the two.
+/// raw `SrClient.dll` call this avoids) — with a short poll in between the
+/// two instead of an explicit `vssadmin delete shadows`.
 ///
-/// That explicit delete turned out to be necessary on a real machine:
 /// `Disable-ComputerRestore` is documented to delete every existing
 /// restore point, but restore points are themselves VSS shadow copies,
 /// and that deletion is handled asynchronously by the VSS service —
 /// re-enabling immediately after (needed so protection isn't left off)
 /// can race ahead of it and leave the old points sitting on disk, which
-/// is exactly what was observed (restore points from every past run still
-/// piling up). `vssadmin delete shadows` deletes them synchronously, so
-/// it's run before re-enabling rather than relying on the cmdlet's own
-/// async cleanup. It exits non-zero when there's nothing to delete (e.g.
-/// the very first run) — harmless, and not allowed to affect `succeeded`
-/// below, which still tracks only the two `*-ComputerRestore` calls that
-/// actually matter.
+/// was observed on a real machine (restore points from every past run
+/// still piling up). This used to paper over that race with an explicit
+/// `vssadmin delete shadows /all`, but that's almost certainly why
+/// deleting restore points got KpRm itself flagged as malware: shelling
+/// out to `vssadmin.exe` to wipe shadow copies is the single
+/// most-fingerprinted command among ransomware families (MITRE ATT&CK
+/// T1490, "Inhibit System Recovery") and heuristic/behavioral AV engines
+/// weight it heavily — doubly so spawned from an unsigned exe via
+/// `powershell -ExecutionPolicy Bypass`. `/all` was also collateral: it
+/// nukes every VSS shadow copy on the drive, including ones unrelated to
+/// System Restore (e.g. backup software's own snapshots), not just the
+/// ones this function means to clear.
+///
+/// Polling `Get-ComputerRestorePoint` until it reports none left (bounded
+/// by a timeout, so a stuck VSS service can't hang this forever) waits
+/// out the same async cleanup without spawning `vssadmin.exe` or touching
+/// shadow copies that aren't restore points.
 pub fn remove_all_restore_points(commands: &mut dyn CommandRunner) -> RestorePointResult {
     RestorePointResult {
         description: "remove the restore points",
         succeeded: run_powershell(
             commands,
-            r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; vssadmin delete shadows /for=$env:SystemDrive /all /quiet; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
+            r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; $deadline = (Get-Date).AddSeconds(20); while ((Get-ComputerRestorePoint) -and ((Get-Date) -lt $deadline)) { Start-Sleep -Milliseconds 500 }; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
         ),
     }
 }
@@ -191,12 +200,13 @@ mod tests {
         let script = args.last().unwrap();
         assert!(script.contains("Disable-ComputerRestore"));
         assert!(script.contains("Enable-ComputerRestore"));
-        // The explicit vssadmin purge must run strictly between the two,
-        // so re-enabling can't race ahead of the actual deletion.
+        assert!(!script.contains("vssadmin"));
+        // The poll for leftover restore points must run strictly between
+        // the two, so re-enabling can't race ahead of the async cleanup.
         let disable_at = script.find("Disable-ComputerRestore").unwrap();
-        let vssadmin_at = script.find("vssadmin delete shadows").unwrap();
+        let poll_at = script.find("Get-ComputerRestorePoint").unwrap();
         let enable_at = script.rfind("Enable-ComputerRestore").unwrap();
-        assert!(disable_at < vssadmin_at && vssadmin_at < enable_at);
+        assert!(disable_at < poll_at && poll_at < enable_at);
     }
 
     #[test]
