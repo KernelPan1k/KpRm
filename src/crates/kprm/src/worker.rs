@@ -191,7 +191,9 @@ fn handle(request: WorkerRequest, response_tx: &Sender<WorkerResponse>) {
             }
 
             if remove_restore_points {
-                let result = restore_point::remove_all_restore_points(&mut commands);
+                let mut system_restore = kprm_windows::WinSystemRestore;
+                let result =
+                    restore_point::remove_all_restore_points(&mut commands, &mut system_restore);
                 report.push(
                     "Restore points",
                     "task",

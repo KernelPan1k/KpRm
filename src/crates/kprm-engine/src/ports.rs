@@ -94,3 +94,17 @@ pub trait CommandRunner {
     /// `None` when the process couldn't even be launched.
     fn run_with_exit_code(&mut self, program: &str, args: &[&str]) -> (Option<i32>, String);
 }
+
+/// Removes individual System Restore points via the `SRRemoveRestorePoint`
+/// API (`srclient.dll`) — the one documented, targeted way to delete a
+/// restore point by its sequence number. Kept separate from
+/// [`CommandRunner`] because the real adapter calls that API directly,
+/// in-process, rather than shelling out to anything: no `vssadmin.exe`
+/// (fingerprinted by ransomware heuristics, see
+/// [`crate::restore_point::remove_all_restore_points`]) and no
+/// `Disable`/`Enable-ComputerRestore` cycling (which doesn't reliably
+/// delete points before `Enable` races back in).
+pub trait SystemRestore {
+    /// `true` if the point was removed (or didn't exist).
+    fn remove_point(&mut self, sequence_number: u32) -> bool;
+}

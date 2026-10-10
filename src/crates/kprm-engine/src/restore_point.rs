@@ -4,9 +4,12 @@
 //! system_restore.au3`. Where the original juggled three fallback
 //! mechanisms for creation (`wmic`, a raw `SrClient.dll` call,
 //! `Checkpoint-Computer`) and enumerated every restore point via WMI COM
-//! calls, this sticks to the documented PowerShell cmdlets throughout —
-//! simpler, and no less reliable in practice (creation still fails the
-//! same way when System Restore is disabled by policy).
+//! calls, creation and listing here stick to the documented PowerShell
+//! cmdlets — simpler, and no less reliable in practice (creation still
+//! fails the same way when System Restore is disabled by policy).
+//! Clearing, however, does end up going through a raw `SrClient.dll` call
+//! after all — see [`remove_all_restore_points`] — because the PowerShell
+//! cmdlets turned out not to get the job done.
 //!
 //! Windows silently no-ops `Checkpoint-Computer` if a restore point
 //! (created by anything — Windows Update, a driver install, an earlier
@@ -19,7 +22,7 @@
 //! created every time regardless of what already exists today — simpler,
 //! and it doesn't touch (let alone delete) any existing restore point.
 
-use crate::ports::{CommandRunner, Registry};
+use crate::ports::{CommandRunner, Registry, SystemRestore};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RestorePointResult {
@@ -63,42 +66,50 @@ pub fn create_restore_point(
     ]
 }
 
-/// Clears every existing restore point on the system drive by cycling
-/// System Restore off then on — the documented way to wipe them all at
-/// once (there is no stock cmdlet to remove a single point;
-/// `SRRemoveRestorePoint`, which the original called directly, requires a
-/// raw `SrClient.dll` call this avoids) — with a short poll in between the
-/// two instead of an explicit `vssadmin delete shadows`.
+/// Clears every existing restore point on the system drive by enumerating
+/// them (via [`list_restore_points`]) and removing each one individually
+/// through [`SystemRestore::remove_point`] — the real adapter's
+/// `SRRemoveRestorePoint` call, the one Windows API actually meant for
+/// deleting a single restore point by sequence number.
 ///
-/// `Disable-ComputerRestore` is documented to delete every existing
-/// restore point, but restore points are themselves VSS shadow copies,
-/// and that deletion is handled asynchronously by the VSS service —
-/// re-enabling immediately after (needed so protection isn't left off)
-/// can race ahead of it and leave the old points sitting on disk, which
-/// was observed on a real machine (restore points from every past run
-/// still piling up). This used to paper over that race with an explicit
-/// `vssadmin delete shadows /all`, but that's almost certainly why
-/// deleting restore points got KpRm itself flagged as malware: shelling
-/// out to `vssadmin.exe` to wipe shadow copies is the single
-/// most-fingerprinted command among ransomware families (MITRE ATT&CK
-/// T1490, "Inhibit System Recovery") and heuristic/behavioral AV engines
-/// weight it heavily — doubly so spawned from an unsigned exe via
-/// `powershell -ExecutionPolicy Bypass`. `/all` was also collateral: it
-/// nukes every VSS shadow copy on the drive, including ones unrelated to
-/// System Restore (e.g. backup software's own snapshots), not just the
-/// ones this function means to clear.
+/// Two things were tried here first and both turned out not to work:
 ///
-/// Polling `Get-ComputerRestorePoint` until it reports none left (bounded
-/// by a timeout, so a stuck VSS service can't hang this forever) waits
-/// out the same async cleanup without spawning `vssadmin.exe` or touching
-/// shadow copies that aren't restore points.
-pub fn remove_all_restore_points(commands: &mut dyn CommandRunner) -> RestorePointResult {
+/// - Cycling System Restore off then back on
+///   (`Disable-ComputerRestore`/`Enable-ComputerRestore`) is documented to
+///   delete every existing restore point as a side effect, but in
+///   practice that didn't reliably happen — restore points survived the
+///   cycle on a real machine, which is a regression from the original
+///   AutoIt tool (hence going back to its approach of removing points
+///   one by one).
+/// - Papering over that with an explicit `vssadmin delete shadows /all`
+///   did delete them, but that's almost certainly what got KpRm itself
+///   flagged as malware for deleting restore points: shelling out to
+///   `vssadmin.exe` to wipe shadow copies is the single most-fingerprinted
+///   command among ransomware families (MITRE ATT&CK T1490, "Inhibit
+///   System Recovery"), and heuristic/behavioral AV engines weight it
+///   heavily — doubly so spawned from an unsigned exe via `powershell
+///   -ExecutionPolicy Bypass`. `/all` was also collateral damage: it nukes
+///   every VSS shadow copy on the drive, including ones unrelated to
+///   System Restore (e.g. backup software's own snapshots), not just the
+///   ones this function means to clear.
+///
+/// `SRRemoveRestorePoint` sidesteps both problems: it's a synchronous,
+/// targeted, in-process API call — no subprocess at all, let alone one
+/// that reads as ransomware behavior — and it only ever touches the
+/// specific restore point it's given.
+pub fn remove_all_restore_points(
+    commands: &mut dyn CommandRunner,
+    restore: &mut dyn SystemRestore,
+) -> RestorePointResult {
+    let succeeded = list_restore_points(commands).into_iter().all(|point| {
+        point
+            .sequence_number
+            .parse::<u32>()
+            .is_ok_and(|seq| restore.remove_point(seq))
+    });
     RestorePointResult {
         description: "remove the restore points",
-        succeeded: run_powershell(
-            commands,
-            r#"Disable-ComputerRestore -Drive "$env:SystemDrive\"; $deadline = (Get-Date).AddSeconds(20); while ((Get-ComputerRestorePoint) -and ((Get-Date) -lt $deadline)) { Start-Sleep -Milliseconds 500 }; Enable-ComputerRestore -Drive "$env:SystemDrive\""#,
-        ),
+        succeeded,
     }
 }
 
@@ -152,7 +163,7 @@ pub fn list_restore_points(commands: &mut dyn CommandRunner) -> Vec<RestorePoint
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::fakes::{FakeCommandRunner, FakeRegistry};
+    use crate::fakes::{FakeCommandRunner, FakeRegistry, FakeSystemRestore};
 
     #[test]
     fn create_restore_point_enables_protection_lifts_the_throttle_then_checkpoints() {
@@ -190,23 +201,41 @@ mod tests {
     }
 
     #[test]
-    fn remove_all_restore_points_disables_then_reenables_protection() {
+    fn remove_all_restore_points_removes_every_listed_point_individually() {
         let mut commands = FakeCommandRunner::new();
+        commands.captured_stdout = Some(
+            "12|KpRm|09/04/2026 21:32:00\r\n13|Windows Update|09/03/2026 08:00:00\r\n".to_string(),
+        );
+        let mut restore = FakeSystemRestore::new();
 
-        let result = remove_all_restore_points(&mut commands);
+        let result = remove_all_restore_points(&mut commands, &mut restore);
 
         assert!(result.succeeded);
-        let (_, args) = &commands.calls[0];
-        let script = args.last().unwrap();
-        assert!(script.contains("Disable-ComputerRestore"));
-        assert!(script.contains("Enable-ComputerRestore"));
-        assert!(!script.contains("vssadmin"));
-        // The poll for leftover restore points must run strictly between
-        // the two, so re-enabling can't race ahead of the async cleanup.
-        let disable_at = script.find("Disable-ComputerRestore").unwrap();
-        let poll_at = script.find("Get-ComputerRestorePoint").unwrap();
-        let enable_at = script.rfind("Enable-ComputerRestore").unwrap();
-        assert!(disable_at < poll_at && poll_at < enable_at);
+        assert_eq!(restore.removed, vec![12, 13]);
+    }
+
+    #[test]
+    fn remove_all_restore_points_succeeds_with_nothing_to_remove() {
+        let mut commands = FakeCommandRunner::new();
+        commands.captured_stdout = Some(String::new());
+        let mut restore = FakeSystemRestore::new();
+
+        let result = remove_all_restore_points(&mut commands, &mut restore);
+
+        assert!(result.succeeded);
+        assert!(restore.removed.is_empty());
+    }
+
+    #[test]
+    fn remove_all_restore_points_fails_if_any_point_cant_be_removed() {
+        let mut commands = FakeCommandRunner::new();
+        commands.captured_stdout = Some("12|KpRm|09/04/2026 21:32:00\r\n".to_string());
+        let mut restore = FakeSystemRestore::new();
+        restore.always_succeeds = false;
+
+        let result = remove_all_restore_points(&mut commands, &mut restore);
+
+        assert!(!result.succeeded);
     }
 
     #[test]

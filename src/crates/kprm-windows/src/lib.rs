@@ -20,6 +20,7 @@ pub mod restore;
 pub mod self_delete;
 pub mod single_instance;
 pub mod system_info;
+pub mod system_restore;
 pub mod timestamp;
 pub mod version_info;
 
@@ -37,4 +38,5 @@ pub use restore::{list_registry_backups, schedule_registry_restore, RestoreOutco
 pub use self_delete::schedule_self_deletion;
 pub use single_instance::{another_instance_is_running, show_message_box};
 pub use system_info::collect as collect_system_info;
+pub use system_restore::WinSystemRestore;
 pub use timestamp::current_timestamp;

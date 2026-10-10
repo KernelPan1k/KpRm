@@ -10,7 +10,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use kprm_catalog::EntryKind;
 
 use crate::paths::KnownDirs;
-use crate::ports::{CommandRunner, FileSystem, ProcessInfo, ProcessManager, Registry, Removal};
+use crate::ports::{
+    CommandRunner, FileSystem, ProcessInfo, ProcessManager, Registry, Removal, SystemRestore,
+};
 
 #[derive(Debug, Clone)]
 pub struct FakeEntry {
@@ -307,6 +309,28 @@ impl CommandRunner for FakeCommandRunner {
             .captured_exit_code
             .unwrap_or(if self.always_succeeds { 0 } else { 1 });
         (Some(code), self.captured_stdout.clone().unwrap_or_default())
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct FakeSystemRestore {
+    pub removed: Vec<u32>,
+    pub always_succeeds: bool,
+}
+
+impl FakeSystemRestore {
+    pub fn new() -> Self {
+        Self {
+            always_succeeds: true,
+            ..Default::default()
+        }
+    }
+}
+
+impl SystemRestore for FakeSystemRestore {
+    fn remove_point(&mut self, sequence_number: u32) -> bool {
+        self.removed.push(sequence_number);
+        self.always_succeeds
     }
 }
 
