@@ -175,6 +175,7 @@ full design rationale.
 - Malwarebytes (log) (Malwarebytes corporation)
 - Malwarebytes Anti-Rootkit (Malwarebytes corporation)
 - Malwarebytes Support Tool (Malwarebytes corporation)
+- Malicious App Uninstaller (Xyntrax)
 - Maze / Sekhmet / Egregor Decryptor
 - Mbr.exe (Gmer)
 - MBRCheck (a_d_13)
